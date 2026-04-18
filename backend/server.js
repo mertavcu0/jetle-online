@@ -86,8 +86,8 @@ const PORT = process.env.PORT || 3000;
 
 connectDb()
   .then(function onDbReady() {
-    app.listen(PORT, function onListen() {
-      console.log("Server çalışıyor:", PORT);
+    app.listen(PORT, () => {
+      console.log("Server running on port " + PORT);
     });
   })
   .catch(function onDbError(err) {
