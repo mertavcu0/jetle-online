@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETLE.COM | Ödeme Ekranı</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="payment">
+  <div id="appHeader"></div>
+
+  <main class="page-shell">
+    <section class="container single-column-layout">
+      <div class="panel page-heading-panel">
+        <h1>Ödeme Ekranı</h1>
+        <p>Seçtiğiniz hizmetler için ödeme bilgilerinizi girerek işlemi tamamlayın.</p>
+      </div>
+
+      <section class="payment-layout">
+        <section class="panel payment-form-panel">
+          <form id="paymentForm" class="listing-form-grid">
+            <div class="form-group full-span">
+              <label for="cardNumber">Kart Numarası</label>
+              <input type="text" id="cardNumber" maxlength="19" placeholder="0000 0000 0000 0000" required />
+            </div>
+
+            <div class="form-group full-span">
+              <label for="cardName">Kart Üzerindeki İsim</label>
+              <input type="text" id="cardName" placeholder="Ad Soyad" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cardExpiry">Son Kullanma</label>
+              <input type="text" id="cardExpiry" maxlength="5" placeholder="12/28" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cardCvv">CVV</label>
+              <input type="password" id="cardCvv" maxlength="4" placeholder="123" required />
+            </div>
+
+            <div class="form-actions-row full-span">
+              <button type="submit" class="btn btn-primary" id="paymentSubmitBtn">Ödemeyi Tamamla</button>
+            </div>
+          </form>
+
+          <div id="paymentStatusBox" class="payment-status-box"></div>
+        </section>
+
+        <aside class="panel payment-summary-panel">
+          <div class="panel-head">
+            <h2>Ödeme Özeti</h2>
+          </div>
+          <ul id="paymentSummaryList" class="payment-summary-list"></ul>
+          <div class="payment-summary-total">
+            <span>Toplam</span>
+            <strong id="paymentTotalPrice">0 TL</strong>
+          </div>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <div id="appFooter"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+</body>
+</html>

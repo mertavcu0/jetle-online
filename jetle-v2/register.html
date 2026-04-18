@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
+  <title>Kayıt ol — JETLE.online</title>
+  <meta name="description" content="JETLE'de hesap oluşturup ilan yayınlamaya başlayın." />
+  <meta property="og:title" content="JETLE.online Kayıt Ol" />
+  <meta property="og:description" content="JETLE'de hesap oluşturup ilan yayınlamaya başlayın." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="auth" class="page-auth">
+  <header class="site-header site-header--simple">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <nav class="header-actions">
+        <a href="login.html" class="header-link">Giriş</a>
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-shell">
+    <div class="auth-card panel">
+      <h1 class="auth-title">Hesap oluştur</h1>
+      <div id="regError" class="form-error" hidden></div>
+      <form id="regForm" novalidate>
+        <div class="field">
+          <label for="regName">Ad soyad</label>
+          <input type="text" id="regName" maxlength="120" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="regEmail">E-posta</label>
+          <input type="email" id="regEmail" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="regPhone">Telefon</label>
+          <input type="tel" id="regPhone" required autocomplete="tel" placeholder="05xx xxx xx xx" />
+        </div>
+        <div class="field">
+          <label for="regCity">Şehir (isteğe bağlı)</label>
+          <input type="text" id="regCity" maxlength="60" autocomplete="address-level1" />
+        </div>
+        <div class="field">
+          <label for="regPw">Şifre</label>
+          <input type="password" id="regPw" minlength="8" autocomplete="new-password" />
+        </div>
+        <div class="field">
+          <label for="regPw2">Şifre tekrar</label>
+          <input type="password" id="regPw2" autocomplete="new-password" />
+        </div>
+        <div class="auth-terms" id="regTermsWrap">
+          <label class="auth-terms__label" for="regTerms">
+            <input type="checkbox" id="regTerms" class="auth-terms__input" autocomplete="off" />
+            <span class="auth-terms__text">
+              <a href="hesap-sozlesmesi.html" target="_blank" rel="noopener noreferrer" class="auth-terms__link">Kullanıcı Sözleşmesi</a>
+              ve
+              <a href="gizlilik.html" target="_blank" rel="noopener noreferrer" class="auth-terms__link">Gizlilik Politikası</a>’nı okudum, kabul ediyorum.
+            </span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Kayıt ol</button>
+      </form>
+      <p class="auth-footer text-small">Zaten hesabınız var mı? <a href="login.html">Giriş yapın</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© JETLE.online</p>
+    </div>
+  </footer>
+
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      JetleAuth.init();
+      JetleAuth.renderHeaderBar();
+      var err = document.getElementById("regError");
+      var termsWrap = document.getElementById("regTermsWrap");
+      var termsEl = document.getElementById("regTerms");
+      if (termsEl && termsWrap) {
+        termsEl.addEventListener("change", function () {
+          if (termsEl.checked) termsWrap.classList.remove("auth-terms--invalid");
+        });
+      }
+      document.getElementById("regForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.hidden = true;
+        if (termsWrap) termsWrap.classList.remove("auth-terms--invalid");
+        var name = document.getElementById("regName").value.trim();
+        var email = document.getElementById("regEmail").value.trim();
+        var phone = document.getElementById("regPhone").value.trim().replace(/\D+/g, "");
+        var city = document.getElementById("regCity").value.trim();
+        var pw = document.getElementById("regPw").value;
+        var pw2 = document.getElementById("regPw2").value;
+        var terms = document.getElementById("regTerms").checked;
+        if (!name) {
+          err.textContent = "Ad soyad girin.";
+          err.hidden = false;
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          err.textContent = "Geçerli bir e-posta girin.";
+          err.hidden = false;
+          return;
+        }
+        if (phone.length < 10) {
+          err.textContent = "Geçerli bir telefon numarası girin.";
+          err.hidden = false;
+          return;
+        }
+        if (pw.length < 8) {
+          err.textContent = "Şifre en az 8 karakter olmalıdır.";
+          err.hidden = false;
+          return;
+        }
+        if (pw !== pw2) {
+          err.textContent = "Şifreler eşleşmiyor.";
+          err.hidden = false;
+          return;
+        }
+        if (!terms) {
+          err.textContent = "Devam etmek için Kullanıcı Sözleşmesi ve Gizlilik Politikası’nı kabul etmelisiniz.";
+          err.hidden = false;
+          if (termsWrap) termsWrap.classList.add("auth-terms--invalid");
+          return;
+        }
+        var res = JetleAuth.register({
+          name: name,
+          email: email,
+          phone: phone,
+          password: pw,
+          city: city,
+          termsAccepted: true
+        });
+        if (!res.ok) {
+          err.textContent = res.message;
+          err.hidden = false;
+          return;
+        }
+        window.location.href = "dashboard.html";
+      });
+    });
+  </script>
+</body>
+</html>

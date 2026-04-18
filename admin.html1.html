@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETLE.COM | Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="admin-dashboard">
+  <div id="appHeader"></div>
+
+  <main class="page-wrap">
+    <div class="container">
+      <section class="admin-shell">
+        <div class="page-title-block">
+          <h1>Admin Panel</h1>
+          <p>Platformdaki ilanları, reklam taleplerini ve kullanıcıları tek merkezden yönetin.</p>
+        </div>
+
+        <div class="admin-layout">
+          <aside class="admin-sidebar panel">
+            <nav class="admin-side-nav">
+              <a href="#adminDashboardSection" class="admin-side-link">Dashboard</a>
+              <a href="#adminListingsSection" class="admin-side-link">İlanlar</a>
+              <a href="#adminReportsSection" class="admin-side-link">�?ikayetler</a>
+              <a href="#adminAdsSection" class="admin-side-link">Reklamlar</a>
+              <a href="#adminUsersSection" class="admin-side-link">Kullanıcılar</a>
+            </nav>
+          </aside>
+
+          <div class="admin-content">
+            <section class="admin-stats-grid" id="adminDashboardSection">
+              <article class="panel admin-stat-card">
+                <span>Toplam ilan sayısı</span>
+                <strong id="adminTotalListings">0</strong>
+              </article>
+              <article class="panel admin-stat-card">
+                <span>Premium ilan sayısı</span>
+                <strong id="adminPremiumListings">0</strong>
+              </article>
+              <article class="panel admin-stat-card">
+                <span>Kullanıcı sayısı</span>
+                <strong id="adminTotalUsers">0</strong>
+              </article>
+              <article class="panel admin-stat-card">
+                <span>Toplam reklam gösterimi</span>
+                <strong id="adminTotalAdImpressions">0</strong>
+              </article>
+              <article class="panel admin-stat-card">
+                <span>Toplam reklam tıklaması</span>
+                <strong id="adminTotalAdClicks">0</strong>
+              </article>
+            </section>
+            <p class="admin-data-note" id="adminDataSourceNote">Veri kaynağı hazırlanıyor...</p>
+
+            <section class="panel admin-section" id="adminListingsSection">
+              <div class="admin-section-head">
+                <div>
+                  <h2>İlan Yönetimi</h2>
+                  <p>İlanları onaylayın, beklemeye alın veya tamamen kaldırın.</p>
+                </div>
+              </div>
+              <div id="adminPendingListingsWrap"></div>
+              <div id="adminListingsWrap"></div>
+            </section>
+
+            <section class="panel admin-section" id="adminReportsSection">
+              <div class="admin-section-head">
+                <div>
+                  <h2>�?ikayetler</h2>
+                  <p>Kullanıcılardan gelen ilan şikayetlerini inceleyin ve moderasyon sürecini hızlandırın.</p>
+                </div>
+              </div>
+              <div id="adminReportsWrap"></div>
+            </section>
+
+            <section class="panel admin-section" id="adminAdsSection">
+              <div class="admin-section-head">
+                <div>
+                  <h2>Reklam Talepleri</h2>
+                  <p>Reklam başvurularını onaylayın veya beklemeye alın.</p>
+                </div>
+              </div>
+
+              <section class="admin-ad-form-box">
+                <div class="panel-head">
+                  <h3>Reklam Ekle</h3>
+                </div>
+                <form id="adminAdForm" class="listing-form-grid">
+                  <div class="form-group">
+                    <label for="adminAdTitle">Reklam Başlığı</label>
+                    <input type="text" id="adminAdTitle" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="adminAdPlacement">Yayın Alanı</label>
+                    <select id="adminAdPlacement" required>
+                      <option value="">Seçiniz</option>
+                      <option value="header">Banner - Header</option>
+                      <option value="sidebar">Banner - Sidebar</option>
+                      <option value="inline">Sponsorlu İlan</option>
+                    </select>
+                  </div>
+                  <div class="form-group full-span">
+                    <label for="adminAdImage">Görsel Yükle</label>
+                    <input type="file" id="adminAdImage" accept="image/png,image/jpeg,image/webp" required />
+                  </div>
+                  <div class="form-group full-span">
+                    <label for="adminAdLink">Link</label>
+                    <input type="url" id="adminAdLink" placeholder="https://ornek.com" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="adminAdStart">Başlangıç Tarihi</label>
+                    <input type="date" id="adminAdStart" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="adminAdEnd">Bitiş Tarihi</label>
+                    <input type="date" id="adminAdEnd" required />
+                  </div>
+                  <div class="form-group full-span">
+                    <label for="adminAdDescription">Açıklama</label>
+                    <textarea id="adminAdDescription" rows="4" placeholder="Reklam açıklaması"></textarea>
+                  </div>
+                  <div class="form-actions-row full-span">
+                    <button type="submit" class="btn btn-primary">Reklamı Kaydet</button>
+                  </div>
+                </form>
+              </section>
+
+              <div id="adminAdsWrap"></div>
+            </section>
+
+            <section class="panel admin-section" id="adminUsersSection">
+              <div class="admin-section-head">
+                <div>
+                  <h2>Kullanıcı Yönetimi</h2>
+                  <p>Kayıtlı kullanıcıları görüntüleyin ve gerekli hesap işlemlerini yönetin.</p>
+                </div>
+              </div>
+              <div id="adminUsersWrap"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

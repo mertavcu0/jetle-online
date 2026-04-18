@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETLE.COM | Ana Sayfa</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="home">
+  <div id="appHeader"></div>
+
+  <main class="page-shell page-shell--marketplace">
+    <div class="listing-info-bar listing-info-bar--home">
+      <div class="container listing-info-bar-inner">
+        <div class="listing-info-bar__cluster">
+          <p id="resultsInfo" class="listing-info-bar__text">Toplam 0 ilan bulundu</p>
+          <p class="listing-info-bar__tagline">Vasıta, emlak, alışveriş ve hizmet ilanlarında arayın; kategoriyi soldan, sonucu buradan yönetin.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sr-only" aria-hidden="true">
+      <input type="search" id="heroSearchInput" tabindex="-1" />
+      <select id="heroCategoryFilter" tabindex="-1"><option value="all">Tüm kategoriler</option></select>
+      <select id="heroCityFilter" class="filter-select filter-select--cities" tabindex="-1"><option value="all">Tüm şehirler</option></select>
+      <button type="button" id="heroSearchButton" tabindex="-1"></button>
+      <select id="categoryFilter"><option value="all">Tüm kategoriler</option></select>
+      <select id="sidebarCategoryFilter"><option value="all">Tüm kategoriler</option></select>
+      <select id="sidebarSubcategoryFilter"><option value="all">Tüm alt kategoriler</option></select>
+      <select id="cityFilter" class="filter-select filter-select--cities"><option value="all">Tüm şehirler</option></select>
+      <select id="brandFilter" disabled><option value="all">Tüm markalar</option></select>
+      <select id="modelFilter" disabled><option value="all">Önce marka seçin</option></select>
+    </div>
+
+    <section class="container main-layout main-layout--marketplace">
+      <button type="button" class="mobile-sidebar-toggle" id="mobileSidebarToggle">Kategoriler ve filtreler</button>
+      <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+      <aside class="sidebar-column sidebar-column--guide" id="sidebarColumn">
+        <div class="sidebar-stack">
+          <div class="sidebar-marketplace-card">
+            <div class="sidebar-marketplace-card__head">
+              <div class="sidebar-marketplace-card__head-text">
+                <p class="sidebar-marketplace-card__kicker">Tüm kategoriler</p>
+                <h2 class="sidebar-marketplace-card__title">Kategori rehberi</h2>
+              </div>
+              <button type="button" class="sidebar-close-btn" id="mobileSidebarClose" aria-label="Kapat">×</button>
+            </div>
+            <nav class="sidebar-marketplace-nav" aria-label="Kategoriler">
+              <div id="categoryList">
+                <div class="category-home-tree category-home-tree--embedded" data-home-category-tree="static" data-home-category-embedded="true">
+                  <a class="category-home-all category-home-link" href="index.html" data-home-category-slug="all" data-category="all">Tüm ilanlar</a>
+
+                  <div class="category-home-branch is-open" data-branch-slug="vasita">
+                    <div class="category-home-branch-head">
+                      <button type="button" class="category-home-toggle" data-action="toggle-branch" aria-expanded="true" aria-label="Alt kategorileri göster veya gizle" data-branch-slug="vasita"><span class="category-home-chevron" aria-hidden="true">›</span></button>
+                      <a class="category-home-group category-home-link" href="index.html?category=vasita" data-home-category-slug="vasita" data-category="Araçlar"><span class="category-home-group-label">Vasıta</span></a>
+                    </div>
+                    <ul class="category-home-subs">
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=otomobil" data-home-category-slug="otomobil" data-category="Otomobil">Otomobil</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=arazi-suv-pickup" data-home-category-slug="arazi-suv-pickup" data-category="Arazi, SUV &amp; Pickup">Arazi, SUV &amp; Pickup</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=elektrikli-araclar" data-home-category-slug="elektrikli-araclar" data-category="Elektrikli Araçlar">Elektrikli Araçlar</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=motosiklet" data-home-category-slug="motosiklet" data-category="Motosiklet">Motosiklet</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=minivan-panelvan" data-home-category-slug="minivan-panelvan" data-category="Minivan &amp; Panelvan">Minivan &amp; Panelvan</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=ticari-araclar" data-home-category-slug="ticari-araclar" data-category="Ticari Araçlar">Ticari Araçlar</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="category-home-branch is-open" data-branch-slug="emlak">
+                    <div class="category-home-branch-head">
+                      <button type="button" class="category-home-toggle" data-action="toggle-branch" aria-expanded="true" aria-label="Alt kategorileri göster veya gizle" data-branch-slug="emlak"><span class="category-home-chevron" aria-hidden="true">›</span></button>
+                      <a class="category-home-group category-home-link" href="index.html?category=emlak" data-home-category-slug="emlak" data-category="Gayrimenkul"><span class="category-home-group-label">Emlak</span></a>
+                    </div>
+                    <ul class="category-home-subs">
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=konut" data-home-category-slug="konut" data-category="Konut">Konut</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=is-yeri" data-home-category-slug="is-yeri" data-category="İş Yeri">İş Yeri</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=arsa" data-home-category-slug="arsa" data-category="Arsa">Arsa</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=bina" data-home-category-slug="bina" data-category="Bina">Bina</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=devre-mulk" data-home-category-slug="devre-mulk" data-category="Devre Mülk">Devre Mülk</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="category-home-branch is-open" data-branch-slug="alisveris">
+                    <div class="category-home-branch-head">
+                      <button type="button" class="category-home-toggle" data-action="toggle-branch" aria-expanded="true" aria-label="Alt kategorileri göster veya gizle" data-branch-slug="alisveris"><span class="category-home-chevron" aria-hidden="true">›</span></button>
+                      <a class="category-home-group category-home-link" href="index.html?category=alisveris" data-home-category-slug="alisveris" data-category="Alışveriş"><span class="category-home-group-label">Alışveriş</span></a>
+                    </div>
+                    <ul class="category-home-subs">
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=telefon" data-home-category-slug="telefon" data-category="Telefon &amp; Aksesuar">Telefon</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=bilgisayar" data-home-category-slug="bilgisayar" data-category="Bilgisayar">Bilgisayar</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=ev-elektronigi" data-home-category-slug="ev-elektronigi" data-category="Ev Elektroniği">Ev Elektroniği</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=moda" data-home-category-slug="moda" data-category="Giyim &amp; Aksesuar">Moda</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=anne-bebek" data-home-category-slug="anne-bebek" data-category="Anne &amp; Bebek">Anne &amp; Bebek</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="category-home-branch is-open" data-branch-slug="is-sanayi">
+                    <div class="category-home-branch-head">
+                      <button type="button" class="category-home-toggle" data-action="toggle-branch" aria-expanded="true" aria-label="Alt kategorileri göster veya gizle" data-branch-slug="is-sanayi"><span class="category-home-chevron" aria-hidden="true">›</span></button>
+                      <a class="category-home-group category-home-link" href="index.html?category=is-sanayi" data-home-category-slug="is-sanayi" data-category="İş &amp; Sanayi"><span class="category-home-group-label">İş &amp; Sanayi</span></a>
+                    </div>
+                    <ul class="category-home-subs">
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=is-makineleri" data-home-category-slug="is-makineleri" data-category="İş Makineleri">İş Makineleri</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=tarim-makineleri" data-home-category-slug="tarim-makineleri" data-category="Tarım Makineleri">Tarım Makineleri</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=sanayi-ekipmanlari" data-home-category-slug="sanayi-ekipmanlari" data-category="Sanayi Ekipmanları">Sanayi Ekipmanları</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="category-home-branch is-open" data-branch-slug="hizmetler">
+                    <div class="category-home-branch-head">
+                      <button type="button" class="category-home-toggle" data-action="toggle-branch" aria-expanded="true" aria-label="Alt kategorileri göster veya gizle" data-branch-slug="hizmetler"><span class="category-home-chevron" aria-hidden="true">›</span></button>
+                      <a class="category-home-group category-home-link" href="index.html?category=hizmetler" data-home-category-slug="hizmetler" data-category="Hizmetler"><span class="category-home-group-label">Hizmetler</span></a>
+                    </div>
+                    <ul class="category-home-subs">
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=nakliye" data-home-category-slug="nakliye" data-category="Nakliye">Nakliye</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=temizlik" data-home-category-slug="temizlik" data-category="Temizlik Hizmetleri">Temizlik</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=tamirat" data-home-category-slug="tamirat" data-category="Ev Tadilat">Tamirat</a></li>
+                      <li><a class="category-home-sub category-home-link" href="index.html?category=teknik-servis" data-home-category-slug="teknik-servis" data-category="Servis &amp; Bakım">Teknik Servis</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </nav>
+            <div class="sidebar-marketplace-filters">
+              <h3 class="sidebar-filters-title">Filtreler</h3>
+              <div class="sidebar-price-row">
+                <div class="form-group">
+                  <label for="minPriceFilter">Fiyat min (₺)</label>
+                  <input type="number" id="minPriceFilter" placeholder="0" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="maxPriceFilter">Fiyat max (₺)</label>
+                  <input type="number" id="maxPriceFilter" placeholder="Sınırsız" min="0" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="citySelect">Şehir</label>
+                <select id="citySelect" class="filter-select filter-select--cities" title="İl seçin">
+                  <option value="all">Tüm şehirler</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="dateFilter">Tarih</label>
+                <select id="dateFilter" class="filter-select filter-select--date" title="İlan tarihi">
+                  <option value="all">Tümü</option>
+                  <option value="24h">Son 24 saat</option>
+                  <option value="3">Son 3 gün</option>
+                  <option value="7">Son 7 gün</option>
+                  <option value="30">Son 30 gün</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-aux-card">
+            <h3 class="sidebar-aux-title">Popüler aramalar</h3>
+            <div class="sidebar-chip-list">
+              <button type="button" class="sidebar-search-chip" data-home-quick-search="otomobil ikinci el">İkinci el otomobil</button>
+              <button type="button" class="sidebar-search-chip" data-home-quick-search="kiralık daire">Kiralık daire</button>
+              <button type="button" class="sidebar-search-chip" data-home-quick-search="İstanbul">İstanbul</button>
+              <button type="button" class="sidebar-search-chip" data-home-quick-search="laptop">Laptop</button>
+              <button type="button" class="sidebar-search-chip" data-home-quick-search="suv">SUV</button>
+            </div>
+          </div>
+
+          <div class="sidebar-aux-card">
+            <h3 class="sidebar-aux-title">Güvenli alışveriş</h3>
+            <ul class="sidebar-tips-list">
+              <li>Konum ve fiyatı karşılaştırın.</li>
+              <li>Görüşmeyi platformda sürdürün.</li>
+              <li>Mümkünse ürünü yerinde görün.</li>
+            </ul>
+          </div>
+
+          <div class="sidebar-aux-card sidebar-aux-card--cta">
+            <h3 class="sidebar-aux-title">Ücretsiz ilan ver</h3>
+            <p class="sidebar-cta-copy">Dakikalar içinde yayına alın.</p>
+            <a href="ilan-ver.html" class="btn btn-primary btn-sm btn-block">İlan ver</a>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content-column content-column--marketplace content-column--home-rail">
+        <p class="home-rail-eyebrow">İlan vitrinleri ve liste</p>
+        <div class="home-vitrin-stack">
+          <section class="panel homepage-showcase-panel homepage-showcase-panel--primary" id="featuredListingsPanel">
+            <div class="dashboard-section-head showcase-head">
+              <div>
+                <h2>Öne çıkan ilanlar</h2>
+                <p>Vitrin ve öne çıkarma ile öne taşınan seçkiler.</p>
+              </div>
+              <a href="#listingGrid" class="section-link">Tümünü gör</a>
+            </div>
+            <div class="listing-grid home-showcase-grid" id="featuredListingsGrid" role="region" aria-label="Öne çıkan ilanlar"></div>
+          </section>
+
+          <section class="panel homepage-showcase-panel homepage-showcase-panel--primary" id="newListingsPanel">
+            <div class="dashboard-section-head showcase-head">
+              <div>
+                <h2>Yeni eklenenler</h2>
+                <p>Platforma son eklenen onaylı ilanlar.</p>
+              </div>
+              <a href="#listingGrid" class="section-link">Tümünü gör</a>
+            </div>
+            <div class="listing-grid home-showcase-grid" id="newListingsGrid" role="region" aria-label="Yeni eklenen ilanlar"></div>
+          </section>
+        </div>
+
+        <div class="home-results-toolbar-wrap">
+          <div class="home-listing-rail-head">
+            <h3 class="home-listing-rail-head__title">İlan araması</h3>
+            <p class="home-listing-rail-head__lead">Kelime, sıralama ve soldaki filtrelerle listeyi daraltın.</p>
+          </div>
+        <div class="panel listing-toolbar-marketplace">
+          <div class="listing-toolbar-marketplace__row">
+            <input type="search" id="searchInput" class="listing-toolbar-marketplace__search" placeholder="Kelime ile ara" autocomplete="off" />
+            <div class="listing-toolbar-marketplace__actions">
+              <label class="sr-only" for="sortFilter">Sıralama</label>
+              <select id="sortFilter" class="listing-toolbar-marketplace__sort">
+                <option value="recommended">Önerilen sıralama</option>
+                <option value="newest">En yeni</option>
+                <option value="price-asc">En düşük fiyat</option>
+                <option value="price-desc">En yüksek fiyat</option>
+                <option value="km-asc">En düşük KM</option>
+                <option value="km-desc">En yüksek KM</option>
+                <option value="oldest">En eski</option>
+              </select>
+              <button type="button" class="btn btn-light btn-sm" id="saveSearchBtn">Aramayı kaydet</button>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="home-listing-section">
+          <div class="listing-grid listing-grid--cards home-listing-grid" id="listingGrid"></div>
+
+          <div class="empty-state empty-state--listing hidden" id="listingEmptyState" aria-live="polite">
+            <div class="empty-state__card">
+              <h3 class="empty-state__title" id="listingEmptyTitle">Henüz yayında ilan bulunmuyor</h3>
+              <p class="empty-state__text" id="listingEmptyCopy">İlk ilanlar onaylandığında burada görünecek.</p>
+              <div class="empty-state__actions">
+                <div id="listingEmptyShortcuts" class="empty-state__shortcuts">
+                  <a href="ilan-ver.html" class="btn btn-primary">Ücretsiz ilan ver</a>
+                  <p class="empty-state__hint empty-state__hint--sidebar">Kategori ve filtreler için sol menüyü kullanın.</p>
+                </div>
+                <button type="button" class="btn btn-light hidden" id="listingEmptyResetFilters">Filtreleri temizle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="saved-search-modal hidden" id="savedSearchModal">
+          <div class="saved-search-backdrop" data-saved-search-close="true"></div>
+          <div class="saved-search-dialog panel">
+            <div class="saved-search-head">
+              <div>
+                <h2>Aramayı Kaydet</h2>
+                <p>Bu filtre kombinasyonunu kaydedin, panelinizden sonra tek tıkla tekrar açın.</p>
+              </div>
+              <button type="button" class="saved-search-close" data-saved-search-close="true" aria-label="Kaydetme penceresini kapat">×</button>
+            </div>
+            <form id="savedSearchForm" class="saved-search-form">
+              <div class="form-group">
+                <label for="savedSearchName">Arama Adı</label>
+                <input type="text" id="savedSearchName" maxlength="80" placeholder="Örn. İstanbul SUV Aramam" required />
+              </div>
+              <div class="form-group">
+                <label for="savedSearchSummary">Filtre Özeti</label>
+                <textarea id="savedSearchSummary" rows="4" readonly></textarea>
+              </div>
+              <div class="saved-search-modal-meta" id="savedSearchMeta"></div>
+              <div class="saved-search-actions">
+                <button type="button" class="btn btn-light" data-saved-search-close="true">Vazgeç</button>
+                <button type="submit" class="btn btn-primary">Aramayı Kaydet</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <div class="container home-page-below" aria-label="Güven ve kampanya">
+      <section class="panel trust-strip-panel trust-strip-panel--support" aria-label="Güven ve destek">
+        <div class="trust-strip-head">
+          <h2>Güvenle al, güvenle sat</h2>
+          <p>İşlem ve iletişim için kısa bilgilendirme.</p>
+        </div>
+        <div class="trust-strip-grid">
+          <article class="trust-strip-card">
+            <span class="trust-strip-icon">₺</span>
+            <div>
+              <h3>Güvenli ödeme</h3>
+              <p>Kontrollü işlem akışı ve şeffaf süreç.</p>
+            </div>
+          </article>
+          <article class="trust-strip-card">
+            <span class="trust-strip-icon">✓</span>
+            <div>
+              <h3>Doğrulanmış satıcılar</h3>
+              <p>Rozetli hesaplarla daha net iletişim.</p>
+            </div>
+          </article>
+          <article class="trust-strip-card">
+            <span class="trust-strip-icon">24</span>
+            <div>
+              <h3>Destek</h3>
+              <p>Sorularınız için yardım merkezi.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel sponsored-banner sponsored-banner-inline" id="homeInlineBanner">
+        <span class="sponsored-tag">Sponsorlu</span>
+        <div class="sponsored-banner-copy">
+          <strong>Kurumsal vitrin ve kampanya alanları</strong>
+          <span>Markanızı ilan akışında ve vitrin bloklarında hedefli şekilde öne çıkarın.</span>
+        </div>
+        <a href="reklam-ver.html" class="sponsored-banner-cta">Teklif al</a>
+      </section>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js?v=20260413"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js?v=20260413"></script>
+</body>
+</html>

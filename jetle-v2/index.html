@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
+  <title>JETLE.online — İlan Pazarı</title>
+  <meta name="description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
+  <meta property="og:title" content="JETLE.online — İlan Pazarı" />
+  <meta property="og:description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="home" class="page-home">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <form class="header-search" id="headerSearchForm" action="#" method="get" role="search">
+        <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Başlık, marka, model, şehir veya kategori ara" autocomplete="off" />
+        <button type="submit" class="header-search-btn">Ara</button>
+      </form>
+      <nav class="header-actions" aria-label="Hızlı bağlantılar">
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <div id="jetleAdHero" class="jetle-ad-hero" data-jetle-ad="hero" role="complementary" aria-label="Kampanya alanı" hidden></div>
+
+  <main class="main-shell">
+    <div class="container main-grid">
+      <aside class="sidebar" aria-label="Kategoriler ve filtreler">
+        <div class="sidebar-block sidebar-block--cat-tree">
+          <h2 class="sidebar-title">Kategoriler</h2>
+          <nav class="category-nav category-tree" id="categoryNav" aria-label="Ürün kategorileri"></nav>
+        </div>
+        <div class="sidebar-block sidebar-block--filters home-filter-shell">
+          <div class="home-filter-shell__intro">
+            <h2 class="sidebar-title home-filter-shell__title">Filtreler</h2>
+            <p class="home-filter-shell__lead text-small text-muted">İlanları konum, fiyat ve kriterlere göre daraltın.</p>
+          </div>
+          <div id="homeFilterActiveTags" class="home-filter-active-tags" aria-label="Seçili filtreler" hidden></div>
+          <button type="button" class="home-filter-open-btn btn btn-secondary btn-sm" id="homeFilterOpenBtn" aria-expanded="false" aria-controls="homeFilterPanel">
+            Filtreleri aç
+          </button>
+          <div class="home-filter-drawer-backdrop" id="homeFilterBackdrop" hidden tabindex="-1" aria-hidden="true"></div>
+          <div id="homeFilterPanel" class="home-filter-panel">
+            <div class="home-filter-panel__head">
+              <span class="home-filter-panel__head-title">Arama filtreleri</span>
+              <button type="button" class="home-filter-close-btn" id="homeFilterCloseBtn" aria-label="Filtreleri kapat">×</button>
+            </div>
+            <div class="home-filter-panel__body">
+          <form class="filter-form home-filter-form" id="filterForm">
+            <details class="home-filter-accordion" open>
+              <summary class="home-filter-accordion__summary">Sıralama</summary>
+              <div class="home-filter-accordion__content">
+            <div class="field">
+              <label for="sortSelect">Liste sırası</label>
+              <select id="sortSelect" name="sort">
+                <option value="newest">En yeni</option>
+                <option value="price-asc">Fiyat artan</option>
+                <option value="price-desc">Fiyat azalan</option>
+                <option value="year-desc">Yıla göre yeni</option>
+                <option value="km-asc">KM düşükten yükseğe</option>
+              </select>
+            </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" open>
+              <summary class="home-filter-accordion__summary">Fiyat aralığı</summary>
+              <div class="home-filter-accordion__content">
+            <div class="home-filter-row home-filter-row--price">
+              <div class="field">
+                <label for="minPrice">Minimum (₺)</label>
+                <input type="number" id="minPrice" name="minPrice" min="0" step="1" placeholder="Alt sınır" inputmode="numeric" />
+              </div>
+              <div class="field">
+                <label for="maxPrice">Maksimum (₺)</label>
+                <input type="number" id="maxPrice" name="maxPrice" min="0" step="1" placeholder="Üst sınır" inputmode="numeric" />
+              </div>
+            </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" open>
+              <summary class="home-filter-accordion__summary">Konum</summary>
+              <div class="home-filter-accordion__content">
+            <div class="field">
+              <label for="citySelect">Şehir</label>
+              <select id="citySelect" name="city">
+                <option value="">Tüm şehirler</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="districtSelect">İlçe</label>
+              <select id="districtSelect" name="district" disabled>
+                <option value="">Önce şehir seçin</option>
+              </select>
+            </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" open>
+              <summary class="home-filter-accordion__summary">İlan tarihi</summary>
+              <div class="home-filter-accordion__content">
+            <div class="field">
+              <label for="dateFilter">Yayın zamanı</label>
+              <select id="dateFilter" name="date">
+                <option value="all">Tümü</option>
+                <option value="day">Son 24 saat</option>
+                <option value="3days">Son 3 gün</option>
+                <option value="week">Son 7 gün</option>
+                <option value="month">Son 30 gün</option>
+              </select>
+            </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" id="vehicleFilterAccordion">
+              <summary class="home-filter-accordion__summary">Kategoriye özel · Vasıta</summary>
+              <div class="home-filter-accordion__content">
+            <div class="filter-group" id="vehicleFilterGroup" hidden>
+              <p class="filter-group__title">Vasıta detayı</p>
+              <div class="field"><label for="filterVehicleBrand">Marka</label><select id="filterVehicleBrand"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterVehicleSeries">Seri</label><select id="filterVehicleSeries" disabled><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterVehicleModel">Model</label><select id="filterVehicleModel" disabled><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterYearMin">Yıl min</label><select id="filterYearMin"><option value="">Yok</option></select></div>
+              <div class="field"><label for="filterYearMax">Yıl max</label><select id="filterYearMax"><option value="">Yok</option></select></div>
+              <div class="field"><label for="filterKmMin">KM min</label><input type="number" id="filterKmMin" min="0" step="1000" placeholder="0" /></div>
+              <div class="field"><label for="filterKmMax">KM max</label><input type="number" id="filterKmMax" min="0" step="1000" placeholder="Yok" /></div>
+              <div class="field"><label for="filterFuel">Yakıt tipi</label><select id="filterFuel"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterGear">Vites</label><select id="filterGear"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterBody">Kasa tipi</label><select id="filterBody"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterDrive">Çekiş</label><select id="filterDrive"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterColor">Renk</label><select id="filterColor"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterVehicleState">Araç durumu</label><select id="filterVehicleState"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterSellerFrom">Kimden</label><select id="filterSellerFrom"><option value="">Tümü</option></select></div>
+              <div class="field"><label for="filterTrade">Takas</label><select id="filterTrade"><option value="">Tümü</option><option value="Evet">Evet</option><option value="Hayır">Hayır</option></select></div>
+              <div class="field"><label for="filterDamage">Ağır hasar kaydı</label><select id="filterDamage"><option value="">Tümü</option><option value="Evet">Evet</option><option value="Hayır">Hayır</option></select></div>
+              <div class="field"><label for="filterWarranty">Garanti</label><select id="filterWarranty"><option value="">Tümü</option><option value="Evet">Evet</option><option value="Hayır">Hayır</option></select></div>
+            </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" id="housingFilterAccordion">
+              <summary class="home-filter-accordion__summary">Kategoriye özel · Emlak &amp; arsa</summary>
+              <div class="home-filter-accordion__content">
+            <div class="filter-group filter-group--housing" id="housingFilterGroup" hidden>
+              <p class="filter-group__title">Emlak &amp; arsa detayı</p>
+              <div class="field">
+                <label for="estateSubcategoryFilter">Emlak alt kategori</label>
+                <select id="estateSubcategoryFilter" name="estateSubcategory">
+                  <option value="">Tümü</option>
+                  <option value="Konut">Konut</option>
+                  <option value="İş Yeri">İş Yeri</option>
+                  <option value="Arsa">Arsa</option>
+                  <option value="Bina">Bina</option>
+                  <option value="Devre Mülk">Devre Mülk</option>
+                  <option value="Turistik Tesis">Turistik Tesis</option>
+                  <option value="Otel">Otel</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingRoomFilter">Oda sayısı</label>
+                <select id="housingRoomFilter" name="housingRoom">
+                  <option value="">Tümü</option>
+                  <option value="1+0">1+0</option>
+                  <option value="1+1">1+1</option>
+                  <option value="2+1">2+1</option>
+                  <option value="3+1">3+1</option>
+                  <option value="4+1">4+1</option>
+                  <option value="5+1">5+1</option>
+                  <option value="5+2+">5+2+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingLivingRoomFilter">Salon sayısı</label>
+                <select id="housingLivingRoomFilter" name="housingLivingRoom">
+                  <option value="">Tümü</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3+">3+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingGrossFilter">Brüt m²</label>
+                <select id="housingGrossFilter" name="housingGross">
+                  <option value="">Tümü</option>
+                  <option value="50 m² altı">50 m² altı</option>
+                  <option value="50-75">50-75</option>
+                  <option value="75-100">75-100</option>
+                  <option value="100-150">100-150</option>
+                  <option value="150-200">150-200</option>
+                  <option value="200+">200+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingFurnishedFilter">Eşyalı</label>
+                <select id="housingFurnishedFilter" name="housingFurnished">
+                  <option value="">Tümü</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingSiteFilter">Site içinde</label>
+                <select id="housingSiteFilter" name="housingSite">
+                  <option value="">Tümü</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="housingHeatingFilter">Isıtma</label>
+                <select id="housingHeatingFilter" name="housingHeating">
+                  <option value="">Tümü</option>
+                  <option value="Kombi (Doğalgaz)">Kombi (Doğalgaz)</option>
+                  <option value="Merkezi">Merkezi</option>
+                  <option value="Klima">Klima</option>
+                  <option value="Soba">Soba</option>
+                  <option value="Yerden Isıtma">Yerden Isıtma</option>
+                </select>
+              </div>
+              <div class="field"><label for="housingNetFilter">Net m²</label><select id="housingNetFilter"><option value="">Tümü</option><option value="0-50">0-50</option><option value="50-75">50-75</option><option value="75-100">75-100</option><option value="100-125">100-125</option><option value="125-150">125-150</option><option value="150-200">150-200</option><option value="200+">200+</option></select></div>
+              <div class="field"><label for="housingAgeFilter">Bina yaşı</label><select id="housingAgeFilter"><option value="">Tümü</option><option value="0">0</option><option value="1-5">1-5</option><option value="6-10">6-10</option><option value="11-15">11-15</option><option value="16-20">16-20</option><option value="21-25">21-25</option><option value="26+">26+</option></select></div>
+              <div class="field"><label for="housingFloorFilter">Bulunduğu kat</label><select id="housingFloorFilter"><option value="">Tümü</option><option value="Bodrum">Bodrum</option><option value="Zemin">Zemin</option><option value="Yüksek giriş">Yüksek giriş</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6+">6+</option><option value="Çatı dubleks">Çatı dubleks</option></select></div>
+              <div class="field"><label for="housingBathroomFilter">Banyo sayısı</label><select id="housingBathroomFilter"><option value="">Tümü</option><option value="1">1</option><option value="2">2</option><option value="3+">3+</option></select></div>
+              <div class="field"><label for="housingBalconyFilter">Balkon</label><select id="housingBalconyFilter"><option value="">Tümü</option><option value="Var">Var</option><option value="Yok">Yok</option></select></div>
+              <div class="field"><label for="housingElevatorFilter">Asansör</label><select id="housingElevatorFilter"><option value="">Tümü</option><option value="Var">Var</option><option value="Yok">Yok</option></select></div>
+              <div class="field"><label for="housingParkingFilter">Otopark</label><select id="housingParkingFilter"><option value="">Tümü</option><option value="Yok">Yok</option><option value="Açık Otopark">Açık Otopark</option><option value="Kapalı Otopark">Kapalı Otopark</option><option value="Her İkisi">Her İkisi</option></select></div>
+              <div class="field"><label for="housingDuesFilter">Aidat</label><select id="housingDuesFilter"><option value="">Tümü</option><option value="Yok">Yok</option><option value="0-500">0-500</option><option value="500-1000">500-1000</option><option value="1000-2000">1000-2000</option><option value="2000+">2000+</option></select></div>
+              <div class="field"><label for="housingTitleFilter">Tapu durumu</label><select id="housingTitleFilter"><option value="">Tümü</option><option value="Kat mülkiyetli">Kat mülkiyetli</option><option value="Kat irtifaklı">Kat irtifaklı</option><option value="Hisseli">Hisseli</option><option value="Arsa Tapulu">Arsa Tapulu</option></select></div>
+              <div class="field"><label for="hotelBedFilter">Otel yatak sayısı</label><select id="hotelBedFilter"><option value="">Tümü</option><option value="1-10">1-10</option><option value="10-20">10-20</option><option value="20-50">20-50</option><option value="50-100">50-100</option><option value="100+">100+</option></select></div>
+              <div class="field"><label for="hotelOpenAreaFilter">Açık alan</label><select id="hotelOpenAreaFilter"><option value="">Tümü</option><option value="0-250">0-250</option><option value="250-500">250-500</option><option value="500-1000">500-1000</option><option value="1000+">1000+</option></select></div>
+              <div class="field"><label for="hotelClosedAreaFilter">Kapalı alan</label><select id="hotelClosedAreaFilter"><option value="">Tümü</option><option value="0-250">0-250</option><option value="250-500">250-500</option><option value="500-1000">500-1000</option><option value="1000+">1000+</option></select></div>
+              <div class="field"><label for="hotelBuildStateFilter">Yapı durumu</label><select id="hotelBuildStateFilter"><option value="">Tümü</option><option value="Sıfır">Sıfır</option><option value="İkinci El">İkinci El</option><option value="Yenilenmiş">Yenilenmiş</option><option value="Yapım aşamasında">Yapım aşamasında</option></select></div>
+              <div class="field"><label for="hotelGroundSurveyFilter">Zemin etüdü</label><select id="hotelGroundSurveyFilter"><option value="">Tümü</option><option value="Var">Var</option><option value="Yok">Yok</option></select></div>
+              <div class="field">
+                <label for="housingMortgageFilter">Krediye uygun</label>
+                <select id="housingMortgageFilter" name="housingMortgage">
+                  <option value="">Tümü</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landZoningFilter">Arsa imar durumu</label>
+                <select id="landZoningFilter" name="landZoning">
+                  <option value="">Tümü</option>
+                  <option value="Konut">Konut</option>
+                  <option value="Ticari">Ticari</option>
+                  <option value="Sanayi">Sanayi</option>
+                  <option value="Tarla">Tarla</option>
+                  <option value="Bağ & Bahçe">Bağ & Bahçe</option>
+                  <option value="Depolama">Depolama</option>
+                  <option value="Turizm">Turizm</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landM2Filter">Arsa m²</label>
+                <select id="landM2Filter" name="landM2">
+                  <option value="">Tümü</option>
+                  <option value="0-250">0-250</option>
+                  <option value="250-500">250-500</option>
+                  <option value="500-1000">500-1000</option>
+                  <option value="1000-2000">1000-2000</option>
+                  <option value="2000+">2000+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landEmsalFilter">Emsal</label>
+                <select id="landEmsalFilter" name="landEmsal">
+                  <option value="">Tümü</option>
+                  <option value="0.20">0.20</option>
+                  <option value="0.30">0.30</option>
+                  <option value="0.50">0.50</option>
+                  <option value="1.00">1.00</option>
+                  <option value="1.50+">1.50+</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landGabariFilter">Gabari</label>
+                <select id="landGabariFilter" name="landGabari">
+                  <option value="">Tümü</option>
+                  <option value="6.50 m">6.50 m</option>
+                  <option value="9.50 m">9.50 m</option>
+                  <option value="12.50 m">12.50 m</option>
+                  <option value="Serbest">Serbest</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landMortgageFilter">Arsa krediye uygun</label>
+                <select id="landMortgageFilter" name="landMortgage">
+                  <option value="">Tümü</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landTradeFilter">Arsa takasa uygun</label>
+                <select id="landTradeFilter" name="landTrade">
+                  <option value="">Tümü</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              </div>
+            </div>
+              </div>
+            </details>
+            <div class="filter-actions home-filter-actions">
+              <button type="button" class="btn btn-primary btn-block" id="filterApply">Filtreleri uygula</button>
+              <button type="button" class="btn btn-secondary btn-block home-filter-btn-clear" id="filterReset">Tüm filtreleri temizle</button>
+            </div>
+          </form>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="content-main">
+        <div class="home-listing-with-rail">
+          <div class="home-listing-with-rail__main">
+        <div class="results-bar" id="resultsBar">
+          <p class="results-count" id="resultsInfo">Yükleniyor…</p>
+          <p class="results-hint">Yalnızca onaylı ilanlar listelenir. Yeni ilanlar moderasyon sonrası görünür.</p>
+        </div>
+
+        <div id="jetleAdFeaturedStrip" class="jetle-ad-featured-strip" data-jetle-ad="featured_strip" hidden></div>
+
+        <section class="listing-section" aria-labelledby="featuredHeading">
+          <div class="section-head">
+            <h2 id="featuredHeading" class="section-title">Öne çıkan ilanlar</h2>
+          </div>
+          <div class="listing-row" id="featuredRow"></div>
+        </section>
+
+        <section class="listing-section" aria-labelledby="showcaseHeading">
+          <div class="section-head">
+            <h2 id="showcaseHeading" class="section-title">Vitrin ilanları</h2>
+          </div>
+          <div class="listing-row listing-row--showcase" id="showcaseRow"></div>
+        </section>
+
+        <section class="listing-section" aria-labelledby="newHeading">
+          <div class="section-head">
+            <h2 id="newHeading" class="section-title">Yeni eklenenler</h2>
+          </div>
+          <div class="listing-row" id="newRow"></div>
+        </section>
+
+        <section class="listing-section" aria-labelledby="allHeading">
+          <div class="section-head">
+            <h2 id="allHeading" class="section-title">Tüm ilanlar</h2>
+          </div>
+          <div class="empty-state empty-state--rich" id="emptyResults" hidden>
+            <div class="empty-state__icon" aria-hidden="true">
+              <svg width="56" height="56" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="22" r="9" stroke="currentColor" stroke-width="2"/>
+                <path d="M32 32l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="empty-state__title">İlan bulunamadı</p>
+            <p class="empty-state__sub">Seçtiğiniz kriterlere uygun sonuç yok. Filtreleri genişletmeyi veya ana sayfadan yeniden aramayı deneyin.</p>
+            <div class="empty-state__actions">
+              <button type="button" class="btn btn-primary btn-sm" id="emptyResetBtn">Filtreleri temizle</button>
+              <a href="index.html" class="btn btn-secondary btn-sm">Tüm ilanlara dön</a>
+            </div>
+          </div>
+          <div class="listing-grid" id="listingsGrid"></div>
+        </section>
+          </div>
+          <aside class="home-listing-with-rail__rail" aria-label="Yan panel">
+            <div id="jetleAdSidebar" class="jetle-ad-sidebar" data-jetle-ad="sidebar" hidden></div>
+            <aside class="sponsor-side panel" id="sponsorSide">
+              <p class="sponsor-side__label">Sponsorlu ilanlar</p>
+              <div id="sponsoredRow" class="sponsor-side__list"></div>
+            </aside>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <section class="home-pricing-teaser" aria-labelledby="homePricingTeaser">
+      <div class="container">
+        <div class="home-pricing-teaser__inner panel panel--flat">
+          <div class="home-pricing-teaser__text">
+            <h2 id="homePricingTeaser" class="home-pricing-teaser__title">Öne çıkarma ve mağaza paketleri</h2>
+            <p class="text-small text-muted">Dopingden vitrine kadar net liste fiyatları; hesabınızdan satın alınır.</p>
+          </div>
+          <ul class="home-pricing-teaser__chips" aria-label="Örnek fiyatlar">
+            <li>Güncelim <strong>149 ₺</strong></li>
+            <li>Öne çıkan <strong>249 ₺</strong></li>
+            <li>Vitrin <strong>399 ₺</strong></li>
+            <li>Standart <strong>1.999 ₺</strong> / ay</li>
+          </ul>
+          <div class="home-pricing-teaser__cta">
+            <a class="btn btn-primary btn-sm" href="paketler.html">Tüm fiyatlar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="home-bottom">
+      <div class="container">
+        <section class="home-trust-strip" aria-label="Güvenli alışveriş özetleri">
+          <div class="home-trust-strip__grid">
+            <article class="home-trust-tile panel panel--flat">
+              <h3 class="home-trust-tile__h">Platform içi iletişim</h3>
+              <p class="home-trust-tile__p">Satıcıyla mümkün olduğunca Jetle üzerinden yazışın; dış kanallara yönlendiren taleplere dikkat edin.</p>
+              <a class="home-trust-tile__link" href="guvenli-alisveris.html">Güven kuralları</a>
+            </article>
+            <article class="home-trust-tile panel panel--flat">
+              <h3 class="home-trust-tile__h">Ödeme ve kapora</h3>
+              <p class="home-trust-tile__p">Jetle ödeme aracısı değildir. Kapora veya ön ödeme taleplerinde ilanı ve satıcıyı doğrulayın.</p>
+              <a class="home-trust-tile__link" href="yardim.html#guvenli-alisveris">Rehber</a>
+            </article>
+            <article class="home-trust-tile panel panel--flat">
+              <h3 class="home-trust-tile__h">İnceleme ve şikayet</h3>
+              <p class="home-trust-tile__p">Yeni ilanlar moderasyondan geçer. Şüpheli içerikleri bildirerek pazar yerine katkı sağlarsınız.</p>
+              <a class="home-trust-tile__link" href="yardim.html#sikayet">Bildirim süreci</a>
+            </article>
+            <article class="home-trust-tile panel panel--flat">
+              <h3 class="home-trust-tile__h">Kurumsal vitrin</h3>
+              <p class="home-trust-tile__p">Öne çıkarma, vitrin ve sponsorluk seçenekleriyle ilanınızı doğru kitleye taşıyın.</p>
+              <a class="home-trust-tile__link" href="hizmetlerimiz.html">Hizmet paketleri</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="home-services-mini" aria-labelledby="homeServicesMiniHeading">
+          <h2 id="homeServicesMiniHeading" class="home-section-title">Hizmetlerimiz</h2>
+          <p class="home-section-lead text-muted text-small">İlanınızın görünürlüğünü artırmak için sunduğumuz çözümlerin özeti. Ayrıntılar için hizmet sayfamıza geçin.</p>
+          <div class="home-services-mini__grid">
+            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#doping">
+              <span class="home-service-pill__t">Doping</span>
+              <span class="home-service-pill__d">Liste içinde üst sıralara yakın konumlandırma</span>
+            </a>
+            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#mobil">
+              <span class="home-service-pill__t">Mobil</span>
+              <span class="home-service-pill__d">Liste ve detay deneyimi mobil öncelikli</span>
+            </a>
+            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#reklam">
+              <span class="home-service-pill__t">Reklam</span>
+              <span class="home-service-pill__d">Banner ve sponsorlu görünürlük alanları</span>
+            </a>
+            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#vitrin">
+              <span class="home-service-pill__t">Vitrin ilan</span>
+              <span class="home-service-pill__d">Ana sayfada ayrı vitrin şeridinde öne çıkma</span>
+            </a>
+            <a class="home-service-pill panel panel--flat" href="paketler.html#pack-magaza">
+              <span class="home-service-pill__t">Premium paketler</span>
+              <span class="home-service-pill__d">Mağaza ve kurumsal üyelik paketleri</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="home-info-blocks" aria-label="Kurumsal bilgi">
+          <div class="home-info-blocks__grid">
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">Hakkımızda</h3>
+              <p class="home-info-card__p">Jetle; vasıta, emlak, alışveriş ve hizmet kategorilerinde bireysel ile kurumsal ilan verenleri buluşturan ilan platformudur.</p>
+              <a class="home-info-card__a" href="hakkimizda.html">Kurumsal sayfa</a>
+            </article>
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">Hizmetlerimiz</h3>
+              <p class="home-info-card__p">Görünürlük, vitrin, reklam ve üyelik çözümleriyle işinizi büyütmenize yardımcı olacak paketleri özetledik.</p>
+              <a class="home-info-card__a" href="hizmetlerimiz.html">Tüm hizmetler</a>
+            </article>
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">Güvenli alışveriş ipuçları</h3>
+              <p class="home-info-card__p">Ödeme, kapora ve iletişim konularında kısa ve net öneriler; alıcı ve satıcılar için ortak dil.</p>
+              <a class="home-info-card__a" href="guvenli-alisveris.html">İpuçlarını oku</a>
+            </article>
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">Yardım ve işlem rehberi</h3>
+              <p class="home-info-card__p">Hesap, ilan verme, favoriler, mesajlar ve paketler için adım adım rehber.</p>
+              <a class="home-info-card__a" href="yardim.html">Rehbere git</a>
+            </article>
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">Site haritası</h3>
+              <p class="home-info-card__p">Önemli sayfalara tek ekrandan erişin; kategori ve hesap bağlantıları düzenli listelenir.</p>
+              <a class="home-info-card__a" href="site-haritasi.html">Haritayı aç</a>
+            </article>
+            <article class="home-info-card panel panel--flat">
+              <h3 class="home-info-card__h">İletişim</h3>
+              <p class="home-info-card__p">Destek, iş birliği ve reklam talepleri için iletişim kanalları ve çalışma saatleri.</p>
+              <a class="home-info-card__a" href="iletisim.html">Bize ulaşın</a>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="jetleAdFooterBanner" class="jetle-ad-footer-banner-wrap" data-jetle-ad="footer_banner" hidden></div>
+
+  <div class="footer-strip">
+    <div class="container footer-strip__inner">
+      <a href="hakkimizda.html">Hakkımızda</a>
+      <a href="hizmetlerimiz.html">Hizmetlerimiz</a>
+      <a href="paketler.html">Paket fiyatları</a>
+      <a href="guvenli-alisveris.html">Güvenli alışveriş</a>
+      <a href="yardim.html">Yardım</a>
+      <a href="site-haritasi.html">Site haritası</a>
+      <a href="iletisim.html">İletişim</a>
+      <a href="kullanim-kosullari.html">Kullanım koşulları</a>
+      <a href="kisisel-veriler.html">Kişisel veriler</a>
+    </div>
+  </div>
+
+  <footer class="site-footer site-footer--full" id="siteFooter">
+    <div class="container">
+      <div class="footer-columns">
+        <div class="footer-col">
+          <p class="footer-col__title">Kurumsal</p>
+          <ul class="footer-links">
+            <li><a href="hakkimizda.html">Hakkımızda</a></li>
+            <li><a href="site-haritasi.html">Site haritası</a></li>
+            <li><a href="iletisim.html">İletişim</a></li>
+            <li><a href="yardim.html#duyurular">Haberler / duyurular</a></li>
+            <li><a href="hizmetlerimiz.html">Hizmetlerimiz</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col__title">Hizmetlerimiz</p>
+          <ul class="footer-links">
+            <li><a href="hizmetlerimiz.html#doping">Doping</a></li>
+            <li><a href="hizmetlerimiz.html#mobil">Mobil</a></li>
+            <li><a href="hizmetlerimiz.html#reklam">Reklam</a></li>
+            <li><a href="hizmetlerimiz.html#vitrin">Vitrin ilanlar</a></li>
+            <li><a href="hizmetlerimiz.html#premium">Premium / mağaza paketleri</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col__title">Gizlilik ve kullanım</p>
+          <ul class="footer-links">
+            <li><a href="guvenli-alisveris.html">Güvenli alışveriş ipuçları</a></li>
+            <li><a href="sozlesmeler.html">Sözleşmeler ve kurallar</a></li>
+            <li><a href="hesap-sozlesmesi.html">Hesap sözleşmesi</a></li>
+            <li><a href="kullanim-kosullari.html">Kullanım koşulları</a></li>
+            <li><a href="kisisel-veriler.html">Kişisel verilerin korunması</a></li>
+            <li><a href="cerez-yonetimi.html">Çerez yönetimi</a></li>
+            <li><a href="gizlilik.html">Gizlilik özeti</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col__title">Yardım</p>
+          <ul class="footer-links">
+            <li><a href="yardim.html">Yardım ve işlem rehberi</a></li>
+            <li><a href="yardim.html#sss">Sık sorulan sorular</a></li>
+            <li><a href="yardim.html#ilan-verme">İlan verme rehberi</a></li>
+            <li><a href="yardim.html#ilan-guvenlik">İlan güvenlik rehberi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom__legal">
+          <p>© <span id="footerYear">2026</span> Jetle Teknoloji A.Ş. Tüm hakları saklıdır.</p>
+          <p class="footer-bottom__note">Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır. Jetle, yalnızca aracı platform olarak moderasyon ve bildirim süreçlerini yürütür.</p>
+        </div>
+        <div class="footer-bottom__social" aria-label="Sosyal medya">
+          <a href="https://www.linkedin.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="LinkedIn">in</a>
+          <a href="https://www.x.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="X">x</a>
+          <a href="https://www.youtube.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="YouTube">▶</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script src="jetle-ads.js"></script>
+  <script src="ilan.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!document.body || document.body.getAttribute("data-page") !== "home") return;
+      if (!window.JetleAPI || !window.JetleMarket) return;
+      var gw = JetleAPI.API_GATEWAY;
+      if (!gw || !gw.baseUrl) return;
+      var token = "";
+      try {
+        var raw = sessionStorage.getItem("jetle_v2_session") || localStorage.getItem("jetle_v2_session");
+        if (raw) {
+          var s = JSON.parse(raw);
+          if (s && s.accessToken) token = String(s.accessToken);
+        }
+      } catch (e) {}
+      var headers = { Accept: "application/json" };
+      if (token) headers.Authorization = "Bearer " + token;
+      var url = String(gw.baseUrl).replace(/\/+$/, "") + "/api/listings";
+      fetch(url, { method: "GET", credentials: "include", headers: headers })
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (json) {
+          if (!json || !json.ok || !Array.isArray(json.data)) return;
+          JetleMarket.refreshAll();
+        })
+        .catch(function () {});
+    });
+  </script>
+</body>
+</html>

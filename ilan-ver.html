@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETLE.COM | İlan Ver</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="listing-form">
+  <div id="appHeader"></div>
+
+  <main class="page-shell">
+    <section class="container single-column-layout listing-create-page">
+      <div class="panel page-heading-panel listing-create-hero">
+        <div class="listing-create-hero-copy">
+          <span class="hero-eyebrow">Profesyonel İlan Oluşturma</span>
+          <h1>İlanınızı birkaç adımda yayınlayın</h1>
+          <p>Doğru kategori, güçlü açıklama ve kaliteli görseller ile ilanınız daha hızlı öne çıkar. Kategori seçildiğinde teknik alanlar otomatik açılır; araç ilanlarında tüm teknik bilgiler zorunludur.</p>
+        </div>
+        <div class="listing-create-hero-badges">
+          <span class="listing-create-pill">Ücretsiz Yayın</span>
+          <span class="listing-create-pill">İnceleme Sonrası Yayın</span>
+          <span class="listing-create-pill">Güvenli Platform</span>
+        </div>
+      </div>
+
+      <section class="listing-stepbar panel">
+        <div class="listing-step-item is-active" data-step="basic">
+          <span>1</span>
+          <strong>Temel Bilgiler</strong>
+        </div>
+        <div class="listing-step-item" data-step="media">
+          <span>2</span>
+          <strong>Medya</strong>
+        </div>
+        <div class="listing-step-item" data-step="details">
+          <span>3</span>
+          <strong>Detaylar</strong>
+        </div>
+        <div class="listing-step-item" data-step="publish">
+          <span>4</span>
+          <strong>Yayınla</strong>
+        </div>
+      </section>
+
+      <section class="boost-options-grid boost-options-grid-compact" aria-label="Opsiyonel vitrin teklifleri">
+        <article class="panel boost-option-card boost-option-card-compact">
+          <div class="boost-option-copy">
+            <span class="boost-option-kicker">Opsiyonel Vitrin</span>
+            <h2>Aramada üstte görün</h2>
+            <p>İsteğe bağlı yükseltme</p>
+          </div>
+          <div class="boost-option-side">
+            <div class="boost-option-price">249 TL</div>
+            <a href="doping.html" class="boost-option-link">İncele</a>
+          </div>
+        </article>
+
+        <article class="panel boost-option-card boost-option-card-compact">
+          <div class="boost-option-copy">
+            <span class="boost-option-kicker">Opsiyonel Vitrin</span>
+            <h2>Vitrine çık</h2>
+            <p>Ana sayfa görünürlüğü</p>
+          </div>
+          <div class="boost-option-side">
+            <div class="boost-option-price">790 TL</div>
+            <a href="doping.html" class="boost-option-link">İncele</a>
+          </div>
+        </article>
+
+        <article class="panel boost-option-card boost-option-card-compact">
+          <div class="boost-option-copy">
+            <span class="boost-option-kicker">Opsiyonel Vitrin</span>
+            <h2>Daha dikkat çek</h2>
+            <p>Liste vurgusu</p>
+          </div>
+          <div class="boost-option-side">
+            <div class="boost-option-price">149 TL</div>
+            <a href="doping.html" class="boost-option-link">İncele</a>
+          </div>
+        </article>
+      </section>
+
+      <div class="listing-create-layout">
+        <section class="listing-create-main">
+          <section class="panel form-panel listing-form-panel-pro">
+            <form id="listingForm" class="listing-form-stack">
+              <input type="hidden" id="listingLocation" required />
+              <input type="hidden" id="listingVerification" value="pending" />
+
+              <section class="listing-form-section" data-form-stage="basic">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2>Temel Bilgiler</h2>
+                    <p>İlanın vitrinde nasıl görüneceğini belirleyen ana alanları doldurun.</p>
+                    <div class="section-mini-badges">
+                      <span>Başlık Gücü</span>
+                      <span>Doğru Kategori</span>
+                      <span>Net Açıklama</span>
+                    </div>
+                  </div>
+                  <div class="listing-code-box">
+                    <span>İlan Numarası</span>
+                    <strong id="listingNumberPreview">JET-000000</strong>
+                  </div>
+                </div>
+
+                <div class="listing-form-grid">
+                  <div class="form-group full-span">
+                    <label for="listingTitle" class="label-required">İlan Başlığı</label>
+                    <input type="text" id="listingTitle" maxlength="100" placeholder="Örnek: Boyasız 2020 model otomatik araç" required />
+                    <small class="field-note">Kısa, net ve güven veren başlıklar daha yüksek dönüşüm sağlar.</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="listingPrice" class="label-required">Fiyat (TL)</label>
+                    <input type="number" id="listingPrice" min="1" step="1" placeholder="500000" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="listingCategory" class="label-required">Kategori</label>
+                    <select id="listingCategory" required>
+                      <option value="">Kategori seçin</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="listingSubcategory">Alt kategori</label>
+                    <input type="text" id="listingSubcategory" placeholder="Örnek: Otomobil / SUV / Daire / Telefon" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="listingExchangeStatus">Takas durumu</label>
+                    <select id="listingExchangeStatus">
+                      <option value="">Seçin</option>
+                      <option value="Evet">Evet</option>
+                      <option value="Hayır">Hayır</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="listingNegotiable">Pazarlık durumu</label>
+                    <select id="listingNegotiable">
+                      <option value="">Seçin</option>
+                      <option value="Evet">Evet</option>
+                      <option value="Hayır">Hayır</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group full-span">
+                    <label for="listingDescription" class="label-required">Açıklama</label>
+                    <textarea id="listingDescription" rows="8" placeholder="Ekspertiz, bakım geçmişi, donanım ve varsa hasar bilgisini şeffaf şekilde yazın" required></textarea>
+                    <small class="field-note">Ekspertiz, kullanım durumu, hasar geçmişi veya önemli avantajları net şekilde yazın.</small>
+                  </div>
+                </div>
+                <div class="section-help-strip">
+                  <span>Başlık ve fiyat alanları ilanın ilk bakıştaki güvenini belirler.</span>
+                  <span>Alt kategori ve açıklama alanlarını boş bırakmayın.</span>
+                </div>
+              </section>
+
+              <section class="listing-form-section" data-form-stage="details">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2 id="dynamicSectionTitle" class="dynamic-section-title">Teknik Özellikler</h2>
+                    <p id="dynamicSectionLead">Seçtiğiniz kategoriye göre ilgili alanlar otomatik açılır ve ilanınızı zenginleştirir.</p>
+                    <div class="section-mini-badges">
+                      <span>Detaylı Veri</span>
+                      <span>Teknik Güven</span>
+                      <span>Daha Hızlı Onay</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="categoryDynamicFields" class="listing-form-grid">
+                  <div class="listing-dynamic-placeholder full-span">
+                    <div class="listing-dynamic-placeholder-copy">
+                      <h3>Teknik alanlar kategoriye göre şekillenir</h3>
+                      <p>Önce kategoriyi seçin: <strong>Araçlar</strong> için marka–model–motor ve hasar bilgisi; <strong>Gayrimenkul</strong> için m² ve oda; <strong>Alışveriş</strong> için marka ve garanti alanları açılır.</p>
+                    </div>
+                    <div class="listing-dynamic-placeholder-grid">
+                      <div class="listing-dynamic-sample"><span>Marka</span><strong>Örnek alan</strong></div>
+                      <div class="listing-dynamic-sample"><span>Model</span><strong>Örnek alan</strong></div>
+                      <div class="listing-dynamic-sample"><span>Yıl</span><strong>Örnek alan</strong></div>
+                      <div class="listing-dynamic-sample"><span>Durum</span><strong>Örnek alan</strong></div>
+                      <div class="listing-dynamic-sample"><span>Renk</span><strong>Örnek alan</strong></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="section-help-strip">
+                  <span>Eksiksiz teknik alanlar daha profesyonel bir ilan görünümü sağlar.</span>
+                  <span>Kategori değiştikçe bu bölüm otomatik olarak yeniden şekillenir.</span>
+                </div>
+              </section>
+
+              <section class="listing-form-section" data-form-stage="media">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2>Fotoğraf ve Video</h2>
+                    <p>Büyük ve net görseller daha fazla görüntülenme sağlar. İlk fotoğraf kapak görseli olarak kullanılır.</p>
+                    <div class="section-mini-badges">
+                      <span>Kapak Fotoğrafı</span>
+                      <span>Yüksek Görünürlük</span>
+                      <span>Video Desteği</span>
+                    </div>
+                  </div>
+                  <div class="listing-media-counter-box">
+                    <span>Fotoğraf Durumu</span>
+                    <strong id="photoCountLabel">0 / 20</strong>
+                    <small id="photoRemainingLabel">20 fotoğraf hakkınız kaldı</small>
+                  </div>
+                </div>
+
+                <div class="listing-media-grid">
+                  <div class="form-group full-span">
+                    <div class="media-uploader media-uploader-large" id="mediaDropzone">
+                      <div class="media-uploader-icon" aria-hidden="true">📷</div>
+                      <strong>Fotoğrafları sürükleyip bırakın</strong>
+                      <p>Dosyaları bırakın veya seçim yaparak ilan galerinizi oluşturun</p>
+                      <small>JPG, PNG, WEBP · minimum 5, maksimum 20 fotoğraf · her dosya en fazla 10 MB</small>
+                      <div class="media-uploader-actions">
+                        <label class="btn btn-primary media-upload-label" for="listingImages">Fotoğraf Seç</label>
+                      </div>
+                      <input type="file" id="listingImages" accept="image/jpeg,image/png,image/webp" multiple hidden />
+                    </div>
+                    <div class="listing-media-tip-cards">
+                      <div class="listing-media-tip-card"><strong>En az 5 fotoğraf</strong><span>Dolu ilanlar daha güven verir.</span></div>
+                      <div class="listing-media-tip-card"><strong>İlk fotoğraf kapak olur</strong><span>Kapak görselinizi güçlü seçin.</span></div>
+                      <div class="listing-media-tip-card"><strong>Net çekim daha çok görüntülenir</strong><span>Aydınlık ve temiz kareler kullanın.</span></div>
+                    </div>
+                    <div class="listing-media-hint-row">
+                      <small class="field-note">Aydınlık ve net fotoğraflar daha çok görüntülenir.</small>
+                      <small class="field-note">Kapak fotoğrafı ilk sıradaki görseldir.</small>
+                    </div>
+                  </div>
+
+                  <div class="media-preview-section full-span">
+                    <div class="media-preview-head">
+                      <h2>Yüklenen Fotoğraflar</h2>
+                      <p>Sürükleyip bırakarak sıralayın, “Kapak Yap” ile ana görseli belirleyin.</p>
+                    </div>
+                    <div class="media-preview-grid media-preview-grid-large" id="imagePreviewGrid"></div>
+                  </div>
+
+                  <div class="form-group full-span">
+                    <div class="media-uploader video-uploader media-uploader-large" id="videoDropzone">
+                      <div class="media-uploader-icon" aria-hidden="true">🎬</div>
+                      <strong>Video ekleyin</strong>
+                      <p>Tanıtım videoları daha fazla güven verir ve ilanı daha dolu gösterir</p>
+                      <small>En fazla 5 dakika · MP4 formatı · maksimum 50 MB</small>
+                      <div class="media-uploader-actions">
+                        <label class="btn btn-light media-upload-label" for="listingVideo">Video Seç</label>
+                      </div>
+                      <input type="file" id="listingVideo" accept="video/mp4" hidden />
+                    </div>
+                    <div class="listing-media-hint-row">
+                      <small class="field-note">Video alanı opsiyoneldir ancak güveni artırır.</small>
+                      <small class="field-note">Ürün veya mülkü kısa ve net gösteren içerikler tercih edin.</small>
+                    </div>
+                  </div>
+
+                  <div class="media-video-preview full-span" id="videoPreviewBox"></div>
+                </div>
+                <div class="section-help-strip">
+                  <span>Boş ve karanlık görseller kullanıcı güvenini düşürür.</span>
+                  <span>Kapak fotoğrafınızı mümkünse en temiz açıdan seçin.</span>
+                </div>
+              </section>
+
+              <section class="listing-form-section" data-form-stage="details">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2>Konum</h2>
+                    <p>İl, ilçe ve mahalle bilgilerini girin. Konum gizliliği için tam adres paylaşılmaz.</p>
+                    <div class="section-mini-badges">
+                      <span>Şehir</span>
+                      <span>İlçe</span>
+                      <span>Mahalle</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="listing-form-grid">
+                  <div class="form-group">
+                    <label for="listingCity" class="label-required">İl</label>
+                    <input type="text" id="listingCity" placeholder="İstanbul" required autocomplete="address-level1" />
+                  </div>
+                  <div class="form-group">
+                    <label for="listingDistrict" class="label-required">İlçe</label>
+                    <input type="text" id="listingDistrict" placeholder="Kadıköy" required autocomplete="address-level2" />
+                  </div>
+                  <div class="form-group full-span">
+                    <label for="listingNeighborhood">Mahalle</label>
+                    <input type="text" id="listingNeighborhood" placeholder="Kozyatağı Mahallesi" />
+                  </div>
+                  <div class="form-group full-span">
+                    <label>Harita Pin Alanı</label>
+                    <div class="estate-map-placeholder listing-map-placeholder">Harita pin alanı burada gösterilecek</div>
+                    <small class="field-note">Konum bilgisi kullanıcı güvenliği için mahalle seviyesinde gösterilebilir.</small>
+                  </div>
+                </div>
+                <div class="section-help-strip">
+                  <span>Doğru konum bilgisi arama sonuçlarında daha doğru eşleşme sağlar.</span>
+                  <span>Platform güvenliği için açık adres yerine bölgesel görünüm tercih edilir.</span>
+                </div>
+              </section>
+
+              <section class="listing-form-section" data-form-stage="details">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2>İletişim / Satıcı Bilgisi</h2>
+                    <p>Alıcıların size güvenle ulaşabilmesi için iletişim bilgilerinizi tamamlayın.</p>
+                    <div class="section-mini-badges">
+                      <span>Güvenli İletişim</span>
+                      <span>Telefon</span>
+                      <span>WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="listing-form-grid">
+                  <div class="form-group">
+                    <label for="listingOwnerName">İlan Sahibi Adı</label>
+                    <input type="text" id="listingOwnerName" placeholder="Ad Soyad" />
+                  </div>
+                  <div class="form-group">
+                    <label for="listingPhone">Telefon</label>
+                    <input type="tel" id="listingPhone" placeholder="05xx xxx xx xx" />
+                  </div>
+                  <div class="form-group">
+                    <label for="listingWhatsapp">WhatsApp tercihi</label>
+                    <select id="listingWhatsapp">
+                      <option value="">Seçin</option>
+                      <option value="Evet">Evet</option>
+                      <option value="Hayır">Hayır</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="section-help-strip">
+                  <span>Eksik iletişim bilgisi geri dönüş oranını düşürür.</span>
+                  <span>WhatsApp tercihi hızlı iletişim için faydalıdır.</span>
+                </div>
+              </section>
+
+              <section class="listing-form-section" data-form-stage="publish">
+                <div class="listing-form-section-head">
+                  <div>
+                    <h2>Önizleme ve Yayınlama</h2>
+                    <p>Son kontrollerinizi yapın, ilanınız incelemeye gönderilsin.</p>
+                  </div>
+                  <div class="listing-status-box">
+                    <span>Durum</span>
+                    <strong>İnceleme bekliyor</strong>
+                  </div>
+                </div>
+
+                <div class="listing-publish-summary">
+                  <div class="listing-publish-point">
+                    <strong>Güvenli Yayın</strong>
+                    <span>İlanınız moderasyon ekibi tarafından kontrol edilir.</span>
+                  </div>
+                  <div class="listing-publish-point">
+                    <strong>Kurallara Uygunluk</strong>
+                    <span>Doğru kategori ve net açıklama daha hızlı onay alır.</span>
+                  </div>
+                  <div class="listing-publish-point">
+                    <strong>Ücretsiz Başlangıç</strong>
+                    <span>Standart ilanınızı ücretsiz yayınlayabilir, sonra öne çıkarabilirsiniz.</span>
+                  </div>
+                </div>
+
+                <div class="form-actions-row full-span listing-submit-row">
+                  <button type="button" class="btn btn-light">Taslak Kaydet</button>
+                  <button type="button" class="btn btn-light" id="listingPreviewBtn">İlanı Önizle</button>
+                  <button type="submit" class="btn btn-primary btn-submit-strong" id="listingSubmitBtn">İlanı Yayınla</button>
+                </div>
+              </section>
+            </form>
+          </section>
+        </section>
+
+        <aside class="listing-create-side">
+          <section class="panel listing-help-panel">
+            <h2>İlanınız daha hızlı öne çıksın</h2>
+            <ul class="listing-help-list">
+              <li>Net ve güven veren bir başlık kullanın</li>
+              <li>En az 5 fotoğraf ekleyin</li>
+              <li>Açıklamayı detaylı ve dürüst yazın</li>
+              <li>Doğru kategori seçimi yapın</li>
+            </ul>
+            <div class="listing-help-badges">
+              <span>Güvenli Yayın</span>
+              <span>Ücretsiz Listeleme</span>
+              <span>İnceleme Sonrası Yayın</span>
+            </div>
+          </section>
+
+          <section class="panel listing-side-status-panel">
+            <h2>Durum Özeti</h2>
+            <div class="listing-side-status-grid">
+              <div class="listing-side-status-item">
+                <span>Yayın Tipi</span>
+                <strong>Standart İlan</strong>
+              </div>
+              <div class="listing-side-status-item">
+                <span>Moderasyon</span>
+                <strong>İnceleme Bekliyor</strong>
+              </div>
+              <div class="listing-side-status-item">
+                <span>Vitrin</span>
+                <strong>Opsiyonel</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel listing-preview-panel" id="listingPreviewPanel">
+            <div class="listing-preview-head">
+              <div>
+                <h2>İlanınız nasıl görünecek?</h2>
+                <p>Vitrindeki ilk izlenim burada şekillenir.</p>
+              </div>
+              <span class="badge badge-pending">İnceleme bekliyor</span>
+            </div>
+            <div class="listing-preview-card">
+              <div class="listing-preview-media" id="listingPreviewMedia">
+                <span>JETLE</span>
+              </div>
+              <div class="listing-preview-body">
+                <div class="listing-preview-price" id="previewPrice">0 TL</div>
+                <h3 id="previewTitle">İlan başlığınız burada görünecek</h3>
+                <div class="listing-preview-meta">
+                  <span id="previewCategory">Kategori seçilmedi</span>
+                  <span id="previewLocation">Konum girilmedi</span>
+                </div>
+                <p id="previewDescription">Açıklama eklendiğinde ilan önizlemesi burada güncellenir.</p>
+                <div class="listing-preview-footer">
+                  <strong id="previewListingNumber">JET-000000</strong>
+                  <span>Durum: İnceleme bekliyor</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="appFooter"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+</body>
+</html>
