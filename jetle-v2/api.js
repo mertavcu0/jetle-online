@@ -18,50 +18,10 @@
   var USERS_KEY = "jetle_v2_users";
   var SESSION_KEY = "jetle_v2_session";
   var BACKEND_FLAG_KEY = "jetle_v2_use_backend_api";
-  var API_BASE_LS_KEY = "jetle_v2_api_base_url";
-  /** Üretim API (Railway). Auth ve tüm backend istekleri bu köke gider. */
+  /** Üretim API (Railway). Tüm backend istekleri bu köke gider. */
   var JETLE_API_BASE_PRODUCTION = "https://jetle-online-production.up.railway.app";
 
-  function isJetleOnlineHost() {
-    try {
-      var h = (window.location.hostname || "").toLowerCase();
-      return h === "jetle.online" || h === "www.jetle.online";
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function isLocalDevHostname() {
-    try {
-      var h = (window.location.hostname || "").toLowerCase();
-      return h === "localhost" || h === "127.0.0.1" || h === "[::1]";
-    } catch (e2) {
-      return false;
-    }
-  }
-
-  /**
-   * jetle.online / www: yalnızca Railway (localStorage/meta ile localhost override edilmez).
-   * Yerel geliştirme: __JETLE_API_BASE__, meta, localStorage; yoksa localhost:3000.
-   * Diğer hostlar: varsayılan Railway.
-   */
   function resolveJetleApiBaseUrl() {
-    if (typeof window === "undefined" || !window.location) return JETLE_API_BASE_PRODUCTION;
-    if (isJetleOnlineHost()) return JETLE_API_BASE_PRODUCTION;
-    try {
-      var inj = window.__JETLE_API_BASE__;
-      if (inj != null && String(inj).trim()) return String(inj).trim().replace(/\/+$/, "");
-    } catch (e0) {}
-    try {
-      var meta = document.querySelector('meta[name="jetle-api-base"]');
-      var mc = meta && meta.getAttribute("content");
-      if (mc != null && String(mc).trim()) return String(mc).trim().replace(/\/+$/, "");
-    } catch (e1) {}
-    try {
-      var ls = localStorage.getItem(API_BASE_LS_KEY);
-      if (ls != null && String(ls).trim()) return String(ls).trim().replace(/\/+$/, "");
-    } catch (e3) {}
-    if (isLocalDevHostname()) return "http://localhost:3000";
     return JETLE_API_BASE_PRODUCTION;
   }
 
@@ -77,7 +37,7 @@
     endpoints: {
       auth: {
         register: "/api/auth/register",
-        login: "/api/auth/login",
+        login: "/login",
         logout: "/api/auth/logout",
         me: "/api/auth/me"
       },
@@ -1875,7 +1835,7 @@
     STATUS: STATUS,
     API_GATEWAY: API_GATEWAY,
     getApiBaseUrl: function () {
-      return API_GATEWAY.baseUrl || "";
+      return API_GATEWAY.baseUrl || JETLE_API_BASE_PRODUCTION;
     },
     backendEnabled: backendEnabled,
     httpRequest: httpRequest,
