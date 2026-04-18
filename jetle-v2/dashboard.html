@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hesabım — JETLE.online</title>
+  <meta name="description" content="JETLE.online hesabınızdan ilanlarınızı, favorilerinizi, mesajlarınızı ve profilinizi yönetin." />
+  <meta property="og:title" content="JETLE.online Hesabım" />
+  <meta property="og:description" content="İlan, mesaj ve favori yönetimini tek ekranda yapın." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="dashboard" class="page-dashboard">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <nav class="header-actions">
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-shell main-shell--dash">
+    <div class="container dash-page">
+      <div class="dash-page-head">
+        <h1 class="dash-page-title">Kullanıcı paneli</h1>
+        <p class="dash-page-lead text-muted text-small">İlanlarınız, mesajlarınız ve hesap ayarlarınız tek yerden yönetilir.</p>
+      </div>
+
+      <nav class="dash-tabs dash-tabs--bar" role="tablist" aria-label="Panel sekmeleri">
+        <button type="button" class="dash-tab is-active" data-tab="listings" id="dashTabListings">İlanlarım</button>
+        <button type="button" class="dash-tab" data-tab="messages" id="dashTabMessages">Mesajlarım</button>
+        <button type="button" class="dash-tab" data-tab="favorites" id="dashTabFavorites">Favorilerim</button>
+        <button type="button" class="dash-tab" data-tab="packages" id="dashTabPackages">Paketler / Doping</button>
+        <button type="button" class="dash-tab" data-tab="profile" id="dashTabProfile">Profil Ayarlarım</button>
+      </nav>
+
+      <div class="dash-panels">
+        <section id="tab-listings" class="dash-panel" data-panel="listings" aria-labelledby="dashTabListings">
+          <div class="dash-panel__head">
+            <h2 class="dash-panel__title">İlanlarım</h2>
+            <p class="dash-panel__hint text-small text-muted">İlanlarınızın durumunu takip edin; pasif veya reddedilen ilanları yeniden yayına gönderebilirsiniz.</p>
+          </div>
+          <div class="subtab-row dash-filters" role="group" aria-label="İlan durumu">
+            <button type="button" class="btn btn-secondary btn-sm listing-filter is-active" data-status="all">Tümü</button>
+            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="draft">Taslak</button>
+            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="approved">Yayında</button>
+            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="pending">Onay bekliyor</button>
+            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="rejected">Reddedilen</button>
+            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="passive">Pasif</button>
+          </div>
+          <div id="myListingsMount" class="dash-my-listings"></div>
+        </section>
+
+        <section id="tab-messages" class="dash-panel" hidden data-panel="messages" aria-labelledby="dashTabMessages">
+          <div class="dash-panel__head">
+            <h2 class="dash-panel__title">Mesajlarım</h2>
+            <p class="dash-panel__hint text-small text-muted">İlanlarınıza gelen soruları yanıtlayın.</p>
+          </div>
+          <div class="dash-messages">
+            <aside class="dash-messages__threads panel panel--flat" id="dashThreads" aria-label="Konuşma listesi"></aside>
+            <section class="dash-messages__chat panel panel--flat">
+              <div id="dashChatHead" class="dash-chat__head text-small text-muted">Konuşma seçin</div>
+              <div id="dashChatBody" class="dash-chat__body"></div>
+              <form id="dashChatForm" class="dash-chat__form">
+                <input type="text" id="dashChatInput" placeholder="Yanıtınızı yazın" autocomplete="off" />
+                <button type="submit" class="btn btn-primary btn-sm">Gönder</button>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <section id="tab-favorites" class="dash-panel" hidden data-panel="favorites" aria-labelledby="dashTabFavorites">
+          <div class="dash-panel__head">
+            <h2 class="dash-panel__title">Favorilerim</h2>
+            <p class="dash-panel__hint text-small text-muted">Kaydettiğiniz ilanlara hızlıca dönün.</p>
+          </div>
+          <div id="favGrid" class="dash-fav-grid"></div>
+        </section>
+
+        <section id="tab-packages" class="dash-panel" hidden data-panel="packages" aria-labelledby="dashTabPackages">
+          <div class="dash-panel__head">
+            <h2 class="dash-panel__title">Paketler / Doping</h2>
+            <p class="dash-panel__hint text-small text-muted">Aktif haklarınız ve satın alabileceğiniz ürünler. Fiyatlar KDV dahildir.</p>
+          </div>
+          <div class="panel panel--flat dash-doping-quick">
+            <h3 class="dash-doping-quick__title">Hızlı Doping Aktivasyonu</h3>
+            <p class="text-small text-muted">Ödeme olmadan gerçek akış hissi için seçtiğiniz yayındaki ilana doping anında aktif edilir.</p>
+            <div class="dash-doping-quick__row">
+              <select id="dopingListingSelect"></select>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnDopingFeatured">Öne çıkar</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnDopingShowcase">Vitrine al</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnDopingUrgent">ACİL yap</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnDopingHighlight">Renkli öne çıkar</button>
+            </div>
+            <p id="dopingQuickMsg" class="text-small text-muted" hidden></p>
+          </div>
+          <div id="packageSummaryMount" class="pricing-dash-summary"></div>
+          <div id="packageGrid" class="pricing-dash-catalog"></div>
+          <p class="text-small text-muted dash-packages-foot"><a href="paketler.html">Ürün listesi</a> · <a href="hizmetlerimiz.html">Hizmet açıklamaları</a></p>
+        </section>
+
+        <section id="tab-profile" class="dash-panel" hidden data-panel="profile" aria-labelledby="dashTabProfile">
+          <div class="dash-panel__head">
+            <h2 class="dash-panel__title">Profil ayarlarım</h2>
+            <p class="dash-panel__hint text-small text-muted">İletişim bilgileriniz ilan verirken varsayılan olarak kullanılır.</p>
+          </div>
+          <div class="panel profile-form profile-form--dash">
+            <div class="field">
+              <label for="profName">Ad soyad</label>
+              <input type="text" id="profName" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="profEmail">E-posta</label>
+              <input type="email" id="profEmail" readonly class="input-readonly" title="E-posta değişikliği için destek ile iletişime geçin" />
+            </div>
+            <div class="field-row field-row--2">
+              <div class="field">
+                <label for="profPhone">Telefon</label>
+                <input type="tel" id="profPhone" autocomplete="tel" />
+              </div>
+              <div class="field">
+                <label for="profProfileType">Profil tipi</label>
+                <select id="profProfileType">
+                  <option value="Bireysel">Bireysel</option>
+                  <option value="Kurumsal">Kurumsal</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="profRoleLine">Hesap rolü</label>
+              <input type="text" id="profRoleLine" readonly class="input-readonly" />
+            </div>
+            <div class="field-row field-row--2">
+              <div class="field">
+                <label for="profCity">Şehir</label>
+                <input type="text" id="profCity" autocomplete="address-level1" />
+              </div>
+              <div class="field">
+                <label for="profDistrict">İlçe</label>
+                <input type="text" id="profDistrict" autocomplete="address-level2" />
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="profSave">Bilgileri kaydet</button>
+            <p id="profMsg" class="text-small text-muted" hidden></p>
+
+            <div class="profile-password panel panel--flat">
+              <h3 class="profile-password__title">Şifre değiştir</h3>
+              <div class="field">
+                <label for="profPwCurrent">Mevcut şifre</label>
+                <input type="password" id="profPwCurrent" autocomplete="current-password" />
+              </div>
+              <div class="field-row field-row--2">
+                <div class="field">
+                  <label for="profPwNew">Yeni şifre</label>
+                  <input type="password" id="profPwNew" autocomplete="new-password" />
+                </div>
+                <div class="field">
+                  <label for="profPwNew2">Yeni şifre (tekrar)</label>
+                  <input type="password" id="profPwNew2" autocomplete="new-password" />
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="profPwBtn">Şifreyi güncelle</button>
+              <p id="profPwMsg" class="text-small text-muted" hidden></p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© JETLE.online</p>
+    </div>
+  </footer>
+
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

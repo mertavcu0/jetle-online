@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
+  <title>Giriş — JETLE.online</title>
+  <meta name="description" content="JETLE.online hesabınıza güvenli giriş yapın." />
+  <meta property="og:title" content="JETLE.online Giriş" />
+  <meta property="og:description" content="JETLE.online hesabınıza güvenli giriş yapın." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="auth" class="page-auth">
+  <header class="site-header site-header--simple">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <nav class="header-actions">
+        <a href="register.html" class="header-link">Kayıt ol</a>
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-shell">
+    <div class="auth-card panel">
+      <h1 class="auth-title">Giriş yap</h1>
+      <p class="text-small text-muted">Hesabınızla giriş yaparak ilan ve mesaj işlemlerinizi güvenle yönetin.</p>
+      <div id="loginError" class="form-error" hidden></div>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">E-posta</label>
+          <input type="email" id="loginEmail" name="email" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Şifre</label>
+          <input type="password" id="loginPassword" name="password" autocomplete="current-password" required />
+        </div>
+        <div class="field field-inline">
+          <label><input type="checkbox" id="loginRemember" name="remember" /> Beni hatırla</label>
+          <a href="#" class="text-small" id="forgotLink">Şifremi unuttum</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Giriş yap</button>
+      </form>
+      <p class="auth-footer text-small">Hesabınız yok mu? <a href="register.html">Kayıt olun</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© JETLE.online</p>
+    </div>
+  </footer>
+
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function sanitizeNext(next) {
+        var v = String(next || "").trim();
+        if (!v) return "index.html";
+        if (/^https?:\/\//i.test(v) || v.indexOf("//") === 0) return "index.html";
+        if (v.indexOf("javascript:") === 0) return "index.html";
+        if (v.charAt(0) === "/") v = v.slice(1);
+        return v || "index.html";
+      }
+      JetleAuth.init();
+      JetleAuth.renderHeaderBar();
+      if (JetleAuth.getCurrentUser()) {
+        var next0 = sanitizeNext(new URLSearchParams(location.search).get("next"));
+        var me0 = JetleAuth.getCurrentUser();
+        if (next0.indexOf("admin.html") !== -1 && me0.role !== "admin") {
+          window.location.href = "index.html";
+          return;
+        }
+        window.location.href = next0;
+        return;
+      }
+      var err = document.getElementById("loginError");
+      document.getElementById("forgotLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        err.hidden = false;
+        err.textContent = "Şifre sıfırlama bağlantısı yakında aktif olacaktır.";
+      });
+      document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.hidden = true;
+        var email = document.getElementById("loginEmail").value.trim();
+        var pw = document.getElementById("loginPassword").value;
+        if (!email) {
+          err.textContent = "E-posta girin.";
+          err.hidden = false;
+          return;
+        }
+        if (!pw) {
+          err.textContent = "Şifre girin.";
+          err.hidden = false;
+          return;
+        }
+        var res = JetleAuth.login(email, pw, document.getElementById("loginRemember").checked);
+        if (!res.ok) {
+          err.textContent = res.message;
+          err.hidden = false;
+          return;
+        }
+        var next = sanitizeNext(new URLSearchParams(location.search).get("next"));
+        var me = JetleAuth.getCurrentUser();
+        if (next.indexOf("admin.html") !== -1 && me && me.role !== "admin") {
+          JetleAuth.logout();
+          err.textContent = "Bu alan yalnızca yönetici hesapları içindir.";
+          err.hidden = false;
+          return;
+        }
+        window.location.href = next;
+      });
+    });
+  </script>
+</body>
+</html>

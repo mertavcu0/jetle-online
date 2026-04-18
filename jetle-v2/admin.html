@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yönetim — JETLE.online</title>
+  <meta name="description" content="JETLE.online yönetim paneli: ilan, kullanıcı, şikayet ve reklam operasyonlarını yönetin." />
+  <meta property="og:title" content="JETLE.online Yönetim Paneli" />
+  <meta property="og:description" content="Platform operasyonlarını tek panelden yönetin." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="admin" class="page-admin">
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script>
+    (function () {
+      if (!window.JetleAPI || !window.JetleAuth) return;
+      JetleAuth.init();
+      if (!JetleAuth.isLoggedIn()) {
+        window.location.replace("login.html?next=" + encodeURIComponent("admin.html"));
+        return;
+      }
+      if (!JetleAuth.isAdmin()) {
+        window.location.replace("index.html");
+        return;
+      }
+    })();
+  </script>
+  <header class="site-header site-header--simple">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <nav class="header-actions">
+        <a href="index.html" class="header-link">Siteye dön</a>
+        <span id="adminIdentity" class="header-link"></span>
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <div class="admin-frame">
+    <aside class="admin-nav panel">
+      <p class="admin-nav-title">Yönetim</p>
+      <button type="button" class="admin-nav-item is-active" data-section="dash">Dashboard</button>
+      <button type="button" class="admin-nav-item" data-section="listings">İlanlar</button>
+      <button type="button" class="admin-nav-item" data-section="users">Kullanıcılar</button>
+      <button type="button" class="admin-nav-item" data-section="complaints">Şikayetler</button>
+      <button type="button" class="admin-nav-item" data-section="ads">Reklamlar</button>
+      <button type="button" class="admin-nav-item" data-section="ads-campaign">Kampanya reklamları</button>
+      <button type="button" class="admin-nav-item" data-section="pricing">Paket fiyatları</button>
+      <button type="button" class="admin-nav-item" data-section="categories">Kategoriler</button>
+      <button type="button" class="admin-nav-item" data-section="settings">Ayarlar</button>
+    </aside>
+    <main class="admin-main">
+      <section id="sec-dash" class="admin-section">
+        <h1 class="page-title">Özet</h1>
+        <div class="stat-grid" id="adminStats"></div>
+        <div class="panel admin-split">
+          <div>
+            <h2 class="block-title">Son ilanlar</h2>
+            <div id="adminRecentListings" class="table-wrap"></div>
+          </div>
+          <div>
+            <h2 class="block-title">Son şikayetler</h2>
+            <div id="adminRecentComplaints" class="table-wrap"></div>
+          </div>
+        </div>
+      </section>
+      <section id="sec-listings" class="admin-section" hidden>
+        <h1 class="page-title">İlan moderasyonu</h1>
+        <div class="field-row admin-toolbar">
+          <div class="field">
+            <label for="adminListingSearch">Arama</label>
+            <input type="search" id="adminListingSearch" placeholder="Başlık, kullanıcı, ilan no" />
+          </div>
+          <div class="field">
+            <label for="adminListingFilter">Durum</label>
+            <select id="adminListingFilter">
+              <option value="all">Tümü</option>
+              <option value="pending">Bekleyen</option>
+              <option value="approved">Onaylı</option>
+              <option value="rejected">Reddedilen</option>
+              <option value="passive">Pasif</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="adminListingCategory">Kategori</label>
+            <select id="adminListingCategory"><option value="all">Tümü</option></select>
+          </div>
+          <div class="field">
+            <label for="adminListingSubcategory">Alt kategori</label>
+            <select id="adminListingSubcategory"><option value="all">Tümü</option></select>
+          </div>
+          <div class="field">
+            <label for="adminListingCity">Şehir</label>
+            <select id="adminListingCity"><option value="all">Tümü</option></select>
+          </div>
+          <div class="field">
+            <label for="adminListingUser">Kullanıcı</label>
+            <input type="text" id="adminListingUser" placeholder="kullanıcı adı" />
+          </div>
+          <div class="field">
+            <label for="adminListingFeatured">Premium / Vitrin</label>
+            <select id="adminListingFeatured">
+              <option value="all">Tümü</option>
+              <option value="yes">Vitrin</option>
+              <option value="no">Standart</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="adminListingDate">Tarih</label>
+            <select id="adminListingDate">
+              <option value="all">Tümü</option>
+              <option value="day">Son 24 saat</option>
+              <option value="3days">Son 3 gün</option>
+              <option value="week">Son 7 gün</option>
+              <option value="month">Son 30 gün</option>
+            </select>
+          </div>
+          <div class="field admin-toolbar__actions">
+            <button type="button" class="btn btn-primary btn-sm" id="adminListingApply">Uygula</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="adminListingReset">Temizle</button>
+          </div>
+        </div>
+        <div id="adminListingsTable" class="table-wrap"></div>
+      </section>
+      <section id="sec-users" class="admin-section" hidden>
+        <h1 class="page-title">Kullanıcılar</h1>
+        <div class="field-row admin-toolbar">
+          <div class="field"><label for="adminUserSearch">Arama</label><input type="search" id="adminUserSearch" placeholder="ad, e-posta" /></div>
+          <div class="field"><label for="adminUserRole">Rol</label><select id="adminUserRole"><option value="all">Tümü</option><option value="user">user</option><option value="admin">admin</option><option value="store">store</option></select></div>
+          <div class="field"><label for="adminUserStatus">Durum</label><select id="adminUserStatus"><option value="all">Tümü</option><option value="active">active</option><option value="passive">passive</option><option value="blocked">blocked</option></select></div>
+          <div class="field admin-toolbar__actions">
+            <button type="button" class="btn btn-primary btn-sm" id="adminUserApply">Uygula</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="adminUserReset">Temizle</button>
+          </div>
+        </div>
+        <div id="adminUsersTable" class="table-wrap"></div>
+      </section>
+      <section id="sec-complaints" class="admin-section" hidden>
+        <h1 class="page-title">Şikayetler</h1>
+        <div class="field-row admin-toolbar">
+          <div class="field"><label for="adminComplaintStatus">Durum</label><select id="adminComplaintStatus"><option value="all">Tümü</option><option value="open">open</option><option value="reviewing">reviewing</option><option value="resolved">resolved</option><option value="dismissed">dismissed</option></select></div>
+          <div class="field"><label for="adminComplaintSearch">Arama</label><input type="search" id="adminComplaintSearch" placeholder="ilan no, kullanıcı, neden" /></div>
+        </div>
+        <div id="adminComplaintsTable" class="table-wrap"></div>
+      </section>
+      <section id="sec-ads" class="admin-section" hidden>
+        <h1 class="page-title">Reklam slotları</h1>
+        <h2 class="block-title">Banner alanları</h2>
+        <div id="adminAdsList" class="stack-gap"></div>
+        <h2 class="block-title">Vitrin ilanlar</h2>
+        <div id="adminFeaturedTable" class="table-wrap"></div>
+      </section>
+      <section id="sec-ads-campaign" class="admin-section" hidden>
+        <h1 class="page-title">Kampanya reklamları (API)</h1>
+        <p class="text-small text-muted">Ana sayfa ve liste yerleşimleri. Sunucu API açıkken kayıtlar veritabanına yazılır; <code>GET /api/ads/public</code> ile yayınlanır.</p>
+        <div class="panel admin-campaign-form">
+          <h2 class="block-title">Yeni / düzenle</h2>
+          <input type="hidden" id="adminCampEditId" value="" />
+          <div class="field-row admin-toolbar" style="flex-wrap: wrap;">
+            <div class="field"><label for="adminCampTitle">Başlık</label><input type="text" id="adminCampTitle" maxlength="200" /></div>
+            <div class="field"><label for="adminCampSubtitle">Alt başlık</label><input type="text" id="adminCampSubtitle" maxlength="300" /></div>
+            <div class="field" style="flex: 1 1 220px;"><label for="adminCampDesc">Açıklama</label><textarea id="adminCampDesc" rows="2" maxlength="2000"></textarea></div>
+            <div class="field"><label for="adminCampImg">Görsel URL</label><input type="url" id="adminCampImg" placeholder="https://..." /></div>
+            <div class="field"><label for="adminCampMobImg">Mobil görsel (ops.)</label><input type="url" id="adminCampMobImg" placeholder="https://..." /></div>
+            <div class="field"><label for="adminCampCta">CTA metni</label><input type="text" id="adminCampCta" value="İncele" maxlength="80" /></div>
+            <div class="field"><label for="adminCampUrl">Hedef link</label><input type="url" id="adminCampUrl" placeholder="https://..." /></div>
+            <div class="field"><label for="adminCampPlacement">Yerleşim</label>
+              <select id="adminCampPlacement">
+                <option value="hero">hero — header altı</option>
+                <option value="featured_strip">featured_strip — liste üstü</option>
+                <option value="sidebar">sidebar — sağ kolon</option>
+                <option value="inline_card">inline_card — grid içi</option>
+                <option value="footer_banner">footer_banner — footer üstü</option>
+              </select>
+            </div>
+            <div class="field"><label for="adminCampOrder">Sıra</label><input type="number" id="adminCampOrder" value="0" step="1" /></div>
+            <div class="field"><label for="adminCampStart">Başlangıç</label><input type="datetime-local" id="adminCampStart" /></div>
+            <div class="field"><label for="adminCampEnd">Bitiş</label><input type="datetime-local" id="adminCampEnd" /></div>
+            <div class="field"><label for="adminCampSponsor">Etiket</label><input type="text" id="adminCampSponsor" value="Sponsorlu" maxlength="40" /></div>
+            <div class="field"><label for="adminCampTone">Tema</label>
+              <select id="adminCampTone">
+                <option value="neutral">neutral</option>
+                <option value="brand">brand</option>
+                <option value="midnight">midnight</option>
+                <option value="slate">slate</option>
+              </select>
+            </div>
+            <div class="field field-inline"><label><input type="checkbox" id="adminCampActive" checked /> Aktif</label></div>
+            <div class="field admin-toolbar__actions">
+              <button type="button" class="btn btn-primary btn-sm" id="adminCampSave">Kaydet</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="adminCampNew">Formu temizle</button>
+            </div>
+          </div>
+        </div>
+        <h2 class="block-title" style="margin-top:1.25rem">Kayıtlı reklamlar</h2>
+        <div id="adminCampaignAdsTable" class="table-wrap"></div>
+      </section>
+      <section id="sec-pricing" class="admin-section" hidden>
+        <h1 class="page-title">Paket ve doping — liste fiyatları</h1>
+        <p class="text-small text-muted">Operasyon referansı. Satın alma kullanıcı panelinden yapılır.</p>
+        <div id="adminPricingCatalog" class="admin-pricing-catalog"></div>
+      </section>
+      <section id="sec-categories" class="admin-section" hidden>
+        <h1 class="page-title">Kategori ağacı</h1>
+        <div id="adminCategoryTree" class="panel category-tree-readonly"></div>
+      </section>
+      <section id="sec-settings" class="admin-section" hidden>
+        <h1 class="page-title">Ayarlar</h1>
+        <p class="text-muted">Sistem ayarları sunucu tarafı yapılandırmaya bağlıdır. API uçları ve yetki rolleri bu alandan yönetilecek şekilde planlanmıştır.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© JETLE.online Yönetim</p>
+    </div>
+  </footer>
+
+  <script src="ilan.js"></script>
+  <script src="script.js"></script>
+
+  <aside id="adminDetailDrawer" class="admin-drawer" hidden>
+    <div class="admin-drawer__head">
+      <h3 class="block-title">İlan Detayı</h3>
+      <button type="button" class="btn btn-secondary btn-sm" id="adminDrawerClose">Kapat</button>
+    </div>
+    <div id="adminDrawerBody" class="admin-drawer__body"></div>
+  </aside>
+</body>
+</html>

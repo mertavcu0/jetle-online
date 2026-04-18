@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kullanıcı Paneli | JETLE.COM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="user-dashboard">
+  <div id="appHeader"></div>
+
+  <main class="page-wrap">
+    <div class="container">
+      <section class="dashboard-shell user-dashboard-shell">
+        <div class="page-title-block user-dashboard-hero">
+          <div>
+            <h1>Kullanıcı Paneli</h1>
+            <p>İlanlarınızı, favorilerinizi, mesajlarınızı ve profil bilgilerinizi tek ekrandan güvenle yönetin.</p>
+          </div>
+          <div class="user-dashboard-hero-actions">
+            <a href="ilan-ver.html" class="btn btn-primary">Yeni İlan Ver</a>
+            <a href="favoriler.html" class="btn btn-light">Favoriler Sayfası</a>
+          </div>
+        </div>
+
+        <div class="dashboard-layout user-dashboard-layout">
+          <aside class="dashboard-sidebar panel user-dashboard-sidebar">
+            <div class="user-dashboard-sidebar-head">
+              <span class="user-dashboard-avatar" id="dashboardAvatar">J</span>
+              <div>
+                <strong id="dashboardGreetingName">Kullanıcı</strong>
+                <p>Hesabınızı bu panelden yönetin</p>
+              </div>
+            </div>
+
+            <nav class="dashboard-nav user-dashboard-nav">
+              <button type="button" class="dashboard-nav-item active" data-user-dashboard-tab="overview">Dashboard</button>
+              <button type="button" class="dashboard-nav-item" data-user-dashboard-tab="listings">İlanlarım</button>
+              <button type="button" class="dashboard-nav-item" data-user-dashboard-tab="favorites">Favorilerim</button>
+              <button type="button" class="dashboard-nav-item" data-user-dashboard-tab="messages">Mesajlarım</button>
+              <button type="button" class="dashboard-nav-item" data-user-dashboard-tab="profile">Profilim</button>
+              <button type="button" class="dashboard-nav-item" data-user-dashboard-tab="logout">Çıkış Yap</button>
+            </nav>
+          </aside>
+
+          <div class="dashboard-content user-dashboard-content">
+            <section class="panel user-dashboard-panel" data-user-dashboard-panel="overview">
+              <div class="dashboard-section-head">
+                <div>
+                  <h2>Genel Durum</h2>
+                  <p>Panelinizdeki özet veriler burada yer alır.</p>
+                </div>
+              </div>
+
+              <div class="user-dashboard-stats">
+                <article class="user-dashboard-stat-card">
+                  <span>Toplam İlan Sayısı</span>
+                  <strong id="dashboardStatTotal">0</strong>
+                  <p>Hesabınıza bağlı tüm ilanlar</p>
+                </article>
+                <article class="user-dashboard-stat-card">
+                  <span>Aktif İlan Sayısı</span>
+                  <strong id="dashboardStatActive">0</strong>
+                  <p>Yayındaki ilanlarınız</p>
+                </article>
+                <article class="user-dashboard-stat-card">
+                  <span>Bekleyen İlan Sayısı</span>
+                  <strong id="dashboardStatPending">0</strong>
+                  <p>Moderasyon sürecindeki ilanlar</p>
+                </article>
+                <article class="user-dashboard-stat-card">
+                  <span>Favori Sayısı</span>
+                  <strong id="dashboardStatFavorites">0</strong>
+                  <p>Kaydettiğiniz ilanlar</p>
+                </article>
+              </div>
+
+              <div class="user-dashboard-overview-grid">
+                <article class="panel user-dashboard-info-card">
+                  <h3>Hızlı Yönetim</h3>
+                  <p>Yeni ilan oluşturabilir, favorilerinize geri dönebilir veya mesaj kutunuza hızlıca geçebilirsiniz.</p>
+                  <div class="user-dashboard-quick-links">
+                    <a href="ilan-ver.html" class="btn btn-primary btn-small">İlan Ekle</a>
+                    <button type="button" class="btn btn-light btn-small" data-user-dashboard-tab="listings">İlanlarımı Gör</button>
+                    <button type="button" class="btn btn-light btn-small" data-user-dashboard-tab="messages">Mesajları Aç</button>
+                  </div>
+                </article>
+                <article class="panel user-dashboard-info-card">
+                  <h3>Hesap Bilgisi</h3>
+                  <div class="user-dashboard-profile-summary">
+                    <div>
+                      <span>Ad Soyad</span>
+                      <strong id="dashboardProfileSummaryName">Aktif kullanıcı</strong>
+                    </div>
+                    <div>
+                      <span>Üyelik Tarihi</span>
+                      <strong id="dashboardProfileMemberSince">-</strong>
+                    </div>
+                  </div>
+                  <p>Profil bilgileriniz güncel olduğunda ilanlarınız daha güven veren görünür.</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel user-dashboard-panel hidden" data-user-dashboard-panel="listings">
+              <div class="dashboard-section-head">
+                <div>
+                  <h2>İlanlarım</h2>
+                  <p>İlan fotoğrafı, fiyatı ve durumu ile birlikte tüm ilanlarınızı bu alandan yönetin.</p>
+                </div>
+                <a href="ilan-ver.html" class="btn btn-primary">Yeni İlan Ver</a>
+              </div>
+              <div id="userDashboardListings" class="user-dashboard-list"></div>
+            </section>
+
+            <section class="panel user-dashboard-panel hidden" data-user-dashboard-panel="favorites">
+              <div class="dashboard-section-head">
+                <div>
+                  <h2>Favorilerim</h2>
+                  <p>Kaydettiğiniz ilanlar burada düzenli bir şekilde listelenir.</p>
+                </div>
+                <a href="favoriler.html" class="btn btn-light">Tüm Favoriler</a>
+              </div>
+              <div id="userDashboardFavorites" class="dashboard-card-list"></div>
+            </section>
+
+            <section class="panel user-dashboard-panel hidden" data-user-dashboard-panel="messages">
+              <div class="dashboard-section-head">
+                <div>
+                  <h2>Mesajlarım</h2>
+                  <p>İlan sahipleriyle olan görüşmelerinizi tek ekranda takip edin.</p>
+                </div>
+                <a href="mesajlar.html" class="btn btn-light">Mesaj Kutusunu Aç</a>
+              </div>
+              <div id="userDashboardMessages" class="user-dashboard-message-list"></div>
+            </section>
+
+            <section class="panel user-dashboard-panel hidden" data-user-dashboard-panel="profile">
+              <div class="dashboard-section-head">
+                <div>
+                  <h2>Profilim</h2>
+                  <p>İletişim bilgilerinizi güncelleyerek hesabınızı düzenli tutun.</p>
+                </div>
+              </div>
+
+              <form id="dashboardProfileForm" class="user-dashboard-profile-form">
+                <div class="form-group">
+                  <label for="dashboardProfileName">Ad Soyad</label>
+                  <input id="dashboardProfileName" name="name" type="text" placeholder="Ad Soyad">
+                </div>
+                <div class="form-group">
+                  <label for="dashboardProfileEmail">E-posta</label>
+                  <input id="dashboardProfileEmail" name="email" type="email" placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                  <label for="dashboardProfilePhone">Telefon</label>
+                  <input id="dashboardProfilePhone" name="phone" type="tel" placeholder="05xx xxx xx xx">
+                </div>
+                <div class="form-group">
+                  <label for="dashboardProfilePassword">Şifre Değiştir</label>
+                  <input id="dashboardProfilePassword" name="password" type="password" placeholder="Yeni şifre">
+                </div>
+
+                <div class="user-dashboard-profile-note">
+                  <strong>Profilinizi güncel tutun</strong>
+                  <p>Doğru iletişim bilgileri, ilan detayındaki satıcı kutusunda daha güvenli bir görünüm sağlar.</p>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Bilgileri Kaydet</button>
+                  <button type="button" class="btn btn-light" data-dashboard-logout>Çıkış Yap</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+</body>
+</html>

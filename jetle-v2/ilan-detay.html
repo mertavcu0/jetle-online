@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan detayı — JETLE.online</title>
+  <meta name="description" content="JETLE.online ilan detay sayfasında satıcı bilgileri, teknik özellikler ve güvenli iletişim araçlarını görüntüleyin." />
+  <meta property="og:title" content="JETLE.online İlan Detayı" />
+  <meta property="og:description" content="İlan detaylarını inceleyin, satıcıyla güvenli iletişim kurun." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-detail page-detail--action" data-page="detail">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <form class="header-search" id="headerSearchForm" action="index.html" method="get" role="search">
+        <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Kelime veya ilan no ile ara" autocomplete="off" />
+        <button type="submit" class="header-search-btn">Ara</button>
+      </form>
+      <nav class="header-actions" aria-label="Hızlı bağlantılar">
+        <span id="headerUserSlot" class="header-user-slot"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-shell main-shell--detail">
+    <div class="container container--detail">
+
+      <div id="detailNotFound" class="detail-empty-state" hidden>
+        <div class="detail-empty-state__inner panel panel--flat">
+          <div class="detail-empty-state__icon detail-empty-state__icon--lg" aria-hidden="true">
+            <svg width="72" height="72" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="22" cy="22" r="9" stroke="currentColor" stroke-width="2"/>
+              <path d="M32 32l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M14 22h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+            </svg>
+          </div>
+          <h1 class="detail-empty-state__title" id="detailNotFoundTitle">İlan bulunamadı</h1>
+          <p class="detail-empty-state__text" id="detailNotFoundDesc">Aradığınız kayıt sistemde yok veya bağlantı hatalı.</p>
+          <a href="index.html" class="btn btn-primary detail-empty-state__cta">Ana sayfaya dön</a>
+        </div>
+      </div>
+
+      <div id="detailRoot" class="detail-root" hidden>
+        <div id="detailStatusBanner" class="detail-status-banner" hidden></div>
+
+        <nav class="detail-breadcrumb" id="detailBreadcrumb" aria-label="Sayfa konumu"></nav>
+
+        <div class="detail-two-col">
+          <div class="detail-col detail-col--main">
+            <div class="detail-gallery-block panel panel--flat">
+              <div class="detail-gallery-stage">
+                <div class="detail-main-photo" id="detailMainPhotoWrap">
+                  <img id="detailMainImg" src="" alt="" width="900" height="560" />
+                </div>
+                <div id="detailVideoWrap" class="detail-video-wrap detail-gallery-stage__video" hidden>
+                  <video id="detailVideoPlayer" controls playsinline preload="metadata"></video>
+                </div>
+              </div>
+              <div class="detail-thumbs detail-thumbs-strip" id="detailThumbs" role="tablist" aria-label="İlan görselleri ve video"></div>
+            </div>
+
+            <section class="detail-section panel panel--flat">
+              <h2 class="detail-section__h">Açıklama</h2>
+              <div class="detail-desc-wrap">
+                <div class="detail-desc" id="detailDesc"></div>
+              </div>
+            </section>
+
+            <section class="detail-section panel panel--flat">
+              <h2 class="detail-section__h">İlan bilgileri</h2>
+              <div class="table-wrap">
+                <table class="data-table data-table--specs">
+                  <tbody id="detailSpecBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="detail-section panel panel--flat">
+              <h2 class="detail-section__h">Konum ve yayın</h2>
+              <div class="detail-kv-stack" id="detailLocationBlock">
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">Konum</span>
+                  <span class="detail-kv-value" id="detailLocInline"></span>
+                </div>
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">Açık adres</span>
+                  <span class="detail-kv-value" id="detailAddressInline"></span>
+                </div>
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">İlan tarihi</span>
+                  <span class="detail-kv-value" id="detailDateInline"></span>
+                </div>
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">İlan no</span>
+                  <span class="detail-kv-value" id="detailNoInline"></span>
+                </div>
+              </div>
+              <p class="detail-location-note text-small text-muted">Tam adres; mesajlaşma sonrası paylaşılabilir.</p>
+            </section>
+
+            <section class="detail-section detail-section--similar" aria-labelledby="similarHeading">
+              <h2 class="detail-section__h" id="similarHeading">Aynı kategorideki ilanlar</h2>
+              <p class="detail-similar-lead text-small text-muted">Benzer aramalarda öne çıkan ilanlar — tıklayarak detaya gidebilirsiniz.</p>
+              <div class="detail-similar-grid" id="detailSimilar"></div>
+            </section>
+          </div>
+
+          <aside class="detail-col detail-col--aside">
+            <div class="detail-sticky panel panel--flat">
+              <div class="detail-price-block">
+                <p class="detail-price-label">Fiyat</p>
+                <p class="detail-price" id="detailPrice"></p>
+                <p class="detail-price-note">Bu ilan için fiyat günceldir</p>
+                <p class="detail-price-negotiation" id="detailPriceNegotiation"></p>
+              </div>
+
+              <div class="detail-title-row">
+                <h1 class="detail-title" id="detailTitle"></h1>
+                <button type="button" class="detail-star-fav" id="detailStarFav" aria-label="Favorilere ekle" title="Favorilere ekle">☆</button>
+              </div>
+
+              <div class="detail-momentum" id="detailHeatBlock" hidden>
+                <p class="detail-heat__hot" id="detailHeatToday" hidden>Bu ilan bugün çok görüntülendi</p>
+                <p class="detail-heat__24" id="detailHeat24h"></p>
+                <div class="detail-momentum__badges" id="detailUrgentAside"></div>
+              </div>
+
+              <div class="detail-seller panel panel--inset">
+                <p class="detail-seller-label">Satıcı</p>
+                <div class="detail-seller-badges" id="detailSellerBadges"></div>
+                <p class="detail-seller-name" id="detailSeller"></p>
+                <p class="detail-seller-role" id="detailSellerRole"></p>
+                <div class="detail-seller-kv">
+                  <p class="detail-seller-seen text-small text-muted" id="detailSellerCity">Şehir: —</p>
+                  <p class="detail-seller-seen text-small text-muted" id="detailSellerMemberSince">Üyelik: —</p>
+                  <p class="detail-seller-seen text-small text-muted" id="detailSellerSeen">Son görülme: —</p>
+                </div>
+                <p class="detail-comm-hint">Platform dışına çıkmadan iletişim kurun</p>
+                <div class="detail-seller-extra">
+                  <a href="index.html" id="detailSellerProfileBtn">Satıcı profili</a>
+                  <span class="detail-seller-extra__sep" aria-hidden="true">·</span>
+                  <a href="index.html" id="detailSellerListingsBtn">Tüm ilanlarını gör</a>
+                </div>
+              </div>
+
+              <div class="detail-cta-stack">
+                <button type="button" class="btn btn-primary btn-block btn--cta-message" id="detailMsgBtn">
+                  <span class="btn--cta-message__inner">
+                    <svg class="btn--cta-message__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                      <path d="M3 7.5l9 6 9-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                    <span>Mesaj gönder</span>
+                  </span>
+                </button>
+                <p class="detail-cta-hint">Genelde 5 dakika içinde yanıtlanır</p>
+                <p class="detail-phone-number" id="detailPhoneNumber" hidden aria-live="polite"></p>
+                <button type="button" class="btn btn-outline btn-block detail-phone-btn" id="detailPhoneBtn">Telefonu göster</button>
+                <div class="detail-cta-row2">
+                  <button type="button" class="btn btn-secondary btn-block" id="detailFavBtn">Favorilere ekle</button>
+                  <button type="button" class="btn btn-secondary btn-block" id="detailShareBtn">Paylaş</button>
+                </div>
+              </div>
+
+              <div class="detail-meta-kv">
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">İlan no</span>
+                  <span class="detail-kv-value" id="detailListingNo"></span>
+                </div>
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">İlan tarihi</span>
+                  <span class="detail-kv-value" id="detailDate"></span>
+                </div>
+                <div class="detail-kv-row">
+                  <span class="detail-kv-label">Konum</span>
+                  <span class="detail-kv-value" id="detailLocLine"></span>
+                </div>
+              </div>
+              <p class="detail-category-micro" id="detailCategory"></p>
+
+              <div class="detail-actions detail-actions--compact">
+                <button type="button" class="btn btn-ghost btn-block" id="detailComplaintBtn">Şikayet et</button>
+              </div>
+
+              <div class="detail-safe-tips">
+                <h3 class="detail-safe-tips__title">Güvenli Alışveriş İpuçları</h3>
+                <ul class="detail-safe-tips__list">
+                  <li><span class="detail-tip-mark" aria-hidden="true">✓</span> Platform dışına çıkmadan iletişim kurun</li>
+                  <li><span class="detail-tip-mark" aria-hidden="true">✓</span> Ödeme öncesi ilan detaylarını doğrulayın</li>
+                  <li><span class="detail-tip-mark" aria-hidden="true">✓</span> Şüpheli içerikleri bildirin</li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <p class="detail-page-footer" id="detailPageFooter" hidden>
+          <button type="button" class="detail-report-link" id="detailReportBottomBtn">Bu ilanı şikayet et</button>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© JETLE.online</p>
+    </div>
+  </footer>
+
+  <div id="detailMsgModal" class="detail-msg-modal" hidden>
+    <div class="detail-msg-modal__card panel">
+      <div class="detail-msg-modal__head">
+        <h3>Satıcıya mesaj gönder</h3>
+        <button type="button" class="btn btn-secondary btn-sm" id="detailMsgClose">Kapat</button>
+      </div>
+      <p id="detailMsgInfo" class="text-small text-muted"></p>
+      <p id="detailMsgFeedback" class="text-small" hidden></p>
+      <form id="detailMsgForm" class="detail-msg-modal__form">
+        <textarea id="detailMsgInput" rows="4" maxlength="800" placeholder="Mesajınızı yazın"></textarea>
+        <div class="detail-msg-modal__actions">
+          <button type="submit" class="btn btn-primary btn-sm">Gönder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="detailComplaintModal" class="detail-msg-modal" hidden aria-hidden="true">
+    <div class="detail-msg-modal__card panel">
+      <div class="detail-msg-modal__head">
+        <h3>İlanı bildir</h3>
+        <button type="button" class="btn btn-secondary btn-sm" id="detailComplaintClose">Kapat</button>
+      </div>
+      <p class="text-small text-muted">Uygunsuz veya yanıltıcı olduğunu düşündüğünüz bu ilanı incelememiz için bize bildirin.</p>
+      <p id="detailComplaintFeedback" class="text-small" hidden></p>
+      <form id="detailComplaintForm" class="detail-msg-modal__form">
+        <div class="field">
+          <label for="detailComplaintReason">Şikayet nedeni</label>
+          <select id="detailComplaintReason" required>
+            <option value="">Neden seçin</option>
+            <option value="Yanıltıcı ilan">Yanıltıcı ilan</option>
+            <option value="Sahte ilan">Sahte ilan</option>
+            <option value="Uygunsuz içerik">Uygunsuz içerik</option>
+            <option value="Fiyat bilgisi yanlış">Fiyat bilgisi yanlış</option>
+            <option value="Yanlış kategori">Yanlış kategori</option>
+            <option value="Spam / tekrar ilan">Spam / tekrar ilan</option>
+            <option value="Dolandırıcılık şüphesi">Dolandırıcılık şüphesi</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+        <textarea id="detailComplaintMessage" rows="4" maxlength="1000" placeholder="Ek açıklama (opsiyonel)"></textarea>
+        <div class="detail-msg-modal__actions">
+          <button type="submit" class="btn btn-primary btn-sm">Bildir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.getElementById("headerSearchForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = document.getElementById("headerSearchInput").value.trim();
+      window.location.href = q ? "index.html?q=" + encodeURIComponent(q) : "index.html";
+    });
+  </script>
+</body>
+</html>

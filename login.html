@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETLE.COM | Giriş Yap</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="login" class="auth-page-body">
+  <div id="appHeader"></div>
+
+  <main class="auth-page-wrap">
+    <section class="auth-card panel narrow-card">
+      <a class="brand brand-inline" href="index.html" aria-label="JETLE.COM Anasayfa">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-icon-lines"><span></span><span></span><span></span></span>
+          <span class="brand-icon-grid"><span></span><span></span><span></span><span></span></span>
+        </span>
+        <span class="brand-text">
+          <strong>JETLE.COM</strong>
+          <small>ilan platformu</small>
+        </span>
+      </a>
+
+      <div class="auth-head">
+        <h1>Giriş Yap</h1>
+        <p>Hesabınıza giriş yaparak favorilerinizi, mesajlarınızı ve ilanlarınızı yönetin.</p>
+      </div>
+
+      <form id="loginForm" class="form-stack">
+        <div class="form-group">
+          <label for="loginEmail">E-posta</label>
+          <input type="email" id="loginEmail" placeholder="ornek@mail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Şifre</label>
+          <input type="password" id="loginPassword" placeholder="Şifreniz" required />
+        </div>
+
+        <label class="checkbox-row" for="rememberMe">
+          <input type="checkbox" id="rememberMe" />
+          <span>Beni hatırla</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary full-width" id="loginBtn">Giriş Yap</button>
+      </form>
+
+      <div class="social-auth">
+        <button type="button" class="btn btn-light full-width" id="googleLoginBtn">Google ile giriş</button>
+        <button type="button" class="btn btn-light full-width" id="appleLoginBtn">Apple ile giriş</button>
+      </div>
+
+      <p class="auth-foot-note">Hesabınız yok mu? <a href="register.html">Hesap oluştur</a></p>
+    </section>
+  </main>
+
+  <div id="appFooter"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="api.js?v=20260418"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+  <script src="ilan.js"></script>
+</body>
+</html>

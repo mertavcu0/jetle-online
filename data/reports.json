@@ -1,0 +1,16 @@
+[
+  {
+    "id": "r1",
+    "listingId": "l13",
+    "listingTitle": "Nilüfer'de site içinde 2+1 yatırım fırsatı",
+    "listingCategory": "Emlak",
+    "reporterId": "u1",
+    "reporterName": "İbrahim Avcu",
+    "reporterEmail": "ibrahim@jetle.com",
+    "reason": "yanlış kategori",
+    "reasonLabel": "Yanlış kategori",
+    "note": "İlan açıklaması konut gibi görünüyor ama tür bilgisi eksik bırakılmış.",
+    "status": "pending",
+    "createdAt": "2026-04-10T14:20:00.000Z"
+  }
+]
