@@ -250,7 +250,7 @@
 
   function login(email, password, remember) {
     if (backendEnabled()) {
-      var loginRes = syncBackendRequest("POST", "/api/auth/login", {
+      var loginRes = syncBackendRequest("POST", "/login", {
         email: String(email || "").trim().toLowerCase(),
         password: String(password || "")
       });

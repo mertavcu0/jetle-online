@@ -11,6 +11,9 @@ const { apiRouter } = require("./routes");
 const { notFoundHandler } = require("./middleware/notFoundHandler");
 const { errorHandler } = require("./middleware/errorHandler");
 const mediaService = require("./services/media.service");
+const authController = require("./controllers/auth.controller");
+const { validateRequest } = require("./middleware/validateRequest");
+const { loginValidator } = require("./utils/validators");
 
 const app = express();
 
@@ -56,6 +59,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: env.JSON_LIMIT }));
 app.use(express.urlencoded({ extended: true, limit: env.JSON_LIMIT }));
 app.use(requestLogger);
+app.post("/login", loginValidator, validateRequest(), authController.login);
 app.use(
   "/api",
   rateLimit({
