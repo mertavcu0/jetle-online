@@ -14,6 +14,24 @@ const {
 
 const { assertListingMedia } = require("../utils/listingMediaPolicy");
 const mediaService = require("./media.service");
+const bcrypt = require("bcryptjs");
+const User = require("../models/User");
+
+/** Token olmadan POST /api/listings için tekrar kullanılan sahip (test). */
+const ANONYMOUS_LISTING_OWNER_EMAIL = "anonymous.listings@jetle.internal";
+
+async function getOrCreateAnonymousListingOwnerId() {
+  var found = await User.findOne({ email: ANONYMOUS_LISTING_OWNER_EMAIL });
+  if (found) return found._id;
+  var hash = await bcrypt.hash("no-login-" + String(Date.now()), 10);
+  var u = await User.create({
+    fullName: "Test ilan (anonim)",
+    email: ANONYMOUS_LISTING_OWNER_EMAIL,
+    passwordHash: hash,
+    role: "user"
+  });
+  return u._id;
+}
 
 
 
@@ -442,7 +460,9 @@ module.exports = {
 
   setStatusByAdmin,
 
-  deleteByAdmin
+  deleteByAdmin,
+
+  getOrCreateAnonymousListingOwnerId
 
 };
 
