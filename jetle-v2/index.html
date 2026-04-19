@@ -577,33 +577,6 @@
   <script src="jetle-ads.js"></script>
   <script src="ilan.js"></script>
   <script src="script.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      if (!document.body || document.body.getAttribute("data-page") !== "home") return;
-      if (!window.JetleAPI || !window.JetleMarket) return;
-      var gw = JetleAPI.API_GATEWAY;
-      if (!gw || !gw.baseUrl) return;
-      var token = "";
-      try {
-        var raw = sessionStorage.getItem("jetle_v2_session") || localStorage.getItem("jetle_v2_session");
-        if (raw) {
-          var s = JSON.parse(raw);
-          if (s && s.accessToken) token = String(s.accessToken);
-        }
-      } catch (e) {}
-      var headers = { Accept: "application/json" };
-      if (token) headers.Authorization = "Bearer " + token;
-      var url = String(gw.baseUrl).replace(/\/+$/, "") + "/api/listings";
-      fetch(url, { method: "GET", credentials: "include", headers: headers })
-        .then(function (r) {
-          return r.json();
-        })
-        .then(function (json) {
-          if (!json || !json.ok || !Array.isArray(json.data)) return;
-          JetleMarket.refreshAll();
-        })
-        .catch(function () {});
-    });
-  </script>
+  <script src="home-api-listings.js"></script>
 </body>
 </html>
