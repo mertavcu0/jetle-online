@@ -567,12 +567,12 @@
     } else {
       var a = document.createElement("a");
       a.href = "login.html";
-      a.className = "header-link";
+      a.className = "btn btn-outline btn-sm";
       a.textContent = "Giriş";
       slot.appendChild(a);
       var r = document.createElement("a");
       r.href = "register.html";
-      r.className = "btn btn-secondary btn-sm";
+      r.className = "btn btn-outline btn-sm";
       r.textContent = "Kayıt ol";
       slot.appendChild(r);
       addIlanVerButton();

@@ -1,10 +1,16 @@
 /**
- * Ana sayfa — Railway /api/listings ile ilanları çeker, "Tüm ilanlar" grid'ini doldurur.
+ * Ana sayfa — API ilanları: ilk ekranda sınırlı sayı, küçük görsel, sayfalama / daha fazla.
  */
 (function () {
   "use strict";
 
   var DEFAULT_LISTINGS_URL = "https://jetle-online-production.up.railway.app/api/listings";
+  var HOME_PAGE_SIZE = 16;
+  var CARD_IMG_W = 320;
+  var CARD_IMG_H = 240;
+
+  var cachedRows = null;
+  var shownCount = 0;
 
   function resolveListingsUrl() {
     try {
@@ -17,12 +23,25 @@
     return DEFAULT_LISTINGS_URL;
   }
 
-  function escHtml(v) {
-    return String(v == null ? "" : v)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+  function normalizeRows(payload) {
+    if (!payload) return [];
+    if (Array.isArray(payload)) return payload;
+    if (payload.data && Array.isArray(payload.data)) return payload.data;
+    if (payload.ok && Array.isArray(payload.data)) return payload.data;
+    return [];
+  }
+
+  /** Kart için küçük görsel URL (detayda tam boy kullanılır). */
+  function pickThumbUrl(item) {
+    if (!item || typeof item !== "object") return "";
+    var m = item.media && Array.isArray(item.media.images) ? item.media.images[0] : null;
+    if (m && typeof m === "object") {
+      var u = m.thumbUrl || m.mediumUrl || m.originalUrl || "";
+      if (u) return String(u).trim();
+    }
+    if (item.coverImage && String(item.coverImage).trim()) return String(item.coverImage).trim();
+    if (Array.isArray(item.images) && item.images[0]) return String(item.images[0]).trim();
+    return "";
   }
 
   function formatTry(n) {
@@ -35,70 +54,74 @@
     return "ilan-detail.html?id=" + encodeURIComponent(id);
   }
 
-  function normalizeRows(payload) {
-    if (!payload) return [];
-    if (Array.isArray(payload)) return payload;
-    if (payload.data && Array.isArray(payload.data)) return payload.data;
-    if (payload.ok && Array.isArray(payload.data)) return payload.data;
-    return [];
-  }
+  function buildCard(item) {
+    var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
+    var title = item.title != null ? String(item.title) : "İsimsiz ilan";
+    var city =
+      item.city != null
+        ? String(item.city)
+        : item.location && item.location.city
+          ? String(item.location.city)
+          : "—";
 
-  function renderCards(grid, rows) {
-    grid.innerHTML = "";
-    rows.forEach(function (item) {
-      var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
-      var title = item.title != null ? String(item.title) : "İsimsiz ilan";
-      var city =
-        item.city != null
-          ? String(item.city)
-          : item.location && item.location.city
-            ? String(item.location.city)
-            : "—";
-
-      var art = document.createElement("article");
-      art.className = "listing-card listing-card--api-feed";
-      if (id) {
-        art.setAttribute("data-id", id);
-        art.setAttribute("data-listing-id", id);
-        art.style.cursor = "pointer";
-        art.setAttribute("role", "link");
-        art.setAttribute("tabindex", "0");
-        art.addEventListener("click", function () {
+    var art = document.createElement("article");
+    art.className = "listing-card listing-card--api-feed";
+    if (id) {
+      art.setAttribute("data-id", id);
+      art.setAttribute("data-listing-id", id);
+      art.style.cursor = "pointer";
+      art.setAttribute("role", "link");
+      art.setAttribute("tabindex", "0");
+      art.addEventListener("click", function () {
+        window.location.href = detailPageHref(id);
+      });
+      art.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           window.location.href = detailPageHref(id);
-        });
-        art.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            window.location.href = detailPageHref(id);
-          }
-        });
-      }
+        }
+      });
+    }
 
-      var inner = document.createElement("div");
-      inner.className = "listing-card__link listing-card__link--api";
+    var inner = document.createElement("div");
+    inner.className = "listing-card__link listing-card__link--api";
 
-      var body = document.createElement("div");
-      body.className = "listing-card__body";
+    var thumb = pickThumbUrl(item);
+    if (thumb) {
+      var media = document.createElement("div");
+      media.className = "listing-card__media";
+      var img = document.createElement("img");
+      img.src = thumb;
+      img.alt = title;
+      img.width = CARD_IMG_W;
+      img.height = CARD_IMG_H;
+      img.loading = "lazy";
+      img.decoding = "async";
+      media.appendChild(img);
+      inner.appendChild(media);
+    }
 
-      var priceEl = document.createElement("div");
-      priceEl.className = "listing-card__price";
-      priceEl.textContent = formatTry(item.price);
+    var body = document.createElement("div");
+    body.className = "listing-card__body";
 
-      var titleEl = document.createElement("h3");
-      titleEl.className = "listing-card__title";
-      titleEl.textContent = title;
+    var priceEl = document.createElement("div");
+    priceEl.className = "listing-card__price";
+    priceEl.textContent = formatTry(item.price);
 
-      var meta = document.createElement("p");
-      meta.className = "listing-card__meta listing-card__meta--city";
-      meta.textContent = city;
+    var titleEl = document.createElement("h3");
+    titleEl.className = "listing-card__title";
+    titleEl.textContent = title;
 
-      body.appendChild(priceEl);
-      body.appendChild(titleEl);
-      body.appendChild(meta);
-      inner.appendChild(body);
-      art.appendChild(inner);
-      grid.appendChild(art);
-    });
+    var meta = document.createElement("p");
+    meta.className = "listing-card__meta listing-card__meta--city";
+    meta.textContent = city;
+
+    body.appendChild(priceEl);
+    body.appendChild(titleEl);
+    body.appendChild(meta);
+    inner.appendChild(body);
+    art.appendChild(inner);
+    return art;
   }
 
   function setEmptyState(emptyBox, titleEl, subEl, show, titleText, subText) {
@@ -106,6 +129,42 @@
     emptyBox.hidden = !show;
     if (titleEl && titleText != null) titleEl.textContent = titleText;
     if (subEl && subText != null) subEl.textContent = subText;
+  }
+
+  function updateResultsInfo(infoEl, total, shown) {
+    if (!infoEl) return;
+    if (total === 0) return;
+    if (shown >= total) {
+      infoEl.textContent = "Toplam " + total + " ilan";
+    } else {
+      infoEl.textContent = "Gösterilen " + shown + " / " + total + " ilan";
+    }
+  }
+
+  function updatePager(total, shown) {
+    var pager = document.getElementById("listingsPager");
+    if (!pager) return;
+    pager.hidden = total === 0 || shown >= total;
+  }
+
+  function appendPage(grid, rows) {
+    rows.forEach(function (item) {
+      grid.appendChild(buildCard(item));
+    });
+  }
+
+  function wireLoadMore(grid, info) {
+    var btn = document.getElementById("listingsLoadMore");
+    if (!btn || btn.getAttribute("data-wired") === "1") return;
+    btn.setAttribute("data-wired", "1");
+    btn.addEventListener("click", function () {
+      if (!cachedRows || shownCount >= cachedRows.length) return;
+      var next = cachedRows.slice(shownCount, shownCount + HOME_PAGE_SIZE);
+      shownCount += next.length;
+      appendPage(grid, next);
+      updateResultsInfo(info, cachedRows.length, shownCount);
+      updatePager(cachedRows.length, shownCount);
+    });
   }
 
   function loadHomeListingsFromApi() {
@@ -116,6 +175,7 @@
     var emptyTitle = document.getElementById("emptyResultsTitle");
     var emptySub = document.getElementById("emptyResultsSub");
     var info = document.getElementById("resultsInfo");
+    var loadEl = document.getElementById("homeListingsLoading");
 
     if (!grid) return;
 
@@ -126,6 +186,7 @@
     fetch(url, {
       method: "GET",
       credentials: "omit",
+      cache: "force-cache",
       headers: { Accept: "application/json" }
     })
       .then(function (res) {
@@ -134,10 +195,14 @@
       })
       .then(function (json) {
         var rows = normalizeRows(json);
-        if (info) info.textContent = "Toplam " + rows.length + " ilan";
+        cachedRows = rows;
+        shownCount = 0;
+
+        if (loadEl) loadEl.hidden = true;
 
         if (rows.length === 0) {
           grid.innerHTML = "";
+          updatePager(0, 0);
           setEmptyState(
             emptyBox,
             emptyTitle,
@@ -150,12 +215,33 @@
         }
 
         setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
-        renderCards(grid, rows);
+
+        var first = rows.slice(0, HOME_PAGE_SIZE);
+        shownCount = first.length;
+        grid.innerHTML = "";
+        appendPage(grid, first);
+
+        updateResultsInfo(info, rows.length, shownCount);
+        updatePager(rows.length, shownCount);
+        wireLoadMore(grid, info);
+
+        try {
+          window.__JETLE_HOME_LISTINGS__ = {
+            total: rows.length,
+            pageSize: HOME_PAGE_SIZE,
+            shown: function () {
+              return shownCount;
+            }
+          };
+        } catch (e) {}
       })
       .catch(function (err) {
         console.log("[JETLE][home-api-listings]", err);
         grid.innerHTML = "";
+        if (loadEl) loadEl.hidden = true;
+        cachedRows = null;
         if (info) info.textContent = "İlanlar yüklenemedi";
+        updatePager(0, 0);
         setEmptyState(
           emptyBox,
           emptyTitle,
