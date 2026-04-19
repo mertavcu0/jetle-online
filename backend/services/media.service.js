@@ -2,7 +2,6 @@ const fs = require("fs");
 const fsp = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
-const sharp = require("sharp");
 const { ApiError } = require("../utils/ApiError");
 const { MediaAsset } = require("../models/MediaAsset");
 const { env } = require("../config/env");
@@ -38,25 +37,24 @@ function relFromAbs(abs) {
   return "/" + path.relative(path.resolve(__dirname, ".."), abs).replace(/\\/g, "/");
 }
 
+function mimeFromExt(ext) {
+  const e = String(ext || "").toLowerCase();
+  if (e === ".png") return "image/png";
+  if (e === ".webp") return "image/webp";
+  if (e === ".gif") return "image/gif";
+  return "image/jpeg";
+}
+
 async function processImageFile(ownerId, filePath, req, originalName) {
   const ext = safeExt(originalName) || ".jpg";
-  const base = makeName(ext === ".png" ? ".png" : ".webp");
+  const base = makeName(ext);
   const originalOut = path.join(ORIGINAL_DIR, base);
   const mediumOut = path.join(MEDIUM_DIR, base);
   const thumbOut = path.join(THUMB_DIR, base);
 
-  const input = sharp(filePath, { failOn: "none" }).rotate();
-  await input.clone().webp({ quality: 84, effort: 4 }).toFile(originalOut);
-  await input
-    .clone()
-    .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-    .webp({ quality: 82, effort: 4 })
-    .toFile(mediumOut);
-  await input
-    .clone()
-    .resize({ width: 400, height: 400, fit: "inside", withoutEnlargement: true })
-    .webp({ quality: 78, effort: 4 })
-    .toFile(thumbOut);
+  await fsp.copyFile(filePath, originalOut);
+  await fsp.copyFile(filePath, mediumOut);
+  await fsp.copyFile(filePath, thumbOut);
 
   const asset = await MediaAsset.create({
     ownerId: ownerId,
@@ -64,7 +62,7 @@ async function processImageFile(ownerId, filePath, req, originalName) {
     originalUrl: toPublicUrl(req, relFromAbs(originalOut)),
     mediumUrl: toPublicUrl(req, relFromAbs(mediumOut)),
     thumbUrl: toPublicUrl(req, relFromAbs(thumbOut)),
-    mimeType: "image/webp",
+    mimeType: mimeFromExt(ext),
     attached: false
   });
   return {

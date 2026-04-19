@@ -14,19 +14,13 @@ const mediaService = require("./services/media.service");
 
 const app = express();
 
-app.get("/health", (req, res) => {
-  res.json({ ok: true, service: "JETLE API" });
-});
-
-const isProduction = process.env.NODE_ENV === "production";
-const corsAllowedOrigins = isProduction
-  ? ["https://jetle.online", "https://www.jetle.online"]
-  : [
-      "http://localhost:3000",
-      "http://localhost:5500",
-      "http://127.0.0.1:3000",
-      "http://127.0.0.1:5500"
-    ];
+app.use(express.json());
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 
 console.log(
   "[jetle-api] env loaded: PORT=" + (env.PORT ? "yes" : "no") + ", MONGODB_URI=" + (env.MONGODB_URI ? "yes" : "no")
@@ -35,38 +29,26 @@ console.log(
 app.disable("x-powered-by");
 app.use(
   helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+    originAgentCluster: false,
+    referrerPolicy: false,
+    hsts: false,
+    noSniff: false,
+    ieNoOpen: false,
+    frameguard: false,
+    permittedCrossDomainPolicies: false,
+    hidePoweredBy: false,
+    xssFilter: false,
+    dnsPrefetchControl: false
   })
 );
-app.use(
-  cors({
-    origin: function corsOrigin(origin, callback) {
-      if (!origin) {
-        return callback(null, true);
-      }
-      if (corsAllowedOrigins.indexOf(origin) !== -1) {
-        return callback(null, true);
-      }
-      return callback(null, false);
-    },
-    credentials: true
-  })
-);
+
 app.use(cookieParser());
-app.use(express.json({ limit: env.JSON_LIMIT }));
 app.use(express.urlencoded({ extended: true, limit: env.JSON_LIMIT }));
 app.use(requestLogger);
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-
-  console.log("LOGIN DENEME:", email, password);
-
-  return res.json({
-    success: true,
-    token: "test-token",
-    user: { email }
-  });
-});
 app.use(
   "/api",
   rateLimit({
@@ -75,21 +57,31 @@ app.use(
   })
 );
 
-app.get("/", function root(req, res) {
-  res.json({
-    ok: true,
-    service: "JETLE API",
-    environment: process.env.NODE_ENV || "development"
-  });
-});
-
 app.get("/health", (req, res) => {
   res.json({ ok: true, service: "JETLE API" });
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  res.json({
+    success: true,
+    message: "login çalışıyor",
+    email,
+    token: "123abc"
+  });
 });
 
 app.use("/api", apiRouter);
 mediaService.ensureUploadDirs();
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads"), { fallthrough: false, maxAge: "7d" }));
+
+app.use(express.static(path.resolve(__dirname, "../jetle-v2")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../jetle-v2/index.html"));
+});
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 

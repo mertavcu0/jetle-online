@@ -6554,11 +6554,6 @@
       var s = JetleAPI.authStorage.read();
       return s && s.accessToken ? String(s.accessToken) : "";
     }
-    var JETLE_API_PRODUCTION_BASE = "https://jetle-online-production.up.railway.app";
-    function resolveBackendApiRoot() {
-      var b = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-      return b ? String(b).replace(/\/+$/, "") : JETLE_API_PRODUCTION_BASE;
-    }
     function uploadMultipartToBackend(url, field, files, onProgress) {
       var token = getBackendAccessToken();
       if (!token) return Promise.reject(new Error("Medya yüklemek için tekrar giriş yapın."));
@@ -6566,7 +6561,8 @@
       Array.prototype.slice.call(files || [], 0).forEach(function (file) {
         fd.append(field, file);
       });
-      var full = resolveBackendApiRoot() + url;
+      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+      var full = base ? base.replace(/\/+$/, "") + url : url;
       return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", full, true);
@@ -6598,7 +6594,8 @@
       if (!token) return Promise.reject(new Error("Medya yüklemek için tekrar giriş yapın."));
       var fd = new FormData();
       fd.append(field, file);
-      var full = resolveBackendApiRoot() + url;
+      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+      var full = base ? base.replace(/\/+$/, "") + url : url;
       var xhr = new XMLHttpRequest();
       var promise = new Promise(function (resolve, reject) {
         xhr.open("POST", full, true);
@@ -6622,7 +6619,8 @@
     function backendJson(method, url, body) {
       var token = getBackendAccessToken();
       if (!token) return Promise.reject(new Error("Medya yüklemek için tekrar giriş yapın."));
-      var full = resolveBackendApiRoot() + url;
+      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+      var full = base ? base.replace(/\/+$/, "") + url : url;
       return fetch(full, {
         method: method,
         credentials: "include",
@@ -6647,7 +6645,8 @@
         videoChunkUpload.sessionId = sessionId;
         videoChunkUpload.cancelled = false;
         var token = getBackendAccessToken();
-        var full = resolveBackendApiRoot() + "/api/media/upload-video/chunk";
+        var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+        var full = (base ? base.replace(/\/+$/, "") : "") + "/api/media/upload-video/chunk";
 
         function sendChunk(offset) {
           if (videoChunkUpload.cancelled) return Promise.reject(new Error("Yükleme iptal edildi."));
@@ -8025,7 +8024,8 @@
             if (mediaUploadEnabled() && item.assetId) {
               var tk = getBackendAccessToken();
               if (tk) {
-                var full = resolveBackendApiRoot() + "/api/media/" + encodeURIComponent(item.assetId);
+                var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+                var full = base ? base.replace(/\/+$/, "") + "/api/media/" + encodeURIComponent(item.assetId) : "/api/media/" + encodeURIComponent(item.assetId);
                 fetch(full, { method: "DELETE", headers: { Authorization: "Bearer " + tk }, credentials: "include" }).catch(function () {});
               }
             }
@@ -8597,7 +8597,8 @@
         if (mediaUploadEnabled() && videoItem && videoItem.assetId) {
           var tk = getBackendAccessToken();
           if (tk) {
-            var full = resolveBackendApiRoot() + "/api/media/" + encodeURIComponent(videoItem.assetId);
+            var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
+            var full = base ? base.replace(/\/+$/, "") + "/api/media/" + encodeURIComponent(videoItem.assetId) : "/api/media/" + encodeURIComponent(videoItem.assetId);
             fetch(full, { method: "DELETE", headers: { Authorization: "Bearer " + tk }, credentials: "include" }).catch(function () {});
           }
         }
