@@ -6038,3 +6038,21 @@ body.modal-open {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(17, 19, 24, 0.1);
 }
+
+/* Ana sayfa API grid (home-api-listings.js) */
+.listing-card--api-feed {
+  min-height: 140px;
+}
+
+.listing-card__link--api {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.listing-card__meta--city {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
