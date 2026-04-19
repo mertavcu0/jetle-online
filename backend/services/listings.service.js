@@ -111,7 +111,7 @@ function toPublicRow(doc) {
 
 async function allPublic(query) {
 
-  const filter = { status: "approved" };
+  const filter = {};
 
   if (query && query.category) filter.category = query.category;
 
