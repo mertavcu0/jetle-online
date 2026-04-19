@@ -30,7 +30,17 @@ const detail = asyncHandler(async function detail(req, res, next) {
 
 const create = asyncHandler(async function create(req, res) {
 
-  var row = await listingsService.create(req.auth.userId, req.body || {}, req.auth);
+  var auth = req.auth || { role: "user" };
+
+  var ownerId;
+
+  if (req.auth && req.auth.userId) {
+    ownerId = String(req.auth.userId);
+  } else {
+    ownerId = String(await listingsService.getOrCreateAnonymousListingOwnerId());
+  }
+
+  var row = await listingsService.create(ownerId, req.body || {}, auth);
 
   res.status(201).json({ ok: true, data: row });
 

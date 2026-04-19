@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/", listingsController.list);
 router.get("/:id", optionalAuth, listingsController.detail);
-router.post("/", requireAuth, listingWriteValidator, validateRequest(), listingsController.create);
+router.post("/", optionalAuth, listingWriteValidator, validateRequest(), listingsController.create);
 router.put("/:id", requireAuth, requireOwnerOrAdmin(), listingWriteValidator, validateRequest(), listingsController.update);
 
 module.exports = { listingsRouter: router };
