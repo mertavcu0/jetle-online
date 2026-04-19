@@ -31,22 +31,8 @@
     return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(num) + " ₺";
   }
 
-  function slugifyTitle(t) {
-    return String(t || "")
-      .toLowerCase()
-      .trim()
-      .replace(/[ıİğĞüÜşŞöÖçÇ]/g, function (ch) {
-        var m = { ı: "i", İ: "i", ğ: "g", Ğ: "g", ü: "u", Ü: "u", ş: "s", Ş: "s", ö: "o", Ö: "o", ç: "c", Ç: "c" };
-        return m[ch] || ch;
-      })
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80);
-  }
-
-  function detailUrl(id, title) {
-    var slug = slugifyTitle(title);
-    return "ilan-detay.html?id=" + encodeURIComponent(id) + (slug ? "&slug=" + encodeURIComponent(slug) : "");
+  function detailPageHref(id) {
+    return "ilan-detail.html?id=" + encodeURIComponent(id);
   }
 
   function normalizeRows(payload) {
@@ -60,7 +46,7 @@
   function renderCards(grid, rows) {
     grid.innerHTML = "";
     rows.forEach(function (item) {
-      var id = item.id != null ? String(item.id) : item._id != null ? String(item._id) : "";
+      var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
       var title = item.title != null ? String(item.title) : "İsimsiz ilan";
       var city =
         item.city != null
@@ -71,11 +57,25 @@
 
       var art = document.createElement("article");
       art.className = "listing-card listing-card--api-feed";
-      art.setAttribute("data-listing-id", id || "");
+      if (id) {
+        art.setAttribute("data-id", id);
+        art.setAttribute("data-listing-id", id);
+        art.style.cursor = "pointer";
+        art.setAttribute("role", "link");
+        art.setAttribute("tabindex", "0");
+        art.addEventListener("click", function () {
+          window.location.href = detailPageHref(id);
+        });
+        art.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            window.location.href = detailPageHref(id);
+          }
+        });
+      }
 
-      var link = document.createElement("a");
-      link.className = "listing-card__link listing-card__link--api";
-      link.href = id ? detailUrl(id, title) : "#";
+      var inner = document.createElement("div");
+      inner.className = "listing-card__link listing-card__link--api";
 
       var body = document.createElement("div");
       body.className = "listing-card__body";
@@ -95,8 +95,8 @@
       body.appendChild(priceEl);
       body.appendChild(titleEl);
       body.appendChild(meta);
-      link.appendChild(body);
-      art.appendChild(link);
+      inner.appendChild(body);
+      art.appendChild(inner);
       grid.appendChild(art);
     });
   }
