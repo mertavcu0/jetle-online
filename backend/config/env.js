@@ -1,5 +1,6 @@
 const path = require("path");
 const dotenv = require("dotenv");
+const { resolveMongoDbUri } = require("./mongodbUri");
 
 dotenv.config({
   path: path.resolve(__dirname, "../.env")
@@ -26,10 +27,15 @@ function parseClientOrigins() {
 var clientOrigins = parseClientOrigins();
 if (!clientOrigins.length) clientOrigins = ["http://localhost:5500"];
 
+var resolvedMongo = resolveMongoDbUri();
+if (!resolvedMongo) {
+  throw new Error("Missing MONGODB_URI_PRODUCTION or MONGODB_URI");
+}
+
 const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: Number(requiredEnv("PORT")),
-  MONGODB_URI: requiredEnv("MONGODB_URI"),
+  MONGODB_URI: resolvedMongo,
   CLIENT_ORIGIN: clientOrigins[0],
   CLIENT_ORIGINS: clientOrigins,
   CORS_ORIGIN: clientOrigins.length === 1 ? clientOrigins[0] : clientOrigins,
