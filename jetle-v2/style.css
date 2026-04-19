@@ -5917,3 +5917,124 @@ body.modal-open {
 .dash-doping-msg--err {
   color: #b91c1c;
 }
+
+/* —— Inter + ilan ver + home loading —— */
+.font-inter {
+  font-family: "Inter", var(--font);
+}
+
+.home-listings-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+}
+
+.home-listings-loading[hidden] {
+  display: none !important;
+}
+
+.home-listings-loading__spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: #fcb900;
+  animation: jetle-spin 0.75s linear infinite;
+}
+
+@keyframes jetle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-listings-loading__text {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.main-shell--ilan-ver {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+.ilan-ver-layout {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ilan-ver-card {
+  padding: 28px 26px;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(17, 19, 24, 0.08);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ilan-ver-card:hover {
+  box-shadow: 0 12px 36px rgba(17, 19, 24, 0.1);
+}
+
+.ilan-ver-card__title {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ilan-ver-card__lead {
+  margin: 0 0 22px;
+}
+
+.ilan-ver-form .field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.ilan-ver-form__row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .ilan-ver-form__row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ilan-ver-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.btn-ilan-ver-primary {
+  background: #fcb900 !important;
+  border-color: #e0a800 !important;
+  color: #1a1d24 !important;
+  font-weight: 600;
+}
+
+.btn-ilan-ver-primary:hover {
+  filter: brightness(0.97);
+  transform: translateY(-1px);
+}
+
+.listing-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 19, 24, 0.1);
+}

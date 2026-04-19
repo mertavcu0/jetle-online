@@ -4555,6 +4555,19 @@
       info.textContent = "Toplam " + list.length + " ilan bulundu" + suffix;
     }
     if (emptyBox) emptyBox.hidden = list.length > 0;
+    var emptyTitle = document.getElementById("emptyResultsTitle");
+    var emptySub = document.getElementById("emptyResultsSub");
+    if (emptyTitle && emptySub) {
+      if (list.length === 0 && (!marketListings || marketListings.length === 0)) {
+        emptyTitle.textContent = "Henüz ilan yok";
+        emptySub.textContent =
+          "Onaylı ilan bulunmuyor. İlk ilanı siz verebilir veya filtreleri sıfırlayarak tekrar deneyebilirsiniz.";
+      } else if (list.length === 0) {
+        emptyTitle.textContent = "İlan bulunamadı";
+        emptySub.textContent =
+          "Seçtiğiniz kriterlere uygun onaylı ilan yok. Filtreleri genişletin veya aramayı değiştirin.";
+      }
+    }
     list.forEach(function (L, idx) {
       grid.appendChild(createListingCard(L));
       if (idx === 2 && window.JetleAds && typeof JetleAds.createInlineCardElement === "function") {
