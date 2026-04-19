@@ -4,17 +4,48 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="dns-prefetch" href="https://jetle-online-production.up.railway.app" />
   <title>JETLE.online — İlan Pazarı</title>
   <meta name="description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
   <meta property="og:title" content="JETLE.online — İlan Pazarı" />
   <meta property="og:description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="style.css" />
+  <style id="jetle-critical-css">
+    :root{--bg:#fff;--bg-muted:#f4f5f7;--border:#e2e4e9;--text:#1a1d24;--accent:#2563eb;--radius:6px;--font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    *,::before,::after{box-sizing:border-box}
+    body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg-muted);line-height:1.45}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+    .site-header{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+    .header-inner{display:flex;align-items:center;gap:16px;padding:12px 16px;flex-wrap:wrap}
+    .main-shell{padding:20px 0 40px}
+    .main-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+    .content-main{min-width:0}
+    .listing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media (max-width:900px){.main-grid{grid-template-columns:1fr}}
+    @media (max-width:1000px){.listing-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.listing-grid{grid-template-columns:1fr}}
+    #splash-screen{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#111,#1a1a1a)}
+    @media (max-width:767px){body.page-home #splash-screen{display:flex}}
+    .splash-logo{font-size:32px;font-weight:700;color:#fff;letter-spacing:2px}
+    .splash-logo span{color:#60a5fa}
+    .splash-sub{font-size:12px;color:#aaa;margin-top:6px;opacity:.8}
+  </style>
+  <link rel="preload" href="style.min.css" as="style" />
+  <link rel="stylesheet" href="style.min.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="style.min.css" /></noscript>
 </head>
 <body data-page="home" class="page-home font-inter">
+  <script>
+    (function () {
+      if (window.innerWidth >= 768) return;
+      var el = document.createElement("div");
+      el.id = "splash-screen";
+      el.setAttribute("aria-hidden", "true");
+      el.innerHTML =
+        '<div class="splash-logo">JETLE<span>.online</span></div><div class="splash-sub">Türkiye\'nin ilan platformu</div>';
+      document.body.insertBefore(el, document.body.firstChild);
+    })();
+  </script>
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
@@ -317,12 +348,9 @@
         </div>
       </aside>
 
-      <div class="content-main">
-        <div class="home-listing-with-rail">
-          <div class="home-listing-with-rail__main">
+      <div class="content-main content-main--home-simple">
         <div class="results-bar" id="resultsBar">
           <p class="results-count" id="resultsInfo">Yükleniyor…</p>
-          <p class="results-hint">Yalnızca onaylı ilanlar listelenir. Yeni ilanlar moderasyon sonrası görünür.</p>
         </div>
 
         <div id="homeListingsLoading" class="home-listings-loading" aria-live="polite" aria-busy="true">
@@ -330,32 +358,9 @@
           <p class="home-listings-loading__text">İlanlar yükleniyor…</p>
         </div>
 
-        <div id="jetleAdFeaturedStrip" class="jetle-ad-featured-strip" data-jetle-ad="featured_strip" hidden></div>
-
-        <section class="listing-section" aria-labelledby="featuredHeading">
-          <div class="section-head">
-            <h2 id="featuredHeading" class="section-title">Öne çıkan ilanlar</h2>
-          </div>
-          <div class="listing-row" id="featuredRow"></div>
-        </section>
-
-        <section class="listing-section" aria-labelledby="showcaseHeading">
-          <div class="section-head">
-            <h2 id="showcaseHeading" class="section-title">Vitrin ilanları</h2>
-          </div>
-          <div class="listing-row listing-row--showcase" id="showcaseRow"></div>
-        </section>
-
-        <section class="listing-section" aria-labelledby="newHeading">
-          <div class="section-head">
-            <h2 id="newHeading" class="section-title">Yeni eklenenler</h2>
-          </div>
-          <div class="listing-row" id="newRow"></div>
-        </section>
-
-        <section class="listing-section" aria-labelledby="allHeading">
-          <div class="section-head">
-            <h2 id="allHeading" class="section-title">Tüm ilanlar</h2>
+        <section class="listing-section listing-section--home-main" aria-labelledby="allHeading">
+          <div class="section-head section-head--compact">
+            <h2 id="allHeading" class="section-title">İlanlar</h2>
           </div>
           <div class="empty-state empty-state--rich" id="emptyResults" hidden>
             <div class="empty-state__icon" aria-hidden="true">
@@ -372,125 +377,8 @@
             </div>
           </div>
           <div class="listing-grid" id="listingsGrid"></div>
-        </section>
-          </div>
-          <aside class="home-listing-with-rail__rail" aria-label="Yan panel">
-            <div id="jetleAdSidebar" class="jetle-ad-sidebar" data-jetle-ad="sidebar" hidden></div>
-            <aside class="sponsor-side panel" id="sponsorSide">
-              <p class="sponsor-side__label">Sponsorlu ilanlar</p>
-              <div id="sponsoredRow" class="sponsor-side__list"></div>
-            </aside>
-          </aside>
-        </div>
-      </div>
-    </div>
-
-    <section class="home-pricing-teaser" aria-labelledby="homePricingTeaser">
-      <div class="container">
-        <div class="home-pricing-teaser__inner panel panel--flat">
-          <div class="home-pricing-teaser__text">
-            <h2 id="homePricingTeaser" class="home-pricing-teaser__title">Öne çıkarma ve mağaza paketleri</h2>
-            <p class="text-small text-muted">Dopingden vitrine kadar net liste fiyatları; hesabınızdan satın alınır.</p>
-          </div>
-          <ul class="home-pricing-teaser__chips" aria-label="Örnek fiyatlar">
-            <li>Güncelim <strong>149 ₺</strong></li>
-            <li>Öne çıkan <strong>249 ₺</strong></li>
-            <li>Vitrin <strong>399 ₺</strong></li>
-            <li>Standart <strong>1.999 ₺</strong> / ay</li>
-          </ul>
-          <div class="home-pricing-teaser__cta">
-            <a class="btn btn-primary btn-sm" href="paketler.html">Tüm fiyatlar</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="home-bottom">
-      <div class="container">
-        <section class="home-trust-strip" aria-label="Güvenli alışveriş özetleri">
-          <div class="home-trust-strip__grid">
-            <article class="home-trust-tile panel panel--flat">
-              <h3 class="home-trust-tile__h">Platform içi iletişim</h3>
-              <p class="home-trust-tile__p">Satıcıyla mümkün olduğunca Jetle üzerinden yazışın; dış kanallara yönlendiren taleplere dikkat edin.</p>
-              <a class="home-trust-tile__link" href="guvenli-alisveris.html">Güven kuralları</a>
-            </article>
-            <article class="home-trust-tile panel panel--flat">
-              <h3 class="home-trust-tile__h">Ödeme ve kapora</h3>
-              <p class="home-trust-tile__p">Jetle ödeme aracısı değildir. Kapora veya ön ödeme taleplerinde ilanı ve satıcıyı doğrulayın.</p>
-              <a class="home-trust-tile__link" href="yardim.html#guvenli-alisveris">Rehber</a>
-            </article>
-            <article class="home-trust-tile panel panel--flat">
-              <h3 class="home-trust-tile__h">İnceleme ve şikayet</h3>
-              <p class="home-trust-tile__p">Yeni ilanlar moderasyondan geçer. Şüpheli içerikleri bildirerek pazar yerine katkı sağlarsınız.</p>
-              <a class="home-trust-tile__link" href="yardim.html#sikayet">Bildirim süreci</a>
-            </article>
-            <article class="home-trust-tile panel panel--flat">
-              <h3 class="home-trust-tile__h">Kurumsal vitrin</h3>
-              <p class="home-trust-tile__p">Öne çıkarma, vitrin ve sponsorluk seçenekleriyle ilanınızı doğru kitleye taşıyın.</p>
-              <a class="home-trust-tile__link" href="hizmetlerimiz.html">Hizmet paketleri</a>
-            </article>
-          </div>
-        </section>
-
-        <section class="home-services-mini" aria-labelledby="homeServicesMiniHeading">
-          <h2 id="homeServicesMiniHeading" class="home-section-title">Hizmetlerimiz</h2>
-          <p class="home-section-lead text-muted text-small">İlanınızın görünürlüğünü artırmak için sunduğumuz çözümlerin özeti. Ayrıntılar için hizmet sayfamıza geçin.</p>
-          <div class="home-services-mini__grid">
-            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#doping">
-              <span class="home-service-pill__t">Doping</span>
-              <span class="home-service-pill__d">Liste içinde üst sıralara yakın konumlandırma</span>
-            </a>
-            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#mobil">
-              <span class="home-service-pill__t">Mobil</span>
-              <span class="home-service-pill__d">Liste ve detay deneyimi mobil öncelikli</span>
-            </a>
-            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#reklam">
-              <span class="home-service-pill__t">Reklam</span>
-              <span class="home-service-pill__d">Banner ve sponsorlu görünürlük alanları</span>
-            </a>
-            <a class="home-service-pill panel panel--flat" href="hizmetlerimiz.html#vitrin">
-              <span class="home-service-pill__t">Vitrin ilan</span>
-              <span class="home-service-pill__d">Ana sayfada ayrı vitrin şeridinde öne çıkma</span>
-            </a>
-            <a class="home-service-pill panel panel--flat" href="paketler.html#pack-magaza">
-              <span class="home-service-pill__t">Premium paketler</span>
-              <span class="home-service-pill__d">Mağaza ve kurumsal üyelik paketleri</span>
-            </a>
-          </div>
-        </section>
-
-        <section class="home-info-blocks" aria-label="Kurumsal bilgi">
-          <div class="home-info-blocks__grid">
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">Hakkımızda</h3>
-              <p class="home-info-card__p">Jetle; vasıta, emlak, alışveriş ve hizmet kategorilerinde bireysel ile kurumsal ilan verenleri buluşturan ilan platformudur.</p>
-              <a class="home-info-card__a" href="hakkimizda.html">Kurumsal sayfa</a>
-            </article>
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">Hizmetlerimiz</h3>
-              <p class="home-info-card__p">Görünürlük, vitrin, reklam ve üyelik çözümleriyle işinizi büyütmenize yardımcı olacak paketleri özetledik.</p>
-              <a class="home-info-card__a" href="hizmetlerimiz.html">Tüm hizmetler</a>
-            </article>
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">Güvenli alışveriş ipuçları</h3>
-              <p class="home-info-card__p">Ödeme, kapora ve iletişim konularında kısa ve net öneriler; alıcı ve satıcılar için ortak dil.</p>
-              <a class="home-info-card__a" href="guvenli-alisveris.html">İpuçlarını oku</a>
-            </article>
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">Yardım ve işlem rehberi</h3>
-              <p class="home-info-card__p">Hesap, ilan verme, favoriler, mesajlar ve paketler için adım adım rehber.</p>
-              <a class="home-info-card__a" href="yardim.html">Rehbere git</a>
-            </article>
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">Site haritası</h3>
-              <p class="home-info-card__p">Önemli sayfalara tek ekrandan erişin; kategori ve hesap bağlantıları düzenli listelenir.</p>
-              <a class="home-info-card__a" href="site-haritasi.html">Haritayı aç</a>
-            </article>
-            <article class="home-info-card panel panel--flat">
-              <h3 class="home-info-card__h">İletişim</h3>
-              <p class="home-info-card__p">Destek, iş birliği ve reklam talepleri için iletişim kanalları ve çalışma saatleri.</p>
-              <a class="home-info-card__a" href="iletisim.html">Bize ulaşın</a>
-            </article>
+          <div id="listingsPager" class="listings-pager" hidden>
+            <button type="button" class="btn btn-secondary btn-sm" id="listingsLoadMore">Daha fazla göster</button>
           </div>
         </section>
       </div>
@@ -500,83 +388,45 @@
   <div id="jetleAdFooterBanner" class="jetle-ad-footer-banner-wrap" data-jetle-ad="footer_banner" hidden></div>
 
   <div class="footer-strip">
-    <div class="container footer-strip__inner">
+    <div class="container footer-strip__inner footer-strip__inner--minimal">
       <a href="hakkimizda.html">Hakkımızda</a>
-      <a href="hizmetlerimiz.html">Hizmetlerimiz</a>
-      <a href="paketler.html">Paket fiyatları</a>
-      <a href="guvenli-alisveris.html">Güvenli alışveriş</a>
-      <a href="yardim.html">Yardım</a>
-      <a href="site-haritasi.html">Site haritası</a>
       <a href="iletisim.html">İletişim</a>
-      <a href="kullanim-kosullari.html">Kullanım koşulları</a>
-      <a href="kisisel-veriler.html">Kişisel veriler</a>
+      <a href="yardim.html">Yardım</a>
     </div>
   </div>
 
-  <footer class="site-footer site-footer--full" id="siteFooter">
+  <footer class="site-footer site-footer--full site-footer--minimal" id="siteFooter">
     <div class="container">
-      <div class="footer-columns">
-        <div class="footer-col">
-          <p class="footer-col__title">Kurumsal</p>
-          <ul class="footer-links">
-            <li><a href="hakkimizda.html">Hakkımızda</a></li>
-            <li><a href="site-haritasi.html">Site haritası</a></li>
-            <li><a href="iletisim.html">İletişim</a></li>
-            <li><a href="yardim.html#duyurular">Haberler / duyurular</a></li>
-            <li><a href="hizmetlerimiz.html">Hizmetlerimiz</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Hizmetlerimiz</p>
-          <ul class="footer-links">
-            <li><a href="hizmetlerimiz.html#doping">Doping</a></li>
-            <li><a href="hizmetlerimiz.html#mobil">Mobil</a></li>
-            <li><a href="hizmetlerimiz.html#reklam">Reklam</a></li>
-            <li><a href="hizmetlerimiz.html#vitrin">Vitrin ilanlar</a></li>
-            <li><a href="hizmetlerimiz.html#premium">Premium / mağaza paketleri</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Gizlilik ve kullanım</p>
-          <ul class="footer-links">
-            <li><a href="guvenli-alisveris.html">Güvenli alışveriş ipuçları</a></li>
-            <li><a href="sozlesmeler.html">Sözleşmeler ve kurallar</a></li>
-            <li><a href="hesap-sozlesmesi.html">Hesap sözleşmesi</a></li>
-            <li><a href="kullanim-kosullari.html">Kullanım koşulları</a></li>
-            <li><a href="kisisel-veriler.html">Kişisel verilerin korunması</a></li>
-            <li><a href="cerez-yonetimi.html">Çerez yönetimi</a></li>
-            <li><a href="gizlilik.html">Gizlilik özeti</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Yardım</p>
-          <ul class="footer-links">
-            <li><a href="yardim.html">Yardım ve işlem rehberi</a></li>
-            <li><a href="yardim.html#sss">Sık sorulan sorular</a></li>
-            <li><a href="yardim.html#ilan-verme">İlan verme rehberi</a></li>
-            <li><a href="yardim.html#ilan-guvenlik">İlan güvenlik rehberi</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
+      <div class="footer-bottom footer-bottom--minimal">
         <div class="footer-bottom__legal">
           <p>© <span id="footerYear">2026</span> Jetle Teknoloji A.Ş. Tüm hakları saklıdır.</p>
-          <p class="footer-bottom__note">Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır. Jetle, yalnızca aracı platform olarak moderasyon ve bildirim süreçlerini yürütür.</p>
-        </div>
-        <div class="footer-bottom__social" aria-label="Sosyal medya">
-          <a href="https://www.linkedin.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="LinkedIn">in</a>
-          <a href="https://www.x.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="X">x</a>
-          <a href="https://www.youtube.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="YouTube">▶</a>
+          <p class="footer-bottom__note">Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır.</p>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="api.js?v=20260217"></script>
-  <script src="auth.js"></script>
-  <script src="jetle-ads.js"></script>
-  <script src="ilan.js"></script>
-  <script src="script.js"></script>
-  <script src="home-api-listings.js"></script>
+  <script src="api.js?v=20260217" defer></script>
+  <script src="auth.js" defer></script>
+  <script src="ilan.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="home-api-listings.js" defer></script>
+  <script>
+    (function () {
+      function dismissSplash() {
+        var splash = document.getElementById("splash-screen");
+        if (!splash) return;
+        splash.style.opacity = "0";
+        splash.style.transition = "opacity 0.35s ease";
+        setTimeout(function () {
+          splash.style.display = "none";
+        }, 350);
+      }
+      if (window.innerWidth >= 768) return;
+      window.addEventListener("load", function () {
+        setTimeout(dismissSplash, 700);
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -5,8 +5,8 @@
   --border: #e2e4e9;
   --text: #1a1d24;
   --text-muted: #5c6370;
-  --accent: #f5b800;
-  --accent-hover: #e0a800;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
   --radius: 6px;
@@ -137,16 +137,19 @@ img {
 
 .header-search-btn {
   border: none;
-  background: var(--accent);
-  color: var(--text);
-  font-weight: 600;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 500;
   padding: 0 18px;
   cursor: pointer;
   font-size: 0.95rem;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .header-search-btn:hover {
-  background: var(--accent-hover);
+  background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
 .header-actions {
@@ -166,18 +169,25 @@ img {
   color: var(--text);
 }
 
-/* Buttons */
+/* Buttons — mavi tonlu premium set */
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  border-radius: var(--radius);
-  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
   font-size: 0.9rem;
-  border: 1px solid transparent;
+  border: none;
   cursor: pointer;
   text-decoration: none;
+  font-family: inherit;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn:hover {
@@ -185,50 +195,51 @@ img {
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 8px 14px;
   font-size: 0.85rem;
+  border-radius: 8px;
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: var(--text);
-  border-color: #d4a000;
+  background: #2563eb;
+  color: #fff;
+  border: none;
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
+  background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: var(--bg);
-  color: var(--text);
-  border-color: var(--border);
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 }
 
 .btn-secondary:hover {
-  background: var(--bg-muted);
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .btn-outline {
-  background: #fff;
-  color: var(--text);
-  border: 2px solid #d1d5db;
-  font-weight: 600;
+  background: transparent;
+  color: #2563eb;
+  border: 1px solid #2563eb;
 }
 
 .btn-outline:hover {
-  border-color: #111318;
-  background: #fafafa;
-  box-shadow: 0 2px 8px rgba(17, 19, 24, 0.06);
+  background: #2563eb;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .btn--cta-message {
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
 }
 
 .btn--cta-message:hover {
-  filter: brightness(1.03);
-  box-shadow: 0 4px 14px rgba(255, 210, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .btn-block {
@@ -252,13 +263,13 @@ img {
 }
 
 .btn-icon:hover {
-  border-color: var(--accent);
-  background: #fffbeb;
+  border-color: #93c5fd;
+  background: #eff6ff;
 }
 
 .btn-icon.is-fav {
-  border-color: var(--accent);
-  background: #fff8e1;
+  border-color: #60a5fa;
+  background: #eff6ff;
 }
 
 /* Ad banner */
@@ -1941,6 +1952,37 @@ body.page-home .home-filter-form select:focus {
   color: #fff;
 }
 
+/* Ana sayfa — sade tek sütun + minimal footer */
+.content-main--home-simple {
+  width: 100%;
+}
+
+.section-head--compact {
+  margin-bottom: 10px;
+}
+
+.listing-section--home-main {
+  margin-bottom: 0;
+}
+
+.footer-strip__inner--minimal {
+  justify-content: center;
+  gap: 16px 28px;
+}
+
+.footer-bottom--minimal {
+  justify-content: center;
+  padding-top: 22px;
+  padding-bottom: 26px;
+}
+
+.site-footer--minimal .footer-bottom__legal {
+  flex: none;
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .footer-columns {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2266,14 +2308,14 @@ body.page-home .home-filter-form select:focus {
 }
 
 .header-account-trigger:hover {
-  border-color: rgba(201, 162, 39, 0.65);
-  background: #fffef6;
-  box-shadow: 0 0 0 1px rgba(255, 210, 0, 0.18);
+  border-color: #93c5fd;
+  background: #eff6ff;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
 }
 
 .header-account-wrap.is-open .header-account-trigger {
-  border-color: #c9a227;
-  background: #fffef8;
+  border-color: #2563eb;
+  background: #eff6ff;
 }
 
 .header-account-trigger__name {
@@ -2323,7 +2365,7 @@ body.page-home .home-filter-form select:focus {
 
 a.header-account-dropdown__item:hover,
 button.header-account-dropdown__item:hover {
-  background: rgba(255, 210, 0, 0.12);
+  background: rgba(37, 99, 235, 0.08);
   color: var(--text);
   text-decoration: none;
 }
@@ -2361,16 +2403,18 @@ button.header-account-dropdown__item:hover {
 
 .btn-ghost {
   background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: var(--radius);
+  border: none;
+  color: #94a3b8;
+  padding: 8px 12px;
+  border-radius: 8px;
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .btn-ghost:hover {
-  background: var(--bg-muted);
+  color: #2563eb;
+  background: transparent;
 }
 
 .header-spacer {
@@ -3539,8 +3583,8 @@ button.header-account-dropdown__item:hover {
 .dash-thread__badge {
   font-size: 0.68rem;
   font-weight: 700;
-  background: #ffd200;
-  color: #111318;
+  background: #dbeafe;
+  color: #1e40af;
   border-radius: 999px;
   padding: 2px 7px;
   min-width: 20px;
@@ -4752,7 +4796,7 @@ body.modal-open {
 
 .detail-empty-state__cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(255, 210, 0, 0.28);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
 }
 
 @media (max-width: 960px) {
@@ -4772,19 +4816,19 @@ body.modal-open {
 .page-detail .btn--cta-message {
   padding: 14px 20px;
   font-size: 0.98rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.01em;
-  background: #ffd200;
-  border-color: #e0b800;
-  color: #111318;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
-  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  transition: background 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
 }
 
 .page-detail .btn--cta-message:hover {
-  background: #e6bc00;
-  border-color: #c9a500;
-  color: #111318;
+  background: #1d4ed8;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .page-detail .btn--cta-message:active {
@@ -5079,15 +5123,15 @@ body.modal-open {
 }
 
 .wizard-step--active {
-  border-color: #e0c040;
-  background: #fffdf5;
+  border-color: #93c5fd;
+  background: #eff6ff;
   color: var(--text);
 }
 
 .wizard-step--active .wizard-step__n {
-  border-color: var(--accent);
-  background: #ffd200;
-  color: #111318;
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #fff;
 }
 
 .wizard-step--done {
@@ -5725,9 +5769,9 @@ body.modal-open {
 }
 
 .pricing-card--popular {
-  border-color: #c9a227;
-  box-shadow: inset 0 0 0 1px rgba(255, 210, 0, 0.25);
-  background: #faf9f4;
+  border-color: #60a5fa;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2);
+  background: #f8fafc;
 }
 
 .pricing-card__badge {
@@ -5738,8 +5782,8 @@ body.modal-open {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: rgba(255, 210, 0, 0.45);
-  color: #1a1a1a;
+  background: #dbeafe;
+  color: #1e40af;
   padding: 3px 8px;
   border-radius: 3px;
 }
@@ -5920,7 +5964,20 @@ body.modal-open {
 
 /* —— Inter + ilan ver + home loading —— */
 .font-inter {
-  font-family: "Inter", var(--font);
+  font-family: var(--font);
+}
+
+.listings-pager {
+  margin: 16px 0 8px;
+  text-align: center;
+}
+
+.listings-pager[hidden] {
+  display: none !important;
+}
+
+#listingsLoadMore {
+  min-height: 40px;
 }
 
 .home-listings-loading {
@@ -5944,7 +6001,7 @@ body.modal-open {
   height: 28px;
   border-radius: 50%;
   border: 3px solid var(--border);
-  border-top-color: #fcb900;
+  border-top-color: #2563eb;
   animation: jetle-spin 0.75s linear infinite;
 }
 
@@ -6019,14 +6076,15 @@ body.modal-open {
 }
 
 .btn-ilan-ver-primary {
-  background: #fcb900 !important;
-  border-color: #e0a800 !important;
-  color: #1a1d24 !important;
-  font-weight: 600;
+  background: #2563eb !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 8px;
 }
 
 .btn-ilan-ver-primary:hover {
-  filter: brightness(0.97);
+  background: #1d4ed8 !important;
   transform: translateY(-1px);
 }
 
@@ -6055,4 +6113,63 @@ body.modal-open {
   margin: 6px 0 0;
   font-size: 0.88rem;
   color: var(--text-muted);
+}
+
+/* Ana sayfa — mobil splash (yalnızca <768px; desktop’ta gizli) */
+#splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111, #1a1a1a);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+@media (max-width: 767px) {
+  body.page-home #splash-screen {
+    display: flex;
+  }
+}
+
+.splash-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  animation: fadeZoom 0.8s ease;
+}
+
+.splash-logo span {
+  color: #60a5fa;
+}
+
+.splash-sub {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+@keyframes fadeZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo {
+    animation: none;
+  }
 }

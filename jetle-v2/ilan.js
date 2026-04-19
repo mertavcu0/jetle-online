@@ -4380,9 +4380,10 @@
     var media = document.createElement("div");
     media.className = "listing-card__media";
     var img = document.createElement("img");
-    img.src = L.image || "";
+    img.src = (L.thumb || L.image) || "";
     img.alt = "";
     img.loading = "lazy";
+    img.decoding = "async";
     img.width = 480;
     img.height = 360;
     media.appendChild(img);
