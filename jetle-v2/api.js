@@ -1945,6 +1945,10 @@
     ,consumeShowcaseSlot: consumeShowcaseSlot
     ,consumeSponsorSlot: consumeSponsorSlot
     ,bumpListing: bumpListing
+    ,postPublicIlan: function (body) {
+      return syncBackendRequest("POST", "/api/ilan", body || {});
+    }
+    ,getAccessToken: getAccessTokenFromSession
     ,authStorage: {
       key: SESSION_KEY,
       read: readAuthState,

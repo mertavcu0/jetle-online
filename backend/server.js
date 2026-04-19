@@ -11,6 +11,11 @@ const { apiRouter } = require("./routes");
 const { notFoundHandler } = require("./middleware/notFoundHandler");
 const { errorHandler } = require("./middleware/errorHandler");
 const mediaService = require("./services/media.service");
+const { Listing } = require("./models/Listing");
+const User = require("./models/User");
+const { requireAuth } = require("./middleware/requireAuth");
+const { asyncHandler } = require("./utils/asyncHandler");
+const { ApiError } = require("./utils/ApiError");
 
 const app = express();
 
@@ -54,6 +59,71 @@ app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 300
+  })
+);
+
+app.post(
+  "/api/ilan",
+  requireAuth,
+  asyncHandler(async function postIlan(req, res) {
+    var b = req.body || {};
+    var title = String(b.title || "").trim();
+    var description = String(b.description || "").trim();
+    var category = String(b.category || "").trim();
+    var city = String(b.city || "").trim();
+    var price = Number(b.price);
+    if (!title || title.length < 3) {
+      throw new ApiError(400, "Başlık en az 3 karakter olmalıdır.");
+    }
+    if (!description || description.length < 10) {
+      throw new ApiError(400, "Açıklama en az 10 karakter olmalıdır.");
+    }
+    if (!category) {
+      throw new ApiError(400, "Kategori seçin.");
+    }
+    if (!city) {
+      throw new ApiError(400, "Şehir seçin.");
+    }
+    if (!Number.isFinite(price) || price < 0) {
+      throw new ApiError(400, "Geçerli bir fiyat girin.");
+    }
+    var user = await User.findById(req.auth.userId).lean();
+    if (!user) {
+      throw new ApiError(401, "Kullanıcı bulunamadı.");
+    }
+    var slug = category
+      .toLowerCase()
+      .replace(/[ıİğĞüÜşŞöÖçÇ]/g, function (ch) {
+        var map = { ı: "i", İ: "i", ğ: "g", Ğ: "g", ü: "u", Ü: "u", ş: "s", Ş: "s", ö: "o", Ö: "o", ç: "c", Ç: "c" };
+        return map[ch] || ch;
+      })
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 120);
+    var doc = await Listing.create({
+      ownerId: user._id,
+      category: category,
+      subcategory: category,
+      categorySlug: slug || "genel",
+      sellerName: user.fullName || user.email || "Kullanıcı",
+      title: title,
+      description: description,
+      price: price,
+      status: "pending",
+      phone: user.phone || "",
+      city: city,
+      district: "",
+      address: ""
+    });
+    res.status(201).json({
+      ok: true,
+      data: {
+        id: String(doc._id),
+        title: doc.title,
+        status: doc.status,
+        createdAt: doc.createdAt
+      }
+    });
   })
 );
 

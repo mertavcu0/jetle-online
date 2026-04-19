@@ -102,7 +102,13 @@
     }
 
     if (page === "home" && window.JetleMarket) {
-      JetleMarket.initHome();
+      var homeLoad = document.getElementById("homeListingsLoading");
+      try {
+        if (homeLoad) homeLoad.hidden = false;
+        JetleMarket.initHome();
+      } finally {
+        if (homeLoad) homeLoad.hidden = true;
+      }
       window.addEventListener("jetle-listings-changed", function () {
         JetleMarket.refreshAll();
       });

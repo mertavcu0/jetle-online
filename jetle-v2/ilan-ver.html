@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
   <title>İlan ver — JETLE.online</title>
-  <meta name="description" content="JETLE.online üzerinde yeni ilan oluşturun ve güvenli şekilde yayına gönderin." />
-  <meta property="og:title" content="JETLE.online İlan Ver" />
-  <meta property="og:description" content="İlanınızı hızlıca oluşturup moderasyona gönderin." />
+  <meta name="description" content="JETLE.online üzerinde yeni ilan oluşturun; onay sonrası yayına alınır." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="form" class="page-form page-form-wizard">
+<body data-page="ilan-ver" class="page-form page-ilan-ver font-inter">
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
@@ -22,269 +24,56 @@
     </div>
   </header>
 
-  <main class="main-shell main-shell--form">
-    <div class="container form-page-grid">
-      <div class="form-main">
-        <h1 class="page-title">Yeni ilan oluştur</h1>
-        <p class="form-lead text-muted text-small">İlanınız incelendikten sonra yayına alınır.</p>
+  <main class="main-shell main-shell--ilan-ver">
+    <div class="container ilan-ver-layout">
+      <section class="ilan-ver-card panel" aria-labelledby="ilanVerHeading">
+        <h1 id="ilanVerHeading" class="ilan-ver-card__title">Ücretsiz ilan ver</h1>
+        <p class="ilan-ver-card__lead text-muted text-small">
+          İlanınız moderasyon ekibince incelenir; onaylandığında yalnızca onaylı ilanlar listesinde görünür.
+        </p>
 
-        <ol class="wizard-steps" aria-label="İlan adımları">
-          <li class="wizard-step" data-step="1"><span class="wizard-step__n">1</span><span class="wizard-step__t">Kategori</span></li>
-          <li class="wizard-step" data-step="2"><span class="wizard-step__n">2</span><span class="wizard-step__t">İlan bilgileri</span></li>
-          <li class="wizard-step" data-step="3"><span class="wizard-step__n">3</span><span class="wizard-step__t">Kategoriye özel</span></li>
-          <li class="wizard-step" data-step="4"><span class="wizard-step__n">4</span><span class="wizard-step__t">Konum ve medya</span></li>
-          <li class="wizard-step" data-step="5"><span class="wizard-step__n">5</span><span class="wizard-step__t">Önizleme ve gönder</span></li>
-        </ol>
-
-        <div id="formError" class="form-error" role="alert" hidden></div>
-        <div id="formSuccess" class="form-success" role="status" hidden></div>
-
-        <div id="vehicleCascade" class="vehicle-cascade" hidden>
-          <p class="vehicle-cascade__title">Araç seçimi</p>
-          <div class="vehicle-cascade__grid">
-            <div class="field field--select">
-              <label class="field-label" for="vehicleBrand">Marka <span class="req">*</span></label>
-              <select id="vehicleBrand" autocomplete="off">
-                <option value="">Marka seçin</option>
-              </select>
-            </div>
-            <div class="field field--select">
-              <label class="field-label" for="vehicleSeries">Seri <span class="req">*</span></label>
-              <select id="vehicleSeries" autocomplete="off" disabled>
-                <option value="">Önce marka seçin</option>
-              </select>
-            </div>
-            <div class="field field--select">
-              <label class="field-label" for="vehicleModel">Model <span class="req">*</span></label>
-              <select id="vehicleModel" autocomplete="off" disabled>
-                <option value="">Önce seri seçin</option>
-              </select>
-            </div>
+        <form id="ilanVerForm" class="ilan-ver-form" novalidate>
+          <div class="field">
+            <label for="ilanTitle">İlan başlığı</label>
+            <input type="text" id="ilanTitle" name="title" required maxlength="200" placeholder="Örn. 2018 model SUV, sıfır ayarında" autocomplete="off" />
           </div>
-        </div>
-
-        <div id="stepPanel1" class="panel form-step panel--wizard">
-          <h2 class="block-title">Kategori seçimi</h2>
-          <p class="text-small text-muted wizard-hint">Ana ve alt kategoriyi doğru seçin.</p>
-          <div class="field-row">
+          <div class="field">
+            <label for="ilanDesc">Açıklama</label>
+            <textarea id="ilanDesc" name="description" rows="6" required maxlength="8000" placeholder="Ürün veya hizmeti detaylı anlatın."></textarea>
+          </div>
+          <div class="field-row ilan-ver-form__row2">
             <div class="field">
-              <label for="catParent">Ana kategori</label>
-              <select id="catParent" required>
-                <option value="">Ana kategori seçin</option>
-              </select>
+              <label for="ilanPrice">Fiyat (₺)</label>
+              <input type="number" id="ilanPrice" name="price" required min="0" step="1" inputmode="numeric" placeholder="0" />
             </div>
             <div class="field">
-              <label for="catSub">Alt kategori</label>
-              <select id="catSub" required>
-                <option value="">Önce ana kategori seçin</option>
+              <label for="ilanCategory">Kategori</label>
+              <select id="ilanCategory" name="category" required>
+                <option value="">Seçin</option>
+                <option value="Vasıta">Vasıta</option>
+                <option value="Emlak">Emlak</option>
+                <option value="Alışveriş">Alışveriş</option>
+                <option value="Hizmetler">Hizmetler</option>
               </select>
             </div>
           </div>
-        </div>
-
-        <div id="stepPanel2" class="panel form-step panel--wizard" hidden>
-          <h2 class="block-title">İlan bilgileri</h2>
           <div class="field">
-            <label for="fTitle">İlan başlığı <span class="req">*</span></label>
-            <input type="text" id="fTitle" maxlength="200" autocomplete="off" placeholder="Örn. 2019 Volkswagen Golf 1.5 TSI" />
+            <label for="ilanCity">Şehir</label>
+            <select id="ilanCity" name="city" required>
+              <option value="">Şehir seçin</option>
+            </select>
           </div>
           <div class="field">
-            <label for="fPrice">Fiyat (₺) <span class="req">*</span></label>
-            <input type="text" id="fPrice" inputmode="numeric" autocomplete="off" placeholder="Örn. 450000" />
+            <label for="ilanPhotos">Fotoğraflar (isteğe bağlı)</label>
+            <input type="file" id="ilanPhotos" name="photos" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple />
+            <p class="text-small text-muted" style="margin: 6px 0 0">İlk sürümde kayıt sunucuya yalnızca metin alanlarıyla gider; fotoğraf alanı yakında tam entegre edilecek.</p>
           </div>
-          <div class="field">
-            <label for="fDesc">Açıklama <span class="req">*</span></label>
-            <textarea id="fDesc" rows="10" maxlength="8000" class="textarea-large" placeholder="Durum, teslim ve önemli notlar."></textarea>
+          <div class="ilan-ver-form__actions">
+            <button type="submit" class="btn btn-ilan-ver-primary" id="ilanVerSubmit">İlanı gönder</button>
+            <a href="index.html" class="btn btn-secondary">Vazgeç</a>
           </div>
-          <div class="field">
-            <span class="label-like">Satıcı tipi <span class="req">*</span></span>
-            <div class="radio-row">
-              <label class="radio-label"><input type="radio" name="sellerType" value="Sahibinden" /> Sahibinden</label>
-              <label class="radio-label"><input type="radio" name="sellerType" value="Mağaza" /> Mağaza</label>
-            </div>
-          </div>
-          <section class="spec-card">
-            <h4 class="spec-card__title">İletişim Bilgisi</h4>
-            <div class="spec-card__body">
-              <div class="field">
-                <label for="fPhone">Telefon numarası <span class="req">*</span></label>
-                <input type="tel" id="fPhone" inputmode="tel" autocomplete="tel-national" placeholder="05xx xxx xx xx" />
-              </div>
-              <div class="field field-inline">
-                <label>
-                  <input type="checkbox" id="fUseProfilePhone" checked />
-                  Profilimdeki telefon numarasını kullan
-                </label>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <div id="stepPanel3" class="panel form-step panel--wizard" hidden>
-          <h2 class="block-title">Kategoriye özel detaylar</h2>
-          <div id="dynamicFields" class="dynamic-fields dynamic-fields--grid"></div>
-        </div>
-
-        <div id="stepPanel4" class="panel form-step panel--wizard" hidden>
-          <h2 class="block-title">Konum ve medya</h2>
-          <section class="spec-card">
-            <h3 class="spec-card__title">Konum Bilgisi</h3>
-            <div class="spec-card__body">
-              <div class="field-row">
-                <div class="field">
-                  <label for="formCity">Şehir</label>
-                  <select id="formCity"></select>
-                </div>
-                <div class="field">
-                  <label for="formDistrict">İlçe</label>
-                  <select id="formDistrict"></select>
-                </div>
-              </div>
-              <div class="field">
-                <label for="formAddress">Açık adres</label>
-                <input type="text" id="formAddress" maxlength="300" autocomplete="street-address" placeholder="Mahalle, sokak, bina no gibi detayları yazın" />
-              </div>
-              <div class="field">
-                <label for="mapSearchInput">Adres veya konum ara</label>
-                <input type="search" id="mapSearchInput" autocomplete="off" placeholder="Adres veya konum ara" />
-              </div>
-              <div class="map-picker" id="mapPickerWrap">
-                <div class="map-picker__canvas" id="mapPicker" role="button" tabindex="0" aria-label="Harita üzerinde konum seç"></div>
-                <p id="mapPickerFallback" class="map-picker__fallback" hidden>
-                  Harita entegrasyonu yapılandırıldığında bu alandan konum seçilebilecek.
-                </p>
-              </div>
-              <p class="text-small text-muted" id="mapCoordsText">Konum seçilmedi</p>
-            </div>
-          </section>
-          <h3 class="block-title block-title--sub">Fotoğraf ve video</h3>
-          <p class="form-media-hint" id="mediaFormatHint">
-            Fotoğraf: JPG, JPEG, PNG, WebP — yüksek çözünürlük yükleyebilirsiniz; tarayıcıda web için optimize edilir (ana görsel en uzun kenar ~1600 px, küçük önizleme ayrı üretilir; mümkünse WebP, aksi halde JPEG).
-            Video: MP4, MOV, WebM — en fazla 1 dosya, dosya başına en fazla 200 MB.
-          </p>
-          <div class="form-media-counters" aria-live="polite">
-            <span>Fotoğraf: <em id="photoCountInfo">0 / 30</em></span>
-            <span>Video: <em id="videoCountInfo">0 / 1</em></span>
-          </div>
-          <div class="form-media-progress" aria-hidden="true">
-            <div class="form-media-progress__row">
-              <div class="form-media-progress__label">Fotoğraf kotası</div>
-              <div class="form-media-progress__track" role="presentation">
-                <div id="photoProgressFill" class="form-media-progress__fill"></div>
-              </div>
-            </div>
-            <div class="form-media-progress__row">
-              <div class="form-media-progress__label">Video kotası</div>
-              <div class="form-media-progress__track form-media-progress__track--video" role="presentation">
-                <div id="videoProgressFill" class="form-media-progress__fill"></div>
-              </div>
-            </div>
-          </div>
-          <div id="photoWarn" class="form-notice form-notice--warn" hidden>
-            Görsel eklemediniz. İsterseniz tek görselle de devam edebilirsiniz; ilan yine de incelenmek üzere gönderilir.
-          </div>
-          <div id="dropZone" class="upload-drop" role="button" tabindex="0" aria-label="Fotoğraf yükleme alanı">
-            <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple class="visually-hidden" />
-            <p class="upload-drop__title">Fotoğrafları buraya sürükleyin veya çoklu seçim yapın</p>
-            <p class="text-small text-muted" style="margin:0 0 10px">Sırayı önizlemede sürükleyip bırakarak değiştirin; <strong>Kapak yap</strong> ile vitrin görselini seçin.</p>
-            <button type="button" class="btn btn-secondary" id="btnPickFiles">Fotoğraf seç</button>
-          </div>
-          <div class="upload-status" id="photoUploadStatus" hidden>
-            <div class="upload-status__row">
-              <span class="upload-status__label">Fotoğraf yükleniyor</span>
-              <span class="upload-status__value" id="photoUploadPercentText">0%</span>
-            </div>
-            <div class="upload-status__track">
-              <div class="upload-status__fill" id="photoUploadPercentFill"></div>
-            </div>
-            <button type="button" class="upload-status__retry" id="retryPhotoUploadBtn" hidden>Tekrar dene</button>
-            <button type="button" class="upload-status__retry upload-status__cancel" id="cancelPhotoUploadBtn">Yüklemeyi iptal et</button>
-          </div>
-          <div id="imagePreview" class="image-preview-grid"></div>
-          <h3 class="block-title block-title--sub">İlan videosu</h3>
-          <p class="text-small text-muted">Opsiyonel. Tek video (mp4, mov, webm).</p>
-          <div id="videoDropZone" class="upload-drop upload-drop--video" role="button" tabindex="0" aria-label="Video yükleme alanı">
-            <input type="file" id="videoInput" accept="video/mp4,video/webm,video/quicktime,.mp4,.mov,.webm" class="visually-hidden" />
-            <p class="upload-drop__title">Videoyu sürükleyip bırakın veya seçin</p>
-            <button type="button" class="btn btn-secondary" id="btnPickVideo">Video seç</button>
-          </div>
-          <div class="upload-status upload-status--video" id="videoUploadStatus" hidden>
-            <div class="upload-status__row">
-              <span class="upload-status__label">Video yükleniyor</span>
-              <span class="upload-status__value" id="videoUploadPercentText">0%</span>
-            </div>
-            <div class="upload-status__track">
-              <div class="upload-status__fill" id="videoUploadPercentFill"></div>
-            </div>
-            <button type="button" class="upload-status__retry" id="retryVideoUploadBtn" hidden>Tekrar dene</button>
-            <button type="button" class="upload-status__retry upload-status__cancel" id="cancelVideoUploadBtn">Yüklemeyi iptal et</button>
-          </div>
-          <div id="videoPreview" class="video-preview video-preview-card" hidden>
-            <div class="video-preview-card__inner">
-              <video id="videoPreviewPlayer" class="video-preview-card__video" controls playsinline preload="metadata"></video>
-              <button type="button" class="video-preview-card__overlay" id="videoPlayOverlay" aria-label="Videoyu oynat">
-                <span class="video-preview-card__play" aria-hidden="true">▶</span>
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm video-preview-card__remove" id="videoRemoveBtn">Videoyu kaldır</button>
-            </div>
-            <p class="text-small text-muted video-preview-card__name" id="videoPreviewName" hidden></p>
-          </div>
-        </div>
-
-        <div id="stepPanel5" class="panel form-step panel--wizard" hidden>
-          <h2 class="block-title">Önizleme ve gönder</h2>
-          <p class="text-small text-muted">Bilgileri kontrol edin. Gönderdiğinizde ilan <strong>incelemede</strong> durumuna alınır.</p>
-          <div class="summary-panel">
-            <div class="summary-block">
-              <h3 class="summary-block__h">Genel</h3>
-              <ul class="summary-list">
-                <li><span>Başlık</span><strong id="sumTitle"></strong></li>
-                <li><span>Fiyat</span><strong id="sumPrice"></strong></li>
-                <li><span>Kategori</span><strong id="sumCat"></strong></li>
-                <li><span>Konum</span><strong id="sumLoc"></strong></li>
-                <li><span>Satıcı tipi</span><strong id="sumSeller"></strong></li>
-                <li><span>Telefon</span><strong id="sumPhone"></strong></li>
-              </ul>
-            </div>
-            <div class="summary-block">
-              <h3 class="summary-block__h">Açıklama</h3>
-              <p class="summary-desc" id="sumDesc"></p>
-            </div>
-            <div class="summary-block">
-              <h3 class="summary-block__h">Teknik / ek bilgiler</h3>
-              <div id="sumSpecs" class="summary-specs"></div>
-            </div>
-            <div class="summary-block">
-              <h3 class="summary-block__h">Fotoğraflar</h3>
-              <div id="sumImages" class="summary-images"></div>
-            </div>
-          </div>
-          <div id="previewCard" class="preview-card-wrap"></div>
-          <p class="text-small text-muted form-legal">Göndererek platform kullanım koşullarını ve ilan kurallarını kabul etmiş olursunuz.</p>
-        </div>
-
-        <div class="form-nav-buttons">
-          <button type="button" class="btn btn-secondary" id="btnPrev">Geri</button>
-          <button type="button" class="btn btn-secondary" id="btnSaveDraft">Taslak Kaydet</button>
-          <button type="button" class="btn btn-primary" id="btnNext">Devam</button>
-          <button type="button" class="btn btn-primary" id="btnSubmitFinal" hidden>İncelemeye Gönder</button>
-        </div>
-      </div>
-
-      <aside class="form-aside">
-        <div class="panel aside-block panel--flat">
-          <h3 class="aside-title">Yayın süreci</h3>
-          <ol class="aside-steps text-small text-muted">
-            <li>Formu eksiksiz doldurun.</li>
-            <li>İlanınız moderasyona düşer.</li>
-            <li>Onay sonrası ana vitrine alınır.</li>
-          </ol>
-        </div>
-        <div class="panel aside-block panel--flat trust-box">
-          <h3 class="aside-title">Güven</h3>
-          <p class="text-small text-muted">Yanıltıcı veya yasaya aykırı ilanlar reddedilir. Kişisel verilerinizi açıklamada paylaşmayın.</p>
-        </div>
-      </aside>
+        </form>
+      </section>
     </div>
   </main>
 
@@ -296,7 +85,7 @@
 
   <script src="api.js?v=20260217"></script>
   <script src="auth.js"></script>
-  <script src="ilan.js"></script>
+  <script src="ilan-ver-form.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
