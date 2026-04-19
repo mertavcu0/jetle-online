@@ -1,6 +1,4 @@
 ﻿(function () {
-  const JETLE_API_BASE = "https://jetle-online-production.up.railway.app";
-
   function redirectIfLoggedIn() {
     if (JETLE.getCurrentUser()) {
       window.location.href = 'index.html';
@@ -25,7 +23,7 @@
       let user = null;
 
       try {
-        const response = await fetch(JETLE_API_BASE + "/login", {
+        const response = await fetch("/login", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
