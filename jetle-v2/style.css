@@ -6173,3 +6173,48 @@ body.modal-open {
     animation: none;
   }
 }
+
+/* Footer — koyu tema (sınıf: .footer, .footer-grid, .footer-bottom) */
+.footer {
+  background: #0f172a;
+  color: #fff;
+  padding: 40px 20px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.footer h4 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.footer a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 6px 0;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.footer a:hover {
+  color: #2563eb;
+}
+
+.footer-bottom {
+  margin-top: 30px;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}

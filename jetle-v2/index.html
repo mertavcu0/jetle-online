@@ -387,21 +387,124 @@
 
   <div id="jetleAdFooterBanner" class="jetle-ad-footer-banner-wrap" data-jetle-ad="footer_banner" hidden></div>
 
-  <div class="footer-strip">
-    <div class="container footer-strip__inner footer-strip__inner--minimal">
-      <a href="hakkimizda.html">Hakkımızda</a>
-      <a href="iletisim.html">İletişim</a>
-      <a href="yardim.html">Yardım</a>
-    </div>
-  </div>
+  <style>
+    .footer-pro {
+      background: #0f172a;
+      color: #fff;
+      padding: 36px 0 0;
+      margin-top: auto;
+    }
+    .footer-pro a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .footer-pro a:hover {
+      color: #2563eb;
+    }
+    .footer-pro__grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 32px;
+      padding-bottom: 28px;
+    }
+    .footer-pro__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .footer-pro__list li {
+      margin: 0 0 10px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    .footer-pro__list li:last-child {
+      margin-bottom: 0;
+    }
+    .footer-pro__heading {
+      margin: 0 0 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .footer-pro__subbar {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 18px 0 28px;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .footer-pro__subbar p {
+      margin: 0 0 8px;
+    }
+    .footer-pro__subbar p:last-child {
+      margin-bottom: 0;
+    }
+    .footer-pro__copy {
+      color: #fff;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      .footer-pro__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 560px) {
+      .footer-pro__grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+      .footer-pro {
+        padding-top: 28px;
+      }
+    }
+  </style>
 
-  <footer class="site-footer site-footer--full site-footer--minimal" id="siteFooter">
+  <footer class="footer-pro" id="siteFooter">
     <div class="container">
-      <div class="footer-bottom footer-bottom--minimal">
-        <div class="footer-bottom__legal">
-          <p>© <span id="footerYear">2026</span> Jetle Teknoloji A.Ş. Tüm hakları saklıdır.</p>
-          <p class="footer-bottom__note">Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır.</p>
-        </div>
+      <div class="footer-pro__grid">
+        <nav class="footer-pro__col" aria-labelledby="footer-col1">
+          <p id="footer-col1" class="footer-pro__heading">Kurumsal</p>
+          <ul class="footer-pro__list">
+            <li><a href="hakkimizda.html">Hakkımızda</a></li>
+            <li><a href="site-haritasi.html">Site Haritası</a></li>
+            <li><a href="iletisim.html">İletişim</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-pro__col" aria-labelledby="footer-col2">
+          <p id="footer-col2" class="footer-pro__heading">Hizmetler</p>
+          <ul class="footer-pro__list">
+            <li><a href="hizmetlerimiz.html">Hizmetlerimiz</a></li>
+            <li><a href="hizmetlerimiz.html#doping">Doping</a></li>
+            <li><a href="hizmetlerimiz.html#mobil">Mobil</a></li>
+            <li><a href="hizmetlerimiz.html#reklam">Reklam Alanı</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-pro__col" aria-labelledby="footer-col3">
+          <p id="footer-col3" class="footer-pro__heading">Yasal</p>
+          <ul class="footer-pro__list">
+            <li><a href="gizlilik.html">Gizlilik ve kullanım</a></li>
+            <li><a href="guvenli-alisveris.html">Güvenli alışveriş ipuçları</a></li>
+            <li><a href="sozlesmeler.html">Sözleşmeler</a></li>
+            <li><a href="hesap-sozlesmesi.html">Hesap sözleşmesi</a></li>
+            <li><a href="kullanim-kosullari.html">Kullanım koşulları</a></li>
+            <li><a href="kisisel-veriler.html">Kişisel verilerin korunması</a></li>
+            <li><a href="cerez-yonetimi.html">Çerez yönetimi</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-pro__col" aria-labelledby="footer-col4">
+          <p id="footer-col4" class="footer-pro__heading">Yardım</p>
+          <ul class="footer-pro__list">
+            <li><a href="yardim.html">Yardım</a></li>
+            <li><a href="yardim.html">Yardım ve işlem rehberi</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer-pro__subbar">
+        <p class="footer-pro__copy">© <span id="footerYear">2026</span> Jetle Teknoloji A.Ş.</p>
+        <p>Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır. Jetle yalnızca aracı platform olarak hizmet verir.</p>
       </div>
     </div>
   </footer>
