@@ -45,7 +45,11 @@ const env = {
   JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES || "15m",
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || "change-this-too",
   JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES || "30d",
-  REFRESH_COOKIE_NAME: process.env.REFRESH_COOKIE_NAME || "jetle_refresh"
+  REFRESH_COOKIE_NAME: process.env.REFRESH_COOKIE_NAME || "jetle_refresh",
+  /** Kayıtta bu e-posta ile oluşan hesap otomatik admin olur (varsayılan: admin@jetle.online). */
+  ADMIN_REGISTRATION_EMAIL: String(process.env.ADMIN_REGISTRATION_EMAIL || "admin@jetle.online")
+    .trim()
+    .toLowerCase()
 };
 
 module.exports = { env };

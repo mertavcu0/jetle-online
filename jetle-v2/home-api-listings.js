@@ -54,6 +54,107 @@
     return "ilan-detail.html?id=" + encodeURIComponent(id);
   }
 
+  function isPromotedListing(item) {
+    if (!item || typeof item !== "object") return false;
+    return !!(item.featured || item.showcase || item.sponsored);
+  }
+
+  function promotedSortKey(item) {
+    var s = 0;
+    if (item.showcase) s += 4;
+    if (item.featured) s += 2;
+    if (item.sponsored) s += 1;
+    return s;
+  }
+
+  function buildFeaturedCard(item) {
+    var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
+    var title = item.title != null ? String(item.title) : "İsimsiz ilan";
+    var city =
+      item.city != null
+        ? String(item.city)
+        : item.location && item.location.city
+          ? String(item.location.city)
+          : "—";
+
+    var link = document.createElement("a");
+    link.className = "featured-card";
+    link.href = detailPageHref(id);
+    if (id) link.setAttribute("data-listing-id", id);
+
+    var badge = document.createElement("span");
+    badge.className = "badge-doping";
+    badge.textContent = "Doping";
+    link.appendChild(badge);
+
+    var thumb = pickThumbUrl(item);
+    if (thumb) {
+      var media = document.createElement("div");
+      media.className = "featured-card__media";
+      var img = document.createElement("img");
+      img.src = thumb;
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      media.appendChild(img);
+      link.appendChild(media);
+    } else {
+      var ph = document.createElement("div");
+      ph.className = "featured-card__media";
+      ph.setAttribute("aria-hidden", "true");
+      link.appendChild(ph);
+    }
+
+    var body = document.createElement("div");
+    body.className = "featured-card__body";
+
+    var priceEl = document.createElement("div");
+    priceEl.className = "featured-card__price";
+    priceEl.textContent = formatTry(item.price);
+
+    var titleEl = document.createElement("p");
+    titleEl.className = "featured-card__title";
+    titleEl.textContent = title;
+
+    var meta = document.createElement("p");
+    meta.className = "featured-card__meta";
+    meta.textContent = city;
+
+    body.appendChild(priceEl);
+    body.appendChild(titleEl);
+    body.appendChild(meta);
+    link.appendChild(body);
+
+    return link;
+  }
+
+  function renderFeaturedStrip(rows) {
+    var rowEl = document.getElementById("homeFeaturedRow");
+    var emptyEl = document.getElementById("homeFeaturedEmpty");
+    if (!rowEl || !emptyEl) return;
+
+    var list = (rows || [])
+      .filter(isPromotedListing)
+      .sort(function (a, b) {
+        return promotedSortKey(b) - promotedSortKey(a);
+      })
+      .slice(0, 24);
+
+    while (rowEl.firstChild) rowEl.removeChild(rowEl.firstChild);
+
+    if (list.length === 0) {
+      emptyEl.hidden = false;
+      rowEl.hidden = true;
+      return;
+    }
+
+    emptyEl.hidden = true;
+    rowEl.hidden = false;
+    list.forEach(function (item) {
+      rowEl.appendChild(buildFeaturedCard(item));
+    });
+  }
+
   function buildCard(item) {
     var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
     var title = item.title != null ? String(item.title) : "İsimsiz ilan";
@@ -203,6 +304,7 @@
         if (rows.length === 0) {
           grid.innerHTML = "";
           updatePager(0, 0);
+          renderFeaturedStrip([]);
           setEmptyState(
             emptyBox,
             emptyTitle,
@@ -213,6 +315,8 @@
           );
           return;
         }
+
+        renderFeaturedStrip(rows);
 
         setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
 
@@ -240,6 +344,7 @@
         grid.innerHTML = "";
         if (loadEl) loadEl.hidden = true;
         cachedRows = null;
+        renderFeaturedStrip([]);
         if (info) info.textContent = "İlanlar yüklenemedi";
         updatePager(0, 0);
         setEmptyState(

@@ -10,6 +10,9 @@
     BACKEND_FLAG: "jetle_v2_use_backend_api"
   };
 
+  /** Yerel (backend kapalı) kayıtta bu e-posta ile hesap admin rolü alır; backend için `ADMIN_REGISTRATION_EMAIL`. */
+  var LOCAL_ADMIN_REGISTRATION_EMAIL = "admin@jetle.online";
+
   /** Demo amaçlı basit doğrulama; gerçek uygulama sunucu tarafında hash + salt kullanmalı. */
   function hashDemo(pw) {
     return "h:" + String(pw).length + ":" + String(pw).slice(0, 1);
@@ -319,6 +322,7 @@
     }
     if (findUserByEmail(safeEmail)) return { ok: false, message: "Bu e-posta ile kayıt var." };
     var id = "u-" + Date.now();
+    var regRole = safeEmail === LOCAL_ADMIN_REGISTRATION_EMAIL ? "admin" : "user";
     var user = {
       id: id,
       name: JetleAPI.sanitizeText(payload.name, 120),
@@ -326,7 +330,7 @@
       phone: safePhone,
       passwordHash: hashDemo(safePw),
       passwordPlain: safePw,
-      role: "user",
+      role: regRole,
       city: JetleAPI.sanitizeText(payload.city || "", 60),
       profileType: "Bireysel",
       active: true,
@@ -441,11 +445,6 @@
 
     var u = getCurrentUser();
     if (u) {
-      addHeaderLink("dashboard.html#messages", "Mesajlar");
-      addHeaderLink("dashboard.html#favorites", "Favoriler");
-      if (u.role === "store") {
-        addHeaderLink("dashboard.html#packages", "Mağaza paketleri");
-      }
       addIlanVerButton();
 
       var wrap = document.createElement("div");

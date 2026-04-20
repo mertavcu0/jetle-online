@@ -63,6 +63,7 @@ async function register(payload) {
   const exists = await User.findOne({ email: email }).select("_id");
   if (exists) throw new ApiError(409, "Bu e-posta ile kayıt var.");
   const passwordHash = await bcrypt.hash(String(payload.password), 10);
+  var initialRole = email === env.ADMIN_REGISTRATION_EMAIL ? "admin" : "user";
   const doc = await User.create({
     fullName: String(payload.fullName || "").trim(),
     email: email,
@@ -70,7 +71,7 @@ async function register(payload) {
     phone: String(payload.phone || "").trim(),
     city: String(payload.city || "").trim(),
     district: String(payload.district || "").trim(),
-    role: "user",
+    role: initialRole,
     profileType: String(payload.profileType || "Bireysel").trim() || "Bireysel",
     isActive: true
   });

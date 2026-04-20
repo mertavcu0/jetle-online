@@ -30,6 +30,50 @@
     .splash-logo span{color:#60a5fa}
     .splash-sub{font-size:12px;color:#aaa;margin-top:6px;opacity:.8}
   </style>
+  <style>
+    .home-doping-strip{margin:0 0 12px}
+    .home-doping-strip__title{font-size:1.05rem;font-weight:700;margin:0 0 6px;color:#1a1d24;letter-spacing:-0.02em}
+    .home-doping-strip__row{margin:0 -4px;padding:4px 4px 12px}
+    .home-doping-strip__empty{margin:0;padding:8px 0 4px;color:#5c6370;font-size:0.9rem}
+    .featured-row{display:flex;gap:15px;overflow-x:auto;padding:10px 0;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .featured-row::-webkit-scrollbar{height:6px}
+    .featured-row::-webkit-scrollbar-thumb{background:#c5cad3;border-radius:3px}
+    .featured-card{position:relative;flex:0 0 auto;min-width:200px;max-width:220px;background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:transform .2s ease,box-shadow .2s ease;border:1px solid rgba(37,99,235,0.14);text-decoration:none;color:inherit;display:block}
+    .featured-card:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 22px rgba(37,99,235,0.18)}
+    .featured-card:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+    .featured-card__media{aspect-ratio:4/3;background:#eef1f6}
+    .featured-card__media img{width:100%;height:100%;object-fit:cover;display:block}
+    .featured-card__body{padding:10px}
+    .featured-card__price{font-weight:700;color:#0f172a;font-size:0.95rem;margin-bottom:4px}
+    .featured-card__title{font-size:0.82rem;font-weight:600;line-height:1.3;margin:0 0 4px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .featured-card__meta{font-size:0.75rem;color:#5c6370;margin:0}
+    .badge-doping{position:absolute;top:8px;left:8px;z-index:2;background:#2563eb;color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;line-height:1.2;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+    #loginModal{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:16px}
+    #loginModal[hidden]{display:none!important}
+    .login-modal__backdrop{position:absolute;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(2px)}
+    .login-modal__panel{position:relative;width:min(400px,100%);background:#fff;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,0.18);padding:22px 22px 20px;z-index:1;border:1px solid #e8eaef}
+    .login-modal__close{position:absolute;top:10px;right:10px;width:36px;height:36px;border:none;background:transparent;border-radius:8px;font-size:1.35rem;line-height:1;cursor:pointer;color:#64748b}
+    .login-modal__close:hover{background:#f1f5f9;color:#0f172a}
+    .login-modal__title{margin:0 0 16px;font-size:1.2rem;font-weight:700;color:#0f172a;letter-spacing:-0.02em;padding-right:32px}
+    #loginModal .login-modal__form .field{margin-bottom:12px}
+    #loginModal .login-modal__form label{display:block;font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:4px}
+    #loginModal .login-modal__form input[type=email],#loginModal .login-modal__form input[type=password]{width:100%;height:42px;border:1px solid #d1d5db;border-radius:8px;padding:0 12px;font:inherit}
+    #loginModal .login-modal__form input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.15)}
+    .login-modal__form .btn-block{width:100%;margin-top:4px;padding:10px 16px;font-weight:600;border-radius:8px;border:none;cursor:pointer;font:inherit}
+    .login-modal__form .btn-primary{background:#2563eb;color:#fff}
+    .login-modal__form .btn-primary:hover{background:#1d4ed8}
+    .login-modal__register{margin:14px 0 0;text-align:center;font-size:0.88rem;color:#64748b}
+    .login-modal__register a{color:#2563eb;font-weight:600;text-decoration:none}
+    .login-modal__register a:hover{text-decoration:underline}
+    .login-modal__sep{display:flex;align-items:center;gap:12px;margin:18px 0;color:#94a3b8;font-size:0.72rem;font-weight:700;letter-spacing:0.06em}
+    .login-modal__sep::before,.login-modal__sep::after{content:"";flex:1;height:1px;background:#e2e8f0}
+    .login-modal__oauth{display:flex;flex-direction:column;gap:10px}
+    .login-modal__oauth .btn-oauth{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:0 14px;border-radius:8px;font:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;border:1px solid #d1d5db;background:#fff;color:#334155;transition:background .15s,border-color .15s}
+    .login-modal__oauth .btn-oauth:hover{background:#f8fafc;border-color:#cbd5e1}
+    .login-modal__oauth .btn-oauth--google{border-color:#dadce0}
+    .login-modal__oauth .btn-oauth--apple{background:#000;color:#fff;border-color:#000}
+    .login-modal__oauth .btn-oauth--apple:hover{background:#1a1a1a;border-color:#1a1a1a}
+  </style>
   <link rel="preload" href="style.min.css" as="style" />
   <link rel="stylesheet" href="style.min.css" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="style.min.css" /></noscript>
@@ -53,7 +97,7 @@
         <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Başlık, marka, model, şehir veya kategori ara" autocomplete="off" />
         <button type="submit" class="header-search-btn">Ara</button>
       </form>
-      <nav class="header-actions" aria-label="Hızlı bağlantılar">
+      <nav class="header-actions" aria-label="Giriş, kayıt ve ilan ver">
         <span id="headerUserSlot" class="header-user-slot"></span>
       </nav>
     </div>
@@ -353,6 +397,12 @@
           <p class="results-count" id="resultsInfo">Yükleniyor…</p>
         </div>
 
+        <section class="home-doping-strip" aria-labelledby="homeFeaturedHeading" id="homeDopingStrip">
+          <h2 id="homeFeaturedHeading" class="home-doping-strip__title">Öne çıkan ilanlar</h2>
+          <div id="homeFeaturedRow" class="featured-row home-doping-strip__row" role="region" aria-label="Öne çıkan ilanlar" hidden></div>
+          <p id="homeFeaturedEmpty" class="home-doping-strip__empty" hidden>Öne çıkan ilan bulunmuyor</p>
+        </section>
+
         <div id="homeListingsLoading" class="home-listings-loading" aria-live="polite" aria-busy="true">
           <div class="home-listings-loading__spinner" aria-hidden="true"></div>
           <p class="home-listings-loading__text">İlanlar yükleniyor…</p>
@@ -508,6 +558,31 @@
       </div>
     </div>
   </footer>
+
+  <div id="loginModal" class="login-modal" hidden role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+    <div class="login-modal__backdrop" data-login-modal-close tabindex="-1" aria-hidden="true"></div>
+    <div class="login-modal__panel">
+      <button type="button" class="login-modal__close" data-login-modal-close aria-label="Kapat">×</button>
+      <h2 id="loginModalTitle" class="login-modal__title">Giriş yap</h2>
+      <form class="login-modal__form" id="loginModalForm" action="#" method="post">
+        <div class="field">
+          <label for="loginModalEmail">E-posta</label>
+          <input type="email" id="loginModalEmail" name="email" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="loginModalPassword">Şifre</label>
+          <input type="password" id="loginModalPassword" name="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Giriş yap</button>
+      </form>
+      <p class="login-modal__register">Hesabın yok mu? <a href="register.html">Kayıt ol</a></p>
+      <div class="login-modal__sep"><span>VEYA</span></div>
+      <div class="login-modal__oauth">
+        <button type="button" class="btn-oauth btn-oauth--google">Google ile giriş yap</button>
+        <button type="button" class="btn-oauth btn-oauth--apple">Apple ile giriş yap</button>
+      </div>
+    </div>
+  </div>
 
   <script src="api.js?v=20260217" defer></script>
   <script src="auth.js" defer></script>

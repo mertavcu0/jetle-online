@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel — JETLE.online</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <p style="font-family: system-ui, sans-serif; padding: 1rem">Yönlendiriliyor…</p>
+  <script src="api.js?v=20260217"></script>
+  <script src="auth.js"></script>
+  <script>
+    (function () {
+      JetleAuth.init();
+      if (!JetleAuth.isLoggedIn()) {
+        window.location.replace("login.html?next=" + encodeURIComponent("panel.html"));
+      } else {
+        window.location.replace("dashboard.html");
+      }
+    })();
+  </script>
+</body>
+</html>
