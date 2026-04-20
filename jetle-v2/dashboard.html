@@ -179,5 +179,13 @@
   <script src="auth.js"></script>
   <script src="ilan.js"></script>
   <script src="script.js"></script>
+  <script>
+    (function () {
+      JetleAuth.init();
+      if (!JetleAuth.isLoggedIn()) {
+        window.location.replace("login.html?next=" + encodeURIComponent("dashboard.html"));
+      }
+    })();
+  </script>
 </body>
 </html>

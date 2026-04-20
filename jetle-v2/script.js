@@ -13,8 +13,170 @@
     if (window.JetleAPI && window.JetleAuth) JetleAuth.init();
     if (window.JetleAuth) JetleAuth.renderHeaderBar();
 
+    (function wireHeaderPanelOrAdminLink() {
+      if (!window.JetleAuth) return;
+
+      var SESSION_KEY = "jetle_v2_session";
+
+      function readRoleFromStoredSession() {
+        try {
+          var raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+          if (raw) {
+            var s = JSON.parse(raw);
+            if (s && s.user && s.user.role != null) return String(s.user.role).toLowerCase();
+            if (s && typeof s.role === "string") return s.role.toLowerCase();
+          }
+        } catch (e) {}
+        try {
+          var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
+          if (u && u.role != null) return String(u.role).toLowerCase();
+        } catch (e2) {}
+        return null;
+      }
+
+      function applyHeaderPanelOrAdminLink() {
+        var slot = document.getElementById("headerUserSlot");
+        if (!slot) return;
+        var prev = document.getElementById("jetleHeaderPanelLink");
+        if (prev) prev.remove();
+
+        var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
+        if (!u) return;
+
+        var role = readRoleFromStoredSession();
+        if (role == null && u.role) role = String(u.role).toLowerCase();
+        var isAdmin = role === "admin";
+
+        var a = document.createElement("a");
+        a.id = "jetleHeaderPanelLink";
+        a.className = "btn btn-outline btn-sm";
+        if (isAdmin) {
+          a.href = "admin.html";
+          a.textContent = "Admin Panel";
+          a.setAttribute("data-jetle-header-link", "admin");
+        } else {
+          a.href = "dashboard.html";
+          a.textContent = "Panelim";
+          a.setAttribute("data-jetle-header-link", "panel");
+        }
+        slot.insertBefore(a, slot.firstChild);
+      }
+
+      if (!JetleAuth._jetlePanelLinkWrapped) {
+        JetleAuth._jetlePanelLinkWrapped = true;
+        var origRender = JetleAuth.renderHeaderBar;
+        JetleAuth.renderHeaderBar = function () {
+          origRender.apply(JetleAuth, arguments);
+          applyHeaderPanelOrAdminLink();
+        };
+      }
+      applyHeaderPanelOrAdminLink();
+    })();
+
     var footerYearEl = document.getElementById("footerYear");
     if (footerYearEl) footerYearEl.textContent = String(new Date().getFullYear());
+
+    (function wireIlanVerLoginGuard() {
+      if (!window.JetleAuth) return;
+      var modalRoot = null;
+
+      function ensureModal() {
+        if (modalRoot) return modalRoot;
+        var wrap = document.createElement("div");
+        wrap.id = "jetleIlanVerLoginModal";
+        wrap.className = "detail-msg-modal";
+        wrap.hidden = true;
+        wrap.setAttribute("role", "dialog");
+        wrap.setAttribute("aria-modal", "true");
+        wrap.setAttribute("aria-labelledby", "jetleIlanVerLoginTitle");
+        wrap.innerHTML =
+          '<div class="detail-msg-modal__card panel">' +
+          '<div class="detail-msg-modal__head">' +
+          '<h2 id="jetleIlanVerLoginTitle" class="auth-title" style="margin:0;font-size:1.15rem">Giriş yapın</h2>' +
+          '<button type="button" class="btn btn-secondary btn-sm" data-jetle-ilanver-close>Kapat</button>' +
+          "</div>" +
+          '<p class="text-small text-muted">İlan vermek için hesabınıza giriş yapın.</p>' +
+          '<div id="jetleIlanVerLoginErr" class="form-error" hidden></div>' +
+          '<form id="jetleIlanVerLoginForm">' +
+          '<div class="field"><label for="jetleIlanVerEmail">E-posta</label><input type="email" id="jetleIlanVerEmail" autocomplete="username" required /></div>' +
+          '<div class="field"><label for="jetleIlanVerPw">Şifre</label><input type="password" id="jetleIlanVerPw" autocomplete="current-password" required /></div>' +
+          '<div class="detail-msg-modal__actions" style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px">' +
+          '<a href="register.html" class="btn btn-outline btn-sm">Kayıt ol</a>' +
+          '<button type="submit" class="btn btn-primary btn-sm">Giriş yap</button>' +
+          "</div></form></div>";
+        document.body.appendChild(wrap);
+        modalRoot = wrap;
+
+        var form = document.getElementById("jetleIlanVerLoginForm");
+        var err = document.getElementById("jetleIlanVerLoginErr");
+
+        function close() {
+          wrap.hidden = true;
+          document.body.classList.remove("modal-open");
+        }
+
+        wrap.addEventListener("click", function (ev) {
+          if (ev.target === wrap) close();
+        });
+        var closeBtn = wrap.querySelector("[data-jetle-ilanver-close]");
+        if (closeBtn) closeBtn.addEventListener("click", close);
+
+        document.addEventListener("keydown", function (ev) {
+          if (!modalRoot || modalRoot.hidden) return;
+          if (ev.key === "Escape") close();
+        });
+
+        form.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          err.hidden = true;
+          var emailEl = document.getElementById("jetleIlanVerEmail");
+          var pwEl = document.getElementById("jetleIlanVerPw");
+          var email = emailEl ? String(emailEl.value || "").trim() : "";
+          var pw = pwEl ? String(pwEl.value || "") : "";
+          var res = JetleAuth.login(email, pw, false);
+          if (!res.ok) {
+            err.textContent = res.message || "Giriş başarısız.";
+            err.hidden = false;
+            return;
+          }
+          close();
+          window.location.href = "ilan-ver.html";
+        });
+
+        return wrap;
+      }
+
+      function openModal() {
+        var m = ensureModal();
+        m.hidden = false;
+        document.body.classList.add("modal-open");
+        var em = document.getElementById("jetleIlanVerEmail");
+        if (em) {
+          window.setTimeout(function () {
+            try {
+              em.focus();
+            } catch (e1) {}
+          }, 50);
+        }
+      }
+
+      document.addEventListener(
+        "click",
+        function (e) {
+          var a = e.target.closest && e.target.closest("a.header-nav-ilanver");
+          if (!a) return;
+          if (e.defaultPrevented) return;
+          if (e.button !== 0) return;
+          if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+          if (JetleAuth.isLoggedIn()) return;
+          var href = a.getAttribute("href") || "";
+          if (href.indexOf("ilan-ver") === -1) return;
+          e.preventDefault();
+          openModal();
+        },
+        true
+      );
+    })();
 
     var page = document.body.getAttribute("data-page") || "";
     function escHtml(v) {

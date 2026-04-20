@@ -146,6 +146,11 @@ app.use("/api", apiRouter);
 mediaService.ensureUploadDirs();
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads"), { fallthrough: false, maxAge: "7d" }));
 
+/** /admin → jetle-v2/admin.html (sayfa içi admin kontrolü ile korunur) */
+app.get(["/admin", "/admin/"], (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../jetle-v2/admin.html"));
+});
+
 app.use(express.static(path.resolve(__dirname, "../jetle-v2")));
 
 app.get("/", (req, res) => {
