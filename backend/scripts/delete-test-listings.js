@@ -1,5 +1,5 @@
 /**
- * Test ilanlarını siler. Bağlantı: önce MONGODB_URI_PRODUCTION (Railway production), yoksa MONGODB_URI.
+ * Test ilanlarını siler. Bağlantı: MONGODB_URI (.env veya ortam değişkeni).
  * Varsayılan: tokensız POST ile oluşturulan ilanlar (anonim sahip).
  *   node backend/scripts/delete-test-listings.js
  * Tüm listings dokümanları (dikkat — production DB):
@@ -9,19 +9,19 @@ const path = require("path");
 const mongoose = require("mongoose");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-const { resolveMongoDbUri, maskMongoDbUri } = require("../config/mongodbUri");
+const { maskMongoDbUri } = require("../config/mongodbUri");
 const { Listing } = require("../models/Listing");
 const User = require("../models/User");
 
 const ANONYMOUS_LISTING_OWNER_EMAIL = "anonymous.listings@jetle.internal";
 
 async function main() {
-  var uri = resolveMongoDbUri();
-  if (!uri) {
-    throw new Error("MONGODB_URI_PRODUCTION veya MONGODB_URI tanımlı olmalı (.env veya ortam değişkeni).");
+  var uri = process.env.MONGODB_URI;
+  if (!uri || String(uri).trim() === "") {
+    throw new Error("MONGODB_URI tanımlı olmalı (.env veya ortam değişkeni).");
   }
-  var uriSource = process.env.MONGODB_URI_PRODUCTION ? "MONGODB_URI_PRODUCTION" : "MONGODB_URI";
-  console.log("MongoDB:", uriSource, "|", maskMongoDbUri(uri));
+  uri = String(uri).trim();
+  console.log("MongoDB:", "MONGODB_URI", "|", maskMongoDbUri(uri));
 
   await mongoose.connect(uri);
 

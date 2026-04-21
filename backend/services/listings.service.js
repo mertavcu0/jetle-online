@@ -115,7 +115,7 @@ async function allPublic(query) {
 
   if (query && query.category) filter.category = query.category;
 
-  const docs = await Listing.find(filter).sort({ showcase: -1, featured: -1, createdAt: -1 }).lean(false);
+  const docs = await Listing.find(filter).sort({ showcase: -1, featured: -1, createdAt: -1 }).lean();
 
   return docs.map(toPublicRow);
 
