@@ -32,11 +32,6 @@ app.set("trust proxy", 1);
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-app.use(function requestDebug(req, res, next) {
-  console.log("REQUEST:", req.method, req.url);
-  next();
-});
-
 console.log(
   "[jetle-api] env loaded: PORT=" + (env.PORT ? "yes" : "no") + ", MONGODB_URI=" + (env.MONGODB_URI ? "yes" : "no")
 );
@@ -172,11 +167,11 @@ app.get(["/admin", "/admin/"], (req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), { fallthrough: false, maxAge: "7d" }));
 
 // ROOT INDEX (static’ten önce — jetle-v2/index.html zorunlu)
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../jetle-v2/index.html"));
 });
 
-app.get("/test", function (req, res) {
+app.get("/test", (req, res) => {
   res.send("TEST OK");
 });
 
@@ -196,6 +191,6 @@ connectDb().catch(function onDbError(err) {
   }
 });
 
-app.listen(PORT, "0.0.0.0", function () {
+app.listen(PORT, "0.0.0.0", () => {
   console.log("Server running on port", PORT);
 });
