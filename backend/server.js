@@ -24,6 +24,11 @@ const { requireAuth } = require("./middleware/requireAuth");
 const { asyncHandler } = require("./utils/asyncHandler");
 const { ApiError } = require("./utils/ApiError");
 
+const apiRoutes = require("./routes");
+if (typeof apiRoutes !== "function") {
+  throw new Error("[jetle-api] ./routes must export Express Router (function), got: " + typeof apiRoutes);
+}
+
 const app = express();
 
 // TRUST PROXY (Railway / reverse proxy)
@@ -155,7 +160,7 @@ app.get("/api/test", (req, res) => {
   res.json({ ok: true, message: "API working" });
 });
 
-app.use("/api", require("./routes"));
+app.use("/api", apiRoutes);
 mediaService.ensureUploadDirs();
 
 /** /admin → jetle-v2/admin.html (sayfa içi admin kontrolü ile korunur) */
