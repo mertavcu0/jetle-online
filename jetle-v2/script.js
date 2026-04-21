@@ -37,7 +37,7 @@
       function applyHeaderPanelOrAdminLink() {
         var slot = document.getElementById("headerUserSlot");
         if (!slot) return;
-        var prev = document.getElementById("jetleHeaderPanelLink");
+        var prev = document.getElementById("adminPanelBtn");
         if (prev) prev.remove();
 
         var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
@@ -47,18 +47,13 @@
         if (role == null && u.role) role = String(u.role).toLowerCase();
         var isAdmin = role === "admin";
 
+        if (!isAdmin) return;
         var a = document.createElement("a");
-        a.id = "jetleHeaderPanelLink";
+        a.id = "adminPanelBtn";
         a.className = "btn btn-outline btn-sm";
-        if (isAdmin) {
-          a.href = "admin.html";
-          a.textContent = "Admin Panel";
-          a.setAttribute("data-jetle-header-link", "admin");
-        } else {
-          a.href = "dashboard.html";
-          a.textContent = "Panelim";
-          a.setAttribute("data-jetle-header-link", "panel");
-        }
+        a.href = "dashboard.html";
+        a.textContent = "Admin Paneli";
+        a.setAttribute("data-jetle-header-link", "admin-panel");
         slot.insertBefore(a, slot.firstChild);
       }
 
@@ -463,7 +458,9 @@
       }
       function showTab(name) {
         document.querySelectorAll(".dash-tab").forEach(function (t) {
-          t.classList.toggle("is-active", t.getAttribute("data-tab") === name);
+          var on = t.getAttribute("data-tab") === name;
+          t.classList.toggle("is-active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
         });
         document.querySelectorAll(".dash-panel").forEach(function (p) {
           p.hidden = p.getAttribute("data-panel") !== name;
@@ -617,10 +614,9 @@
         var mine = JetleAPI.getListingsByUser(user.id);
         if (!mine.length) {
           mount.innerHTML =
-            '<div class="dash-empty">' +
-            '<p class="dash-empty__title">Henüz ilan vermediniz</p>' +
-            '<p class="dash-empty__text text-small text-muted">İlk ilanınızı oluşturarak binlerce alıcıya ulaşabilirsiniz.</p>' +
-            '<a class="btn btn-primary btn-sm" href="ilan-ver.html">İlan ver</a>' +
+            '<div class="empty-box">' +
+            "<p>Henüz ilan vermedin</p>" +
+            '<a href="ilan-ver.html">İlan Ver</a>' +
             "</div>";
           return;
         }
