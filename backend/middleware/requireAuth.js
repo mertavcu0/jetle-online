@@ -13,6 +13,7 @@ function requireAuth(req, res, next) {
       role: decoded.role || "user",
       email: decoded.email || ""
     };
+    req.user = req.auth;
     return next();
   } catch (err) {
     return next(new ApiError(401, "Invalid or expired token"));

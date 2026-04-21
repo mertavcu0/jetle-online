@@ -64,12 +64,22 @@
         if (v.charAt(0) === "/") v = v.slice(1);
         return v || "index.html";
       }
+      function shouldSendNonAdminHomeFromDashboard(next, role) {
+        if (String(role || "").toLowerCase() === "admin") return false;
+        var n = String(next || "");
+        if (n.indexOf("dashboard.html") === -1) return false;
+        return n.indexOf("#") === -1;
+      }
       JetleAuth.init();
       JetleAuth.renderHeaderBar();
       if (JetleAuth.getCurrentUser()) {
         var next0 = sanitizeNext(new URLSearchParams(location.search).get("next"));
         var me0 = JetleAuth.getCurrentUser();
         if (next0.indexOf("admin.html") !== -1 && me0.role !== "admin") {
+          window.location.href = "index.html";
+          return;
+        }
+        if (shouldSendNonAdminHomeFromDashboard(next0, me0.role)) {
           window.location.href = "index.html";
           return;
         }
@@ -109,6 +119,10 @@
           JetleAuth.logout();
           err.textContent = "Bu alan yalnızca yönetici hesapları içindir.";
           err.hidden = false;
+          return;
+        }
+        if (shouldSendNonAdminHomeFromDashboard(next, me && me.role)) {
+          window.location.href = "index.html";
           return;
         }
         window.location.href = next;

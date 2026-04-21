@@ -3,12 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hesabım — JETLE.online</title>
-  <meta name="description" content="JETLE.online hesabınızdan ilanlarınızı, favorilerinizi, mesajlarınızı ve profilinizi yönetin." />
-  <meta property="og:title" content="JETLE.online Hesabım" />
-  <meta property="og:description" content="İlan, mesaj ve favori yönetimini tek ekranda yapın." />
+  <title>Admin Paneli — JETLE.online</title>
+  <meta name="description" content="JETLE.online yönetici ve hesap paneli: ilanlar, mesajlar, favoriler ve profil ayarları." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .dashboard {
+      display: flex;
+      align-items: stretch;
+      min-height: 0;
+    }
+    @media (max-width: 900px) {
+      .dashboard {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100% !important;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+      }
+    }
+    .sidebar {
+      width: 240px;
+      border-right: 1px solid #eee;
+      padding: 20px;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
+    .sidebar .dash-tab {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      color: #333;
+      text-decoration: none;
+      border: none;
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+    }
+    .sidebar .dash-tab:hover {
+      background: #f3f4f6;
+    }
+    .sidebar .dash-tab.is-active {
+      background: rgba(37, 99, 235, 0.1);
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    .main {
+      flex: 1;
+      padding: 25px;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .empty-box {
+      text-align: center;
+      margin-top: 50px;
+    }
+    .empty-box p {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .empty-box button,
+    .empty-box a {
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .empty-box a:hover {
+      background: #1d4ed8;
+      color: #fff;
+    }
+    .dash-panel {
+      margin: 0;
+    }
+    .dash-panel__head--tight {
+      margin-bottom: 12px;
+    }
+    .dash-panel__head--tight .dash-panel__title {
+      margin: 0 0 4px;
+      font-size: 1.25rem;
+    }
+    .dash-filters--pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .dash-filters--pills .listing-filter {
+      border-radius: 999px;
+    }
+    .dash-messages {
+      margin-top: 4px;
+    }
+  </style>
 </head>
 <body data-page="dashboard" class="page-dashboard">
   <header class="site-header">
@@ -21,29 +120,25 @@
   </header>
 
   <main class="main-shell main-shell--dash">
-    <div class="container dash-page">
-      <div class="dash-page-head">
-        <h1 class="dash-page-title">Kullanıcı paneli</h1>
-        <p class="dash-page-lead text-muted text-small">İlanlarınız, mesajlarınız ve hesap ayarlarınız tek yerden yönetilir.</p>
-      </div>
+    <div class="container dashboard">
+      <aside class="sidebar" aria-label="Hesap menüsü">
+        <p class="text-small text-muted" style="margin:0 0 12px;font-weight:600" id="dashAdminLabel" hidden>Yönetici: Admin Paneli</p>
+        <nav class="dash-sidebar__nav" role="tablist" aria-label="Panel menüsü">
+          <button type="button" class="dash-tab is-active" data-tab="listings" id="dashTabListings" role="tab" aria-selected="true">İlanlarım</button>
+          <button type="button" class="dash-tab" data-tab="messages" id="dashTabMessages" role="tab" aria-selected="false">Mesajlarım</button>
+          <button type="button" class="dash-tab" data-tab="favorites" id="dashTabFavorites" role="tab" aria-selected="false">Favorilerim</button>
+          <button type="button" class="dash-tab" data-tab="packages" id="dashTabPackages" role="tab" aria-selected="false">Paketler / Doping</button>
+          <button type="button" class="dash-tab" data-tab="profile" id="dashTabProfile" role="tab" aria-selected="false">Profil Ayarları</button>
+        </nav>
+      </aside>
 
-      <nav class="dash-tabs dash-tabs--bar" role="tablist" aria-label="Panel sekmeleri">
-        <button type="button" class="dash-tab is-active" data-tab="listings" id="dashTabListings">İlanlarım</button>
-        <button type="button" class="dash-tab" data-tab="messages" id="dashTabMessages">Mesajlarım</button>
-        <button type="button" class="dash-tab" data-tab="favorites" id="dashTabFavorites">Favorilerim</button>
-        <button type="button" class="dash-tab" data-tab="packages" id="dashTabPackages">Paketler / Doping</button>
-        <button type="button" class="dash-tab" data-tab="profile" id="dashTabProfile">Profil Ayarlarım</button>
-      </nav>
-
-      <div class="dash-panels">
+      <div class="main">
         <section id="tab-listings" class="dash-panel" data-panel="listings" aria-labelledby="dashTabListings">
-          <div class="dash-panel__head">
+          <div class="dash-panel__head dash-panel__head--tight">
             <h2 class="dash-panel__title">İlanlarım</h2>
-            <p class="dash-panel__hint text-small text-muted">İlanlarınızın durumunu takip edin; pasif veya reddedilen ilanları yeniden yayına gönderebilirsiniz.</p>
           </div>
-          <div class="subtab-row dash-filters" role="group" aria-label="İlan durumu">
+          <div class="subtab-row dash-filters dash-filters--pills" role="group" aria-label="İlan durumu">
             <button type="button" class="btn btn-secondary btn-sm listing-filter is-active" data-status="all">Tümü</button>
-            <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="draft">Taslak</button>
             <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="approved">Yayında</button>
             <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="pending">Onay bekliyor</button>
             <button type="button" class="btn btn-secondary btn-sm listing-filter" data-status="rejected">Reddedilen</button>
@@ -53,9 +148,8 @@
         </section>
 
         <section id="tab-messages" class="dash-panel" hidden data-panel="messages" aria-labelledby="dashTabMessages">
-          <div class="dash-panel__head">
+          <div class="dash-panel__head dash-panel__head--tight">
             <h2 class="dash-panel__title">Mesajlarım</h2>
-            <p class="dash-panel__hint text-small text-muted">İlanlarınıza gelen soruları yanıtlayın.</p>
           </div>
           <div class="dash-messages">
             <aside class="dash-messages__threads panel panel--flat" id="dashThreads" aria-label="Konuşma listesi"></aside>
@@ -71,21 +165,20 @@
         </section>
 
         <section id="tab-favorites" class="dash-panel" hidden data-panel="favorites" aria-labelledby="dashTabFavorites">
-          <div class="dash-panel__head">
+          <div class="dash-panel__head dash-panel__head--tight">
             <h2 class="dash-panel__title">Favorilerim</h2>
-            <p class="dash-panel__hint text-small text-muted">Kaydettiğiniz ilanlara hızlıca dönün.</p>
           </div>
           <div id="favGrid" class="dash-fav-grid"></div>
         </section>
 
         <section id="tab-packages" class="dash-panel" hidden data-panel="packages" aria-labelledby="dashTabPackages">
-          <div class="dash-panel__head">
+          <div class="dash-panel__head dash-panel__head--tight">
             <h2 class="dash-panel__title">Paketler / Doping</h2>
-            <p class="dash-panel__hint text-small text-muted">Aktif haklarınız ve satın alabileceğiniz ürünler. Fiyatlar KDV dahildir.</p>
+            <p class="dash-panel__hint text-small text-muted" style="margin:0">Aktif haklarınız ve satın alabileceğiniz ürünler.</p>
           </div>
           <div class="panel panel--flat dash-doping-quick">
             <h3 class="dash-doping-quick__title">Hızlı Doping Aktivasyonu</h3>
-            <p class="text-small text-muted">Ödeme olmadan gerçek akış hissi için seçtiğiniz yayındaki ilana doping anında aktif edilir.</p>
+            <p class="text-small text-muted">Yayındaki ilanınızı seçerek doping uygulayın.</p>
             <div class="dash-doping-quick__row">
               <select id="dopingListingSelect"></select>
               <button type="button" class="btn btn-secondary btn-sm" id="btnDopingFeatured">Öne çıkar</button>
@@ -101,9 +194,8 @@
         </section>
 
         <section id="tab-profile" class="dash-panel" hidden data-panel="profile" aria-labelledby="dashTabProfile">
-          <div class="dash-panel__head">
+          <div class="dash-panel__head dash-panel__head--tight">
             <h2 class="dash-panel__title">Profil ayarlarım</h2>
-            <p class="dash-panel__hint text-small text-muted">İletişim bilgileriniz ilan verirken varsayılan olarak kullanılır.</p>
           </div>
           <div class="panel profile-form profile-form--dash">
             <div class="field">
@@ -184,6 +276,12 @@
       JetleAuth.init();
       if (!JetleAuth.isLoggedIn()) {
         window.location.replace("login.html?next=" + encodeURIComponent("dashboard.html"));
+        return;
+      }
+      var me = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
+      var lbl = document.getElementById("dashAdminLabel");
+      if (me && String(me.role || "").toLowerCase() === "admin" && lbl) {
+        lbl.hidden = false;
       }
     })();
   </script>
