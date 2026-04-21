@@ -1,3 +1,7 @@
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+console.log("MONGO URI:", process.env.MONGODB_URI);
+
 process.on("uncaughtException", function (err) {
   console.error("UNCAUGHT ERROR:", err);
 });
@@ -8,7 +12,6 @@ process.on("unhandledRejection", function (err) {
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
@@ -23,8 +26,6 @@ const User = require("./models/User");
 const { requireAuth } = require("./middleware/requireAuth");
 const { asyncHandler } = require("./utils/asyncHandler");
 const { ApiError } = require("./utils/ApiError");
-const { authRouter } = require("./routes/auth.routes");
-
 const apiRoutes = require("./routes");
 if (typeof apiRoutes !== "function") {
   throw new Error("[jetle-api] ./routes must export Express Router (function), got: " + typeof apiRoutes);
@@ -169,7 +170,7 @@ app.get("/api/test", (req, res) => {
   res.json({ ok: true, message: "API working" });
 });
 
-app.use("/api/auth", authRouter);
+app.use("/api/auth", require("./routes/auth"));
 app.use("/api", apiRoutes);
 mediaService.ensureUploadDirs();
 
