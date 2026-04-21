@@ -23,6 +23,7 @@ const User = require("./models/User");
 const { requireAuth } = require("./middleware/requireAuth");
 const { asyncHandler } = require("./utils/asyncHandler");
 const { ApiError } = require("./utils/ApiError");
+const { authRouter } = require("./routes/auth.routes");
 
 const apiRoutes = require("./routes");
 if (typeof apiRoutes !== "function") {
@@ -160,6 +161,7 @@ app.get("/api/test", (req, res) => {
   res.json({ ok: true, message: "API working" });
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api", apiRoutes);
 mediaService.ensureUploadDirs();
 
@@ -184,13 +186,34 @@ app.get("/test", (req, res) => {
 app.use(express.static(path.join(__dirname, "../jetle-v2")));
 
 app.use(notFoundHandler);
+app.use(function logUnhandledApiError(err, req, res, next) {
+  console.error("[jetle-api][error]", {
+    method: req && req.method,
+    path: req && req.originalUrl,
+    status: err && err.statusCode ? err.statusCode : 500,
+    message: err && err.message ? err.message : "Unknown error"
+  });
+  if (err && err.stack) {
+    console.error(err.stack);
+  }
+  next(err);
+});
 app.use(errorHandler);
 
 console.log("ENV PORT:", process.env.PORT);
-const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
+const PORT = process.env.PORT || 8080;
 
 connectDb().catch(function onDbError(err) {
   console.error("[jetle-api] DB bağlantısı kurulamadı (sunucu dinlemeye devam ediyor):", err && err.message ? err.message : err);
+  if (err && err.name) {
+    console.error("[jetle-api][db] name:", err.name);
+  }
+  if (err && err.code) {
+    console.error("[jetle-api][db] code:", err.code);
+  }
+  if (err && err.cause) {
+    console.error("[jetle-api][db] cause:", err.cause);
+  }
   if (err && err.stack) {
     console.error(err.stack);
   }
