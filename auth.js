@@ -1,4 +1,10 @@
 ﻿(function () {
+  const API_URL = "https://jetle-online-production.up.railway.app";
+  const API_BASE = API_URL.replace(/\/+$/, "");
+  function apiEndpoint(path) {
+    return API_BASE + "/" + String(path || "").replace(/^\/+/, "");
+  }
+
   function redirectIfLoggedIn() {
     if (JETLE.getCurrentUser()) {
       window.location.href = 'index.html';
@@ -20,10 +26,11 @@
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const password = document.getElementById('loginPassword').value;
       const remember = document.getElementById('rememberMe').checked;
-      let user = null;
 
       try {
-        const response = await fetch("/login", {
+        const loginUrl = apiEndpoint("/api/auth/login");
+        console.log("API REQUEST:", loginUrl);
+        const res = await fetch(loginUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -33,63 +40,44 @@
             password: password
           })
         });
-
-        const payload = await response.json().catch(function () { return {}; });
-        if (response.ok && payload && payload.user) {
-          user = payload.user;
-        } else if (response.status !== 404) {
-          JETLE.showToast((payload && payload.message) || 'E-posta veya şifre hatalı.');
+        const data = await res.json();
+        console.log("LOGIN RESPONSE:", data);
+        if (!res.ok) {
+          alert((data && data.message) || "Giriş başarısız");
           return;
         }
+
+        const payload = data.data || data;
+        const user = payload.user;
+        const token = payload.token || payload.accessToken || "";
+
+        localStorage.setItem("user", JSON.stringify(user != null ? user : null));
+        localStorage.setItem("token", token);
+
+        if (window.JETLE && user) {
+          JETLE.setCurrentUser(
+            {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              avatar: user.avatar || '',
+              role: user.role || 'user'
+            },
+            remember
+          );
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get("next") || "index.html";
+        window.location.href = next;
+        return;
       } catch (error) {
         if (window.console && typeof window.console.warn === 'function') {
           console.warn('[JETLE][login][api]', error);
         }
-      }
-
-      if (!user) {
-        user = JETLE.getUsers().find(function (item) {
-          return item.email.toLowerCase() === email && item.password === password;
-        });
-      }
-
-      if (!user) {
-        JETLE.showToast('E-posta veya şifre hatalı.');
+        alert("Sunucuya bağlanılamadı.");
         return;
       }
-
-      if (user.status === 'passive') {
-        JETLE.showToast('Bu hesap pasif durumda. Destek ile iletişime geçin.');
-        return;
-      }
-
-      if (user.status === 'blocked') {
-        JETLE.showToast('Bu hesap engellendi. Destek ile iletişime geçin.');
-        return;
-      }
-
-      const browser = navigator.userAgent.indexOf('Chrome') > -1 ? 'Chrome' : 'Tarayıcı';
-      user.lastLogin = 'İstanbul / ' + browser;
-
-      try {
-        if (window.JETLE_API && typeof window.JETLE_API.updateUser === 'function') {
-          await window.JETLE_API.updateUser(user.id, {
-            lastLogin: user.lastLogin
-          });
-        } else {
-          JETLE.saveUsers(JETLE.getUsers().map(function (item) {
-            return item.id === user.id ? Object.assign({}, item, { lastLogin: user.lastLogin }) : item;
-          }));
-        }
-      } catch (error) {
-        if (window.console && typeof window.console.warn === 'function') {
-          console.warn('[JETLE][login][last-login]', error);
-        }
-      }
-
-      JETLE.setCurrentUser({ id: user.id, name: user.name, email: user.email, avatar: user.avatar || '', role: user.role || 'user' }, remember);
-      JETLE.showToast('Giriş başarılı.');
-      setTimeout(function () { window.location.href = 'index.html'; }, 400);
     });
 
     if (googleBtn) {
@@ -113,10 +101,19 @@
 
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
-      const name = document.getElementById('registerName').value.trim();
-      const email = document.getElementById('registerEmail').value.trim().toLowerCase();
-      const password = document.getElementById('registerPassword').value.trim();
+      const fullNameInput = document.getElementById('registerName');
+      const emailInput = document.getElementById('registerEmail');
+      const passwordInput = document.getElementById('registerPassword');
+      const termsInput = document.getElementById('terms');
+      const name = fullNameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value.trim();
+      const termsAccepted = Boolean(termsInput && termsInput.checked);
       const users = JETLE.getUsers();
+      if (!termsAccepted) {
+        JETLE.showToast('Kullanım şartlarını kabul etmelisiniz.');
+        return;
+      }
 
       if (users.some(function (item) { return item.email.toLowerCase() === email; })) {
         JETLE.showToast('Bu e-posta ile kayıtlı bir hesap zaten mevcut.');
@@ -146,11 +143,23 @@
       };
 
       try {
-        if (window.JETLE_API && typeof window.JETLE_API.createUser === 'function') {
-          await window.JETLE_API.createUser(newUser);
-        } else {
-          users.push(newUser);
-          JETLE.saveUsers(users);
+        const registerUrl = apiEndpoint("/api/auth/register");
+        console.log("API REQUEST:", registerUrl);
+        const response = await fetch(registerUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fullName: fullNameInput.value,
+            email: emailInput.value,
+            password: passwordInput.value,
+            termsAccepted: document.getElementById('terms').checked
+          })
+        });
+        const payload = await response.json().catch(function () { return {}; });
+        if (!response.ok) {
+          throw new Error((payload && payload.message) || 'Kayıt başarısız');
         }
 
         JETLE.setCurrentUser({ id: newUser.id, name: newUser.name, email: newUser.email, avatar: '', role: newUser.role }, true);
