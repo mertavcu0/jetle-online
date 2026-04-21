@@ -1,13 +1,20 @@
-const path = require("path");
+process.on("uncaughtException", function (err) {
+  console.error("UNCAUGHT ERROR:", err);
+});
+
+process.on("unhandledRejection", function (err) {
+  console.error("UNHANDLED PROMISE:", err);
+});
+
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const { env } = require("./config/env");
 const { connectDb } = require("./config/db");
 const { requestLogger } = require("./utils/logger");
-const { apiRouter } = require("./routes");
 const { notFoundHandler } = require("./middleware/notFoundHandler");
 const { errorHandler } = require("./middleware/errorHandler");
 const mediaService = require("./services/media.service");
@@ -19,13 +26,16 @@ const { ApiError } = require("./utils/ApiError");
 
 const app = express();
 
-app.use(express.json());
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-);
+// TRUST PROXY (Railway / reverse proxy)
+app.set("trust proxy", 1);
+
+app.use(cors());
+app.use(express.json({ limit: "10mb" }));
+
+app.use(function requestDebug(req, res, next) {
+  console.log("REQUEST:", req.method, req.url);
+  next();
+});
 
 console.log(
   "[jetle-api] env loaded: PORT=" + (env.PORT ? "yes" : "no") + ", MONGODB_URI=" + (env.MONGODB_URI ? "yes" : "no")
@@ -52,7 +62,7 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true, limit: env.JSON_LIMIT }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(requestLogger);
 app.use(
   "/api",
@@ -131,6 +141,10 @@ app.get("/health", (req, res) => {
   res.json({ ok: true, service: "JETLE API" });
 });
 
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -142,36 +156,46 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.use("/api", apiRouter);
+app.get("/api/test", (req, res) => {
+  res.json({ ok: true, message: "API working" });
+});
+
+app.use("/api", require("./routes"));
 mediaService.ensureUploadDirs();
-app.use("/uploads", express.static(path.resolve(__dirname, "uploads"), { fallthrough: false, maxAge: "7d" }));
 
 /** /admin → jetle-v2/admin.html (sayfa içi admin kontrolü ile korunur) */
 app.get(["/admin", "/admin/"], (req, res) => {
   res.sendFile(path.resolve(__dirname, "../jetle-v2/admin.html"));
 });
 
-app.use(express.static(path.resolve(__dirname, "../jetle-v2")));
+/** API yüklemeleri */
+app.use("/uploads", express.static(path.join(__dirname, "uploads"), { fallthrough: false, maxAge: "7d" }));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../jetle-v2/index.html"));
+// ROOT INDEX (static’ten önce — jetle-v2/index.html zorunlu)
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname, "../jetle-v2/index.html"));
 });
+
+app.get("/test", function (req, res) {
+  res.send("TEST OK");
+});
+
+// STATIC — yalnızca jetle-v2 (public kökü yok; index burada)
+app.use(express.static(path.join(__dirname, "../jetle-v2")));
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
+console.log("ENV PORT:", process.env.PORT);
+const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 
-connectDb()
-  .then(function onDbReady() {
-    app.listen(PORT, () => {
-      console.log("Server running on port " + PORT);
-    });
-  })
-  .catch(function onDbError(err) {
-    console.error("[jetle-api] Veritabanı bağlantısı kurulamadı:", err && err.message ? err.message : err);
-    if (err && err.stack) {
-      console.error(err.stack);
-    }
-    process.exit(1);
-  });
+connectDb().catch(function onDbError(err) {
+  console.error("[jetle-api] DB bağlantısı kurulamadı (sunucu dinlemeye devam ediyor):", err && err.message ? err.message : err);
+  if (err && err.stack) {
+    console.error(err.stack);
+  }
+});
+
+app.listen(PORT, "0.0.0.0", function () {
+  console.log("Server running on port", PORT);
+});
