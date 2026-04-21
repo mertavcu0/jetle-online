@@ -1,4 +1,9 @@
 const express = require("express");
+const router = express.Router();
+
+const authController = require("../controllers/auth.controller");
+const { validateRequest } = require("../middleware/validateRequest");
+const { loginValidator } = require("../utils/validators");
 const { authRouter } = require("./auth.routes");
 const { listingsRouter } = require("./listings.routes");
 const { dashboardRouter } = require("./dashboard.routes");
@@ -11,8 +16,8 @@ const { dopingRouter } = require("./doping.routes");
 const { mediaRouter } = require("./media.routes");
 const { adsPublicRouter } = require("./ads.routes");
 
-const router = express.Router();
-
+/** Frontend uyumu: /api/login -> authController.login */
+router.post("/login", loginValidator, validateRequest(), authController.login);
 router.use("/auth", authRouter);
 router.use("/listings", listingsRouter);
 router.use("/me", dashboardRouter);
@@ -25,4 +30,8 @@ router.use("/doping", dopingRouter);
 router.use("/media", mediaRouter);
 router.use("/ads", adsPublicRouter);
 
-module.exports = { apiRouter: router };
+router.get("/test", (req, res) => {
+  res.send("API OK");
+});
+
+module.exports = router;
