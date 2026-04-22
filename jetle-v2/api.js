@@ -17,37 +17,18 @@
   };
   var USERS_KEY = "jetle_v2_users";
   var SESSION_KEY = "jetle_v2_session";
+  /** auth.js ile aynı anahtar: oturum JSON’u dışında kalıcı Bearer token */
+  var ACCESS_TOKEN_LS_KEY = "jetle_v2_access_token";
   var BACKEND_FLAG_KEY = "jetle_v2_use_backend_api";
   var API_BASE_LS_KEY = "jetle_v2_api_base_url";
-  /** Üretim API (Railway). Auth ve tüm backend istekleri bu köke gider. */
-  var JETLE_API_BASE_PRODUCTION = "https://jetle-online-production.up.railway.app";
-
-  function isJetleOnlineHost() {
-    try {
-      var h = (window.location.hostname || "").toLowerCase();
-      return h === "jetle.online" || h === "www.jetle.online";
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function isLocalDevHostname() {
-    try {
-      var h = (window.location.hostname || "").toLowerCase();
-      return h === "localhost" || h === "127.0.0.1" || h === "[::1]";
-    } catch (e2) {
-      return false;
-    }
-  }
 
   /**
-   * jetle.online / www: yalnızca Railway (localStorage/meta ile localhost override edilmez).
-   * Yerel geliştirme: __JETLE_API_BASE__, meta, localStorage; yoksa localhost:3000.
-   * Diğer hostlar: varsayılan Railway.
+   * Frontend için tek API kökü:
+   * - varsayılan: window.location.origin
+   * - opsiyonel override: __JETLE_API_BASE__, meta, localStorage
    */
   function resolveJetleApiBaseUrl() {
-    if (typeof window === "undefined" || !window.location) return JETLE_API_BASE_PRODUCTION;
-    if (isJetleOnlineHost()) return JETLE_API_BASE_PRODUCTION;
+    if (typeof window === "undefined" || !window.location) return "";
     try {
       var inj = window.__JETLE_API_BASE__;
       if (inj != null && String(inj).trim()) return String(inj).trim().replace(/\/+$/, "");
@@ -61,8 +42,7 @@
       var ls = localStorage.getItem(API_BASE_LS_KEY);
       if (ls != null && String(ls).trim()) return String(ls).trim().replace(/\/+$/, "");
     } catch (e3) {}
-    if (isLocalDevHostname()) return "http://localhost:3000";
-    return JETLE_API_BASE_PRODUCTION;
+    return "https://jetle-online-production.up.railway.app";
   }
 
   /**
@@ -142,6 +122,9 @@
     try {
       sessionStorage.removeItem(SESSION_KEY);
     } catch (e) {}
+    try {
+      localStorage.removeItem(ACCESS_TOKEN_LS_KEY);
+    } catch (e2) {}
   }
 
   function readAuthState() {
@@ -164,7 +147,13 @@
 
   function getAccessTokenFromSession() {
     var s = readAuthState();
-    return s && s.accessToken ? String(s.accessToken) : "";
+    var t = s && s.accessToken ? String(s.accessToken) : "";
+    if (!t) {
+      try {
+        t = localStorage.getItem(ACCESS_TOKEN_LS_KEY) || "";
+      } catch (e) {}
+    }
+    return t;
   }
 
   function syncBackendRequest(method, url, body) {
@@ -565,7 +554,8 @@
       sponsored: !!row.sponsored,
       packageType: sanitizeText(row.packageType || "basic", 48) || "basic",
       createdBy: row.ownerId || row.createdBy || null,
-      specs: row.specs && typeof row.specs === "object" ? row.specs : {}
+      specs: row.specs && typeof row.specs === "object" ? row.specs : {},
+      features: row.features && typeof row.features === "object" && !Array.isArray(row.features) ? row.features : null
     };
   }
 
@@ -763,7 +753,6 @@
 
   function getSimilarPublic(id, categorySlug, parentCategory, limit) {
     limit = limit || 4;
-    var pub = getPublicListings();
     var out = [];
     var seen = {};
     if (id) seen[id] = true;
@@ -777,11 +766,39 @@
       });
     }
 
-    pushFrom(
-      pub.filter(function (L) {
-        return L.id !== id && L.categorySlug === categorySlug;
-      })
-    );
+    var catRows = null;
+    if (backendEnabled() && parentCategory) {
+      var remote = syncBackendRequest("GET", "/api/listings?category=" + encodeURIComponent(parentCategory));
+      if (remote.ok && remote.data && Array.isArray(remote.data.data)) {
+        catRows = remote.data.data.map(backendListingToLegacy).filter(function (L) {
+          return L.status === STATUS.APPROVED;
+        });
+      }
+    }
+
+    if (catRows && catRows.length) {
+      pushFrom(
+        catRows.filter(function (L) {
+          return L.id !== id && categorySlug && L.categorySlug === categorySlug;
+        })
+      );
+      if (out.length < limit) {
+        pushFrom(
+          catRows.filter(function (L) {
+            return L.id !== id;
+          })
+        );
+      }
+    }
+
+    var pub = getPublicListings();
+    if (out.length < limit) {
+      pushFrom(
+        pub.filter(function (L) {
+          return L.id !== id && L.categorySlug === categorySlug;
+        })
+      );
+    }
     if (out.length < limit && parentCategory) {
       pushFrom(
         pub.filter(function (L) {
@@ -1192,8 +1209,8 @@
   function adminApproveListing(listingId) {
     if (!backendEnabled()) return { ok: false, message: "Sunucu bağlantısı gerekli." };
     return syncBackendRequest(
-      "PATCH",
-      "/api/admin/listings/" + encodeURIComponent(listingId) + "/approve",
+      "PUT",
+      "/api/admin/listing/" + encodeURIComponent(listingId) + "/approve",
       {}
     );
   }
@@ -1201,15 +1218,15 @@
   function adminRejectListing(listingId) {
     if (!backendEnabled()) return { ok: false, message: "Sunucu bağlantısı gerekli." };
     return syncBackendRequest(
-      "PATCH",
-      "/api/admin/listings/" + encodeURIComponent(listingId) + "/reject",
+      "PUT",
+      "/api/admin/listing/" + encodeURIComponent(listingId) + "/reject",
       {}
     );
   }
 
   function adminDeleteListing(listingId) {
     if (!backendEnabled()) return { ok: false, message: "Sunucu bağlantısı gerekli." };
-    return syncBackendRequest("DELETE", "/api/admin/listings/" + encodeURIComponent(listingId));
+    return syncBackendRequest("DELETE", "/api/admin/listing/" + encodeURIComponent(listingId));
   }
 
   /** Aktif + tarih aralığı uygun kampanya reklamları (placement opsiyonel). */

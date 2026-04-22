@@ -9,15 +9,18 @@
   <meta property="og:description" content="İlan detaylarını inceleyin, satıcıyla güvenli iletişim kurun." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js" crossorigin="anonymous"></script>
 </head>
 <body class="page-detail page-detail--action" data-page="detail">
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="container header-inner header-inner--market">
       <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
-      <form class="header-search" id="headerSearchForm" action="index.html" method="get" role="search">
-        <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Kelime veya ilan no ile ara" autocomplete="off" />
-        <button type="submit" class="header-search-btn">Ara</button>
-      </form>
+      <div class="header-search-wrap">
+        <form class="header-search" id="headerSearchForm" action="index.html" method="get" role="search">
+          <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Kelime veya ilan no ile ara" autocomplete="off" />
+          <button type="submit" class="header-search-btn">Ara</button>
+        </form>
+      </div>
       <nav class="header-actions" aria-label="Hızlı bağlantılar">
         <span id="headerUserSlot" class="header-user-slot"></span>
       </nav>
@@ -52,53 +55,62 @@
             <div class="detail-gallery-block panel panel--flat">
               <div class="detail-gallery-stage">
                 <div class="detail-main-photo" id="detailMainPhotoWrap">
-                  <img id="detailMainImg" src="" alt="" width="900" height="560" />
+                  <img id="ilanMainImage" src="" alt="" width="900" height="560" />
                 </div>
                 <div id="detailVideoWrap" class="detail-video-wrap detail-gallery-stage__video" hidden>
                   <video id="detailVideoPlayer" controls playsinline preload="metadata"></video>
                 </div>
               </div>
-              <div class="detail-thumbs detail-thumbs-strip" id="detailThumbs" role="tablist" aria-label="İlan görselleri ve video"></div>
+              <div class="detail-thumbs detail-thumbs-strip" id="ilanThumbs" role="tablist" aria-label="İlan görselleri ve video"></div>
             </div>
 
-            <section class="detail-section panel panel--flat">
-              <h2 class="detail-section__h">Açıklama</h2>
-              <div class="detail-desc-wrap">
-                <div class="detail-desc" id="detailDesc"></div>
+            <div class="detail-premium-tabs panel panel--flat">
+              <div class="detail-tabs-premium" role="tablist" aria-label="İlan içeriği">
+                <button type="button" class="detail-tab-premium active" id="detailTabDescBtn" data-tab="desc" role="tab" aria-selected="true" aria-controls="detailPanelDesc">Açıklama</button>
+                <button type="button" class="detail-tab-premium" id="detailTabFeatBtn" data-tab="feat" role="tab" aria-selected="false" aria-controls="detailPanelFeat">Özellikler</button>
               </div>
-            </section>
-
-            <section class="detail-section panel panel--flat">
-              <h2 class="detail-section__h">İlan bilgileri</h2>
-              <div class="table-wrap">
-                <table class="data-table data-table--specs">
-                  <tbody id="detailSpecBody"></tbody>
-                </table>
+              <div id="detailPanelDesc" class="detail-tab-panel detail-tab-panel--active" role="tabpanel" aria-labelledby="detailTabDescBtn">
+                <section class="detail-section detail-section--flush">
+                  <h2 class="detail-section__h">Açıklama</h2>
+                  <div class="detail-desc-wrap">
+                    <div class="detail-desc" id="detailDesc"></div>
+                  </div>
+                </section>
+                <section class="detail-section detail-section--flush">
+                  <h2 class="detail-section__h">Konum ve yayın</h2>
+                  <div class="detail-kv-stack" id="detailLocationBlock">
+                    <div class="detail-kv-row">
+                      <span class="detail-kv-label">Konum</span>
+                      <span class="detail-kv-value" id="detailLocInline"></span>
+                    </div>
+                    <div class="detail-kv-row">
+                      <span class="detail-kv-label">Açık adres</span>
+                      <span class="detail-kv-value" id="detailAddressInline"></span>
+                    </div>
+                    <div class="detail-kv-row">
+                      <span class="detail-kv-label">İlan tarihi</span>
+                      <span class="detail-kv-value" id="detailDateInline"></span>
+                    </div>
+                    <div class="detail-kv-row">
+                      <span class="detail-kv-label">İlan no</span>
+                      <span class="detail-kv-value" id="detailNoInline"></span>
+                    </div>
+                  </div>
+                  <p class="detail-location-note text-small text-muted">Tam adres; mesajlaşma sonrası paylaşılabilir.</p>
+                </section>
               </div>
-            </section>
-
-            <section class="detail-section panel panel--flat">
-              <h2 class="detail-section__h">Konum ve yayın</h2>
-              <div class="detail-kv-stack" id="detailLocationBlock">
-                <div class="detail-kv-row">
-                  <span class="detail-kv-label">Konum</span>
-                  <span class="detail-kv-value" id="detailLocInline"></span>
-                </div>
-                <div class="detail-kv-row">
-                  <span class="detail-kv-label">Açık adres</span>
-                  <span class="detail-kv-value" id="detailAddressInline"></span>
-                </div>
-                <div class="detail-kv-row">
-                  <span class="detail-kv-label">İlan tarihi</span>
-                  <span class="detail-kv-value" id="detailDateInline"></span>
-                </div>
-                <div class="detail-kv-row">
-                  <span class="detail-kv-label">İlan no</span>
-                  <span class="detail-kv-value" id="detailNoInline"></span>
-                </div>
+              <div id="detailPanelFeat" class="detail-tab-panel" role="tabpanel" aria-labelledby="detailTabFeatBtn" hidden>
+                <div id="detailFeaturesGrouped" class="detail-features-grouped" aria-label="Özellik listesi"></div>
+                <section class="detail-section detail-section--flush">
+                  <h2 class="detail-section__h">Teknik tablo</h2>
+                  <div class="table-wrap">
+                    <table class="data-table data-table--specs">
+                      <tbody id="detailSpecBody"></tbody>
+                    </table>
+                  </div>
+                </section>
               </div>
-              <p class="detail-location-note text-small text-muted">Tam adres; mesajlaşma sonrası paylaşılabilir.</p>
-            </section>
+            </div>
 
             <section class="detail-section detail-section--similar" aria-labelledby="similarHeading">
               <h2 class="detail-section__h" id="similarHeading">Aynı kategorideki ilanlar</h2>
@@ -108,8 +120,8 @@
           </div>
 
           <aside class="detail-col detail-col--aside">
-            <div class="detail-sticky panel panel--flat">
-              <div class="detail-price-block">
+            <div class="detail-sticky panel panel--flat detail-sticky--premium">
+              <div class="detail-price-block detail-price-block--premium">
                 <p class="detail-price-label">Fiyat</p>
                 <p class="detail-price" id="detailPrice"></p>
                 <p class="detail-price-note">Bu ilan için fiyat günceldir</p>
@@ -127,7 +139,7 @@
                 <div class="detail-momentum__badges" id="detailUrgentAside"></div>
               </div>
 
-              <div class="detail-seller panel panel--inset">
+              <div class="detail-seller panel panel--inset detail-seller--premium">
                 <p class="detail-seller-label">Satıcı</p>
                 <div class="detail-seller-badges" id="detailSellerBadges"></div>
                 <p class="detail-seller-name" id="detailSeller"></p>
@@ -261,6 +273,7 @@
   <script src="auth.js"></script>
   <script src="ilan.js"></script>
   <script src="script.js"></script>
+  <script src="ilan-detay.js"></script>
   <script>
     document.getElementById("headerSearchForm").addEventListener("submit", function (e) {
       e.preventDefault();
