@@ -7,7 +7,9 @@
   var KEYS = {
     USERS: "jetle_v2_users",
     SESSION: "jetle_v2_session",
-    BACKEND_FLAG: "jetle_v2_use_backend_api"
+    BACKEND_FLAG: "jetle_v2_use_backend_api",
+    /** jetle-backend ve frontend ortak: Bearer token (localStorage) */
+    ACCESS_TOKEN: "jetle_v2_access_token"
   };
 
   /** Yerel (backend kapalı) kayıtta bu e-posta ile hesap admin rolü alır; backend için `ADMIN_REGISTRATION_EMAIL`. */
@@ -107,12 +109,41 @@
   }
 
   function clearSessionState() {
+    try {
+      localStorage.removeItem(KEYS.ACCESS_TOKEN);
+    } catch (e0) {}
     var storage = getAuthStorage();
     if (storage && typeof storage.clear === "function") {
       storage.clear();
       return;
     }
     localStorage.removeItem(KEYS.SESSION);
+  }
+
+  /** Oturum veya localStorage’daki kalıcı token (jetle-backend uyumu). */
+  function getRawAccessToken() {
+    var s = readSessionState();
+    if (s && s.accessToken) return String(s.accessToken);
+    try {
+      return localStorage.getItem(KEYS.ACCESS_TOKEN) || "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /** JWT payload (role, userId) — imza doğrulaması sunucuda; istemci sadece okur. */
+  function decodeJwtPayload(token) {
+    try {
+      var parts = String(token || "").split(".");
+      if (parts.length < 2) return null;
+      var b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      var pad = b64.length % 4;
+      if (pad) b64 += new Array(5 - pad).join("=");
+      var json = typeof atob !== "undefined" ? atob(b64) : "";
+      return JSON.parse(json);
+    } catch (e) {
+      return null;
+    }
   }
 
   function getUsers() {
@@ -165,7 +196,7 @@
         email: s.user.email,
         name: s.user.fullName || s.user.name,
         role: s.user.role || "user",
-        accessToken: s.accessToken || "",
+        accessToken: getRawAccessToken(),
         refreshToken: s.refreshToken || "",
         remember: !!s.persist,
         user: s.user
@@ -184,13 +215,22 @@
   }
   function setBackendSession(payload, remember) {
     var current = readSessionState();
-    saveSessionState({
-      userId: payload && payload.user ? payload.user.id : null,
-      accessToken: payload ? payload.accessToken : "",
-      refreshToken: payload ? payload.refreshToken || "" : "",
-      user: payload ? payload.user : null,
-      at: new Date().toISOString()
-    }, remember == null ? !!(current && current.persist) : !!remember);
+    var tok = payload && (payload.accessToken || payload.token) ? String(payload.accessToken || payload.token) : "";
+    saveSessionState(
+      {
+        userId: payload && payload.user ? payload.user.id : null,
+        accessToken: tok,
+        refreshToken: payload ? payload.refreshToken || "" : "",
+        user: payload ? payload.user : null,
+        at: new Date().toISOString()
+      },
+      remember == null ? !!(current && current.persist) : !!remember
+    );
+    if (tok) {
+      try {
+        localStorage.setItem(KEYS.ACCESS_TOKEN, tok);
+      } catch (e) {}
+    }
   }
 
   function clearSession() {
@@ -211,36 +251,68 @@
   }
 
   function normalizeBackendUser(me) {
+    var jwtRole = null;
+    var tok = getRawAccessToken();
+    if (tok) {
+      var pl = decodeJwtPayload(tok);
+      if (pl && pl.role) jwtRole = String(pl.role);
+    }
     return {
       id: me.id,
       name: me.fullName || me.name || "",
       email: me.email || "",
       phone: me.phone || "",
-      role: me.role || "user",
+      role: me.role || jwtRole || "user",
       city: me.city || "",
       district: me.district || "",
       profileType: me.profileType || "Bireysel"
     };
   }
 
+  function userFromJwtOnly() {
+    var tok = getRawAccessToken();
+    if (!tok) return null;
+    var pl = decodeJwtPayload(tok);
+    if (!pl || !pl.userId) return null;
+    var role = pl.role ? String(pl.role) : "user";
+    return {
+      id: String(pl.userId),
+      name: "",
+      email: "",
+      phone: "",
+      role: role,
+      city: "",
+      district: "",
+      profileType: "Bireysel"
+    };
+  }
+
   function syncCurrentUserFromBackend() {
     if (!backendEnabled()) return null;
-    var s = readSessionState();
-    if (!s || !s.accessToken) {
+    var tok = getRawAccessToken();
+    if (!tok) {
       clearSession();
       return null;
     }
-    var meRes = syncBackendRequest("GET", "/api/auth/me", null, String(s.accessToken || ""));
+    var s = readSessionState();
+    var meRes = syncBackendRequest("GET", "/api/me", null, String(tok));
     if (!meRes.ok || !meRes.data || !meRes.data.data) {
-      if (meRes.status === 401 || meRes.status === 403) clearSession();
-      return null;
+      if (meRes.status === 401 || meRes.status === 403) {
+        clearSession();
+        return null;
+      }
+      var fallback = userFromJwtOnly();
+      return fallback ? normalizeBackendUser(fallback) : null;
     }
     var me = meRes.data.data;
-    setBackendSession({
-      accessToken: String(s.accessToken || ""),
-      refreshToken: String(s.refreshToken || ""),
-      user: me
-    }, !!s.persist);
+    setBackendSession(
+      {
+        accessToken: String(tok),
+        refreshToken: s && s.refreshToken ? String(s.refreshToken) : "",
+        user: me
+      },
+      !!(s && s.persist)
+    );
     return normalizeBackendUser(me);
   }
 
@@ -253,14 +325,34 @@
 
   function login(email, password, remember) {
     if (backendEnabled()) {
-      var loginRes = syncBackendRequest("POST", "/api/auth/login", {
+      var loginRes = syncBackendRequest("POST", "/api/login", {
         email: String(email || "").trim().toLowerCase(),
         password: String(password || "")
       });
       if (!loginRes.ok) return { ok: false, message: mapBackendMessage(loginRes, "Giriş başarısız.") };
       var pl = loginRes.data && loginRes.data.data;
-      if (!pl || !pl.user || !pl.accessToken) return { ok: false, message: "Geçersiz backend yanıtı." };
-      setBackendSession(pl, !!remember);
+      if (!pl || !pl.user) return { ok: false, message: "Geçersiz backend yanıtı." };
+      var token = pl.accessToken || pl.token;
+      if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
+      var u = pl.user;
+      setBackendSession(
+        {
+          accessToken: String(token),
+          refreshToken: pl.refreshToken || "",
+          user: {
+            id: u.id,
+            fullName: u.name || u.fullName || "",
+            name: u.name || u.fullName || "",
+            email: u.email || "",
+            role: u.role || "user",
+            phone: u.phone || "",
+            city: u.city || "",
+            district: u.district || "",
+            profileType: u.profileType || "Bireysel"
+          }
+        },
+        !!remember
+      );
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -283,25 +375,47 @@
 
   function logout() {
     if (backendEnabled()) {
-      var s = getSession();
-      syncBackendRequest("POST", "/api/auth/logout", null, s && s.accessToken ? s.accessToken : "");
+      var tok = getRawAccessToken();
+      if (tok) {
+        try {
+          syncBackendRequest("POST", "/api/auth/logout", null, tok);
+        } catch (e) {}
+      }
     }
     clearSession();
   }
 
   function register(payload) {
     if (backendEnabled()) {
-      var regRes = syncBackendRequest("POST", "/api/auth/register", {
-        fullName: JetleAPI.sanitizeText(payload.name || payload.fullName || "", 120),
+      var regRes = syncBackendRequest("POST", "/api/register", {
+        name: JetleAPI.sanitizeText(payload.name || payload.fullName || "", 120),
         email: String(payload.email || "").trim().toLowerCase(),
-        phone: String(payload.phone || "").replace(/\D+/g, ""),
-        password: String(payload.password || ""),
-        termsAccepted: payload.termsAccepted === true || payload.termsAccepted === "true"
+        password: String(payload.password || "")
       });
       if (!regRes.ok) return { ok: false, message: mapBackendMessage(regRes, "Kayıt başarısız.") };
       var rd = regRes.data && regRes.data.data;
-      if (!rd || !rd.user || !rd.accessToken) return { ok: false, message: "Geçersiz backend yanıtı." };
-      setBackendSession(rd, payload && payload.remember !== false);
+      if (!rd || !rd.user) return { ok: false, message: "Geçersiz backend yanıtı." };
+      var token = rd.accessToken || rd.token;
+      if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
+      var u = rd.user;
+      setBackendSession(
+        {
+          accessToken: String(token),
+          refreshToken: rd.refreshToken || "",
+          user: {
+            id: u.id,
+            fullName: u.name || u.fullName || "",
+            name: u.name || u.fullName || "",
+            email: u.email || "",
+            role: u.role || "user",
+            phone: u.phone || "",
+            city: u.city || "",
+            district: u.district || "",
+            profileType: u.profileType || "Bireysel"
+          }
+        },
+        payload && payload.remember !== false
+      );
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -383,7 +497,7 @@
         city: current.city || "",
         district: current.district || "",
         profileType: current.profileType || "Bireysel",
-        accessToken: session && session.accessToken ? session.accessToken : "",
+        accessToken: getRawAccessToken(),
         refreshToken: session && session.refreshToken ? session.refreshToken : ""
       };
     }
@@ -396,7 +510,11 @@
 
   function isAdmin() {
     var u = getCurrentUser();
-    return !!(u && u.role === "admin");
+    if (u && u.role === "admin") return true;
+    var tok = getRawAccessToken();
+    if (!tok) return false;
+    var pl = decodeJwtPayload(tok);
+    return !!(pl && pl.role === "admin");
   }
 
   function requireUser() {
@@ -438,15 +556,13 @@
     function addIlanVerButton() {
       var iv = document.createElement("a");
       iv.href = "ilan-ver.html";
-      iv.className = "btn btn-primary btn-sm header-nav-ilanver";
+      iv.className = "header-btn-ilan-ver header-nav-ilanver";
       iv.textContent = "İlan Ver";
       slot.appendChild(iv);
     }
 
     var u = getCurrentUser();
     if (u) {
-      addIlanVerButton();
-
       var wrap = document.createElement("div");
       wrap.className = "header-account-wrap";
 
@@ -563,15 +679,16 @@
       wrap.appendChild(trigger);
       wrap.appendChild(menu);
       slot.appendChild(wrap);
+      addIlanVerButton();
     } else {
       var a = document.createElement("a");
       a.href = "login.html";
-      a.className = "btn btn-outline btn-sm";
+      a.className = "header-link header-link--auth";
       a.textContent = "Giriş";
       slot.appendChild(a);
       var r = document.createElement("a");
       r.href = "register.html";
-      r.className = "btn btn-outline btn-sm";
+      r.className = "header-link header-link--auth";
       r.textContent = "Kayıt ol";
       slot.appendChild(r);
       addIlanVerButton();
@@ -593,7 +710,7 @@
       }
       if (Object.keys(body).length === 0) return { ok: true };
       var s = readSessionState();
-      var res = syncBackendRequest("PATCH", "/api/me/profile", body, s && s.accessToken ? s.accessToken : "");
+      var res = syncBackendRequest("PATCH", "/api/me/profile", body, getRawAccessToken());
       if (!res.ok) return { ok: false, message: mapBackendMessage(res, "Profil güncellenemedi.") };
       syncCurrentUserFromBackend();
       return { ok: true };
@@ -639,6 +756,8 @@
 
   window.JetleAuth = {
     KEYS: KEYS,
+    getRawAccessToken: getRawAccessToken,
+    decodeJwtPayload: decodeJwtPayload,
     init: init,
     login: login,
     logout: logout,

@@ -68,11 +68,18 @@
       var tdTitle = document.createElement("td");
       tdTitle.textContent = row.title || "—";
       var tdUser = document.createElement("td");
-      tdUser.innerHTML =
-        "<div class=\"admin-panel-user\">" +
-        (owner.fullName ? "<span class=\"admin-panel-user__name\">" + escapeHtml(owner.fullName) + "</span>" : "") +
-        (owner.email ? "<span class=\"admin-panel-user__email text-small text-muted\">" + escapeHtml(owner.email) + "</span>" : "") +
-        "</div>";
+      if (owner.fullName || owner.email) {
+        tdUser.innerHTML =
+          "<div class=\"admin-panel-user\">" +
+          (owner.fullName ? "<span class=\"admin-panel-user__name\">" + escapeHtml(owner.fullName) + "</span>" : "") +
+          (owner.email ? "<span class=\"admin-panel-user__email text-small text-muted\">" + escapeHtml(owner.email) + "</span>" : "") +
+          "</div>";
+      } else if (row.userId) {
+        tdUser.innerHTML =
+          "<span class=\"text-small text-muted\">Kullanıcı ID: " + escapeHtml(String(row.userId)) + "</span>";
+      } else {
+        tdUser.textContent = "—";
+      }
       var tdDate = document.createElement("td");
       tdDate.className = "text-small";
       tdDate.textContent = formatDate(row.createdAt);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
-  <title>İlan ver — JETLE.online</title>
+  <title>İlan Ver — JETLE.online</title>
   <meta name="description" content="JETLE.online üzerinde yeni ilan oluşturun; onay sonrası yayına alınır." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,55 +25,136 @@
   </header>
 
   <main class="main-shell main-shell--ilan-ver">
-    <div class="container ilan-ver-layout">
-      <section class="ilan-ver-card panel" aria-labelledby="ilanVerHeading">
-        <h1 id="ilanVerHeading" class="ilan-ver-card__title">Ücretsiz ilan ver</h1>
-        <p class="ilan-ver-card__lead text-muted text-small">
-          İlanınız moderasyon ekibince incelenir; onaylandığında yalnızca onaylı ilanlar listesinde görünür.
-        </p>
+    <div class="ilan-ver-v2">
+      <header class="ilan-ver-v2__intro">
+        <h1 class="ilan-ver-v2__title">İlan Ver</h1>
+        <p class="ilan-ver-v2__subtitle">İlanınızı kolayca oluşturun</p>
+      </header>
 
-        <form id="ilanVerForm" class="ilan-ver-form" novalidate>
-          <div class="field">
-            <label for="ilanTitle">İlan başlığı</label>
-            <input type="text" id="ilanTitle" name="title" required maxlength="200" placeholder="Örn. 2018 model SUV, sıfır ayarında" autocomplete="off" />
-          </div>
-          <div class="field">
-            <label for="ilanDesc">Açıklama</label>
-            <textarea id="ilanDesc" name="description" rows="6" required maxlength="8000" placeholder="Ürün veya hizmeti detaylı anlatın."></textarea>
-          </div>
-          <div class="field-row ilan-ver-form__row2">
-            <div class="field">
-              <label for="ilanPrice">Fiyat (₺)</label>
-              <input type="number" id="ilanPrice" name="price" required min="0" step="1" inputmode="numeric" placeholder="0" />
+      <ol class="ilan-ver-v2__steptrack" aria-label="İlan oluşturma adımları">
+        <li class="ilan-ver-v2__steptab is-active">
+          <span class="ilan-ver-v2__steptab-inner">
+            <span class="ilan-ver-v2__steptab-num" aria-hidden="true">1</span>
+            <span class="ilan-ver-v2__steptab-label">Bilgiler</span>
+          </span>
+        </li>
+        <li class="ilan-ver-v2__stepjoin" aria-hidden="true">—</li>
+        <li class="ilan-ver-v2__steptab">
+          <span class="ilan-ver-v2__steptab-inner">
+            <span class="ilan-ver-v2__steptab-num" aria-hidden="true">2</span>
+            <span class="ilan-ver-v2__steptab-label">Fotoğraflar</span>
+          </span>
+        </li>
+        <li class="ilan-ver-v2__stepjoin" aria-hidden="true">—</li>
+        <li class="ilan-ver-v2__steptab">
+          <span class="ilan-ver-v2__steptab-inner">
+            <span class="ilan-ver-v2__steptab-num" aria-hidden="true">3</span>
+            <span class="ilan-ver-v2__steptab-label">Yayınla</span>
+          </span>
+        </li>
+      </ol>
+
+      <p class="ilan-ver-v2__required-legend">Zorunlu alanlar <abbr title="zorunlu">*</abbr> ile işaretlenmiştir.</p>
+
+      <div class="ilan-ver-v2__surface">
+        <div class="ilan-ver-v2__layout">
+          <aside class="ilan-ver-v2__aside" aria-labelledby="ilanVerCatHeading">
+            <h2 id="ilanVerCatHeading" class="ilan-ver-v2__aside-title">Kategori</h2>
+            <nav class="ilan-ver-v2__catnav" aria-label="İlan kategorisi seçimi">
+              <button type="button" class="ilan-ver-v2__catbtn" data-ilan-cat="Emlak">
+                <span class="ilan-ver-v2__cat-ic" aria-hidden="true">🏠</span>
+                <span class="ilan-ver-v2__cat-txt">Emlak</span>
+              </button>
+              <button type="button" class="ilan-ver-v2__catbtn" data-ilan-cat="Vasıta">
+                <span class="ilan-ver-v2__cat-ic" aria-hidden="true">🚗</span>
+                <span class="ilan-ver-v2__cat-txt">Vasıta</span>
+              </button>
+              <button type="button" class="ilan-ver-v2__catbtn" data-ilan-cat="Elektronik">
+                <span class="ilan-ver-v2__cat-ic" aria-hidden="true">📱</span>
+                <span class="ilan-ver-v2__cat-txt">Elektronik</span>
+              </button>
+            </nav>
+            <p class="ilan-ver-v2__aside-hint text-muted text-small">Sol menüden kategori seçin; form sağda güncellenir.</p>
+          </aside>
+
+          <div class="ilan-ver-v2__formcol">
+            <div class="ilan-ver-v2__trust" role="status">
+              <p class="ilan-ver-v2__trust-text">
+                İlanınız yayınlanmadan önce kontrol edilir. Kurallara uygun ilanlar daha hızlı onaylanır.
+              </p>
             </div>
-            <div class="field">
-              <label for="ilanCategory">Kategori</label>
-              <select id="ilanCategory" name="category" required>
+
+            <form id="ilanVerForm" class="ilan-ver-v2__form" novalidate>
+              <label for="ilanCategory" class="ilan-ver-v2__sr-only">Kategori (zorunlu)</label>
+              <select id="ilanCategory" name="category" class="ilan-ver-v2__sr-only" aria-hidden="true" tabindex="-1">
                 <option value="">Seçin</option>
-                <option value="Vasıta">Vasıta</option>
                 <option value="Emlak">Emlak</option>
-                <option value="Alışveriş">Alışveriş</option>
-                <option value="Hizmetler">Hizmetler</option>
+                <option value="Vasıta">Vasıta</option>
+                <option value="Elektronik">Elektronik</option>
               </select>
-            </div>
+
+              <section class="ilan-ver-v2__card" aria-labelledby="sec-bilgi">
+                <h2 id="sec-bilgi" class="ilan-ver-v2__section-title">İlan Bilgileri</h2>
+                <div class="ilan-ver-v2__field">
+                  <label for="ilanTitle" class="ilan-ver-v2__label">Başlık <abbr title="zorunlu">*</abbr></label>
+                  <input type="text" id="ilanTitle" name="title" maxlength="200" placeholder="Örn: 2020 BMW 320i M Paket, Hatasız" autocomplete="off" class="ilan-ver-v2__input" aria-required="true" />
+                  <p class="ilan-ver-v2__hint text-small text-muted">En az 3 karakter.</p>
+                </div>
+                <div class="ilan-ver-v2__field">
+                  <label for="ilanDesc" class="ilan-ver-v2__label">Açıklama <abbr title="zorunlu">*</abbr></label>
+                  <textarea id="ilanDesc" name="description" rows="6" maxlength="8000" placeholder="Ürününüzü detaylı ve açık şekilde anlatın..." class="ilan-ver-v2__input ilan-ver-v2__textarea" aria-required="true"></textarea>
+                  <p class="ilan-ver-v2__hint text-small text-muted">En az 10 karakter.</p>
+                </div>
+              </section>
+
+              <section class="ilan-ver-v2__card" aria-labelledby="sec-detay">
+                <h2 id="sec-detay" class="ilan-ver-v2__section-title">Detaylar</h2>
+                <div class="ilan-ver-v2__field-row">
+                  <div class="ilan-ver-v2__field">
+                    <label for="ilanPrice" class="ilan-ver-v2__label">Fiyat (₺) <abbr title="zorunlu">*</abbr></label>
+                    <input type="number" id="ilanPrice" name="price" min="0" step="1" inputmode="numeric" placeholder="0" class="ilan-ver-v2__input" aria-required="true" />
+                  </div>
+                  <div class="ilan-ver-v2__field">
+                    <label for="ilanCity" class="ilan-ver-v2__label">Şehir <abbr title="zorunlu">*</abbr></label>
+                    <select id="ilanCity" name="city" class="ilan-ver-v2__input ilan-ver-v2__select" aria-required="true">
+                      <option value="">Şehir seçin</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ilan-ver-v2__field">
+                  <span class="ilan-ver-v2__label">Kategori <abbr title="zorunlu">*</abbr></span>
+                  <p class="ilan-ver-v2__cat-readout text-muted text-small" id="ilanCategoryReadout">Sol menüden seçim yapın.</p>
+                </div>
+              </section>
+
+              <section class="ilan-ver-v2__card" aria-labelledby="sec-medya">
+                <h2 id="sec-medya" class="ilan-ver-v2__section-title">Medya</h2>
+                <div class="ilan-ver-v2__field">
+                  <span class="ilan-ver-v2__label">Fotoğraflar <span class="ilan-ver-v2__optional">(isteğe bağlı)</span></span>
+                  <div class="ilan-ver-v2__dropzone" id="ilanPhotoDropzone" role="presentation">
+                    <input type="file" id="ilanPhotos" name="photos" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple class="ilan-ver-v2__drop-input" />
+                    <div class="ilan-ver-v2__drop-inner">
+                      <span class="ilan-ver-v2__drop-icon" aria-hidden="true">📷</span>
+                      <p class="ilan-ver-v2__drop-title">Fotoğrafları buraya sürükleyin veya seçin</p>
+                      <p class="ilan-ver-v2__drop-hint text-small text-muted">JPEG, PNG veya WebP — ilk sürümde sunucuya yalnızca metin alanları gider.</p>
+                      <p class="ilan-ver-v2__drop-files text-small" id="ilanPhotoFilesLabel" hidden></p>
+                    </div>
+                  </div>
+                  <div class="ilan-ver-v2__previews" id="ilanPhotoPreviews" aria-live="polite"></div>
+                </div>
+              </section>
+
+              <div class="ilan-ver-v2__actions">
+                <button type="submit" class="ilan-ver-v2__submit" id="ilanVerSubmit" disabled>İlan Gönder</button>
+                <p class="ilan-ver-v2__terms">
+                  İlan vererek <a href="kullanim-kosullari.html" class="ilan-ver-v2__terms-link">kullanım şartlarını</a> kabul etmiş olursunuz.
+                </p>
+                <a href="index.html" class="ilan-ver-v2__cancel">Vazgeç</a>
+              </div>
+            </form>
           </div>
-          <div class="field">
-            <label for="ilanCity">Şehir</label>
-            <select id="ilanCity" name="city" required>
-              <option value="">Şehir seçin</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="ilanPhotos">Fotoğraflar (isteğe bağlı)</label>
-            <input type="file" id="ilanPhotos" name="photos" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple />
-            <p class="text-small text-muted" style="margin: 6px 0 0">İlk sürümde kayıt sunucuya yalnızca metin alanlarıyla gider; fotoğraf alanı yakında tam entegre edilecek.</p>
-          </div>
-          <div class="ilan-ver-form__actions">
-            <button type="submit" class="btn btn-ilan-ver-primary" id="ilanVerSubmit">İlanı gönder</button>
-            <a href="index.html" class="btn btn-secondary">Vazgeç</a>
-          </div>
-        </form>
-      </section>
+        </div>
+      </div>
     </div>
   </main>
 

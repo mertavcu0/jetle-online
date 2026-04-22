@@ -4542,6 +4542,9 @@
     var info = document.getElementById("resultsInfo");
     var emptyBox = document.getElementById("emptyResults");
     if (!grid) return;
+    if (typeof window !== "undefined" && window.__JETLE_USE_HOME_API_LISTINGS__ && document.body && document.body.getAttribute("data-page") === "home") {
+      return;
+    }
     clearEl(grid);
     var list = getSortedListings(getFilteredListings());
     if (info) {
@@ -5217,6 +5220,9 @@
     renderNew();
     renderGrid();
     syncIndexUrlFromState();
+    try {
+      window.dispatchEvent(new CustomEvent("jetle-home-api-search", { detail: { q: state.search } }));
+    } catch (e0) {}
   }
 
   function applyFilters() {
@@ -5710,6 +5716,72 @@
     }
   }
 
+  /** API `features`: { Grup: [ "satır", ... ] } veya specs / plan üzerinden gruplu liste. */
+  function buildFeatureGroupsFromListing(L) {
+    if (!L || typeof L !== "object") return null;
+    if (L.features && typeof L.features === "object" && !Array.isArray(L.features)) {
+      var out = {};
+      Object.keys(L.features).forEach(function (g) {
+        var arr = L.features[g];
+        if (!Array.isArray(arr)) return;
+        var lines = arr
+          .map(function (x) {
+            return String(x != null ? x : "").trim();
+          })
+          .filter(Boolean);
+        if (lines.length) out[g] = lines;
+      });
+      if (Object.keys(out).length) return out;
+    }
+    var specs = L.specs || {};
+    var plan = getDetailSpecRows(L);
+    var lines = [];
+    if (plan && plan.length) {
+      plan.forEach(function (row) {
+        var val = pickSpecVal(specs, row.keys, L);
+        if (val === "—" || String(val).trim() === "") return;
+        lines.push(row.label + ": " + val);
+      });
+    }
+    if (!lines.length) {
+      var ks = Object.keys(specs).sort();
+      ks.forEach(function (k) {
+        var v = specs[k];
+        if (v == null || String(v).trim() === "") return;
+        if (typeof v === "object") return;
+        lines.push(k + ": " + String(v));
+      });
+    }
+    return lines.length ? { Özellikler: lines } : null;
+  }
+
+  function fillDetailFeaturesGrouped(container, L) {
+    if (!container) return;
+    clearEl(container);
+    var groups = buildFeatureGroupsFromListing(L);
+    if (!groups) return;
+    Object.keys(groups).forEach(function (gName) {
+      var items = groups[gName];
+      if (!Array.isArray(items) || !items.length) return;
+      var wrap = document.createElement("div");
+      wrap.className = "detail-features-group";
+      var h4 = document.createElement("h4");
+      h4.className = "detail-features-group__title";
+      h4.textContent = gName;
+      var ul = document.createElement("ul");
+      ul.className = "detail-features-group__list";
+      items.forEach(function (it) {
+        var li = document.createElement("li");
+        var t = String(it || "").trim();
+        li.textContent = t.indexOf("\u2714") === 0 ? t : "\u2714 " + t;
+        ul.appendChild(li);
+      });
+      wrap.appendChild(h4);
+      wrap.appendChild(ul);
+      container.appendChild(wrap);
+    });
+  }
+
   function fillBreadcrumb(nav, L) {
     if (!nav) return;
     clearEl(nav);
@@ -5848,12 +5920,24 @@
     var descEl = document.getElementById("detailDesc");
     if (descEl) {
       descEl.textContent = "";
-      var p = document.createElement("p");
-      p.className = "detail-desc__text";
       var rawDesc = L.description != null ? String(L.description).trim() : "";
-      p.textContent = rawDesc ? rawDesc : "Satıcı açıklama eklememiştir";
-      if (!rawDesc) p.classList.add("detail-desc__text--empty");
-      descEl.appendChild(p);
+      if (!rawDesc) {
+        var p0 = document.createElement("p");
+        p0.className = "detail-desc__text detail-desc__text--empty";
+        p0.textContent = "Satıcı açıklama eklememiştir";
+        descEl.appendChild(p0);
+      } else if (typeof window.DOMPurify !== "undefined" && window.DOMPurify.sanitize) {
+        var safe = window.DOMPurify.sanitize(rawDesc.replace(/\n/g, "<br/>"), {
+          ALLOWED_TAGS: ["br", "p", "strong", "em", "b", "i", "ul", "ol", "li", "a", "span"],
+          ALLOWED_ATTR: ["href", "target", "rel", "class"]
+        });
+        descEl.innerHTML = safe;
+      } else {
+        var p1 = document.createElement("p");
+        p1.className = "detail-desc__text";
+        p1.textContent = rawDesc;
+        descEl.appendChild(p1);
+      }
     }
 
     setText("detailSeller", L.sellerName || "Satıcı");
@@ -6074,8 +6158,8 @@
       reportBottom.onclick = openComplaintFlow;
     }
 
-    var mainImg = document.getElementById("detailMainImg");
-    var thumbs = document.getElementById("detailThumbs");
+    var mainImg = document.getElementById("ilanMainImage") || document.getElementById("detailMainImg");
+    var thumbs = document.getElementById("ilanThumbs") || document.getElementById("detailThumbs");
     var wrap = document.getElementById("detailMainPhotoWrap");
     var imgs = L.images && L.images.length ? L.images.filter(Boolean).slice() : [];
     if (imgs.length > 30) imgs = imgs.slice(0, 30);
@@ -6152,7 +6236,7 @@
         imgs.forEach(function (src, i) {
           var b = document.createElement("button");
           b.type = "button";
-          b.className = "detail-thumb" + (i === 0 ? " is-active" : "");
+          b.className = "detail-thumb detail-thumb--square" + (i === 0 ? " is-active" : "");
           b.setAttribute("data-kind", "photo");
           b.setAttribute("aria-label", "Fotoğraf " + (i + 1));
           var im = document.createElement("img");
@@ -6203,6 +6287,7 @@
     }
 
     fillSpecTableBody(document.getElementById("detailSpecBody"), L);
+    fillDetailFeaturesGrouped(document.getElementById("detailFeaturesGrouped"), L);
 
     var favBtn = document.getElementById("detailFavBtn");
     if (favBtn) {
@@ -6329,7 +6414,7 @@
     if (similar) {
       clearEl(similar);
       similar.className = "detail-similar-grid";
-      JetleAPI.getSimilarPublic(L.id, L.categorySlug, L.category, 8).forEach(function (card) {
+      JetleAPI.getSimilarPublic(L.id, L.categorySlug, L.category, 4).forEach(function (card) {
         var node = createListingCard(card);
         node.classList.add("listing-card--compact");
         similar.appendChild(node);
@@ -6371,6 +6456,12 @@
       vb.className = "detail-aside-flair detail-aside-flair--muted";
       vb.textContent = "Bugün ~" + fakeViews + " görüntülenme";
       urgentAside.appendChild(vb);
+    }
+
+    if (typeof window.bindIlanDetayPremiumTabs === "function") {
+      try {
+        window.bindIlanDetayPremiumTabs();
+      } catch (eTabs) {}
     }
   }
 

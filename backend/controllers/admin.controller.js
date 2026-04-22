@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("../models/User");
 const listingsService = require("../services/listings.service");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
@@ -33,9 +34,32 @@ function dopingListing(req, res) {
   res.json({ ok: true, data: { id: req.params.id, doping: req.body || {} } });
 }
 
-function users(req, res) {
-  res.json({ ok: true, data: [] });
-}
+const users = asyncHandler(async function users(req, res) {
+  var rows = await User.find({})
+    .select("-passwordHash")
+    .sort({ createdAt: -1 })
+    .lean();
+  var safe = rows.map(function (u) {
+    return {
+      id: String(u._id),
+      fullName: u.fullName,
+      email: u.email,
+      phone: u.phone,
+      city: u.city,
+      district: u.district,
+      role: u.role,
+      profileType: u.profileType,
+      isActive: u.isActive,
+      createdAt: u.createdAt,
+      updatedAt: u.updatedAt,
+      storePlan: u.storePlan,
+      dopingCredits: u.dopingCredits,
+      featuredSlots: u.featuredSlots,
+      showcaseSlots: u.showcaseSlots
+    };
+  });
+  res.json({ ok: true, data: safe });
+});
 
 module.exports = {
   listings,
