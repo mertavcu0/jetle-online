@@ -155,7 +155,7 @@
     var user = JetleAuth.requireUser();
     if (!user) return;
 
-    JetleAuth.renderHeaderBar();
+    JetleAuth.renderNavbar(window.currentUser);
 
     document.querySelectorAll(".dash-tab").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -188,7 +188,7 @@
         msg.hidden = false;
         msg.textContent = res.ok ? "Profil güncellendi." : res.message;
       }
-      JetleAuth.renderHeaderBar();
+      JetleAuth.renderNavbar(window.currentUser);
     });
 
     window.addEventListener("hashchange", applyHash);

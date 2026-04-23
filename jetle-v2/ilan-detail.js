@@ -7,14 +7,20 @@
   var galleryUrls = [];
   var galleryIndex = 0;
 
-  var DEFAULT_LISTINGS_URL = "https://jetle-online-production.up.railway.app/api/listings";
+  var API_BASE = "https://jetle-online-production.up.railway.app";
+  var DEFAULT_LISTINGS_URL = API_BASE + "/api/listings";
 
   function resolveListingsUrl() {
     try {
+      if (window.JetleAPI && JetleAPI.API_BASE) {
+        var jb = String(JetleAPI.API_BASE).trim().replace(/\/+$/, "");
+        if (/^https?:\/\//i.test(jb)) return jb + "/api/listings";
+      }
       var meta = document.querySelector('meta[name="jetle-api-base"]');
       var base = meta && meta.getAttribute("content");
       if (base && String(base).trim()) {
-        return String(base).trim().replace(/\/+$/, "") + "/api/listings";
+        var b = String(base).trim().replace(/\/+$/, "");
+        if (/^https?:\/\//i.test(b)) return b + "/api/listings";
       }
     } catch (e) {}
     return DEFAULT_LISTINGS_URL;
@@ -23,6 +29,20 @@
   function resolveListingDetailUrl(id) {
     var listUrl = resolveListingsUrl().replace(/\/+$/, "");
     return listUrl + "/" + encodeURIComponent(id);
+  }
+
+  function listingsFetchHeaders() {
+    try {
+      if (window.JetleAPI && typeof JetleAPI.buildFetchAuthHeaders === "function") {
+        return JetleAPI.buildFetchAuthHeaders({}, {});
+      }
+    } catch (e) {}
+    var h = { Accept: "application/json" };
+    try {
+      var tk = localStorage.getItem("token") || localStorage.getItem("jetle_v2_access_token") || "";
+      if (tk) h.Authorization = "Bearer " + tk;
+    } catch (e2) {}
+    return h;
   }
 
   function getQueryId() {
@@ -693,7 +713,7 @@
     fetch(resolveListingsUrl(), {
       method: "GET",
       credentials: "omit",
-      headers: { Accept: "application/json" }
+      headers: listingsFetchHeaders()
     })
       .then(function (res) {
         if (!res.ok) return [];
@@ -712,6 +732,34 @@
       });
   }
 
+  function fetchListingByIdFromList(id) {
+    return fetch(resolveListingsUrl(), {
+      method: "GET",
+      credentials: "omit",
+      headers: listingsFetchHeaders()
+    })
+      .then(function (res) {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function (json) {
+        var rows = normalizeRows(json);
+        var sid = String(id || "").trim();
+        if (!sid || !rows.length) return null;
+        var ilan = rows.find(function (item) {
+          return rowId(item) === sid;
+        });
+        if (!ilan) {
+          console.error("İlan bulunamadı:", sid);
+          return null;
+        }
+        return ilan;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
   function loadDetail() {
     var loading = document.getElementById("detailLoading");
     var skeleton = document.getElementById("detailSkeleton");
@@ -725,68 +773,84 @@
     var id = getQueryId();
     if (!id) {
       setVisible(loading, false);
+      if (loading) loading.setAttribute("aria-busy", "false");
       setVisible(skeleton, false);
       setVisible(errBox, true);
       if (errText) errText.textContent = "Geçersiz veya eksik ilan numarası (?id=).";
       return;
     }
 
-    setVisible(loading, false);
     setVisible(errBox, false);
     setVisible(root, false);
-    setVisible(skeleton, true);
+    setVisible(skeleton, false);
+    setVisible(loading, true);
+    if (loading) loading.setAttribute("aria-busy", "true");
 
     var detailUrl = resolveListingDetailUrl(id);
 
     fetch(detailUrl, {
       method: "GET",
       credentials: "omit",
-      headers: { Accept: "application/json" }
+      headers: listingsFetchHeaders()
     })
       .then(function (res) {
         if (res.status === 404) return null;
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        if (!res.ok) throw new Error("Sunucu yanıtı: HTTP " + res.status);
         return res.json();
       })
       .then(function (json) {
         setVisible(loading, false);
+        if (loading) loading.setAttribute("aria-busy", "false");
 
-        if (json == null) {
+        var data = json != null ? unwrapPayload(json) : null;
+        if (data && typeof data === "object") {
           setVisible(skeleton, false);
-          setStickyContactBar(false);
-          setVisible(errBox, true);
-          if (errText) errText.textContent = "Bu ilan bulunamadı veya görüntüleme yetkiniz yok.";
+          setVisible(errBox, false);
+          setVisible(root, true);
+          applyListingToDom(data, id);
+          loadSimilarListings(id, data, similarEl);
           return;
         }
 
-        var data = unwrapPayload(json);
-        if (!data || typeof data !== "object") {
+        setVisible(skeleton, true);
+        return fetchListingByIdFromList(id).then(function (fallbackData) {
           setVisible(skeleton, false);
-          setStickyContactBar(false);
-          setVisible(errBox, true);
-          if (errText) errText.textContent = "İlan verisi alınamadı.";
-          return;
-        }
-
-        setVisible(skeleton, false);
-        setVisible(errBox, false);
-        setVisible(root, true);
-
-        applyListingToDom(data, id);
-        loadSimilarListings(id, data, similarEl);
+          if (!fallbackData || typeof fallbackData !== "object") {
+            setStickyContactBar(false);
+            setVisible(errBox, true);
+            if (errText) errText.textContent = "Bu ilan bulunamadı veya görüntüleme yetkiniz yok.";
+            return;
+          }
+          setVisible(errBox, false);
+          setVisible(root, true);
+          applyListingToDom(fallbackData, id);
+          loadSimilarListings(id, fallbackData, similarEl);
+        });
       })
       .catch(function (err) {
         console.error("[JETLE][ilan-detail]", err);
         setVisible(loading, false);
+        if (loading) loading.setAttribute("aria-busy", "false");
         setVisible(skeleton, false);
         setStickyContactBar(false);
         setVisible(errBox, true);
-        if (errText) errText.textContent = "İlan yüklenirken bir hata oluştu. Daha sonra tekrar deneyin.";
+        if (errText) {
+          var em = err && err.message ? String(err.message) : "";
+          errText.textContent =
+            (em ? em + " " : "") + "İlan yüklenemedi. «Tekrar dene» ile yenileyebilir veya ana sayfaya dönebilirsiniz.";
+        }
       });
   }
 
   function boot() {
     initImageLightbox();
+    var retry = document.getElementById("detailRetryBtn");
+    if (retry && retry.getAttribute("data-wired") !== "1") {
+      retry.setAttribute("data-wired", "1");
+      retry.addEventListener("click", function () {
+        loadDetail();
+      });
+    }
     loadDetail();
   }
 

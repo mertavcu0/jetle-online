@@ -312,26 +312,32 @@
 
   function init() {
     if (document.body.getAttribute("data-page") !== "admin") return;
-    JetleAuth.init();
-    JetleAuth.renderHeaderBar();
-    if (!JetleAuth.requireAdmin()) return;
+    function proceedAfterAuth() {
+      JetleAuth.renderNavbar(window.currentUser);
+      if (!JetleAuth.requireAdmin()) return;
 
-    document.querySelectorAll(".admin-nav-item").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        showSection(btn.getAttribute("data-section"));
+      document.querySelectorAll(".admin-nav-item").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          showSection(btn.getAttribute("data-section"));
+        });
       });
-    });
 
-    $("adminListingFilter").addEventListener("change", renderListingsTable);
+      $("adminListingFilter").addEventListener("change", renderListingsTable);
 
-    renderStats();
-    renderRecentListings();
-    renderRecentComplaints();
-    renderListingsTable();
-    renderUsers();
-    renderComplaints();
-    renderAds();
-    renderCategoryTree();
+      renderStats();
+      renderRecentListings();
+      renderRecentComplaints();
+      renderListingsTable();
+      renderUsers();
+      renderComplaints();
+      renderAds();
+      renderCategoryTree();
+    }
+    if (typeof JetleAuth.bootstrap === "function") {
+      JetleAuth.bootstrap().then(proceedAfterAuth);
+    } else {
+      Promise.resolve(JetleAuth.init && JetleAuth.init()).then(proceedAfterAuth);
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);

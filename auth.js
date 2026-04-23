@@ -1,6 +1,6 @@
 ﻿(function () {
-  const API_URL = "https://jetle-online-production.up.railway.app";
-  const API_BASE = API_URL.replace(/\/+$/, "");
+  const API_BASE = "https://jetle-online-production.up.railway.app";
+  const ME_ENDPOINT = "/api/auth/me";
   function apiEndpoint(path) {
     return API_BASE + "/" + String(path || "").replace(/^\/+/, "");
   }
@@ -28,8 +28,8 @@
       const remember = document.getElementById('rememberMe').checked;
 
       try {
+        console.log("LOGIN FETCH URL:", API_BASE + "/api/auth/login");
         const loginUrl = apiEndpoint("/api/auth/login");
-        console.log("API REQUEST:", loginUrl);
         const res = await fetch(loginUrl, {
           method: 'POST',
           headers: {
@@ -49,10 +49,14 @@
 
         const payload = data.data || data;
         const user = payload.user;
-        const token = payload.token || payload.accessToken || "";
+        if (payload.token) {
+          localStorage.setItem("token", String(payload.token));
+        } else if (payload.accessToken) {
+          localStorage.setItem("token", String(payload.accessToken));
+        }
+        console.log("SAVED TOKEN:", localStorage.getItem("token"));
 
         localStorage.setItem("user", JSON.stringify(user != null ? user : null));
-        localStorage.setItem("token", token);
 
         if (window.JETLE && user) {
           JETLE.setCurrentUser(
@@ -69,7 +73,9 @@
 
         const params = new URLSearchParams(window.location.search);
         const next = params.get("next") || "index.html";
-        window.location.href = next;
+        window.setTimeout(function () {
+          window.location.href = next;
+        }, 200);
         return;
       } catch (error) {
         if (window.console && typeof window.console.warn === 'function') {
@@ -144,7 +150,6 @@
 
       try {
         const registerUrl = apiEndpoint("/api/auth/register");
-        console.log("API REQUEST:", registerUrl);
         const response = await fetch(registerUrl, {
           method: 'POST',
           headers: {
@@ -418,6 +423,41 @@
   window.initLoginPage = initLoginPage;
   window.initRegisterPage = initRegisterPage;
   window.initSettingsPage = initSettingsPage;
+
+  /** Konsol: `JETLE.fetchMeConsole()` — `fetch(API_BASE + ME_ENDPOINT)` + Bearer `token` + `console.log` JSON. */
+  window.JETLE = window.JETLE || {};
+  window.JETLE.fetchMeConsole = function () {
+    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    return fetch(API_BASE + ME_ENDPOINT, {
+      headers: {
+        Authorization: "Bearer " + String(localStorage.getItem("token") || "")
+      }
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (data) {
+        console.log(data);
+        return data;
+      });
+  };
+
+  /** Eski token temizliği: `localStorage.clear()` + `sessionStorage.clear()` + yenileme. Sonra tekrar giriş + `API_BASE + ME_ENDPOINT`. */
+  window.JETLE.forceHardLogoutClear = function (opts) {
+    opts = opts || {};
+    var reload = opts.reload !== false;
+    try {
+      localStorage.clear();
+    } catch (e1) {}
+    try {
+      sessionStorage.clear();
+    } catch (e2) {}
+    if (reload) {
+      try {
+        location.reload();
+      } catch (e3) {}
+    }
+  };
 
   document.addEventListener('DOMContentLoaded', function () {
     const ready = window.JETLE && window.JETLE.ready ? window.JETLE.ready : Promise.resolve();

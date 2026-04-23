@@ -18,21 +18,6 @@
 <body data-page="admin-panel" class="page-dashboard">
   <script src="api.js?v=20260217"></script>
   <script src="auth.js"></script>
-  <script>
-    (function () {
-      if (!window.JetleAPI || !window.JetleAuth) return;
-      JetleAPI.init();
-      JetleAuth.init();
-      if (!JetleAuth.isLoggedIn()) {
-        window.location.replace("login.html?next=" + encodeURIComponent("admin-panel.html"));
-        return;
-      }
-      if (!JetleAuth.isAdmin()) {
-        window.location.replace("index.html");
-        return;
-      }
-    })();
-  </script>
 
   <header class="site-header">
     <div class="container header-inner">

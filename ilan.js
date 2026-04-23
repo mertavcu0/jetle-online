@@ -26,12 +26,10 @@
     });
   }
 
-  console.log('ilan.js gerçekten yüklendi');
   function requireAuth() {
     const user = JETLE.getCurrentUser();
     if (!user) {
-      JETLE.showToast('Bu işlem için giriş yapmalısınız.');
-      setTimeout(function () { window.location.href = 'login.html'; }, 500);
+      JETLE.showToast('Bu işlem için giriş yapmalısınız. Sayfa açık kaldı, isterseniz giriş yapıp devam edebilirsiniz.');
       return null;
     }
     return user;
@@ -3409,6 +3407,43 @@ function getComparableGroup(listing) {
     let videoFile = null;
     let draggedImageIndex = null;
 
+    function ensureInlineFormErrorBox() {
+      if (!form) return null;
+      let el = document.getElementById('listingFormInlineError');
+      if (el) return el;
+      el = document.createElement('div');
+      el.id = 'listingFormInlineError';
+      el.className = 'form-inline-error';
+      el.setAttribute('role', 'alert');
+      el.style.display = 'none';
+      el.style.marginBottom = '12px';
+      el.style.padding = '10px 12px';
+      el.style.border = '1px solid #fca5a5';
+      el.style.background = '#fef2f2';
+      el.style.color = '#991b1b';
+      el.style.borderRadius = '8px';
+      form.insertBefore(el, form.firstChild);
+      return el;
+    }
+
+    function clearInlineFormError() {
+      const el = ensureInlineFormErrorBox();
+      if (!el) return;
+      el.textContent = '';
+      el.style.display = 'none';
+    }
+
+    function setInlineFormError(message, fieldId) {
+      const el = ensureInlineFormErrorBox();
+      if (!el) return;
+      el.textContent = String(message || 'Formda eksik veya hatalı alanlar var.');
+      el.style.display = 'block';
+      if (fieldId) {
+        const field = document.getElementById(fieldId);
+        if (field && typeof field.focus === 'function') field.focus();
+      }
+    }
+
     if (categorySelect) {
       categorySelect.innerHTML += JETLE.CATEGORIES.map(function (category) {
         return '<option value="' + category + '">' + category + '</option>';
@@ -4172,7 +4207,8 @@ function getComparableGroup(listing) {
       return empty;
     }
 
-    function validateCategoryDynamicFields(categoryGroupName, extraFields) {
+    function validateCategoryDynamicFields(categoryGroupName, extraFields, reportError) {
+      const emitError = typeof reportError === 'function' ? reportError : function (msg) { JETLE.showToast(msg); };
       if (categoryGroupName === 'Araçlar') {
         const req = ['brand', 'model', 'year', 'bodyType', 'fuel', 'transmission', 'traction', 'km', 'engineVolume', 'enginePower', 'color', 'warranty', 'damageRecord'];
         const labels = {
@@ -4192,7 +4228,7 @@ function getComparableGroup(listing) {
         };
         const missing = req.filter(function (k) { return !String(extraFields[k] || '').trim(); });
         if (missing.length) {
-          JETLE.showToast('Araç ilanı — zorunlu: ' + missing.map(function (k) { return labels[k] || k; }).join(', ') + '.');
+          emitError('Araç ilanı — zorunlu: ' + missing.map(function (k) { return labels[k] || k; }).join(', ') + '.');
           return false;
         }
         return true;
@@ -4209,14 +4245,14 @@ function getComparableGroup(listing) {
         };
         const missing = req.filter(function (k) { return !String(extraFields[k] || '').trim(); });
         if (missing.length) {
-          JETLE.showToast('Emlak ilanı — zorunlu: ' + missing.map(function (k) { return labels[k] || k; }).join(', ') + '.');
+          emitError('Emlak ilanı — zorunlu: ' + missing.map(function (k) { return labels[k] || k; }).join(', ') + '.');
           return false;
         }
         return true;
       }
       if (categoryGroupName === 'Alışveriş') {
         if (!String(extraFields.brand || '').trim() || !String(extraFields.warranty || '').trim()) {
-          JETLE.showToast('Ürün ilanı için marka ve garanti durumu zorunludur.');
+          emitError('Ürün ilanı için marka ve garanti durumu zorunludur.');
           return false;
         }
         return true;
@@ -4226,6 +4262,7 @@ function getComparableGroup(listing) {
 
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
+      clearInlineFormError();
       syncMainLocationToHidden();
 
       const titleValue = document.getElementById('listingTitle').value.trim();
@@ -4253,31 +4290,43 @@ function getComparableGroup(listing) {
         syncMainLocationToHidden();
       }
 
-      if (!titleValue || !priceValue || !categoryValue || !descriptionValue) {
-        JETLE.showToast('Başlık, fiyat, kategori ve açıklama zorunludur.');
+      if (!titleValue) {
+        setInlineFormError('Başlık zorunludur.', 'listingTitle');
+        return;
+      }
+      if (!priceValue || !Number.isFinite(Number(priceValue)) || Number(priceValue) <= 0) {
+        setInlineFormError('Geçerli bir fiyat girin.', 'listingPrice');
+        return;
+      }
+      if (!categoryValue) {
+        setInlineFormError('Kategori seçimi zorunludur.', 'listingCategory');
+        return;
+      }
+      if (!descriptionValue) {
+        setInlineFormError('Açıklama zorunludur.', 'listingDescription');
         return;
       }
 
       if (!imageFiles.length || imageFiles.length < 5) {
-        JETLE.showToast('En az 5 fotoğraf yüklemeniz gerekir.');
+        setInlineFormError('En az 5 fotoğraf yüklemeniz gerekir.', 'listingImages');
         return;
       }
 
       const cityVal = document.getElementById('listingCity') && document.getElementById('listingCity').value.trim();
       const districtVal = document.getElementById('listingDistrict') && document.getElementById('listingDistrict').value.trim();
       if (!cityVal || !districtVal) {
-        JETLE.showToast('İl ve ilçe bilgisi zorunludur.');
+        setInlineFormError('İl ve ilçe bilgisi zorunludur.', !cityVal ? 'listingCity' : 'listingDistrict');
         return;
       }
 
       const extraFields = collectDynamicExtraFields();
-      if (!validateCategoryDynamicFields(categoryGroupName, extraFields)) {
+      if (!validateCategoryDynamicFields(categoryGroupName, extraFields, function (msg) { setInlineFormError(msg); })) {
         return;
       }
 
       const locationStr = String(document.getElementById('listingLocation').value || '').trim();
       if (!locationStr) {
-        JETLE.showToast('Konum bilgisi eksik.');
+        setInlineFormError('Konum bilgisi eksik.');
         return;
       }
 
@@ -6680,7 +6729,6 @@ function getComparableGroup(listing) {
     if (page === 'payment') initPaymentPage();
   });
 
-  console.log("FORCE CALL ÇALIŞTI");
   forcePopulateCitySelect();
 }
 })();

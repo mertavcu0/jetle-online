@@ -13,12 +13,17 @@
   <script src="auth.js"></script>
   <script>
     (function () {
-      JetleAuth.init();
-      if (!JetleAuth.isLoggedIn()) {
+      if (!window.JetleAuth || typeof JetleAuth.bootstrap !== "function") {
         window.location.replace("login.html?next=" + encodeURIComponent("panel.html"));
-      } else {
-        window.location.replace("index.html");
+        return;
       }
+      JetleAuth.bootstrap().then(function () {
+        if (!JetleAuth.isLoggedIn()) {
+          window.location.replace("login.html?next=" + encodeURIComponent("panel.html"));
+        } else {
+          window.location.replace("index.html");
+        }
+      });
     })();
   </script>
 </body>

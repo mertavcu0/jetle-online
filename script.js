@@ -1,5 +1,4 @@
 ﻿(function () {
-  console.log('script.js gerçekten yüklendi');
   const impressionCache = {};
   const STORE = {
     users: 'jetle_users_v3',

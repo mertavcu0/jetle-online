@@ -5,7 +5,6 @@ const authController = require("../controllers/auth.controller");
 const { validateRequest } = require("../middleware/validateRequest");
 const { loginValidator } = require("../utils/validators");
 const { listingsRouter } = require("./listings.routes");
-const { dashboardRouter } = require("./dashboard.routes");
 const { favoritesRouter } = require("./favorites.routes");
 const { messagesRouter } = require("./messages.routes");
 const { complaintsRouter } = require("./complaints.routes");
@@ -18,7 +17,6 @@ const { adsPublicRouter } = require("./ads.routes");
 /** Frontend uyumu: /api/login -> authController.login */
 router.post("/login", loginValidator, validateRequest(), authController.login);
 router.use("/listings", listingsRouter);
-router.use("/me", dashboardRouter);
 router.use("/favorites", favoritesRouter);
 router.use("/messages", messagesRouter);
 router.use("/complaints", complaintsRouter);
