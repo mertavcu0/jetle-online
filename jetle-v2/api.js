@@ -23,7 +23,6 @@
   var API_BASE_LS_KEY = "jetle_v2_api_base_url";
   /** Tüm API istekleri — göreli `/api/...` kullanılmaz; her zaman mutlak kök. */
   var API_BASE = "https://jetle-online-production.up.railway.app";
-  const ME_ENDPOINT = "/api/auth/me";
 
   function isUnsafeApiBaseUrl(s) {
     var u = String(s || "").trim().toLowerCase();
@@ -68,7 +67,7 @@
         register: "/api/auth/register",
         login: "/api/auth/login",
         logout: "/api/auth/logout",
-        me: ME_ENDPOINT
+        me: "/api/auth/me"
       },
       listings: {
         list: "/api/listings",
@@ -1127,7 +1126,7 @@
       if (status !== STATUS.PASSIVE && status !== STATUS.PENDING) {
         return { ok: false, message: "Bu durum panelden güncellenemez." };
       }
-      var res = syncBackendRequest("PATCH", ME_ENDPOINT + "/listings/" + encodeURIComponent(listingId) + "/status", { status: status });
+      var res = syncBackendRequest("PATCH", "/api/auth/me/listings/" + encodeURIComponent(listingId) + "/status", { status: status });
       if (!res.ok) return { ok: false, message: res.message || "Durum güncellenemedi." };
       var row = res.data && res.data.data;
       notifyListingsChanged();
@@ -1226,7 +1225,7 @@
 
   function deleteListing(id) {
     if (backendEnabled()) {
-      var del = syncBackendRequest("DELETE", ME_ENDPOINT + "/listings/" + encodeURIComponent(id));
+      var del = syncBackendRequest("DELETE", "/api/auth/me/listings/" + encodeURIComponent(id));
       notifyListingsChanged();
       return { ok: del.ok, message: del.message || "" };
     }
@@ -1305,7 +1304,7 @@
 
   function getListingsByUser(userId) {
     if (backendEnabled()) {
-      var remoteMine = syncBackendRequest("GET", ME_ENDPOINT + "/listings");
+      var remoteMine = syncBackendRequest("GET", "/api/auth/me/listings");
       if (remoteMine.ok && remoteMine.data && Array.isArray(remoteMine.data.data)) {
         return remoteMine.data.data.map(backendListingToLegacy).filter(Boolean);
       }
@@ -1490,7 +1489,7 @@
       d.storeActiveUntil = null;
     }
     if (backendEnabled() && getAccessTokenFromSession()) {
-      var pk = syncBackendRequest("GET", ME_ENDPOINT + "/packages");
+      var pk = syncBackendRequest("GET", "/api/auth/me/packages");
       if (pk.ok && pk.data && pk.data.data) {
         var srv = pk.data.data;
         if (typeof srv.dopingCredits === "number") d.dopingCredits = Math.max(0, srv.dopingCredits);

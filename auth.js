@@ -1,6 +1,5 @@
 ﻿(function () {
   const API_BASE = "https://jetle-online-production.up.railway.app";
-  const ME_ENDPOINT = "/api/auth/me";
   function apiEndpoint(path) {
     return API_BASE + "/" + String(path || "").replace(/^\/+/, "");
   }
@@ -424,11 +423,11 @@
   window.initRegisterPage = initRegisterPage;
   window.initSettingsPage = initSettingsPage;
 
-  /** Konsol: `JETLE.fetchMeConsole()` — `fetch(API_BASE + ME_ENDPOINT)` + Bearer `token` + `console.log` JSON. */
+  /** Konsol: `JETLE.fetchMeConsole()` — `fetch(API_BASE + "/api/auth/me")` + Bearer `token` + `console.log` JSON. */
   window.JETLE = window.JETLE || {};
   window.JETLE.fetchMeConsole = function () {
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
-    return fetch(API_BASE + ME_ENDPOINT, {
+    console.log("CALLING:", API_BASE + "/api/auth/me");
+    return fetch(API_BASE + "/api/auth/me", {
       headers: {
         Authorization: "Bearer " + String(localStorage.getItem("token") || "")
       }
@@ -442,7 +441,7 @@
       });
   };
 
-  /** Eski token temizliği: `localStorage.clear()` + `sessionStorage.clear()` + yenileme. Sonra tekrar giriş + `API_BASE + ME_ENDPOINT`. */
+  /** Eski token temizliği: `localStorage.clear()` + `sessionStorage.clear()` + yenileme. Sonra tekrar giriş + `API_BASE + "/api/auth/me"`. */
   window.JETLE.forceHardLogoutClear = function (opts) {
     opts = opts || {};
     var reload = opts.reload !== false;

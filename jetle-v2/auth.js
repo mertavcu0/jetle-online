@@ -18,7 +18,6 @@
   var LEGACY_TOKEN_KEY = "token";
   /** Üretim API kökü — göreli `/api/...` yok; tüm istekler mutlak URL. */
   var API_BASE = "https://jetle-online-production.up.railway.app";
-  const ME_ENDPOINT = "/api/auth/me";
 
   /** Yerel (backend kapalı) kayıtta bu e-posta ile hesap admin rolü alır; backend için `ADMIN_REGISTRATION_EMAIL`. */
   var LOCAL_ADMIN_REGISTRATION_EMAIL = "admin@jetle.online";
@@ -319,12 +318,12 @@
       } catch (eTok) {}
       return Promise.resolve(null);
     }
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    console.log("CALLING:", API_BASE + "/api/auth/me");
     var bearerLs = "";
     try {
       bearerLs = localStorage.getItem("token") || "";
     } catch (eLs) {}
-    return fetch(API_BASE + ME_ENDPOINT, {
+    return fetch(API_BASE + "/api/auth/me", {
       method: "GET",
       credentials: "include",
       headers: { Authorization: "Bearer " + String(bearerLs), Accept: "application/json" }
@@ -395,8 +394,8 @@
       return null;
     }
     var s = readSessionState();
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
-    var meUrlSync = API_BASE.replace(/\/+$/, "") + ME_ENDPOINT;
+    console.log("CALLING:", API_BASE + "/api/auth/me");
+    var meUrlSync = API_BASE.replace(/\/+$/, "") + "/api/auth/me";
     var bearerSync = "";
     try {
       bearerSync = localStorage.getItem("token") || "";
@@ -552,7 +551,7 @@
 
   /**
    * Eski token/JWT temizliği: sunucu çıkışı (mümkünse) + `localStorage.clear()` + `sessionStorage.clear()`,
-   * ardından sayfa yenileme. Sonra yeniden giriş yapıp `API_BASE + ME_ENDPOINT` test edin.
+   * ardından sayfa yenileme. Sonra yeniden giriş yapıp `API_BASE + "/api/auth/me"` test edin.
    * @param {{ reload?: boolean }} opts reload false ise yenileme yapmaz (varsayılan true).
    */
   function forceHardLogoutClear(opts) {
@@ -817,7 +816,7 @@
       }
       if (Object.keys(body).length === 0) return { ok: true };
       var s = readSessionState();
-      var res = syncBackendRequest("PATCH", ME_ENDPOINT + "/profile", body, getRawAccessToken());
+      var res = syncBackendRequest("PATCH", "/api/auth/me/profile", body, getRawAccessToken());
       if (!res.ok) return { ok: false, message: mapBackendMessage(res, "Profil güncellenemedi.") };
       syncCurrentUserFromBackend();
       return { ok: true };
@@ -932,15 +931,15 @@
     _bootstrapPromise = null;
   }
 
-  /** Konsoldan: `JetleAuth.debugAuth()` — token + GET `ME_ENDPOINT` yanıtını loglar. */
+  /** Konsoldan: `JetleAuth.debugAuth()` — token + GET `/api/auth/me` yanıtını loglar. */
   function debugAuth() {
     var token = "";
     try {
       token = localStorage.getItem("token") || "";
     } catch (eT) {}
     console.log("TOKEN:", token || "(yok)");
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
-    return fetch(API_BASE + ME_ENDPOINT, {
+    console.log("CALLING:", API_BASE + "/api/auth/me");
+    return fetch(API_BASE + "/api/auth/me", {
       method: "GET",
       credentials: "include",
       headers: {
@@ -968,12 +967,12 @@
   }
 
   /**
-   * Konsol: `JetleAuth.fetchMeConsole()` — `API_BASE + ME_ENDPOINT` + `Authorization: Bearer` + `token`,
+   * Konsol: `JetleAuth.fetchMeConsole()` — `API_BASE + "/api/auth/me"` + `Authorization: Bearer` + `token`,
    * ardından `r.json()` ve `console.log` (sizin fetch zinciriyle aynı mantık).
    */
   function fetchMeConsole() {
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
-    return fetch(API_BASE + ME_ENDPOINT, {
+    console.log("CALLING:", API_BASE + "/api/auth/me");
+    return fetch(API_BASE + "/api/auth/me", {
       headers: {
         Authorization: "Bearer " + String(localStorage.getItem("token") || "")
       }

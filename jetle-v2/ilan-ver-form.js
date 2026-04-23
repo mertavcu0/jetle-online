@@ -5,7 +5,6 @@
   "use strict";
 
   var API_BASE = "https://jetle-online-production.up.railway.app";
-  const ME_ENDPOINT = "/api/auth/me";
   var TOTAL_STEPS = 6;
   var currentStep = 1;
 
@@ -171,8 +170,8 @@
 
   function validateAuthTokenAsync(token) {
     if (!token) return Promise.resolve(false);
-    console.log("CALLING:", API_BASE + ME_ENDPOINT);
-    return fetch(API_BASE + ME_ENDPOINT, {
+    console.log("CALLING:", API_BASE + "/api/auth/me");
+    return fetch(API_BASE + "/api/auth/me", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + String(localStorage.getItem("token") || ""),
