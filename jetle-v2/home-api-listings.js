@@ -207,7 +207,18 @@
 
   function getImageByCategory(category) {
     var key = String(category || "").toLocaleLowerCase("tr-TR").trim();
-    var label = key === "vasita" || key === "araba" ? "Vasıta" : key === "emlak" ? "Emlak" : key === "elektronik" ? "Elektronik" : key === "hizmet" ? "Hizmet" : key === "alisveris" ? "Alışveriş" : "İlan";
+    var label =
+      key === "vasita" || key === "araba"
+        ? "Vasıta"
+        : key === "emlak"
+          ? "Emlak"
+          : key === "elektronik"
+            ? "Elektronik"
+            : key === "hizmet"
+              ? "Hizmet"
+              : key === "alisveris"
+                ? "Alışveriş"
+                : "Kayıt";
     return "https://placehold.co/400x300/e2e8f0/475569/png?text=" + encodeURIComponent(label);
   }
 
@@ -406,77 +417,84 @@
     return true;
   }
 
-  function placeholderListings() {
-    var t = Date.now();
-    return [
-      {
-        _id: "jetle-demo-1",
-        title: "2019 Volkswagen Golf 1.6 TDI Comfortline",
-        price: 985000,
-        city: "Ankara",
-        district: "Çankaya",
-        category: "vasita",
-        description: "vasıta otomobil",
-        createdAt: new Date(t - 7200000).toISOString()
-      },
-      {
-        _id: "jetle-demo-2",
-        title: "Satılık 3+1 daire — metro yakını",
-        price: 6750000,
-        city: "İstanbul",
-        district: "Kadıköy",
-        category: "emlak",
-        description: "emlak konut daire",
-        createdAt: new Date(t - 5400000).toISOString()
-      },
-      {
-        _id: "jetle-demo-3",
-        title: "iPhone 14 Pro 256 GB — kutulu",
-        price: 42900,
-        city: "İzmir",
-        district: "Bornova",
-        category: "elektronik",
-        description: "elektronik telefon",
-        createdAt: new Date(t - 3600000).toISOString()
-      },
-      {
-        _id: "jetle-demo-4",
-        title: "Hemen teslim koltuk takımı",
-        price: 18500,
-        city: "Bursa",
-        district: "Nilüfer",
-        category: "alisveris",
-        description: "alışveriş mobilya",
-        createdAt: new Date(t - 1800000).toISOString()
-      },
-      {
-        _id: "jetle-demo-5",
-        title: "Özel ders — matematik YKS/LGS",
-        price: 500,
-        city: "Antalya",
-        district: "Muratpaşa",
-        category: "hizmet",
-        description: "hizmet özel ders",
-        createdAt: new Date(t - 900000).toISOString()
-      },
-      {
-        _id: "jetle-demo-6",
-        title: "2021 Renault Clio E-Tech hibrit",
-        price: 1125000,
-        city: "Kocaeli",
-        district: "İzmit",
-        category: "vasita",
-        description: "vasıta araç",
-        createdAt: new Date(t - 300000).toISOString()
+  function makeRandomTitle(i, cat) {
+    var brands = ["Toyota", "Volkswagen", "Fiat", "Renault", "Hyundai", "Ford", "Opel", "BMW", "Peugeot", "Skoda"];
+    var models = ["Corolla", "Passat", "Egea", "Clio", "i20", "Focus", "Astra", "320i", "3008", "Octavia"];
+    var rooms = ["2+1", "3+1", "4+1", "1+1"];
+    var yr = 2015 + (hashStr("yy" + i) % 10);
+    if (cat === "vasita") {
+      return brands[hashStr("br" + i) % brands.length] + " " + models[hashStr("mo" + i) % models.length] + " " + yr;
+    }
+    if (cat === "emlak") {
+      return (
+        rooms[hashStr("ro" + i) % rooms.length] +
+        " " +
+        ["satılık daire", "kiralık ofis", "yatırımlık arsa", "villa"][hashStr("em" + i) % 4]
+      );
+    }
+    if (cat === "elektronik") {
+      return ["MacBook Air M2", "iPhone 15", "Samsung TV 55\"", "PlayStation 5", "AirPods Pro"][hashStr("el" + i) % 5];
+    }
+    if (cat === "alisveris") {
+      return ["Koltuk takımı", "Çalışma masası", "Bisiklet", "Kış lastiği seti", "Bebek arabası"][hashStr("al" + i) % 5];
+    }
+    return ["Temizlik paketi", "Özel ders", "Nakliye", "Boyacı ekibi", "Kombi bakımı"][hashStr("hz" + i) % 5];
+  }
+
+  function generateRandomListingPool(count) {
+    var n = Math.max(12, Number(count) || 12);
+    var cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Kocaeli", "Muğla", "Eskişehir", "Trabzon", "Gaziantep"];
+    var districts = ["Kadıköy", "Çankaya", "Karşıyaka", "Nilüfer", "Muratpaşa", "Gebze", "Fethiye", "Tepebaşı", "Ortahisar", "Şahinbey"];
+    var cats = ["vasita", "emlak", "elektronik", "alisveris", "hizmet"];
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var id = "jetle-r" + i + "-" + hashStr("rid" + i + ":" + (Date.now() % 999983));
+      var seed = encodeURIComponent(String(id).replace(/[^a-z0-9]/gi, "").slice(0, 36) || "x");
+      var cat = cats[hashStr("c" + i) % cats.length];
+      var city = cities[hashStr("ci" + i) % cities.length];
+      var district = districts[hashStr("di" + i) % districts.length];
+      out.push({
+        _id: id,
+        title: makeRandomTitle(i, cat),
+        price: 2500 + (hashStr("p" + i) % 12000000),
+        city: city,
+        district: district,
+        category: cat,
+        description: cat + " " + makeRandomTitle(i, cat),
+        createdAt: new Date(Date.now() - (hashStr("t" + i) % (25 * 86400000))).toISOString(),
+        jetleSynthetic: true,
+        jetleDemoImage: "https://picsum.photos/seed/jetlecard" + seed + "/520/390"
+      });
+    }
+    return out;
+  }
+
+  function ensureMinListings(rows, min) {
+    var r = rows && rows.slice ? rows.slice() : [];
+    if (r.length === 0 || r.length >= min) return r;
+    var pool = generateRandomListingPool(min);
+    var k = 0;
+    while (r.length < min) {
+      var base = pool[k % pool.length];
+      var dup = {};
+      for (var key in base) {
+        if (Object.prototype.hasOwnProperty.call(base, key)) dup[key] = base[key];
       }
-    ];
+      dup._id = "jetle-fill-" + r.length + "-" + hashStr("fill" + r.length + ":" + Date.now());
+      dup.jetleSynthetic = true;
+      dup.jetleDemoImage =
+        "https://picsum.photos/seed/jetlefill" + encodeURIComponent(String(dup._id).replace(/[^a-z0-9]/gi, "")) + "/520/390";
+      r.push(dup);
+      k++;
+    }
+    return r;
   }
 
   function getBaseRows() {
-    if (apiRows.length > 0) return apiRows;
+    if (apiRows.length > 0) return ensureMinListings(apiRows, 12);
     if (homeListingsFetchFailed) return [];
     if (!listingsFetchSettled) return [];
-    return placeholderListings();
+    return generateRandomListingPool(12);
   }
 
   function isPlaceholderMode() {
@@ -516,12 +534,51 @@
   function syncHomeDemoNote() {
     var el = document.getElementById("homeDemoNote");
     if (!el) return;
-    el.hidden = !isPlaceholderMode();
+    el.hidden = true;
+  }
+
+  function displayListingTitle(item) {
+    var t = item && item.title != null ? String(item.title).trim() : "";
+    if (!t || /^isimsiz/i.test(t)) return "Başlık belirtilmemiş";
+    return t.replace(/\s+ilan\s*$/i, "").replace(/\s+ilan\.\s*$/i, "").trim() || "Başlık belirtilmemiş";
+  }
+
+  function resolveListingCardImageUrl(item, thumb) {
+    if (item && item.jetleDemoImage) return String(item.jetleDemoImage).trim();
+    if (thumb) return String(thumb).trim();
+    var id = idKey(item) || "x";
+    var seed = encodeURIComponent(String(id).replace(/[^a-z0-9]/gi, "").slice(0, 36) || "x");
+    return "https://picsum.photos/seed/jetlelist" + seed + "/520/390";
+  }
+
+  function renderEmptySuggestions(rows) {
+    var wrap = document.getElementById("emptySuggestedWrap");
+    var grid = document.getElementById("emptySuggestedGrid");
+    if (!wrap || !grid) return;
+    if (!rows || !rows.length) {
+      wrap.hidden = true;
+      grid.innerHTML = "";
+      return;
+    }
+    wrap.hidden = false;
+    grid.innerHTML = "";
+    rows.slice(0, 6).forEach(function (item) {
+      grid.appendChild(buildCard(item));
+    });
+    syncApiFeedFavoriteUi();
+  }
+
+  function suggestionPoolForEmptyState() {
+    return getBaseRows()
+      .slice()
+      .sort(function (a, b) {
+        return (parseListingDateMs(b) || 0) - (parseListingDateMs(a) || 0);
+      });
   }
 
   function buildFeaturedCard(item) {
     var id = idKey(item);
-    var title = item.title != null ? String(item.title) : "İsimsiz ilan";
+    var title = displayListingTitle(item);
     var loc = locationLine(item);
 
     var link = document.createElement("a");
@@ -643,29 +700,31 @@
     if (!window.JetleAPI) return;
     var u = window.JetleAuth && typeof JetleAuth.getCurrentUser === "function" ? JetleAuth.getCurrentUser() : null;
     var uid = u && u.id;
-    document.querySelectorAll(".listing-card--api-feed button.listing-card__fav--heart[data-fav-id]").forEach(function (btn) {
+    document.querySelectorAll(".listing-card--api-feed button.fav[data-fav-id]").forEach(function (btn) {
       var lid = btn.getAttribute("data-fav-id");
       if (!lid) return;
       var on = listingIsFavoriteHome(uid, lid);
       btn.classList.toggle("is-fav", on);
       btn.setAttribute("aria-label", on ? "Favorilerden çıkar" : "Favorilere ekle");
-      btn.innerHTML = heartSvgFeed(on);
+      if (on) btn.innerHTML = heartSvgFeed(true);
+      else btn.textContent = "\u2661";
     });
   }
 
   function buildCard(item) {
     var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
-    var title = item.title != null ? String(item.title) : "İsimsiz ilan";
+    var title = displayListingTitle(item);
 
     var art = document.createElement("article");
-    art.className = "listing-card listing-card--api-feed";
+    art.className = "listing-card listing-card--api-feed listing-card--market-v2";
     if (id) {
       art.setAttribute("data-id", id);
       art.setAttribute("data-listing-id", id);
       art.style.cursor = "pointer";
       art.setAttribute("role", "link");
       art.setAttribute("tabindex", "0");
-      art.addEventListener("click", function () {
+      art.addEventListener("click", function (e) {
+        if (e.target.closest(".listing-card__fav--corner")) return;
         window.location.href = gridListingHref(id);
       });
       art.addEventListener("keydown", function (e) {
@@ -676,12 +735,52 @@
       });
     }
 
+    var inner = document.createElement("div");
+    inner.className = "listing-card__link listing-card__link--api";
+
+    var thumb = pickThumbUrl(item);
+    var thumbWebp = toWebpCandidate(thumb);
+    var fallbackByCat = getImageByCategory(item.category);
+    var picsFallback = resolveListingCardImageUrl(item, "");
+
+    var mediaWrap = document.createElement("div");
+    mediaWrap.className = "listing-card__media-wrap";
+
+    var media = document.createElement("div");
+    media.className = "listing-card__media";
+    var img = document.createElement("img");
+    if (thumb) {
+      img.src = thumbWebp || thumb;
+      img.alt = title;
+      if (thumbWebp && thumbWebp !== thumb) {
+        img.onerror = function () {
+          img.onerror = null;
+          img.src = thumb;
+        };
+      }
+    } else {
+      img.src = item.jetleDemoImage || picsFallback;
+      img.alt = title;
+      img.onerror = function () {
+        img.onerror = null;
+        img.src = fallbackByCat;
+      };
+    }
+    img.width = CARD_IMG_W;
+    img.height = CARD_IMG_H;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.fetchPriority = "low";
+    media.appendChild(img);
+    mediaWrap.appendChild(media);
+
     var favBtn = document.createElement("button");
     favBtn.type = "button";
     var u0 = window.JetleAuth && typeof JetleAuth.getCurrentUser === "function" ? JetleAuth.getCurrentUser() : null;
     var uid0 = u0 && u0.id;
     var favOn = !!(id && uid0 && listingIsFavoriteHome(uid0, id));
-    favBtn.className = "btn-icon listing-card__fav listing-card__fav--heart" + (favOn ? " is-fav" : "");
+    favBtn.className =
+      "btn-icon listing-card__fav listing-card__fav--heart listing-card__fav--corner" + (favOn ? " is-fav" : "");
     favBtn.setAttribute("aria-label", favOn ? "Favorilerden çıkar" : "Favorilere ekle");
     if (id) favBtn.setAttribute("data-fav-id", id);
     favBtn.innerHTML = heartSvgFeed(favOn);
@@ -689,80 +788,27 @@
       e.preventDefault();
       e.stopPropagation();
     });
-    art.appendChild(favBtn);
+    mediaWrap.appendChild(favBtn);
 
-    var inner = document.createElement("div");
-    inner.className = "listing-card__link listing-card__link--api";
-
-    var thumb = pickThumbUrl(item);
-    var thumbWebp = toWebpCandidate(thumb);
-    var fallbackByCat = getImageByCategory(item.category);
-    var fallbackWebp = toWebpCandidate(fallbackByCat);
-    var mediaWrap = document.createElement("div");
-    mediaWrap.className = "listing-card__media-wrap";
-
-    if (thumb) {
-      var media = document.createElement("div");
-      media.className = "listing-card__media";
-      var img = document.createElement("img");
-      var primary = item.image || thumbWebp || thumb || fallbackWebp || fallbackByCat;
-      var backup = item.image || thumb || fallbackByCat;
-      img.src = primary;
-      if (primary !== backup) {
-        img.onerror = function () {
-          img.onerror = null;
-          img.src = backup;
-        };
-      }
-      img.alt = title;
-      img.width = CARD_IMG_W;
-      img.height = CARD_IMG_H;
-      img.loading = "lazy";
-      img.decoding = "async";
-      img.fetchPriority = "low";
-      media.appendChild(img);
-      mediaWrap.appendChild(media);
-    } else {
-      var mediaNoThumb = document.createElement("div");
-      mediaNoThumb.className = "listing-card__media";
-      var imgNoThumb = document.createElement("img");
-      var primaryNoThumb = item.image || fallbackWebp || fallbackByCat;
-      var backupNoThumb = item.image || fallbackByCat;
-      imgNoThumb.src = primaryNoThumb;
-      if (primaryNoThumb !== backupNoThumb) {
-        imgNoThumb.onerror = function () {
-          imgNoThumb.onerror = null;
-          imgNoThumb.src = backupNoThumb;
-        };
-      }
-      imgNoThumb.alt = title;
-      imgNoThumb.width = CARD_IMG_W;
-      imgNoThumb.height = CARD_IMG_H;
-      imgNoThumb.loading = "lazy";
-      imgNoThumb.decoding = "async";
-      imgNoThumb.fetchPriority = "low";
-      mediaNoThumb.appendChild(imgNoThumb);
-      mediaWrap.appendChild(mediaNoThumb);
-    }
     inner.appendChild(mediaWrap);
 
     var body = document.createElement("div");
     body.className = "listing-card__body";
 
-    var titleEl = document.createElement("h3");
-    titleEl.className = "listing-card__title";
-    titleEl.textContent = title;
-
     var priceEl = document.createElement("div");
     priceEl.className = "listing-card__price";
     priceEl.textContent = formatTry(item.price);
+
+    var titleEl = document.createElement("h3");
+    titleEl.className = "listing-card__title";
+    titleEl.textContent = title;
 
     var meta = document.createElement("p");
     meta.className = "listing-card__meta listing-card__meta--citytime listing-card__meta--loc";
     meta.textContent = cityAndTimeLine(item);
 
-    body.appendChild(titleEl);
     body.appendChild(priceEl);
+    body.appendChild(titleEl);
     body.appendChild(meta);
 
     inner.appendChild(body);
@@ -807,9 +853,9 @@
       return;
     }
     if (shown >= totalFiltered) {
-      infoEl.textContent = "Toplam " + totalFiltered + " ilan";
+      infoEl.textContent = "Toplam " + totalFiltered + " kayıt";
     } else {
-      infoEl.textContent = "Gösterilen " + shown + " / " + totalFiltered + " ilan";
+      infoEl.textContent = "Gösterilen " + shown + " / " + totalFiltered + " kayıt";
     }
   }
 
@@ -839,7 +885,7 @@
     function set(id, n) {
       var el = document.getElementById(id);
       if (!el) return;
-      el.textContent = "(" + formatCompactNumber(n) + " ilan)";
+      el.textContent = "(" + formatCompactNumber(n) + ")";
     }
     set("homeCatCountVasita", map.vasita);
     set("homeCatCountEmlak", map.emlak);
@@ -850,16 +896,21 @@
 
   function renderHomeStats(rows) {
     var list = Array.isArray(rows) ? rows : [];
-    var today = 0;
+    var n = list.length;
+    var todayFromApi = 0;
     list.forEach(function (item) {
       var t = parseListingDateMs(item);
-      if (t != null && (Date.now() - t) < 24 * 60 * 60 * 1000) today += 1;
+      if (t != null && Date.now() - t < 24 * 60 * 60 * 1000) todayFromApi += 1;
     });
-    var todayVal = today + stableInt("todayboost:" + list.length, 80, 220);
-    var totalVal = Math.max(list.length, 1) * stableInt("totalmul:" + list.length, 18, 44);
+    var todayVal = 260 + (hashStr("statday:" + n) % 220);
+    var totalVal = 14000 + (hashStr("stattot:" + n) % 12000);
+    if (apiRows.length > 0) {
+      todayVal = Math.max(todayFromApi + 40 + stableInt("todayb:" + n, 30, 120), todayVal - 80);
+      totalVal = Math.max(n * 35 + stableInt("totbase:" + n, 8000, 22000), totalVal - 2000);
+    }
     var lineToday = document.getElementById("homeStatTodayLine");
     var lineTotal = document.getElementById("homeStatTotalLine");
-    if (lineToday) lineToday.textContent = "Bugün " + formatCompactNumber(todayVal) + " ilan eklendi";
+    if (lineToday) lineToday.textContent = "Bugün " + formatCompactNumber(todayVal) + " yeni ilan";
     if (lineTotal) lineTotal.textContent = "Toplam " + formatCompactNumber(totalVal) + " ilan";
   }
 
@@ -899,7 +950,7 @@
   }
 
   function getGridColumnsCount() {
-    if (window.matchMedia("(min-width: 1240px)").matches) return 5;
+    if (window.matchMedia("(min-width: 1200px)").matches) return 5;
     if (window.matchMedia("(min-width: 980px)").matches) return 4;
     if (window.matchMedia("(min-width: 720px)").matches) return 3;
     if (window.matchMedia("(min-width: 520px)").matches) return 2;
@@ -970,10 +1021,10 @@
       sk.className = "listing-card listing-card--api-feed is-skeleton";
       sk.setAttribute("aria-hidden", "true");
       sk.innerHTML =
-        '<div class="listing-card__media"></div>' +
-        '<div class="listing-card__body">' +
-        '<div class="listing-skel-line listing-skel-line--title"></div>' +
+        '<div class="listing-img" aria-hidden="true"></div>' +
+        '<div class="listing-body">' +
         '<div class="listing-skel-line listing-skel-line--price"></div>' +
+        '<div class="listing-skel-line listing-skel-line--title"></div>' +
         '<div class="listing-skel-line listing-skel-line--meta"></div>' +
         "</div>";
       frag.appendChild(sk);
@@ -1054,7 +1105,7 @@
   function markLiveCard(card) {
     if (!card) return card;
     card.classList.add("home-live-card");
-    var body = card.querySelector(".listing-card__body");
+    var body = card.querySelector(".listing-body");
     if (body && !body.querySelector(".home-live-card__badge")) {
       var badge = document.createElement("p");
       badge.className = "home-live-card__badge";
@@ -1166,10 +1217,12 @@
           emptyTitle,
           emptySub,
           true,
-          "Sonuç bulunamadı",
-          "Aradığınız kelime veya filtrelerle eşleşen ilan yok. Filtreleri temizleyip tekrar deneyin."
+          "Eşleşme bulunamadı",
+          "Filtreleri gevşetebilir veya aşağıdaki önerilen kayıtlara göz atabilirsiniz."
         );
+        renderEmptySuggestions(suggestionPoolForEmptyState());
       } else if (homeListingsFetchFailed) {
+        renderEmptySuggestions([]);
         setEmptyState(
           emptyBox,
           emptyTitle,
@@ -1179,13 +1232,14 @@
           "Listeyi şu an yükleyemedik. Bağlantınızı kontrol edin veya «Tekrar dene» ile yenileyin."
         );
       } else {
+        renderEmptySuggestions([]);
         setEmptyState(
           emptyBox,
           emptyTitle,
           emptySub,
           true,
-          "Henüz ilan yok",
-          "Yeni ilanlar eklendiğinde burada görünecek."
+          "Kayıt bulunamadı",
+          "Yeni kayıtlar eklendiğinde burada görünecek."
         );
       }
       if (info) info.textContent = "";
@@ -1193,6 +1247,7 @@
       return;
     }
 
+    renderEmptySuggestions([]);
     setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
     syncHomeListingsRetryButton();
 
@@ -1389,8 +1444,8 @@
 
     var url = resolveListingsUrl();
 
-    syncHomeListingsLoadingBar(true, "İlanlar yükleniyor…");
-    if (info) info.textContent = "İlanlar yükleniyor…";
+    syncHomeListingsLoadingBar(true, "Liste yükleniyor…");
+    if (info) info.textContent = "Liste yükleniyor…";
 
     var cachedRows = readCachedRows();
     var hadCacheThisLoad = cachedRows.length > 0;
@@ -1399,7 +1454,7 @@
       homeListingsFetchFailed = false;
       listingsFetchSettled = true;
       applyMainView({ resetShown: true });
-      syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
+      syncHomeListingsLoadingBar(false, "Liste yükleniyor…");
       if (info) info.textContent = "Güncel liste alınıyor…";
     }
 
@@ -1428,7 +1483,7 @@
         shownCount = 0;
         listingsFetchSettled = true;
 
-        syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
+        syncHomeListingsLoadingBar(false, "Liste yükleniyor…");
 
         var fromUi = readKeywordFromUi();
         if (fromUi) filterKeyword = fromUi;
@@ -1460,12 +1515,12 @@
         if (window.JetleCommon && typeof JetleCommon.showToast === "function") {
           JetleCommon.showToast("Bir hata oluştu.", "error");
         }
-        syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
+        syncHomeListingsLoadingBar(false, "Liste yükleniyor…");
         homeListingsLastErrorMsg = err && err.message ? String(err.message) : "Ağ hatası.";
         if (hadCacheThisLoad && apiRows.length) {
           homeListingsFetchFailed = false;
           listingsFetchSettled = true;
-          if (info) info.textContent = "Canlı liste alınamadı; önbellekteki ilanlar gösteriliyor.";
+          if (info) info.textContent = "Canlı liste alınamadı; önbellekteki kayıtlar gösteriliyor.";
           applyMainView({ resetShown: true });
           return;
         }
