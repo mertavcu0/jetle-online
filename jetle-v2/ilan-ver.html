@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="ilan-ver-panel.css" />
 </head>
 <body data-page="ilan-ver" class="page-form page-ilan-ver font-inter">
   <header class="site-header">
@@ -25,28 +26,32 @@
   </header>
 
   <main class="main-shell main-shell--ilan-ver">
-    <div class="ilan-ver-v2 ilan-wizard-wrap">
-      <header class="ilan-ver-v2__intro">
-        <h1 class="ilan-ver-v2__title">İlan Ver</h1>
-        <p class="ilan-ver-v2__subtitle">Adımları tamamlayarak ilanınızı oluşturun; onay sonrası yayına alınır.</p>
-      </header>
+    <div class="ilan-ver-v2 ilan-wizard-wrap ilan-lp">
+      <div class="ilan-lp-head">
+        <header class="ilan-ver-v2__intro">
+          <h1 class="ilan-ver-v2__title">İlan oluştur</h1>
+          <p class="ilan-ver-v2__subtitle">Bilgilerinizi adım adım girin; sağdaki önizleme kayıt öncesi görünümü yansıtır.</p>
+        </header>
 
-      <div class="ilan-wizard__progress-wrap" aria-hidden="true">
-        <div class="ilan-wizard__progress-track">
-          <div class="ilan-wizard__progress-fill" id="ilanWizardProgressFill" style="width:16.66%"></div>
+        <div class="ilan-wizard__progress-wrap" aria-hidden="true">
+          <div class="ilan-wizard__progress-track">
+            <div class="ilan-wizard__progress-fill" id="ilanWizardProgressFill" style="width:0%"></div>
+          </div>
+          <ol class="ilan-wizard__progress-steps" aria-label="İlerleme">
+            <li class="ilan-wizard__progress-step is-active" data-wizard-step-marker="1"><span>1</span> Kategori</li>
+            <li class="ilan-wizard__progress-step" data-wizard-step-marker="2"><span>2</span> Bilgi</li>
+            <li class="ilan-wizard__progress-step" data-wizard-step-marker="3"><span>3</span> Fiyat</li>
+            <li class="ilan-wizard__progress-step" data-wizard-step-marker="4"><span>4</span> Konum</li>
+            <li class="ilan-wizard__progress-step" data-wizard-step-marker="5"><span>5</span> Fotoğraf</li>
+            <li class="ilan-wizard__progress-step" data-wizard-step-marker="6"><span>6</span> Özet</li>
+          </ol>
         </div>
-        <ol class="ilan-wizard__progress-steps" aria-label="İlerleme">
-          <li class="ilan-wizard__progress-step is-active" data-wizard-step-marker="1"><span>1</span> Kategori</li>
-          <li class="ilan-wizard__progress-step" data-wizard-step-marker="2"><span>2</span> Bilgi</li>
-          <li class="ilan-wizard__progress-step" data-wizard-step-marker="3"><span>3</span> Fiyat</li>
-          <li class="ilan-wizard__progress-step" data-wizard-step-marker="4"><span>4</span> Konum</li>
-          <li class="ilan-wizard__progress-step" data-wizard-step-marker="5"><span>5</span> Fotoğraf</li>
-          <li class="ilan-wizard__progress-step" data-wizard-step-marker="6"><span>6</span> Önizleme</li>
-        </ol>
+
+        <p class="ilan-wizard__legend">Zorunlu alanlar <abbr title="zorunlu">*</abbr> ile işaretlenmiştir.</p>
       </div>
 
-      <p class="ilan-wizard__legend">Zorunlu alanlar <abbr title="zorunlu">*</abbr> ile işaretlenmiştir.</p>
-
+      <div class="ilan-lp-layout">
+        <div class="ilan-lp-main">
       <div class="ilan-ver-v2__surface ilan-wizard__surface">
         <div id="ilanWizardSuccess" class="ilan-wizard__success" hidden>
           <div class="ilan-wizard__success-icon" aria-hidden="true">
@@ -116,6 +121,38 @@
                   <textarea id="ilanDesc" name="description" rows="7" maxlength="8000" placeholder="Ürün veya hizmeti net şekilde anlatın; ekspertiz, garanti, teslimat gibi bilgiler ekleyin." class="ilan-wizard__input ilan-wizard__textarea"></textarea>
                   <p class="ilan-wizard__hint">En az 10 karakter.</p>
                   <p class="ilan-wizard__field-msg" id="ilanErrDesc" hidden></p>
+                </div>
+                <div class="ilan-wizard__vehicle-block">
+                  <h3 class="ilan-wizard__subhead">Marka · model · yıl · km</h3>
+                  <div class="ilan-lp-field-grid">
+                    <div class="ilan-wizard__field">
+                      <label for="ilanBrand" class="ilan-wizard__label">Marka</label>
+                      <input type="text" id="ilanBrand" name="vehicleBrand" maxlength="80" placeholder="Örn: BMW" class="ilan-wizard__input" autocomplete="off" />
+                    </div>
+                    <div class="ilan-wizard__field">
+                      <label for="ilanModel" class="ilan-wizard__label">Model</label>
+                      <input type="text" id="ilanModel" name="vehicleModel" maxlength="80" placeholder="Örn: 320i" class="ilan-wizard__input" autocomplete="off" />
+                    </div>
+                    <div class="ilan-wizard__field">
+                      <label for="ilanVehicleYear" class="ilan-wizard__label">Yıl</label>
+                      <input type="number" id="ilanVehicleYear" name="vehicleYear" min="1950" max="2036" step="1" inputmode="numeric" placeholder="2019" class="ilan-wizard__input" />
+                    </div>
+                    <div class="ilan-wizard__field">
+                      <label for="ilanOdometerKm" class="ilan-wizard__label">Km</label>
+                      <input type="number" id="ilanOdometerKm" name="odometerKm" min="0" max="2000000" step="1" inputmode="numeric" placeholder="85000" class="ilan-wizard__input" />
+                    </div>
+                    <div class="ilan-wizard__field" style="grid-column: 1 / -1">
+                      <label for="ilanListingCondition" class="ilan-wizard__label">Durum</label>
+                      <select id="ilanListingCondition" name="listingCondition" class="ilan-wizard__input ilan-wizard__select">
+                        <option value="">Seçin (isteğe bağlı)</option>
+                        <option value="Sıfır">Sıfır</option>
+                        <option value="İkinci el">İkinci el</option>
+                        <option value="Az kullanılmış">Az kullanılmış</option>
+                        <option value="Yenilenmiş">Yenilenmiş</option>
+                        <option value="Hasar kaydı var">Hasar kaydı var</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -211,6 +248,21 @@
           </form>
         </div>
       </div>
+        </div>
+
+        <aside class="ilan-lp-aside" aria-label="Canlı ilan önizlemesi">
+          <div class="preview-card">
+            <h3>İlan Önizleme</h3>
+            <p class="ilan-lp-preview-cat" id="ilanPvCat">Kategori seçilmedi</p>
+            <h2 id="preview-title" class="ilan-lp-preview-title">İlan başlığı</h2>
+            <p id="preview-price" class="ilan-lp-preview-price">0 ₺</p>
+            <p class="ilan-lp-preview-meta" id="ilanPvLoc">Konum —</p>
+            <p id="preview-desc" class="ilan-lp-preview-desc">Açıklama burada görünecek</p>
+            <div class="ilan-lp-preview-extras" id="ilanPvExtras" hidden></div>
+            <div class="ilan-lp-preview-photos" id="ilanPvPhotos" aria-hidden="true"></div>
+          </div>
+        </aside>
+      </div>
     </div>
   </main>
 
@@ -222,7 +274,7 @@
 
   <script src="api.js?v=20260217"></script>
   <script src="auth.js"></script>
-  <script src="ilan-ver-form.js?v=2"></script>
+  <script src="ilan-ver-form.js?v=4"></script>
   <script src="script.js"></script>
 </body>
 </html>
