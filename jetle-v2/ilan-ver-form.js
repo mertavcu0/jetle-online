@@ -47,19 +47,9 @@
       { key: "roomCount", label: "Oda sayısı", type: "select", options: ["Stüdyo", "1+1", "2+1", "3+1", "4+1", "5+"] },
       { key: "squareMeters", label: "Brüt m²", type: "number", min: 1, max: 50000, placeholder: "120" }
     ],
-    Vasıta: [
-      { key: "modelYear", label: "Model yılı", type: "number", min: 1950, max: 2035, placeholder: "2019" },
-      { key: "mileageKm", label: "Kilometre", type: "number", min: 0, max: 2000000, placeholder: "85000" },
-      { key: "fuelType", label: "Yakıt", type: "select", options: ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"] }
-    ],
-    Elektronik: [
-      { key: "condition", label: "Durum", type: "select", options: ["Sıfır", "İkinci el", "Yenilenmiş"] },
-      { key: "warranty", label: "Garanti", type: "select", options: ["Var", "Yok", "Belirsiz"] }
-    ],
-    Alışveriş: [
-      { key: "condition", label: "Durum", type: "select", options: ["Sıfır", "Az kullanılmış", "İkinci el"] },
-      { key: "brand", label: "Marka (isteğe bağlı)", type: "text", max: 80, optional: true, placeholder: "Marka adı" }
-    ],
+    Vasıta: [{ key: "fuelType", label: "Yakıt", type: "select", options: ["Benzin", "Dizel", "Hibrit", "Elektrik", "LPG"] }],
+    Elektronik: [{ key: "warranty", label: "Garanti", type: "select", options: ["Var", "Yok", "Belirsiz"] }],
+    Alışveriş: [],
     Hizmet: [
       { key: "serviceArea", label: "Hizmet bölgesi", type: "text", max: 120, placeholder: "Örn: İstanbul Anadolu yakası" },
       { key: "experienceYears", label: "Deneyim (yıl)", type: "number", min: 0, max: 80, placeholder: "5" }
@@ -137,7 +127,10 @@
     revokePreviewUrls();
     if (!mount) return;
     while (mount.firstChild) mount.removeChild(mount.firstChild);
-    if (!photoInput || !photoInput.files || !photoInput.files.length) return;
+    if (!photoInput || !photoInput.files || !photoInput.files.length) {
+      syncAsidePhotoStripFromPreviews();
+      return;
+    }
     var max = 16;
     var n = Math.min(photoInput.files.length, max);
     for (var i = 0; i < n; i++) {
@@ -153,6 +146,7 @@
       wrap.appendChild(img);
       mount.appendChild(wrap);
     }
+    syncAsidePhotoStripFromPreviews();
   }
 
   function getToken() {
@@ -312,17 +306,112 @@
     });
   }
 
+  function collectManualListingSpecs() {
+    var out = {};
+    var pairs = [
+      ["ilanBrand", "vehicleBrand"],
+      ["ilanModel", "vehicleModel"],
+      ["ilanVehicleYear", "vehicleYear"],
+      ["ilanOdometerKm", "odometerKm"],
+      ["ilanListingCondition", "listingCondition"]
+    ];
+    pairs.forEach(function (pair) {
+      var el = document.getElementById(pair[0]);
+      if (el && String(el.value || "").trim() !== "") out[pair[1]] = String(el.value).trim();
+    });
+    return out;
+  }
+
   function collectSpecs() {
     var out = {};
     var mount = document.getElementById("ilanDynamicFields");
-    if (!mount) return out;
-    mount.querySelectorAll("[data-spec-key]").forEach(function (el) {
-      var k = el.getAttribute("data-spec-key");
-      if (!k) return;
-      var v = el.value != null ? String(el.value).trim() : "";
-      if (v !== "") out[k] = v;
+    if (mount) {
+      mount.querySelectorAll("[data-spec-key]").forEach(function (el) {
+        var k = el.getAttribute("data-spec-key");
+        if (!k) return;
+        var v = el.value != null ? String(el.value).trim() : "";
+        if (v !== "") out[k] = v;
+      });
+    }
+    var manual = collectManualListingSpecs();
+    Object.keys(manual).forEach(function (k) {
+      out[k] = manual[k];
     });
     return out;
+  }
+
+  function syncLivePreview() {
+    var catEl = document.getElementById("ilanPvCat");
+    var cat = getCategory();
+    if (catEl) catEl.textContent = cat || "Kategori seçilmedi";
+    var titleIn = document.getElementById("ilanTitle");
+    var tit = document.getElementById("preview-title") || document.getElementById("ilanPvTitle");
+    if (tit) {
+      var tv = titleIn && String(titleIn.value || "").trim();
+      tit.textContent = tv || "İlan başlığı";
+    }
+    var pr = document.getElementById("ilanPrice");
+    var pv = document.getElementById("preview-price") || document.getElementById("ilanPvPrice");
+    if (pv) {
+      var pRaw = pr && String(pr.value || "").trim();
+      var p = pRaw === "" ? NaN : Number(pr && pr.value);
+      if (pRaw === "") {
+        pv.textContent = "0 ₺";
+      } else {
+        pv.textContent = Number.isFinite(p) ? p.toLocaleString("tr-TR") + " ₺" : pRaw + " ₺";
+      }
+    }
+    var descIn = document.getElementById("ilanDesc");
+    var descOut = document.getElementById("preview-desc") || document.getElementById("ilanPvDesc");
+    if (descOut) {
+      var d = descIn && String(descIn.value || "").trim();
+      descOut.textContent = d || "Açıklama burada görünecek";
+    }
+    var city = document.getElementById("ilanCity");
+    var dist = document.getElementById("ilanDistrict");
+    var loc = document.getElementById("ilanPvLoc");
+    if (loc) {
+      var c = city && city.value ? city.value : "";
+      var di = dist && String(dist.value || "").trim();
+      loc.textContent = c || di ? (c + (di ? " · " + di : "")) : "Konum —";
+    }
+    var sub = document.getElementById("ilanSubcategory");
+    var extras = document.getElementById("ilanPvExtras");
+    if (extras) {
+      var bits = [];
+      if (sub && sub.value) bits.push("Alt kategori: " + sub.value);
+      var br = document.getElementById("ilanBrand");
+      var mo = document.getElementById("ilanModel");
+      var yr = document.getElementById("ilanVehicleYear");
+      var km = document.getElementById("ilanOdometerKm");
+      var st = document.getElementById("ilanListingCondition");
+      if (br && br.value.trim()) bits.push("Marka: " + br.value.trim());
+      if (mo && mo.value.trim()) bits.push("Model: " + mo.value.trim());
+      if (yr && String(yr.value || "").trim()) bits.push("Yıl: " + yr.value);
+      if (km && String(km.value || "").trim()) bits.push("Km: " + Number(km.value).toLocaleString("tr-TR"));
+      if (st && st.value) bits.push("Durum: " + st.value);
+      if (bits.length) {
+        extras.textContent = bits.join(" · ");
+        extras.hidden = false;
+      } else {
+        extras.textContent = "";
+        extras.hidden = true;
+      }
+    }
+  }
+
+  function syncAsidePhotoStripFromPreviews() {
+    var src = document.getElementById("ilanPhotoPreviews");
+    var strip = document.getElementById("ilanPvPhotos");
+    if (!strip) return;
+    while (strip.firstChild) strip.removeChild(strip.firstChild);
+    if (!src) return;
+    src.querySelectorAll("img").forEach(function (img) {
+      var n = document.createElement("img");
+      n.src = img.src;
+      n.alt = img.alt || "";
+      strip.appendChild(n);
+    });
   }
 
   function validateDynamicFields() {
@@ -511,6 +600,7 @@
       renderDynamicFields(getCategory());
     }
     if (step === 6) buildPreview();
+    syncLivePreview();
   }
 
   function uploadListingImages(token, photoInput) {
@@ -624,8 +714,63 @@
           if (sub) sub.value = "";
         }
         showMsg(document.getElementById("ilanErrStep1"), "");
+        syncLivePreview();
       });
     });
+
+    form.addEventListener(
+      "input",
+      function () {
+        syncLivePreview();
+      },
+      true
+    );
+    form.addEventListener(
+      "change",
+      function () {
+        syncLivePreview();
+      },
+      true
+    );
+
+    (function wirePreviewTitlePriceDesc() {
+      var titleInput =
+        document.querySelector('[name="baslik"]') ||
+        document.querySelector('[name="title"]');
+      var priceInput =
+        document.querySelector('[name="fiyat"]') ||
+        document.querySelector('[name="price"]');
+      var descInput =
+        document.querySelector('[name="aciklama"]') ||
+        document.querySelector('[name="description"]');
+      var previewTitle =
+        document.getElementById("preview-title") || document.getElementById("ilanPvTitle");
+      var previewPrice =
+        document.getElementById("preview-price") || document.getElementById("ilanPvPrice");
+      var previewDesc =
+        document.getElementById("preview-desc") || document.getElementById("ilanPvDesc");
+      if (titleInput && previewTitle) {
+        titleInput.addEventListener("input", function () {
+          previewTitle.textContent = titleInput.value || "İlan başlığı";
+        });
+      }
+      if (priceInput && previewPrice) {
+        priceInput.addEventListener("input", function () {
+          var raw = String(priceInput.value || "").trim();
+          if (raw === "") {
+            previewPrice.textContent = "0 ₺";
+            return;
+          }
+          var n = Number(priceInput.value);
+          previewPrice.textContent = Number.isFinite(n) ? n.toLocaleString("tr-TR") + " ₺" : raw + " ₺";
+        });
+      }
+      if (descInput && previewDesc) {
+        descInput.addEventListener("input", function () {
+          previewDesc.textContent = descInput.value || "Açıklama burada görünecek";
+        });
+      }
+    })();
 
     function onPhotosUpdated() {
       updatePhotoLabel(photoInput, filesLabel);
@@ -637,6 +782,15 @@
     }
 
     if (dropzone && photoInput) {
+      var dropInner = dropzone.querySelector(".ilan-wizard__drop-inner");
+      if (dropInner) {
+        dropInner.addEventListener("click", function (e) {
+          if (e.target === photoInput) return;
+          try {
+            photoInput.click();
+          } catch (eC) {}
+        });
+      }
       var dragDepth = 0;
       dropzone.addEventListener("dragenter", function (e) {
         e.preventDefault();
@@ -683,6 +837,7 @@
     }
 
     goToStep(1);
+    syncLivePreview();
 
     setTimeout(function () {
       var tokenNow = getToken();
@@ -778,6 +933,8 @@
               throw new Error(msg);
             }
             if (formShell) formShell.hidden = true;
+            var asideEl = document.querySelector(".ilan-lp-aside");
+            if (asideEl) asideEl.hidden = true;
             if (successBox) successBox.hidden = false;
             form.reset();
             if (catHidden) catHidden.value = "";
@@ -787,8 +944,10 @@
             revokePreviewUrls();
             if (previewsEl) while (previewsEl.firstChild) previewsEl.removeChild(previewsEl.firstChild);
             updatePhotoLabel(photoInput, filesLabel);
+            syncAsidePhotoStripFromPreviews();
             currentStep = 1;
             updateProgressMarkers(1);
+            syncLivePreview();
           })
           .catch(function (err) {
             var m = err && err.message ? err.message : "Bilinmeyen hata.";
