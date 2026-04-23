@@ -4,31 +4,44 @@
 (function () {
   "use strict";
 
-  var CITIES = [
-    "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın",
-    "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı",
-    "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir",
-    "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Isparta", "Mersin", "İstanbul",
-    "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli", "Konya",
-    "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir",
-    "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ",
-    "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak",
-    "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan",
-    "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
-  ];
+  function trProvinceNames() {
+    if (window.JetleTrCities && typeof JetleTrCities.getProvinceNames === "function") {
+      return JetleTrCities.getProvinceNames();
+    }
+    return [];
+  }
 
-  var DISTRICTS = {
-    İstanbul: ["Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", "Silivri", "Şile", "Şişli", "Sultanbeyli", "Sultangazi", "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"],
-    Ankara: ["Akyurt", "Altındağ", "Ayaş", "Bala", "Beypazarı", "Çamlıdere", "Çankaya", "Çubuk", "Elmadağ", "Etimesgut", "Evren", "Gölbaşı", "Güdül", "Haymana", "Kahramankazan", "Kalecik", "Keçiören", "Kızılcahamam", "Mamak", "Nallıhan", "Polatlı", "Pursaklar", "Sincan", "Şereflikoçhisar", "Yenimahalle"],
-    İzmir: ["Aliağa", "Balçova", "Bayındır", "Bayraklı", "Bergama", "Beydağ", "Bornova", "Buca", "Çeşme", "Çiğli", "Dikili", "Foça", "Gaziemir", "Güzelbahçe", "Karabağlar", "Karaburun", "Karşıyaka", "Kemalpaşa", "Kınık", "Kiraz", "Konak", "Menderes", "Menemen", "Narlıdere", "Ödemiş", "Seferihisar", "Selçuk", "Tire", "Torbalı", "Urla"],
-    Bursa: ["Osmangazi", "Nilüfer", "Yıldırım", "İnegöl", "Gemlik", "Mustafakemalpaşa", "Mudanya", "Orhangazi", "Yenişehir", "İznik"],
-    Adana: ["Seyhan", "Çukurova", "Yüreğir", "Sarıçam", "Ceyhan", "Kozan", "İmamoğlu", "Karaisalı", "Pozantı"],
-    Antalya: ["Muratpaşa", "Konyaaltı", "Kepez", "Döşemealtı", "Aksu", "Kumluca", "Manavgat", "Alanya", "Kaş", "Kemer", "Serik"],
-    Konya: ["Meram", "Karatay", "Selçuklu", "Akören", "Beyşehir", "Cihanbeyli", "Ereğli", "Ilgın", "Akşehir", "Sarayönü"],
-    Gaziantep: ["Şahinbey", "Şehitkamil", "Oğuzeli", "Nizip", "İslahiye", "Nurdağı", "Araban", "Yavuzeli"],
-    Kocaeli: ["İzmit", "Gebze", "Darıca", "Körfez", "Gölcük", "Kartepe", "Başiskele", "Çayırova", "Derince", "Karamürsel"],
-    Mersin: ["Akdeniz", "Mezitli", "Toroslar", "Yenişehir", "Tarsus", "Erdemli", "Silifke", "Anamur", "Mut"]
-  };
+  function buildDistrictsMap() {
+    var m = {};
+    var rows = window.JETLE_TR_CITIES || [];
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      if (r && r.name) m[r.name] = (r.districts || []).slice();
+    }
+    return m;
+  }
+
+  function trComboRefresh(el) {
+    try {
+      if (window.JetleTrCitiesUI && el && typeof JetleTrCitiesUI.refresh === "function") {
+        JetleTrCitiesUI.refresh(el);
+      }
+    } catch (e) {}
+  }
+
+  var _homeTrCombosReady = false;
+  function ensureHomeFilterSearchCombos() {
+    if (_homeTrCombosReady) return;
+    if (!window.JetleTrCitiesUI || typeof JetleTrCitiesUI.enhanceSelect !== "function") return;
+    var cs = document.getElementById("citySelect");
+    var ds = document.getElementById("districtSelect");
+    if (!cs || !ds) return;
+    _homeTrCombosReady = true;
+    JetleTrCitiesUI.enhanceSelect(cs, { wrapClass: "home-filter-tr-combo" });
+    JetleTrCitiesUI.enhanceSelect(ds, { wrapClass: "home-filter-tr-combo" });
+    var hc = document.getElementById("homeHeroCity");
+    if (hc) JetleTrCitiesUI.enhanceSelect(hc, { wrapClass: "home-hero-tr-combo" });
+  }
 
   var CATEGORY_TREE = [
     {
@@ -3588,6 +3601,7 @@
       if (state.maxPrice != null) params.set("maxPrice", String(state.maxPrice));
       if (state.city) params.set("city", state.city);
       if (state.district) params.set("district", state.district);
+      if (state.marketSubcategory) params.set("marketSub", state.marketSubcategory);
       if (state.datePreset && state.datePreset !== "all") params.set("date", state.datePreset);
       [
         ["estateSub", state.estateSubcategory],
@@ -3702,7 +3716,9 @@
     vehicleDamage: "",
     vehicleWarranty: "",
     sellerId: "",
-    sellerName: ""
+    sellerName: "",
+    /** Filtre paneli: mevcut listeye göre alt kategori (L.subcategory) */
+    marketSubcategory: ""
   };
 
   function favKey() {
@@ -3878,6 +3894,7 @@
       }
       if (state.city && L.city !== state.city) return false;
       if (state.district && L.district !== state.district) return false;
+      if (state.marketSubcategory && String(L.subcategory || "") !== state.marketSubcategory) return false;
       if (state.minPrice != null && L.price < state.minPrice) return false;
       if (state.maxPrice != null && L.price > state.maxPrice) return false;
       if (!listingMatchesDate(L.createdAt, state.datePreset)) return false;
@@ -3893,14 +3910,7 @@
   }
 
   function getSortedListings(list) {
-    function dopingPriority(L) {
-      if (L.showcase) return 2;
-      if (L.featured) return 1;
-      return 0;
-    }
-    function byDopingThenDate(a, b) {
-      var dp = dopingPriority(b) - dopingPriority(a);
-      if (dp !== 0) return dp;
+    function byDateDesc(a, b) {
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
     function numSpec(L, keys) {
@@ -3917,11 +3927,27 @@
       return null;
     }
     var sorted = list.slice();
-    if (state.sortBy === "price-asc") return sorted.sort(function (a, b) { return byDopingThenDate(a, b) || (a.price - b.price); });
-    if (state.sortBy === "price-desc") return sorted.sort(function (a, b) { return byDopingThenDate(a, b) || (b.price - a.price); });
-    if (state.sortBy === "year-desc") return sorted.sort(function (a, b) { return byDopingThenDate(a, b) || ((numSpec(b, ["Yıl"]) || 0) - (numSpec(a, ["Yıl"]) || 0)); });
-    if (state.sortBy === "km-asc") return sorted.sort(function (a, b) { return byDopingThenDate(a, b) || ((numSpec(a, ["KM"]) || 999999999) - (numSpec(b, ["KM"]) || 999999999)); });
-    return sorted.sort(byDopingThenDate);
+    if (state.sortBy === "price-asc") {
+      return sorted.sort(function (a, b) {
+        return (a.price - b.price) || byDateDesc(a, b);
+      });
+    }
+    if (state.sortBy === "price-desc") {
+      return sorted.sort(function (a, b) {
+        return (b.price - a.price) || byDateDesc(a, b);
+      });
+    }
+    if (state.sortBy === "year-desc") {
+      return sorted.sort(function (a, b) {
+        return (numSpec(b, ["Yıl"]) || 0) - (numSpec(a, ["Yıl"]) || 0) || byDateDesc(a, b);
+      });
+    }
+    if (state.sortBy === "km-asc") {
+      return sorted.sort(function (a, b) {
+        return (numSpec(a, ["KM"]) || 999999999) - (numSpec(b, ["KM"]) || 999999999) || byDateDesc(a, b);
+      });
+    }
+    return sorted.sort(byDateDesc);
   }
 
   function populateCitySelect(selectId, opts) {
@@ -3932,9 +3958,9 @@
     sel.innerHTML = "";
     var first = document.createElement("option");
     first.value = "";
-    first.textContent = opts.placeholder != null ? opts.placeholder : sel.id === "citySelect" ? "Tüm şehirler" : "Şehir seçin";
+    first.textContent = opts.placeholder != null ? opts.placeholder : sel.id === "citySelect" ? "Tüm iller" : "İl seçin";
     sel.appendChild(first);
-    CITIES.forEach(function (c) {
+    trProvinceNames().forEach(function (c) {
       var o = document.createElement("option");
       o.value = c;
       o.textContent = c;
@@ -3948,6 +3974,7 @@
         }
       }
     }
+    trComboRefresh(sel);
   }
 
   function fillDistrictSelect(citySelectId, districtSelectId) {
@@ -3959,17 +3986,27 @@
     while (dEl.firstChild) dEl.removeChild(dEl.firstChild);
     var p = document.createElement("option");
     p.value = "";
-    p.textContent = city ? "İlçe seçin" : "Önce şehir seçin";
+    p.textContent = city ? "İlçe seçin" : "Önce il seçin";
     dEl.appendChild(p);
-    var list = DISTRICTS[city] || [];
-    if (city && !list.length) list = ["Merkez"];
+    var list = city && window.JetleTrCities && typeof JetleTrCities.getDistricts === "function" ? JetleTrCities.getDistricts(city) || [] : [];
     list.forEach(function (d) {
       var o = document.createElement("option");
       o.value = d;
       o.textContent = d;
       dEl.appendChild(o);
     });
-    if (keep) dEl.value = keep;
+    var keepValid = false;
+    if (keep) {
+      for (var j = 0; j < dEl.options.length; j++) {
+        if (dEl.options[j].value === keep) {
+          keepValid = true;
+          break;
+        }
+      }
+    }
+    dEl.value = keepValid ? keep : "";
+    dEl.disabled = !city;
+    trComboRefresh(dEl);
   }
 
   function slugifyListingTitle(title) {
@@ -4308,6 +4345,40 @@
         nav.appendChild(buildExpandableGroup(group));
       }
     });
+    syncMarketSubcategoryFilter();
+  }
+
+  /** Filtre formu: şu anki kategori kapsamındaki benzersiz alt kategoriler */
+  function syncMarketSubcategoryFilter() {
+    var sel = document.getElementById("filterMarketSubcategory");
+    if (!sel) return;
+    var keep = sel.value;
+    while (sel.firstChild) sel.removeChild(sel.firstChild);
+    var z = document.createElement("option");
+    z.value = "";
+    z.textContent = "Tüm alt kategoriler";
+    sel.appendChild(z);
+    var subs = {};
+    var maxOpts = 48;
+    for (var li = 0; li < marketListings.length; li++) {
+      var L = marketListings[li];
+      if (state.parentCategoryName && (L.parentCategory || "") !== state.parentCategoryName) continue;
+      if (state.categorySlug && (L.categorySlug || "") !== state.categorySlug) continue;
+      var s = (L.subcategory || "").trim();
+      if (!s) continue;
+      subs[s] = true;
+    }
+    var keys = Object.keys(subs).sort(function (a, b) {
+      return a.localeCompare(b, "tr");
+    });
+    for (var ki = 0; ki < keys.length && ki < maxOpts; ki++) {
+      var o = document.createElement("option");
+      o.value = keys[ki];
+      o.textContent = keys[ki];
+      sel.appendChild(o);
+    }
+    if (keep && subs[keep]) sel.value = keep;
+    else sel.value = state.marketSubcategory && subs[state.marketSubcategory] ? state.marketSubcategory : "";
   }
 
   function listingIdHash(id) {
@@ -4317,60 +4388,49 @@
     return n;
   }
 
-  function isListingCreatedToday(iso) {
-    if (!iso) return false;
-    try {
-      var d = new Date(iso);
-      var t = new Date();
-      return d.getFullYear() === t.getFullYear() && d.getMonth() === t.getMonth() && d.getDate() === t.getDate();
-    } catch (e) {
-      return false;
-    }
+  function fakeStableCount(seed, min, max) {
+    var lo = Number(min);
+    var hi = Number(max);
+    if (!isFinite(lo) || !isFinite(hi) || hi < lo) return lo || 0;
+    var span = hi - lo + 1;
+    return lo + (listingIdHash(seed) % span);
   }
 
-  /** ACİL / Fiyat düştü / Bugün — deterministik, kart başına tutarlı */
-  function listingCardFlairs(L) {
-    var h = listingIdHash(L.id);
-    var urgent = !!L.urgent;
-    var priceDrop = h % 13 === 0;
-    var today = isListingCreatedToday(L.createdAt);
-    return { urgent: urgent, priceDrop: priceDrop, today: today };
+  function relativeTimeLabel(iso) {
+    if (!iso) return "Az önce";
+    var t = new Date(iso).getTime();
+    if (!isFinite(t)) return "Az önce";
+    var diff = Date.now() - t;
+    if (diff < 45 * 1000) return "Az önce";
+    if (diff < 60 * 60 * 1000) return Math.max(1, Math.floor(diff / 60000)) + " dk önce";
+    if (diff < 24 * 60 * 60 * 1000) return Math.max(1, Math.floor(diff / 3600000)) + " saat önce";
+    if (diff < 2 * 24 * 60 * 60 * 1000) return "Dün";
+    return Math.max(2, Math.floor(diff / 86400000)) + " gün önce";
+  }
+
+  function heartSvg(filled) {
+    if (filled) {
+      return (
+        '<svg class="listing-card__fav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+      );
+    }
+    return (
+      '<svg class="listing-card__fav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.65" fill="none"/></svg>'
+    );
   }
 
   function createListingCard(L) {
     var card = document.createElement("article");
-    card.className = "listing-card" + (L.showcase ? " listing-card--showcase" : "") + (L.featured ? " listing-card--featured" : "") + (L.highlight ? " listing-card--highlight" : "");
+    card.className = "listing-card listing-card--platform";
     card.setAttribute("data-listing-id", L.id);
-
-    var premiumBadges = [];
-    if (L.showcase) premiumBadges.push("VİTRİN");
-    if (L.featured) premiumBadges.push("ÖNE ÇIKAN");
-    if (L.sponsored) premiumBadges.push("Sponsorlu");
-    if (premiumBadges.length) {
-      var pWrap = document.createElement("div");
-      pWrap.className = "listing-card__premium";
-      premiumBadges.forEach(function (name) {
-        var b = document.createElement("span");
-        b.className = "listing-card__badge listing-card__badge--premium";
-        b.textContent = name;
-        pWrap.appendChild(b);
-      });
-      card.appendChild(pWrap);
-    }
-
-    if (L.sellerType === "Mağaza") {
-      var badge = document.createElement("span");
-      badge.className = "listing-card__badge listing-card__badge--store";
-      badge.textContent = "Mağaza";
-      card.appendChild(badge);
-    }
 
     var fav = document.createElement("button");
     fav.type = "button";
-    fav.className = "btn-icon listing-card__fav" + (isFavorite(L.id) ? " is-fav" : "");
-    fav.setAttribute("aria-label", "Favorilere ekle");
+    var favOn = isFavorite(L.id);
+    fav.className = "btn-icon listing-card__fav listing-card__fav--heart" + (favOn ? " is-fav" : "");
+    fav.setAttribute("aria-label", favOn ? "Favorilerden çıkar" : "Favorilere ekle");
     fav.setAttribute("data-fav-id", L.id);
-    fav.textContent = isFavorite(L.id) ? "★" : "☆";
+    fav.innerHTML = heartSvg(favOn);
     card.appendChild(fav);
 
     var link = document.createElement("a");
@@ -4392,65 +4452,22 @@
     var body = document.createElement("div");
     body.className = "listing-card__body";
 
-    var fl = listingCardFlairs(L);
-    var flairRow = document.createElement("div");
-    flairRow.className = "listing-card__flair-row";
-    if (fl.urgent) {
-      var u = document.createElement("span");
-      u.className = "listing-card__flair listing-card__flair--urgent";
-      u.textContent = "ACİL";
-      flairRow.appendChild(u);
-    }
-    if (fl.priceDrop) {
-      var pd = document.createElement("span");
-      pd.className = "listing-card__flair listing-card__flair--pricedrop";
-      pd.textContent = "Fiyat düştü";
-      flairRow.appendChild(pd);
-    }
-    if (fl.today) {
-      var td = document.createElement("span");
-      td.className = "listing-card__flair listing-card__flair--today";
-      td.textContent = "Bugün eklendi";
-      flairRow.appendChild(td);
-    }
-    if (flairRow.childNodes.length) body.appendChild(flairRow);
+    var title = document.createElement("h3");
+    title.className = "listing-card__title";
+    title.textContent = L.title;
+    body.appendChild(title);
 
     var price = document.createElement("div");
     price.className = "listing-card__price";
     price.textContent = formatPrice(L.price);
     body.appendChild(price);
 
-    var title = document.createElement("h3");
-    title.className = "listing-card__title";
-    title.textContent = L.title;
-    body.appendChild(title);
-
     var meta = document.createElement("div");
     meta.className = "listing-card__meta";
-    meta.textContent = [L.city, L.district].filter(Boolean).join(" · ") + " · " + formatDate(L.createdAt);
+    var rel = relativeTimeLabel(L.createdAt);
+    var locPart = [L.city, L.district].filter(Boolean).join(" / ");
+    meta.textContent = [locPart, rel].filter(Boolean).join(" · ");
     body.appendChild(meta);
-
-    var cat = document.createElement("div");
-    cat.className = "listing-card__cat";
-    cat.textContent = L.parentCategory + " › " + L.categoryLabel + " · " + L.sellerType;
-    body.appendChild(cat);
-
-    var priceHint = document.createElement("p");
-    priceHint.className = "listing-card__price-hint";
-    priceHint.textContent = "Fiyat güncel";
-    body.appendChild(priceHint);
-
-    if (L.parentCategory === "Vasıta") {
-      var vx = document.createElement("p");
-      vx.className = "listing-card__vasita-note";
-      vx.textContent = "Pazarlık payı olabilir";
-      body.appendChild(vx);
-    }
-
-    var desc = document.createElement("p");
-    desc.className = "listing-card__desc";
-    desc.textContent = L.description;
-    body.appendChild(desc);
 
     link.appendChild(body);
     card.appendChild(link);
@@ -4467,14 +4484,15 @@
     if (!row) return;
     clearEl(row);
     var list = getFilteredListings()
-      .filter(function (L) {
-        return L.featured;
+      .slice()
+      .sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
       })
       .slice(0, 4);
     if (!list.length) {
       var empty = document.createElement("div");
       empty.className = "empty-panel";
-      empty.textContent = "Öne çıkan ilan bulunmuyor.";
+      empty.textContent = "Henüz ilan yok.";
       row.appendChild(empty);
       return;
     }
@@ -4488,14 +4506,15 @@
     if (!row) return;
     clearEl(row);
     var list = getFilteredListings()
-      .filter(function (L) {
-        return L.showcase;
+      .slice()
+      .sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
       })
       .slice(0, 6);
     if (!list.length) {
       var empty = document.createElement("div");
       empty.className = "empty-panel";
-      empty.textContent = "Vitrin alanında ilan yok.";
+      empty.textContent = "Henüz ilan yok.";
       row.appendChild(empty);
       return;
     }
@@ -4509,14 +4528,15 @@
     if (!row) return;
     clearEl(row);
     var list = getFilteredListings()
-      .filter(function (L) {
-        return L.sponsored;
+      .slice()
+      .sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
       })
       .slice(0, 3);
     if (!list.length) {
       var empty = document.createElement("div");
       empty.className = "empty-panel";
-      empty.textContent = "Aktif sponsorlu ilan yok.";
+      empty.textContent = "Henüz ilan yok.";
       row.appendChild(empty);
       return;
     }
@@ -4559,17 +4579,19 @@
       info.textContent = "Toplam " + list.length + " ilan bulundu" + suffix;
     }
     if (emptyBox) emptyBox.hidden = list.length > 0;
+    var emptyDiscover = document.getElementById("emptyResultsDiscover");
+    if (emptyDiscover) emptyDiscover.hidden = list.length > 0;
     var emptyTitle = document.getElementById("emptyResultsTitle");
     var emptySub = document.getElementById("emptyResultsSub");
     if (emptyTitle && emptySub) {
       if (list.length === 0 && (!marketListings || marketListings.length === 0)) {
         emptyTitle.textContent = "Henüz ilan yok";
         emptySub.textContent =
-          "Onaylı ilan bulunmuyor. İlk ilanı siz verebilir veya filtreleri sıfırlayarak tekrar deneyebilirsiniz.";
+          "Yeni ilanlar eklendikçe burada görünecek. Filtreleri sıfırlayarak tüm ilanları görebilir veya hemen ilan verebilirsiniz.";
       } else if (list.length === 0) {
-        emptyTitle.textContent = "İlan bulunamadı";
+        emptyTitle.textContent = "Bu kriterlerde sonuç yok";
         emptySub.textContent =
-          "Seçtiğiniz kriterlere uygun onaylı ilan yok. Filtreleri genişletin veya aramayı değiştirin.";
+          "Fiyat aralığını genişletin, şehir / alt kategori seçimini kaldırın veya farklı bir arama deneyin. Aşağıdaki kısayollarla keşfe devam edin.";
       }
     }
     list.forEach(function (L, idx) {
@@ -4685,9 +4707,15 @@
     if (trade) trade.value = state.vehicleTrade;
     if (dmg) dmg.value = state.vehicleDamage;
     if (war) war.value = state.vehicleWarranty;
+    syncMarketSubcategoryFilter();
+    var msub = document.getElementById("filterMarketSubcategory");
+    if (msub) msub.value = state.marketSubcategory || "";
     syncHousingFilterVisibility();
     syncVehicleFilterVisibility();
     syncVehicleFilterSelects();
+    trComboRefresh(city);
+    trComboRefresh(district);
+    trComboRefresh(document.getElementById("homeHeroCity"));
   }
 
   function readFilterForm() {
@@ -4742,8 +4770,16 @@
     var trade = document.getElementById("filterTrade");
     var dmg = document.getElementById("filterDamage");
     var war = document.getElementById("filterWarranty");
+    var marketSub = document.getElementById("filterMarketSubcategory");
     state.minPrice = minP && minP.value !== "" ? Number(minP.value) : null;
     state.maxPrice = maxP && maxP.value !== "" ? Number(maxP.value) : null;
+    if (state.minPrice != null && state.maxPrice != null && !isNaN(state.minPrice) && !isNaN(state.maxPrice) && state.minPrice > state.maxPrice) {
+      var swapP = state.minPrice;
+      state.minPrice = state.maxPrice;
+      state.maxPrice = swapP;
+      if (minP) minP.value = String(state.minPrice);
+      if (maxP) maxP.value = String(state.maxPrice);
+    }
     state.city = city && city.value ? city.value : "";
     state.district = district && district.value ? district.value : "";
     state.datePreset = date && date.value ? date.value : "all";
@@ -4793,6 +4829,7 @@
     state.brandSlug = vBrand && vBrand.value ? vBrand.value : "";
     state.seriesSlug = vSeries && vSeries.value ? vSeries.value : "";
     state.modelSlug = vModel && vModel.value ? vModel.value : "";
+    state.marketSubcategory = marketSub && marketSub.value ? marketSub.value : "";
   }
 
   function syncHousingFilterVisibility() {
@@ -4982,6 +5019,7 @@
       state.city = "";
       state.district = "";
     } else if (chip === "district") state.district = "";
+    else if (chip === "marketSub") state.marketSubcategory = "";
     else if (chip === "date") state.datePreset = "all";
     else if (chip === "search") state.search = "";
     else if (chip === "vehicleTree") {
@@ -5077,6 +5115,7 @@
     if (state.maxPrice != null && !isNaN(state.maxPrice)) addChip("maxPrice", "Max " + formatPrice(Number(state.maxPrice)));
     if (state.city) addChip("city", state.city);
     if (state.district) addChip("district", state.district);
+    if (state.marketSubcategory) addChip("marketSub", "Alt kategori: " + state.marketSubcategory);
     if (state.datePreset && state.datePreset !== "all") addChip("date", CHIP_DATE_LABELS[state.datePreset] || state.datePreset);
     if (state.search && String(state.search).trim()) addChip("search", "Arama: " + String(state.search).trim().slice(0, 28));
     if (state.brandSlug || state.seriesSlug || state.modelSlug) {
@@ -5183,8 +5222,6 @@
 
   function syncDistrictFilter() {
     fillDistrictSelect("citySelect", "districtSelect");
-    var district = document.getElementById("districtSelect");
-    if (district) district.disabled = !state.city;
   }
 
   function clearSellerFilter() {
@@ -5195,6 +5232,7 @@
   function setCategoryFilter(childSlug, parentName) {
     state.categorySlug = childSlug || "";
     state.parentCategoryName = parentName || "";
+    state.marketSubcategory = "";
     state.brandSlug = "";
     state.seriesSlug = "";
     state.modelSlug = "";
@@ -5241,6 +5279,7 @@
     state.maxPrice = null;
     state.city = "";
     state.district = "";
+    state.marketSubcategory = "";
     state.datePreset = "all";
     state.sortBy = "newest";
     state.estateSubcategory = "";
@@ -5304,6 +5343,11 @@
       syncDistrictFilter();
       return;
     }
+    if (id === "filterMarketSubcategory") {
+      var ms = document.getElementById("filterMarketSubcategory");
+      state.marketSubcategory = ms && ms.value ? ms.value : "";
+      return;
+    }
     if (id === "filterVehicleBrand") {
       state.brandSlug = document.getElementById("filterVehicleBrand").value || "";
       state.seriesSlug = "";
@@ -5365,6 +5409,7 @@
     state.maxPrice = params.get("maxPrice") ? Number(params.get("maxPrice")) : null;
     state.city = params.get("city") || "";
     state.district = params.get("district") || "";
+    state.marketSubcategory = params.get("marketSub") || "";
     state.datePreset = params.get("date") || "all";
     state.estateSubcategory = params.get("estateSub") || "";
     state.housingRoom = params.get("room") || "";
@@ -5426,6 +5471,7 @@
     syncVehicleFilterSelects();
     syncHousingFilterVisibility();
     syncFilterForm();
+    ensureHomeFilterSearchCombos();
     if (window.JetleAds && typeof JetleAds.mountHomePage === "function") {
       JetleAds.mountHomePage();
     }
@@ -5836,16 +5882,19 @@
       if (nfTitle) nfTitle.textContent = title || "İlan bulunamadı";
       if (nfDesc) nfDesc.textContent = desc || "";
       document.title = (title || "İlan") + " — JETLE.online";
+      try {
+        if (window.JetleCommon && typeof JetleCommon.applySeoBasics === "function") JetleCommon.applySeoBasics();
+      } catch (eSeo) {}
       var dpf = document.getElementById("detailPageFooter");
       if (dpf) dpf.hidden = true;
     }
 
     if (!id) {
-      showEmpty("İlan bulunamadı", "Geçerli bir ilan bağlantısı ile açın (?id=…).");
+      showEmpty("Bir hata oluştu", "Geçerli bir ilan bağlantısı ile açın (?id=…).");
       return;
     }
     if (!raw) {
-      showEmpty("İlan bulunamadı", "Bu numaraya ait kayıt bulunamadı. Ana sayfadan arama yapabilirsiniz.");
+      showEmpty("Henüz ilan yok", "Bu numaraya ait kayıt bulunamadı. Ana sayfadan arama yapabilirsiniz.");
       return;
     }
     if (!L) {
@@ -5863,6 +5912,9 @@
     if (dpfShow) dpfShow.hidden = false;
 
     document.title = (L.title || "İlan") + " — JETLE.online";
+    try {
+      if (window.JetleCommon && typeof JetleCommon.applySeoBasics === "function") JetleCommon.applySeoBasics();
+    } catch (eSeo2) {}
 
     var statusEl = document.getElementById("detailStatusBanner");
     if (statusEl) {
@@ -5908,14 +5960,18 @@
       ? Number(locObj.lat).toFixed(5) + ", " + Number(locObj.lng).toFixed(5)
       : "";
     var locLine = [locCity, locDistrict].filter(Boolean).join(" / ") || locCoords || "Belirtilmedi";
-    setText("detailListingNo", L.listingNo || L.id);
     setText("detailDate", formatDateLong(L.createdAt));
+    setText("detailUpdatedDateInline", formatDateLong(L.updatedAt || L.createdAt));
     setText("detailLocLine", locLine);
     setText("detailCategory", L.category + " › " + L.subcategory);
     setText("detailLocInline", locLine);
     setText("detailAddressInline", locAddress || "Belirtilmedi");
     setText("detailDateInline", formatDateLong(L.createdAt));
     setText("detailNoInline", L.listingNo || L.id);
+    var viewCount = fakeStableCount(L.id + ":views", 10, 500);
+    var favCountDetail = fakeStableCount(L.id + ":fav", 2, 84);
+    setText("detailViewCount", String(viewCount));
+    setText("detailFavCount", String(favCountDetail));
 
     var descEl = document.getElementById("detailDesc");
     if (descEl) {
@@ -6413,55 +6469,57 @@
     var similar = document.getElementById("detailSimilar");
     if (similar) {
       clearEl(similar);
-      similar.className = "detail-similar-grid";
-      JetleAPI.getSimilarPublic(L.id, L.categorySlug, L.category, 4).forEach(function (card) {
+      similar.className = "detail-similar-grid detail-similar-grid--pro";
+      var seen = {};
+      var merged = [];
+      function pushCard(c) {
+        if (!c || !c.id || seen[c.id] || merged.length >= 8) return;
+        seen[c.id] = true;
+        merged.push(c);
+      }
+      JetleAPI.getSimilarPublic(L.id, L.categorySlug, L.category, 8).forEach(pushCard);
+      if (merged.length < 8) {
+        var cityKey = String(locCity || "");
+        JetleAPI.getMarketListings().forEach(function (x) {
+          if (merged.length >= 8) return;
+          if (!x || !x.id || seen[x.id]) return;
+          if (cityKey && String(x.city || "") !== cityKey) return;
+          pushCard(x);
+        });
+      }
+      if (merged.length < 8) {
+        JetleAPI.getMarketListings().forEach(function (x) {
+          if (merged.length >= 8) return;
+          if (!x || !x.id || seen[x.id]) return;
+          pushCard(x);
+        });
+      }
+      merged.forEach(function (card) {
         var node = createListingCard(card);
         node.classList.add("listing-card--compact");
         similar.appendChild(node);
       });
     }
 
-    var heatToday = document.getElementById("detailHeatToday");
-    var heat24 = document.getElementById("detailHeat24h");
     var heatBlock = document.getElementById("detailHeatBlock");
-    var vh = listingIdHash(L.id);
-    var viewers24 = 8 + (vh % 42);
-    if (heat24) {
-      heat24.textContent = "Son 24 saatte " + viewers24 + " kişi baktı";
-    }
-    if (heatToday) {
-      var showHot = L.featured || L.showcase || vh % 4 === 0;
-      heatToday.hidden = !showHot;
-      heatToday.textContent = "Bu ilan bugün çok görüntülendi";
-    }
-    if (heatBlock) heatBlock.hidden = false;
+    if (heatBlock) heatBlock.hidden = true;
 
     var urgentAside = document.getElementById("detailUrgentAside");
-    if (urgentAside) {
-      urgentAside.textContent = "";
-      if (L.featured || L.showcase) {
-        var pb = document.createElement("span");
-        pb.className = "detail-aside-flair detail-aside-flair--premium";
-        pb.textContent = L.showcase ? "Vitrin ilanı" : "Öne çıkan ilan";
-        urgentAside.appendChild(pb);
-      }
-      if (L.urgent) {
-        var ub = document.createElement("span");
-        ub.className = "detail-aside-flair detail-aside-flair--urgent";
-        ub.textContent = "ACİL";
-        urgentAside.appendChild(ub);
-      }
-      var fakeViews = 120 + (vh % 400);
-      var vb = document.createElement("span");
-      vb.className = "detail-aside-flair detail-aside-flair--muted";
-      vb.textContent = "Bugün ~" + fakeViews + " görüntülenme";
-      urgentAside.appendChild(vb);
-    }
+    if (urgentAside) urgentAside.textContent = "";
 
-    if (typeof window.bindIlanDetayPremiumTabs === "function") {
+    if (typeof window.bindIlanDetayDetailTabs === "function") {
+      try {
+        window.bindIlanDetayDetailTabs();
+      } catch (eTabs) {}
+    } else if (typeof window.bindIlanDetayPremiumTabs === "function") {
       try {
         window.bindIlanDetayPremiumTabs();
-      } catch (eTabs) {}
+      } catch (eTabs2) {}
+    }
+    if (typeof window.bindIlanDetayGallerySlider === "function") {
+      try {
+        window.bindIlanDetayGallerySlider();
+      } catch (eGal) {}
     }
   }
 
@@ -8493,7 +8551,6 @@
         if (!err) return "";
         var status = Number(err.status || 0);
         if (status === 0) return "Sunucuya ulaşılamadı. Lütfen bağlantınızı kontrol edip tekrar deneyin.";
-        if (status === 401) return "İlan işlemi için tekrar giriş yapın.";
         if (status === 403) return "Bu ilan üzerinde işlem yetkiniz yok.";
         if (status === 400 && Array.isArray(err.details) && err.details.length) {
           return err.details[0].msg || err.message || "";
@@ -8560,7 +8617,7 @@
       persistListing("draft");
     }
 
-    populateCitySelect("formCity", { placeholder: "Şehir seçin" });
+    populateCitySelect("formCity", { placeholder: "İl seçin" });
     fillDistrictSelect("formCity", "formDistrict");
     syncLocationFromInputs();
     initMap();
@@ -8572,6 +8629,12 @@
     $("formDistrict").addEventListener("change", function () {
       syncLocationFromInputs();
     });
+    if (window.JetleTrCitiesUI && typeof JetleTrCitiesUI.enhanceSelect === "function") {
+      var fcW = $("formCity");
+      var fdW = $("formDistrict");
+      if (fcW) JetleTrCitiesUI.enhanceSelect(fcW, { wrapClass: "dash-listing-tr-combo" });
+      if (fdW) JetleTrCitiesUI.enhanceSelect(fdW, { wrapClass: "dash-listing-tr-combo" });
+    }
     var formAddress = $("formAddress");
     if (formAddress) {
       formAddress.addEventListener("input", function () {
@@ -8870,6 +8933,8 @@
       if ($("formCity")) $("formCity").value = L.city || (L.location && L.location.city) || "";
       fillDistrictSelect("formCity", "formDistrict");
       if ($("formDistrict")) $("formDistrict").value = L.district || (L.location && L.location.district) || "";
+      trComboRefresh($("formCity"));
+      trComboRefresh($("formDistrict"));
       if ($("formAddress") && L.location) $("formAddress").value = L.location.address || "";
       syncLocationFromInputs();
       if (L.location) {
@@ -8935,8 +9000,12 @@
   }
 
   window.JetleMarket = {
-    CITIES: CITIES,
-    DISTRICTS: DISTRICTS,
+    get CITIES() {
+      return trProvinceNames();
+    },
+    get DISTRICTS() {
+      return buildDistrictsMap();
+    },
     CATEGORY_TREE: CATEGORY_TREE,
     initHome: initHome,
     refreshAll: refreshAll,

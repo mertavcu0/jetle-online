@@ -1313,9 +1313,6 @@
     return getAllListings().filter(function (L) {
       return L.createdBy === userId;
     }).sort(function (a, b) {
-      var ap = a.showcase ? 2 : a.featured ? 1 : 0;
-      var bp = b.showcase ? 2 : b.featured ? 1 : 0;
-      if (bp !== ap) return bp - ap;
       return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
     });
   }
@@ -1327,43 +1324,7 @@
   }
 
   function activateDoping(listingId, ownerId, type) {
-    var kind = sanitizeText(type, 24);
-    if (backendEnabled()) {
-      if (String(getCurrentUserId()) !== String(ownerId)) return { ok: false, message: "Bu ilana işlem yetkiniz yok." };
-      var res = syncBackendRequest("POST", "/api/doping/activate", { listingId: listingId, type: kind });
-      if (!res.ok) return { ok: false, message: res.message || "Doping uygulanamadı." };
-      notifyListingsChanged();
-      var L = getListingById(listingId);
-      return { ok: true, listing: L, message: "Paket aktif edildi." };
-    }
-    var list = getAllListings();
-    for (var i = 0; i < list.length; i++) {
-      var L = list[i];
-      if (L.id !== listingId) continue;
-      if (L.createdBy !== ownerId) return { ok: false, message: "Bu ilana işlem yetkiniz yok." };
-      if (L.status !== STATUS.APPROVED) return { ok: false, message: "Doping yalnızca yayındaki ilanlara uygulanır." };
-      if (kind === "featured") {
-        L.featured = true;
-        L.featuredUntil = addDaysIso(7);
-        L.packageType = "featured";
-      } else if (kind === "showcase") {
-        L.showcase = true;
-        L.featured = true;
-        L.showcaseUntil = addDaysIso(7);
-        L.featuredUntil = addDaysIso(7);
-        L.packageType = "showcase";
-      } else if (kind === "urgent") {
-        L.urgent = true;
-      } else if (kind === "highlight") {
-        L.highlight = true;
-      } else {
-        return { ok: false, message: "Geçersiz doping türü." };
-      }
-      L.updatedAt = new Date().toISOString();
-      saveAllListings(list);
-      return { ok: true, listing: L, message: "Paket aktif edildi." };
-    }
-    return { ok: false, message: "İlan bulunamadı." };
+    return { ok: false, message: "Vitrin ve öne çıkarma özellikleri kaldırıldı." };
   }
 
   function getComplaints() {
@@ -1609,82 +1570,14 @@
     saveEntitlements(userId, ent);
   }
 
-  var PRICING_CATALOG = {
-    dopings: [
-      { id: "doping-guncelle", name: "Güncelim", price: 149, currency: "TRY", unit: "işlem", perks: ["Yayın tarihi güncellenir", "Liste sıralamasında tazelik", "Tek seferlik hak"], bumpCredits: 1 },
-      { id: "doping-one-cikar", name: "Öne Çıkan İlan", price: 249, currency: "TRY", unit: "ilan / dönem", perks: ["Arama sonuçlarında üst bant", "Öne çıkan etiketi", "Kategori içi görünürlük"], featuredSlots: 1 },
-      { id: "doping-vitrin", name: "Vitrin İlan", price: 399, currency: "TRY", unit: "ilan / dönem", perks: ["Vitrin şeridinde gösterim", "Öne çıkarma dahil", "Daha yüksek tıklanma"], showcaseSlots: 1 },
-      { id: "doping-ana-vitrin", name: "Ana Sayfa Vitrin", price: 599, currency: "TRY", unit: "ilan / dönem", perks: ["Ana sayfa vitrin rotasyonu", "Marka görünürlüğü", "Öncelikli yerleşim"], showcaseSlots: 2 },
-      { id: "doping-sponsor", name: "Sponsorlu İlan / Banner Destekli", price: 899, currency: "TRY", unit: "ilan / dönem", perks: ["Sponsor alanlarında gösterim", "Banner destekli görünüm", "Kampanya raporlaması"], sponsorSlots: 1 }
-    ],
-    stores: [
-      { id: "store-baslangic", name: "Başlangıç Paket", price: 999, period: "ay", plan: "baslangic", perks: ["25 aktif ilan", "Mağaza rozeti", "Temel vitrin desteği"], maxListings: 25, popular: false },
-      { id: "store-standart", name: "Standart Paket", price: 1999, period: "ay", plan: "standart", perks: ["75 aktif ilan", "Öne çıkan ilan kredileri", "Gelişmiş vitrin görünürlüğü"], maxListings: 75, popular: true },
-      { id: "store-pro", name: "Pro Paket", price: 3499, period: "ay", plan: "pro", perks: ["200 aktif ilan", "Kurumsal profil", "Vitrin önceliği", "Reklam alanı avantajı"], maxListings: 200, popular: false },
-      { id: "store-kurumsal", name: "Kurumsal Plus", price: 5999, period: "ay", plan: "kurumsal_plus", perks: ["500 aktif ilan", "Özel destek hattı", "Ana sayfa vitrin rotasyonu", "Banner önceliği"], maxListings: 500, popular: false }
-    ],
-    extras: [
-      { id: "extra-ilan-1", name: "Ek İlan 1", price: 99, unit: "adet", extraListingSlots: 1, perks: ["Anında aktif slot"] },
-      { id: "extra-ilan-2-5", name: "Ek İlan 2–5", price: 79, unit: "adet", extraListingSlots: 1, perks: ["Çoklu ilan ihtiyacı için", "Aynı hesapta kullanım"] },
-      { id: "extra-ilan-10", name: "10’lu Ek İlan Paketi", price: 599, unit: "paket", extraListingSlots: 10, perks: ["10 ek yayın hakkı", "Paket başına tasarruf"] }
-    ],
-    credits: [
-      { id: "kredi-5", name: "5 Kredi Paketi", price: 499, unit: "5 kredi", credits: 5, perks: ["Öne çıkarma veya vitrin için kullanılabilir", "Panelden takip"] },
-      { id: "kredi-10", name: "10 Kredi Paketi", price: 899, unit: "10 kredi", credits: 10, perks: ["Daha uygun birim fiyat", "Kurumsal ilanlar için"] },
-      { id: "kredi-25", name: "25 Kredi Paketi", price: 1999, unit: "25 kredi", credits: 25, perks: ["Yüksek hacimli satıcılar", "Öncelikli destek"] }
-    ]
-  };
+  var PRICING_CATALOG = { dopings: [], stores: [], extras: [], credits: [] };
 
   function getPricingCatalog() {
     return PRICING_CATALOG;
   }
 
   function purchasePricingProduct(userId, productId) {
-    if (!userId || userId === "__guest__") return { ok: false, message: "Giriş yapın." };
-    var pid = sanitizeText(productId, 48);
-    var hit = null;
-    PRICING_CATALOG.dopings.forEach(function (x) {
-      if (x.id === pid) hit = { type: "doping", row: x };
-    });
-    if (!hit) {
-      PRICING_CATALOG.stores.forEach(function (x) {
-        if (x.id === pid) hit = { type: "store", row: x };
-      });
-    }
-    if (!hit) {
-      PRICING_CATALOG.extras.forEach(function (x) {
-        if (x.id === pid) hit = { type: "extra", row: x };
-      });
-    }
-    if (!hit) {
-      PRICING_CATALOG.credits.forEach(function (x) {
-        if (x.id === pid) hit = { type: "credit", row: x };
-      });
-    }
-    if (!hit) return { ok: false, message: "Ürün bulunamadı." };
-    if (backendEnabled()) {
-      if (String(getCurrentUserId()) !== String(userId)) return { ok: false, message: "Oturum uyuşmuyor." };
-      var pay = syncBackendRequest("POST", "/api/packages/activate", { productId: pid });
-      if (!pay.ok) return { ok: false, message: pay.message || "Satın alma başarısız." };
-      return { ok: true, message: hit.row.name + " satın alındı (simülasyon)." };
-    }
-    var ent = getEntitlements(userId);
-    var r = hit.row;
-    if (hit.type === "doping") {
-      if (r.bumpCredits) ent.bumpCredits += r.bumpCredits;
-      if (r.featuredSlots) ent.featuredSlots += r.featuredSlots;
-      if (r.showcaseSlots) ent.showcaseSlots += r.showcaseSlots;
-      if (r.sponsorSlots) ent.sponsorSlots += r.sponsorSlots;
-    } else if (hit.type === "store") {
-      extendStorePlan(userId, r.plan, 30);
-      ent = getEntitlements(userId);
-    } else if (hit.type === "extra") {
-      ent.extraListingSlots += r.extraListingSlots || 0;
-    } else if (hit.type === "credit") {
-      ent.dopingCredits += r.credits || 0;
-    }
-    saveEntitlements(userId, ent);
-    return { ok: true, message: r.name + " satın alındı (yerel ödeme simülasyonu)." };
+    return { ok: false, message: "Ücretli paket ve ödeme özellikleri kaldırıldı." };
   }
 
   function consumeFeaturedSlot(userId) {

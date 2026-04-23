@@ -445,7 +445,7 @@
       var rid = rowId(r);
       var a = document.createElement("a");
       a.className = "ilan-sim-card";
-      a.href = "ilan-detail.html?id=" + encodeURIComponent(rid);
+      a.href = "ilan-detay.html?id=" + encodeURIComponent(rid);
       var media = document.createElement("div");
       media.className = "ilan-sim-card__media";
       var img = document.createElement("img");
@@ -627,6 +627,30 @@
     }
   }
 
+  function applyListingDocumentSeo(title, id) {
+    var safeTitle = title != null && String(title).trim() ? String(title).trim() : "İlan";
+    var full = safeTitle + " — JETLE.online";
+    try {
+      document.title = full;
+    } catch (e) {}
+    try {
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) {
+        var snippet = safeTitle.length > 120 ? safeTitle.slice(0, 117) + "…" : safeTitle;
+        desc.setAttribute("content", snippet + " — JETLE.online ilan detayı, fiyat ve iletişim.");
+      }
+      var ogT = document.querySelector('meta[property="og:title"]');
+      if (ogT) ogT.setAttribute("content", full);
+      var ogD = document.querySelector('meta[property="og:description"]');
+      if (ogD && desc) ogD.setAttribute("content", desc.getAttribute("content") || "");
+    } catch (e2) {}
+    try {
+      if (window.JetleCommon && typeof JetleCommon.applySeoBasics === "function") {
+        JetleCommon.applySeoBasics();
+      }
+    } catch (e3) {}
+  }
+
   function applyListingToDom(item, id) {
     var titleEl = document.getElementById("ilanTitle");
     var headNo = document.getElementById("ilanHeadMetaNo");
@@ -698,7 +722,7 @@
       if (logged) {
         btnMsg.href = "dashboard.html#messages";
       } else {
-        btnMsg.href = "login.html?next=" + encodeURIComponent("ilan-detail.html?id=" + id);
+        btnMsg.href = "login.html?next=" + encodeURIComponent("ilan-detay.html?id=" + id);
       }
       btnMsg.textContent = "Mesaj";
       btnMsg.setAttribute("aria-label", "Mesaj gönder");
@@ -706,6 +730,7 @@
 
     window.tabAc("aciklama");
     setStickyContactBar(true);
+    applyListingDocumentSeo(title, id);
   }
 
   function loadSimilarListings(currentId, currentItem, similarEl) {
@@ -776,15 +801,18 @@
       if (loading) loading.setAttribute("aria-busy", "false");
       setVisible(skeleton, false);
       setVisible(errBox, true);
-      if (errText) errText.textContent = "Geçersiz veya eksik ilan numarası (?id=).";
+      if (errText) errText.textContent = "Bir hata oluştu. Geçerli bir ilan bağlantısı ile açın (?id=…).";
+      try {
+        document.title = "Bir hata oluştu — JETLE.online";
+      } catch (eTitle) {}
       return;
     }
 
     setVisible(errBox, false);
     setVisible(root, false);
-    setVisible(skeleton, false);
-    setVisible(loading, true);
-    if (loading) loading.setAttribute("aria-busy", "true");
+    setVisible(loading, false);
+    if (loading) loading.setAttribute("aria-busy", "false");
+    setVisible(skeleton, true);
 
     var detailUrl = resolveListingDetailUrl(id);
 
@@ -835,10 +863,12 @@
         setStickyContactBar(false);
         setVisible(errBox, true);
         if (errText) {
-          var em = err && err.message ? String(err.message) : "";
           errText.textContent =
-            (em ? em + " " : "") + "İlan yüklenemedi. «Tekrar dene» ile yenileyebilir veya ana sayfaya dönebilirsiniz.";
+            "Bir hata oluştu. Bağlantınızı kontrol edin, «Tekrar dene» ile yenileyin veya ana sayfaya dönün.";
         }
+        try {
+          document.title = "Bir hata oluştu — JETLE.online";
+        } catch (eTit) {}
       });
   }
 

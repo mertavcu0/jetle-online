@@ -12,9 +12,10 @@
     USERS: "jetle_v2_users",
     SESSION: "jetle_v2_session",
     BACKEND_FLAG: "jetle_v2_use_backend_api",
-    /** jetle-backend ve frontend ortak: Bearer token (localStorage) */
     ACCESS_TOKEN: "jetle_v2_access_token"
   };
+  /** Basit oturum: tek kaynak (token yok) */
+  var USER_LS = "user";
   var LEGACY_TOKEN_KEY = "token";
   /** Üretim API kökü — göreli `/api/...` yok; tüm istekler mutlak URL. */
   var API_BASE = "https://jetle-online-production.up.railway.app";
@@ -38,6 +39,46 @@
 
   function writeJson(key, v) {
     localStorage.setItem(key, JSON.stringify(v));
+  }
+
+  function readStoredUser() {
+    try {
+      var raw = localStorage.getItem(USER_LS);
+      if (!raw) return null;
+      var u = JSON.parse(raw);
+      return u && typeof u === "object" && u.id ? u : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function persistUser(user) {
+    if (!user || typeof user !== "object" || !user.id) return;
+    var row = {
+      id: String(user.id),
+      name: String(user.name || user.fullName || "").trim() || "Kullanıcı",
+      email: String(user.email || "").trim(),
+      phone: String(user.phone || "").trim(),
+      role: user.role || "user",
+      city: String(user.city || "").trim(),
+      district: String(user.district || "").trim(),
+      profileType: user.profileType || "Bireysel"
+    };
+    try {
+      localStorage.setItem(USER_LS, JSON.stringify(row));
+    } catch (e) {}
+    try {
+      window.currentUser = row;
+    } catch (e2) {}
+  }
+
+  function clearUserState() {
+    try {
+      localStorage.removeItem(USER_LS);
+    } catch (e0) {}
+    try {
+      window.currentUser = null;
+    } catch (e1) {}
   }
 
   function backendEnabled() {
@@ -126,6 +167,7 @@
   }
 
   function clearSessionState() {
+    clearUserState();
     try {
       localStorage.removeItem(KEYS.ACCESS_TOKEN);
       localStorage.removeItem(LEGACY_TOKEN_KEY);
@@ -138,14 +180,8 @@
     localStorage.removeItem(KEYS.SESSION);
   }
 
-  /** JWT: önce kalıcı `token`, sonra oturum içi accessToken (sayfa yenilemede tutarlı). */
+  /** Token kullanılmıyor; geriye dönük çağrılar için boş döner. */
   function getRawAccessToken() {
-    try {
-      var lsTok = localStorage.getItem(LEGACY_TOKEN_KEY) || localStorage.getItem(KEYS.ACCESS_TOKEN) || "";
-      if (lsTok) return String(lsTok);
-    } catch (e0) {}
-    var s = readSessionState();
-    if (s && s.accessToken) return String(s.accessToken);
     return "";
   }
 
@@ -206,6 +242,29 @@
   }
 
   function getSession() {
+    var su = readStoredUser();
+    if (su) {
+      return {
+        userId: su.id,
+        email: su.email,
+        name: su.name,
+        role: su.role || "user",
+        accessToken: "",
+        refreshToken: "",
+        remember: false,
+        user: {
+          id: su.id,
+          fullName: su.name,
+          name: su.name,
+          email: su.email || "",
+          role: su.role || "user",
+          phone: su.phone || "",
+          city: su.city || "",
+          district: su.district || "",
+          profileType: su.profileType || "Bireysel"
+        }
+      };
+    }
     var s = readSessionState();
     if (!s || (!s.userId && !s.user)) return null;
     if (s.user && s.user.id) {
@@ -214,7 +273,7 @@
         email: s.user.email,
         name: s.user.fullName || s.user.name,
         role: s.user.role || "user",
-        accessToken: getRawAccessToken(),
+        accessToken: "",
         refreshToken: s.refreshToken || "",
         remember: !!s.persist,
         user: s.user
@@ -259,7 +318,6 @@
   function mapBackendMessage(res, fallback) {
     if (!res) return fallback;
     if (res.status === 0) return res.message || "Sunucuya ulaşılamadı.";
-    if (res.status === 401) return "E-posta veya şifre hatalı.";
     if (res.status === 403) return "Bu işlem için yetkiniz bulunmuyor.";
     if (res.status === 409) return "Bu e-posta ile kayıt var.";
     if (res.status === 429) return "Çok fazla deneme yapıldı. Lütfen kısa süre sonra tekrar deneyin.";
@@ -270,18 +328,12 @@
   }
 
   function normalizeBackendUser(me) {
-    var jwtRole = null;
-    var tok = getRawAccessToken();
-    if (tok) {
-      var pl = decodeJwtPayload(tok);
-      if (pl && pl.role) jwtRole = String(pl.role);
-    }
     return {
       id: me.id,
       name: me.fullName || me.name || "",
       email: me.email || "",
       phone: me.phone || "",
-      role: me.role || jwtRole || "user",
+      role: me.role || "user",
       city: me.city || "",
       district: me.district || "",
       profileType: me.profileType || "Bireysel"
@@ -307,129 +359,21 @@
     };
   }
 
-  /** Sunucudan oturum doğrulama (async); window.currentUser güncellenir. */
+  /** Yerelde saklanan `user` ile window.currentUser eşitlenir (token yok). */
   function syncCurrentUserFromBackendAsync() {
-    if (!backendEnabled()) return Promise.resolve(null);
-    var tok = getRawAccessToken();
-    if (!tok) {
-      clearSession();
-      try {
-        window.currentUser = null;
-      } catch (eTok) {}
-      return Promise.resolve(null);
-    }
-    console.log("CALLING:", API_BASE + "/api/auth/me");
-    var bearerLs = "";
+    var u = readStoredUser();
     try {
-      bearerLs = localStorage.getItem("token") || "";
-    } catch (eLs) {}
-    return fetch(API_BASE + "/api/auth/me", {
-      method: "GET",
-      credentials: "include",
-      headers: { Authorization: "Bearer " + String(bearerLs), Accept: "application/json" }
-    })
-      .then(function (res) {
-        return res.text().then(function (txt) {
-          var j = null;
-          try {
-            j = txt ? JSON.parse(txt) : null;
-          } catch (e) {
-            j = null;
-          }
-          return { res: res, j: j };
-        });
-      })
-      .then(function (op) {
-        var res = op.res;
-        var j = op.j;
-        if (res.status === 401 || res.status === 403) {
-          clearSession();
-          try {
-            window.currentUser = null;
-          } catch (e401) {}
-          return null;
-        }
-        var me = j && j.data != null ? j.data : null;
-        if (res.ok && me && typeof me === "object") {
-          var s = readSessionState();
-          setBackendSession(
-            {
-              accessToken: String(tok),
-              refreshToken: s && s.refreshToken ? String(s.refreshToken) : "",
-              user: me
-            },
-            !!(s && s.persist)
-          );
-          var norm = normalizeBackendUser(me);
-          try {
-            window.currentUser = norm;
-          } catch (eOk) {}
-          return norm;
-        }
-        var fallback = userFromJwtOnly();
-        var out = fallback ? normalizeBackendUser(fallback) : null;
-        try {
-          window.currentUser = out;
-        } catch (eFb) {}
-        return out;
-      })
-      .catch(function () {
-        var fallback = userFromJwtOnly();
-        var out = fallback ? normalizeBackendUser(fallback) : null;
-        try {
-          window.currentUser = out;
-        } catch (eCatch) {}
-        return out;
-      });
+      window.currentUser = u;
+    } catch (e) {}
+    return Promise.resolve(u);
   }
 
   function syncCurrentUserFromBackend() {
-    if (!backendEnabled()) return null;
-    var tok = getRawAccessToken();
-    if (!tok) {
-      clearSession();
-      try {
-        window.currentUser = null;
-      } catch (e) {}
-      return null;
-    }
-    var s = readSessionState();
-    console.log("CALLING:", API_BASE + "/api/auth/me");
-    var meUrlSync = API_BASE.replace(/\/+$/, "") + "/api/auth/me";
-    var bearerSync = "";
+    var u = readStoredUser();
     try {
-      bearerSync = localStorage.getItem("token") || "";
-    } catch (eLs2) {}
-    var meRes = syncBackendRequest("GET", meUrlSync, null, String(bearerSync));
-    if (!meRes.ok || !meRes.data || !meRes.data.data) {
-      if (meRes.status === 401 || meRes.status === 403) {
-        clearSession();
-        try {
-          window.currentUser = null;
-        } catch (e2) {}
-        return null;
-      }
-      var fallback = userFromJwtOnly();
-      var out = fallback ? normalizeBackendUser(fallback) : null;
-      try {
-        window.currentUser = out;
-      } catch (e3) {}
-      return out;
-    }
-    var me = meRes.data.data;
-    setBackendSession(
-      {
-        accessToken: String(tok),
-        refreshToken: s && s.refreshToken ? String(s.refreshToken) : "",
-        user: me
-      },
-      !!(s && s.persist)
-    );
-    var norm = normalizeBackendUser(me);
-    try {
-      window.currentUser = norm;
-    } catch (e4) {}
-    return norm;
+      window.currentUser = u;
+    } catch (e) {}
+    return u;
   }
 
   function findUserByEmail(email) {
@@ -451,46 +395,13 @@
       console.log("LOGIN RESPONSE:", body);
       var pl = body.data;
       if (!pl || !pl.user) return { ok: false, message: "Geçersiz backend yanıtı." };
-      var token = pl.token || pl.accessToken;
-      if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
-      try {
-        if (pl.token) {
-          localStorage.setItem("token", String(pl.token));
-        } else if (pl.accessToken) {
-          localStorage.setItem("token", String(pl.accessToken));
-        }
-        localStorage.setItem(KEYS.ACCESS_TOKEN, String(token));
-      } catch (eTok) {}
-      console.log("SAVED TOKEN:", (function () {
-        try {
-          return localStorage.getItem("token");
-        } catch (eSt) {
-          return "";
-        }
-      })());
       var u = pl.user;
-      var disp = (u && (u.fullName || u.name)) || "";
-      setBackendSession(
-        {
-          accessToken: String(token),
-          refreshToken: pl.refreshToken || "",
-          user: {
-            id: u.id,
-            fullName: disp,
-            name: disp,
-            email: u.email || "",
-            role: u.role || "user",
-            phone: u.phone || "",
-            city: u.city || "",
-            district: u.district || "",
-            profileType: u.profileType || "Bireysel"
-          }
-        },
-        !!remember
-      );
+      var norm = normalizeBackendUser(u);
       try {
-        window.currentUser = normalizeBackendUser(u);
-      } catch (eLogin) {}
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
+        localStorage.removeItem(KEYS.ACCESS_TOKEN);
+      } catch (eTok) {}
+      persistUser(norm);
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -508,9 +419,16 @@
     }
     if (u.active === false) return { ok: false, message: "Hesap pasif." };
     setSession(u.id, !!remember);
-    try {
-      window.currentUser = getCurrentUserLocalFromSession();
-    } catch (eLocLogin) {}
+    persistUser({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone || "",
+      role: u.role || "user",
+      city: u.city || "",
+      district: u.district || "",
+      profileType: u.profileType || "Bireysel"
+    });
     return { ok: true };
   }
 
@@ -535,14 +453,16 @@
 
   function logout() {
     if (backendEnabled()) {
-      var tok = getRawAccessToken();
-      if (tok) {
-        try {
-          syncBackendRequest("POST", "/api/auth/logout", null, tok);
-        } catch (e) {}
-      }
+      try {
+        syncBackendRequest("POST", "/api/auth/logout", null, "");
+      } catch (e) {}
     }
-    clearSession();
+    try {
+      localStorage.clear();
+    } catch (e1) {}
+    try {
+      sessionStorage.clear();
+    } catch (e2) {}
     try {
       window.currentUser = null;
     } catch (eLo) {}
@@ -594,46 +514,13 @@
       console.log("REGISTER RESPONSE:", regBody);
       var rd = regBody.data;
       if (!rd || !rd.user) return { ok: false, message: "Geçersiz backend yanıtı." };
-      var token = rd.token || rd.accessToken;
-      if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
-      try {
-        if (rd.token) {
-          localStorage.setItem("token", String(rd.token));
-        } else if (rd.accessToken) {
-          localStorage.setItem("token", String(rd.accessToken));
-        }
-        localStorage.setItem(KEYS.ACCESS_TOKEN, String(token));
-      } catch (eTokR) {}
-      console.log("SAVED TOKEN:", (function () {
-        try {
-          return localStorage.getItem("token");
-        } catch (eSr) {
-          return "";
-        }
-      })());
       var u = rd.user;
-      var dispR = (u && (u.fullName || u.name)) || "";
-      setBackendSession(
-        {
-          accessToken: String(token),
-          refreshToken: rd.refreshToken || "",
-          user: {
-            id: u.id,
-            fullName: dispR,
-            name: dispR,
-            email: u.email || "",
-            role: u.role || "user",
-            phone: u.phone || "",
-            city: u.city || "",
-            district: u.district || "",
-            profileType: u.profileType || "Bireysel"
-          }
-        },
-        payload && payload.remember !== false
-      );
+      var normR = normalizeBackendUser(u);
       try {
-        window.currentUser = normalizeBackendUser(u);
-      } catch (eRegB) {}
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
+        localStorage.removeItem(KEYS.ACCESS_TOKEN);
+      } catch (eTokR) {}
+      persistUser(normR);
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -672,23 +559,30 @@
     list.push(user);
     saveUsers(list);
     setSession(id, payload && payload.remember !== false);
-    try {
-      window.currentUser = getCurrentUserLocalFromSession();
-    } catch (eLocReg) {}
+    persistUser({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "",
+      role: user.role || "user",
+      city: user.city || "",
+      district: user.district || "",
+      profileType: user.profileType || "Bireysel"
+    });
     return { ok: true };
   }
 
   function getCurrentUser() {
-    if (backendEnabled()) {
-      try {
-        return window.currentUser != null ? window.currentUser : null;
-      } catch (eGc) {
-        return null;
-      }
-    }
     try {
       if (window.currentUser != null) return window.currentUser;
-    } catch (eGc2) {}
+    } catch (eGc) {}
+    var stored = readStoredUser();
+    if (stored) {
+      try {
+        window.currentUser = stored;
+      } catch (eSt) {}
+      return stored;
+    }
     return getCurrentUserLocalFromSession();
   }
 
@@ -697,46 +591,41 @@
   }
 
   function getFullUser() {
-    if (backendEnabled()) {
-      var current = getCurrentUser();
-      if (!current) return null;
-      var session = getSession();
-      return {
-        id: current.id,
-        name: current.name,
-        email: current.email,
-        phone: current.phone,
-        role: current.role || "user",
-        city: current.city || "",
-        district: current.district || "",
-        profileType: current.profileType || "Bireysel",
-        accessToken: getRawAccessToken(),
-        refreshToken: session && session.refreshToken ? session.refreshToken : ""
-      };
-    }
     var c = getCurrentUser();
     if (!c) return null;
-    return getUsers().find(function (x) {
+    var fu = getUsers().find(function (x) {
       return x.id === c.id;
-    }) || null;
+    });
+    if (fu) return fu;
+    return {
+      id: c.id,
+      name: c.name,
+      email: c.email,
+      phone: c.phone || "",
+      role: c.role || "user",
+      city: c.city || "",
+      district: c.district || "",
+      profileType: c.profileType || "Bireysel"
+    };
   }
 
   function isAdmin() {
     var u = getCurrentUser();
-    if (u && u.role === "admin") return true;
-    var tok = getRawAccessToken();
-    if (!tok) return false;
-    var pl = decodeJwtPayload(tok);
-    return !!(pl && pl.role === "admin");
+    return !!(u && u.role === "admin");
   }
 
-  function requireUser() {
+  function checkAuth() {
     if (!isLoggedIn()) {
       var page = (location.pathname && location.pathname.split("/").pop()) || "";
       if (!page || page === "") page = "index.html";
       window.location.replace("login.html?next=" + encodeURIComponent(page));
-      return null;
+      return false;
     }
+    return true;
+  }
+
+  function requireUser() {
+    if (!checkAuth()) return null;
     return getCurrentUser();
   }
 
@@ -774,8 +663,15 @@
       slot.appendChild(iv);
     }
 
-    var u = arguments.length >= 1 ? user : window.currentUser;
+    var u = arguments.length >= 1 ? user : getCurrentUser();
     if (u) {
+      var nameEl = document.createElement("span");
+      nameEl.className = "header-user-name";
+      nameEl.textContent = String(u.name || u.fullName || "Hesabım").trim() || "Hesabım";
+      nameEl.setAttribute("aria-label", "Giriş yapan kullanıcı");
+      slot.appendChild(nameEl);
+
+      addHeaderLink("favoriler.html", "Favorilerim", "header-link--auth");
       addHeaderLink("dashboard.html#profile", "Profil", "header-link--auth");
       var out = document.createElement("button");
       out.type = "button";
@@ -805,20 +701,22 @@
     var u = getCurrentUser();
     if (!u) return { ok: false, message: "Oturum yok." };
     if (backendEnabled()) {
-      var body = {};
-      if (patch.name != null) body.fullName = JetleAPI.sanitizeText(patch.name, 120);
-      if (patch.phone != null) body.phone = JetleAPI.sanitizeText(patch.phone, 20);
-      if (patch.city != null) body.city = JetleAPI.sanitizeText(patch.city, 60);
-      if (patch.district != null) body.district = JetleAPI.sanitizeText(patch.district, 60);
-      if (patch.profileType != null) {
-        var pt = JetleAPI.sanitizeText(patch.profileType, 40);
-        if (pt === "Bireysel" || pt === "Kurumsal") body.profileType = pt;
-      }
-      if (Object.keys(body).length === 0) return { ok: true };
-      var s = readSessionState();
-      var res = syncBackendRequest("PATCH", "/api/auth/me/profile", body, getRawAccessToken());
-      if (!res.ok) return { ok: false, message: mapBackendMessage(res, "Profil güncellenemedi.") };
-      syncCurrentUserFromBackend();
+      var next = {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        phone: u.phone || "",
+        role: u.role || "user",
+        city: u.city || "",
+        district: u.district || "",
+        profileType: u.profileType || "Bireysel"
+      };
+      if (patch.name != null) next.name = JetleAPI.sanitizeText(patch.name, 120);
+      if (patch.phone != null) next.phone = JetleAPI.sanitizeText(patch.phone, 20);
+      if (patch.city != null) next.city = JetleAPI.sanitizeText(patch.city, 60);
+      if (patch.district != null) next.district = JetleAPI.sanitizeText(patch.district, 60);
+      if (patch.profileType != null) next.profileType = JetleAPI.sanitizeText(patch.profileType, 40);
+      persistUser(next);
       return { ok: true };
     }
     var list = getUsers();
@@ -835,6 +733,7 @@
     try {
       window.currentUser = getCurrentUserLocalFromSession();
     } catch (eUpLoc) {}
+    if (window.currentUser) persistUser(window.currentUser);
     return { ok: true };
   }
 
@@ -888,15 +787,12 @@
   function init() {
     seedUsersIfEmpty();
     if (window.JetleAPI && typeof JetleAPI.init === "function") JetleAPI.init();
-    if (backendEnabled()) {
-      var tok = getRawAccessToken();
-      if (!tok) {
-        try {
-          window.currentUser = null;
-        } catch (eIn1) {}
-        return Promise.resolve(null);
-      }
-      return syncCurrentUserFromBackendAsync();
+    var su = readStoredUser();
+    if (su) {
+      try {
+        window.currentUser = su;
+      } catch (eSu) {}
+      return Promise.resolve(su);
     }
     try {
       window.currentUser = getCurrentUserLocalFromSession();
@@ -905,6 +801,7 @@
         window.currentUser = null;
       } catch (eIn3) {}
     }
+    if (window.currentUser) persistUser(window.currentUser);
     return Promise.resolve(window.currentUser);
   }
 
@@ -1002,6 +899,7 @@
     getFullUser: getFullUser,
     isLoggedIn: isLoggedIn,
     isAdmin: isAdmin,
+    checkAuth: checkAuth,
     requireUser: requireUser,
     requireAdmin: requireAdmin,
     renderHeaderBar: renderHeaderBar,

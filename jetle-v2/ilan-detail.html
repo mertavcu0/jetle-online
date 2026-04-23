@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <title>İlan detayı — JETLE.online</title>
+  <meta name="description" content="JETLE.online ilan detayında fiyat, görseller, özellikler ve güvenli iletişim seçenekleri." />
+  <meta property="og:title" content="İlan detayı — JETLE.online" />
+  <meta property="og:description" content="JETLE.online ilan detayında fiyat, görseller ve satıcı bilgileri." />
+  <meta name="robots" content="index, follow" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -515,7 +519,7 @@
     }
   </style>
 </head>
-<body class="page-detail font-inter">
+<body class="page-detail font-inter" data-page="detail">
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
     <symbol id="iqs-cal" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></symbol>
     <symbol id="iqs-km" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></symbol>
@@ -579,7 +583,7 @@
       </div>
 
       <div id="detailError" class="panel panel--flat detail-error-panel" hidden>
-        <p id="detailErrorText" class="text-muted">İlan bulunamadı.</p>
+        <p id="detailErrorText" class="text-muted">Bir hata oluştu.</p>
         <div class="detail-error-panel__actions">
           <button type="button" class="btn btn-secondary btn-sm" id="detailRetryBtn">Tekrar dene</button>
           <a href="index.html" class="btn btn-primary btn-sm">Ana sayfaya dön</a>
@@ -674,6 +678,7 @@
 
   <script src="api.js?v=20260217"></script>
   <script src="auth.js"></script>
+  <script src="common.js"></script>
   <script src="script.js"></script>
   <script src="ilan-detail.js"></script>
 </body>

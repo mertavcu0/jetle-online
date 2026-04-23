@@ -11,15 +11,18 @@
   var API_BASE = "https://jetle-online-production.up.railway.app";
   var DEFAULT_LISTINGS_URL = API_BASE + "/api/listings";
   /** İlk yüklemede sadece 6 kart; kalanlar lazy chunk halinde gelir. */
-  var HOME_INITIAL_RENDER_COUNT = 6;
-  var HOME_LAZY_BATCH_SIZE = 6;
+  var HOME_INITIAL_RENDER_COUNT = 12;
+  var HOME_LAZY_BATCH_SIZE = 8;
   var HOME_CACHE_KEY = "jetle_home_listings_cache_v1";
   var HOME_CACHE_TTL_MS = 2 * 60 * 1000;
-  var MAX_RENDERED_CARDS = 30;
+  var MAX_RENDERED_CARDS = 48;
   var EST_CARD_ROW_HEIGHT = 332;
   var CARD_IMG_W = 280;
   var CARD_IMG_H = 210;
   var DESC_MAX = 140;
+  var LIVE_STREAM_MAX = 10;
+  var LIVE_STREAM_TICK_MS = 5000;
+  var LIVE_STREAM_STORAGE_KEY = "jetle_home_live_stream_v1";
 
   /** Ham API satırları (filtre öncesi). */
   var apiRows = [];
@@ -37,6 +40,7 @@
   var infiniteObserver = null;
   var scrollFallbackWired = false;
   var virtualTopTrimmedRows = 0;
+  var liveStreamTimer = null;
 
   function idKey(item) {
     if (!item || typeof item !== "object") return "";
@@ -47,30 +51,12 @@
 
   function selectFeaturedList(rows) {
     var r = rows || [];
-    var promoted = r
-      .filter(isPromotedListing)
+    return r
+      .slice()
       .sort(function (a, b) {
-        return promotedSortKey(b) - promotedSortKey(a);
-      });
-    var picked = promoted.slice(0, 6);
-    var used = {};
-    picked.forEach(function (x) {
-      used[idKey(x)] = true;
-    });
-    if (picked.length < 4) {
-      for (var i = 0; i < r.length && picked.length < 6; i++) {
-        var k = idKey(r[i]);
-        if (k && used[k]) continue;
-        if (k) used[k] = true;
-        picked.push(r[i]);
-      }
-    }
-    if (picked.length === 0 && r.length) {
-      picked = r.slice(0, 6).map(function (x) {
-        return Object.assign({ featured: true }, x);
-      });
-    }
-    return picked.slice(0, 6);
+        return (parseListingDateMs(b) || 0) - (parseListingDateMs(a) || 0);
+      })
+      .slice(0, 6);
   }
 
   function featuredCardHref(item) {
@@ -267,22 +253,16 @@
     return Math.abs(h);
   }
 
-  /** API’de kurumsal işareti varsa veya id’ye göre kararlı “rastgele” (~%25). */
-  function showKurumsalBadge(item) {
-    if (!item || typeof item !== "object") return false;
-    var raw = item.sellerType || item.sellerProfileType || item.profileType || item.accountType || item.sellerCategory || "";
-    if (raw && /kurumsal/i.test(String(raw))) return true;
-    var key = idKey(item) || String(item.title || item.listingNo || "");
-    return hashStr(key) % 4 === 1;
-  }
-
   function cityLabel(item) {
     if (!item || typeof item !== "object") return "—";
     var c = item.city != null ? String(item.city).trim() : "";
-    if (item.location && typeof item.location === "object" && item.location.city) {
-      c = c || String(item.location.city).trim();
+    var d = item.district != null ? String(item.district).trim() : "";
+    if (item.location && typeof item.location === "object") {
+      if (!c && item.location.city) c = String(item.location.city).trim();
+      if (!d && item.location.district) d = String(item.location.district).trim();
     }
-    return c || "—";
+    var loc = [c, d].filter(Boolean).join(" / ");
+    return loc || "—";
   }
 
   function mongoIdToDateMs(idStr) {
@@ -315,6 +295,7 @@
     var hr = Math.floor(min / 60);
     if (hr < 24) return hr + " saat önce";
     var d = Math.floor(hr / 24);
+    if (d === 1) return "Dün";
     if (d < 7) return d + " gün önce";
     var w = Math.floor(d / 7);
     if (w < 5) return w + " hafta önce";
@@ -330,27 +311,12 @@
   }
 
   function detailPageHref(id) {
-    return "ilan-detail.html?id=" + encodeURIComponent(id);
+    return "ilan-detay.html?id=" + encodeURIComponent(id);
   }
 
   function gridListingHref(id) {
     if (!id) return "index.html";
     return detailPageHref(id);
-  }
-
-  function isPromotedListing(item) {
-    if (!item || typeof item !== "object") return false;
-    return !!(item.featured || item.showcase || item.sponsored || item.urgent || item.highlight);
-  }
-
-  function promotedSortKey(item) {
-    var s = 0;
-    if (item.urgent) s += 8;
-    if (item.showcase) s += 4;
-    if (item.featured) s += 2;
-    if (item.highlight) s += 1;
-    if (item.sponsored) s += 1;
-    return s;
   }
 
   function cityMatches(item, cityNorm) {
@@ -363,42 +329,18 @@
     return foldTr(c) === foldTr(want);
   }
 
-  function appendPromotionBadges(host, item) {
-    if (!host || !item) return;
-    var hasRealBadge = !!(item.urgent || item.showcase || item.featured);
-    if (item.urgent) {
-      var u = document.createElement("span");
-      u.className = "jetle-badge jetle-badge--acil";
-      u.textContent = "Acil";
-      host.appendChild(u);
-    }
-    if (item.showcase) {
-      var v = document.createElement("span");
-      v.className = "jetle-badge jetle-badge--vitrin";
-      v.textContent = "Vitrin";
-      host.appendChild(v);
-    }
-    if (item.featured) {
-      var f = document.createElement("span");
-      f.className = "jetle-badge jetle-badge--one";
-      f.textContent = "Öne çıkan";
-      host.appendChild(f);
-    }
-    if (!hasRealBadge) {
-      // Kararlı "random": aynı ilan her yüklemede aynı etiketi alır.
-      var rk = hashStr(idKey(item) || item.title || item.description || "");
-      if (rk % 7 === 0) {
-        var ra = document.createElement("span");
-        ra.className = "jetle-badge jetle-badge--acil";
-        ra.textContent = "Acil";
-        host.appendChild(ra);
-      } else if (rk % 7 === 1) {
-        var rv = document.createElement("span");
-        rv.className = "jetle-badge jetle-badge--vitrin";
-        rv.textContent = "Vitrin";
-        host.appendChild(rv);
-      }
-    }
+  function stableInt(seed, min, max) {
+    var a = Number(min);
+    var b = Number(max);
+    if (!Number.isFinite(a) || !Number.isFinite(b) || b < a) return 0;
+    var key = String(seed || "");
+    var span = b - a + 1;
+    return a + (hashStr(key) % span);
+  }
+
+  function fakeViews(item) {
+    var id = idKey(item) || item.title || "listing";
+    return stableInt("views:" + id, 10, 500);
   }
 
   function keywordMatches(item, kw) {
@@ -500,11 +442,6 @@
     var wrap = document.createElement("div");
     wrap.className = "featured-card__media-wrap";
 
-    var badgeOne = document.createElement("span");
-    badgeOne.className = "featured-card__badge-one";
-    badgeOne.textContent = "Öne Çıkan";
-    wrap.appendChild(badgeOne);
-
     var thumb = pickThumbUrl(item);
     var thumbWebp = toWebpCandidate(thumb);
     if (thumb) {
@@ -580,10 +517,44 @@
     });
   }
 
+  function heartSvgFeed(filled) {
+    if (filled) {
+      return (
+        '<svg class="listing-card__fav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+      );
+    }
+    return (
+      '<svg class="listing-card__fav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="1.65" fill="none"/></svg>'
+    );
+  }
+
+  function listingIsFavoriteHome(uid, lid) {
+    if (!uid || !lid || !window.JetleAPI) return false;
+    if (typeof JetleAPI.isFavorite === "function") return !!JetleAPI.isFavorite(uid, lid);
+    if (typeof JetleAPI.getFavorites === "function") {
+      var arr = JetleAPI.getFavorites(uid);
+      return Array.isArray(arr) && arr.indexOf(String(lid)) !== -1;
+    }
+    return false;
+  }
+
+  function syncApiFeedFavoriteUi() {
+    if (!window.JetleAPI) return;
+    var u = window.JetleAuth && typeof JetleAuth.getCurrentUser === "function" ? JetleAuth.getCurrentUser() : null;
+    var uid = u && u.id;
+    document.querySelectorAll(".listing-card--api-feed button.listing-card__fav--heart[data-fav-id]").forEach(function (btn) {
+      var lid = btn.getAttribute("data-fav-id");
+      if (!lid) return;
+      var on = listingIsFavoriteHome(uid, lid);
+      btn.classList.toggle("is-fav", on);
+      btn.setAttribute("aria-label", on ? "Favorilerden çıkar" : "Favorilere ekle");
+      btn.innerHTML = heartSvgFeed(on);
+    });
+  }
+
   function buildCard(item) {
     var id = item._id != null ? String(item._id) : item.id != null ? String(item.id) : "";
     var title = item.title != null ? String(item.title) : "İsimsiz ilan";
-    var descShort = shortDescription(item.description);
 
     var art = document.createElement("article");
     art.className = "listing-card listing-card--api-feed";
@@ -604,6 +575,21 @@
       });
     }
 
+    var favBtn = document.createElement("button");
+    favBtn.type = "button";
+    var u0 = window.JetleAuth && typeof JetleAuth.getCurrentUser === "function" ? JetleAuth.getCurrentUser() : null;
+    var uid0 = u0 && u0.id;
+    var favOn = !!(id && uid0 && listingIsFavoriteHome(uid0, id));
+    favBtn.className = "btn-icon listing-card__fav listing-card__fav--heart" + (favOn ? " is-fav" : "");
+    favBtn.setAttribute("aria-label", favOn ? "Favorilerden çıkar" : "Favorilere ekle");
+    if (id) favBtn.setAttribute("data-fav-id", id);
+    favBtn.innerHTML = heartSvgFeed(favOn);
+    favBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    art.appendChild(favBtn);
+
     var inner = document.createElement("div");
     inner.className = "listing-card__link listing-card__link--api";
 
@@ -613,17 +599,6 @@
     var fallbackWebp = toWebpCandidate(fallbackByCat);
     var mediaWrap = document.createElement("div");
     mediaWrap.className = "listing-card__media-wrap";
-    if (showKurumsalBadge(item)) {
-      var kurumsal = document.createElement("span");
-      kurumsal.className = "listing-card__kurumsal-badge";
-      kurumsal.textContent = "Kurumsal";
-      kurumsal.setAttribute("aria-hidden", "true");
-      mediaWrap.appendChild(kurumsal);
-    }
-    var badges = document.createElement("div");
-    badges.className = "jetle-badges";
-    appendPromotionBadges(badges, item);
-    if (badges.firstChild) mediaWrap.appendChild(badges);
 
     if (thumb) {
       var media = document.createElement("div");
@@ -689,8 +664,6 @@
     body.appendChild(priceEl);
     body.appendChild(meta);
 
-    // DOM yükünü azaltmak için kartta açıklama satırını render etmiyoruz.
-
     inner.appendChild(body);
     art.appendChild(inner);
     return art;
@@ -699,6 +672,11 @@
   function setEmptyState(emptyBox, titleEl, subEl, show, titleText, subText) {
     if (!emptyBox) return;
     emptyBox.hidden = !show;
+    if (show) {
+      emptyBox.classList.toggle("empty-state--error", titleText === "Bir hata oluştu");
+    } else {
+      emptyBox.classList.remove("empty-state--error");
+    }
     if (titleEl && titleText != null) titleEl.textContent = titleText;
     if (subEl && subText != null) subEl.textContent = subText;
   }
@@ -732,6 +710,85 @@
     } else {
       infoEl.textContent = "Gösterilen " + shown + " / " + totalFiltered + " ilan";
     }
+  }
+
+  function formatCompactNumber(n) {
+    var val = Number(n);
+    if (!Number.isFinite(val)) return "0";
+    return new Intl.NumberFormat("tr-TR").format(Math.round(val));
+  }
+
+  function categoryFromItem(item) {
+    var h = haystackForCategory(item);
+    if (categoryMatches(item, "vasita")) return "vasita";
+    if (categoryMatches(item, "emlak")) return "emlak";
+    if (categoryMatches(item, "elektronik")) return "elektronik";
+    if (categoryMatches(item, "alisveris")) return "alisveris";
+    if (categoryMatches(item, "hizmet")) return "hizmet";
+    return h.indexOf("hizmet") !== -1 ? "hizmet" : "";
+  }
+
+  function renderCategoryCounts(rows) {
+    var list = Array.isArray(rows) ? rows : [];
+    var map = { vasita: 0, emlak: 0, elektronik: 0, alisveris: 0, hizmet: 0 };
+    list.forEach(function (item) {
+      var c = categoryFromItem(item);
+      if (c && map[c] != null) map[c] += 1;
+    });
+    function set(id, n) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = "(" + formatCompactNumber(n) + " ilan)";
+    }
+    set("homeCatCountVasita", map.vasita);
+    set("homeCatCountEmlak", map.emlak);
+    set("homeCatCountElektronik", map.elektronik);
+    set("homeCatCountAlisveris", map.alisveris);
+    set("homeCatCountHizmet", map.hizmet);
+  }
+
+  function renderHomeStats(rows) {
+    var list = Array.isArray(rows) ? rows : [];
+    var today = 0;
+    list.forEach(function (item) {
+      var t = parseListingDateMs(item);
+      if (t != null && (Date.now() - t) < 24 * 60 * 60 * 1000) today += 1;
+    });
+    var todayVal = today + stableInt("todayboost:" + list.length, 80, 220);
+    var totalVal = Math.max(list.length, 1) * stableInt("totalmul:" + list.length, 18, 44);
+    var lineToday = document.getElementById("homeStatTodayLine");
+    var lineTotal = document.getElementById("homeStatTotalLine");
+    if (lineToday) lineToday.textContent = "Bugün " + formatCompactNumber(todayVal) + " ilan eklendi";
+    if (lineTotal) lineTotal.textContent = "Toplam " + formatCompactNumber(totalVal) + " ilan";
+  }
+
+  function renderExtraSection(gridId, rows) {
+    var grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    var slice = (rows || []).slice(0, 8);
+    if (!slice.length) {
+      var emptyP = document.createElement("p");
+      emptyP.className = "home-extra-feed-empty home-extra-feed-empty--pro text-muted text-small";
+      emptyP.textContent = "Henüz ilan yok";
+      grid.appendChild(emptyP);
+      return;
+    }
+    slice.forEach(function (item) {
+      grid.appendChild(buildCard(item));
+    });
+  }
+
+  function renderExtraFeeds(rows) {
+    var list = Array.isArray(rows) ? rows.slice() : [];
+    var byNewest = list.slice().sort(function (a, b) {
+      return (parseListingDateMs(b) || 0) - (parseListingDateMs(a) || 0);
+    });
+    var byViews = list.slice().sort(function (a, b) {
+      return fakeViews(b) - fakeViews(a);
+    });
+    renderExtraSection("homeNewestGrid", byNewest);
+    renderExtraSection("homePopularGrid", byViews);
   }
 
   function updatePager(totalFiltered, shown) {
@@ -791,6 +848,7 @@
     pruneVirtualizedCards(grid);
     updateResultsInfo(info, displayRows.length, shownCount);
     updatePager(displayRows.length, shownCount);
+    syncApiFeedFavoriteUi();
   }
 
   function queueLazyChunk(grid, info) {
@@ -809,6 +867,7 @@
 
   function renderGridSkeleton(grid, count) {
     if (!grid) return;
+    grid.setAttribute("aria-busy", "true");
     var n = Math.max(0, Number(count) || 0);
     if (!n) return;
     var frag = document.createDocumentFragment();
@@ -856,6 +915,126 @@
     } catch (e) {}
   }
 
+  function safeSessionGet(key, fallback) {
+    try {
+      var raw = sessionStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function safeSessionSet(key, value) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {}
+  }
+
+  function buildLivePool(rows) {
+    var list = Array.isArray(rows) ? rows.slice() : [];
+    if (!list.length) return [];
+    return list.sort(function (a, b) {
+      return hashStr(idKey(a) + ":live") - hashStr(idKey(b) + ":live");
+    });
+  }
+
+  function ensureLiveState(rows) {
+    var state = safeSessionGet(LIVE_STREAM_STORAGE_KEY, null);
+    var pool = buildLivePool(rows);
+    var sig = pool.map(function (x) {
+      return idKey(x);
+    }).join("|");
+    if (!state || state.signature !== sig) {
+      state = {
+        signature: sig,
+        pointer: 0,
+        ids: pool.map(function (x) {
+          return idKey(x);
+        })
+      };
+      safeSessionSet(LIVE_STREAM_STORAGE_KEY, state);
+    }
+    return state;
+  }
+
+  function markLiveCard(card) {
+    if (!card) return card;
+    card.classList.add("home-live-card");
+    var body = card.querySelector(".listing-card__body");
+    if (body && !body.querySelector(".home-live-card__badge")) {
+      var badge = document.createElement("p");
+      badge.className = "home-live-card__badge";
+      badge.textContent = "Az önce eklendi";
+      body.insertBefore(badge, body.firstChild);
+    }
+    if (!card.querySelector(".home-live-card__dot")) {
+      var dot = document.createElement("span");
+      dot.className = "home-live-card__dot";
+      dot.setAttribute("aria-hidden", "true");
+      card.appendChild(dot);
+    }
+    return card;
+  }
+
+  function animateLiveInsert(card) {
+    if (!card) return;
+    card.classList.add("is-entering");
+    requestAnimationFrame(function () {
+      card.classList.add("is-entering-active");
+      card.classList.remove("is-entering");
+      setTimeout(function () {
+        card.classList.remove("is-entering-active");
+      }, 420);
+    });
+  }
+
+  function renderLiveInitial(rows) {
+    var grid = document.getElementById("homeLiveStreamGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    var state = ensureLiveState(rows);
+    var idToItem = {};
+    (rows || []).forEach(function (x) {
+      var k = idKey(x);
+      if (k) idToItem[k] = x;
+    });
+    state.ids.slice(0, LIVE_STREAM_MAX).forEach(function (id) {
+      if (!idToItem[id]) return;
+      grid.appendChild(markLiveCard(buildCard(idToItem[id])));
+    });
+  }
+
+  function startLiveTicker(rows) {
+    var grid = document.getElementById("homeLiveStreamGrid");
+    if (!grid) return;
+    if (liveStreamTimer) {
+      clearInterval(liveStreamTimer);
+      liveStreamTimer = null;
+    }
+    if (!rows || !rows.length) return;
+    liveStreamTimer = setInterval(function () {
+      var state = ensureLiveState(rows);
+      if (!state.ids || !state.ids.length) return;
+      var id = state.ids[state.pointer % state.ids.length];
+      state.pointer = (state.pointer + 1) % state.ids.length;
+      safeSessionSet(LIVE_STREAM_STORAGE_KEY, state);
+      var item = null;
+      for (var i = 0; i < rows.length; i++) {
+        if (idKey(rows[i]) === id) {
+          item = rows[i];
+          break;
+        }
+      }
+      if (!item) return;
+      var card = markLiveCard(buildCard(item));
+      grid.insertBefore(card, grid.firstChild || null);
+      animateLiveInsert(card);
+      while (grid.children.length > LIVE_STREAM_MAX) {
+        grid.removeChild(grid.lastElementChild);
+      }
+    }, LIVE_STREAM_TICK_MS);
+  }
+
   function applyMainView(opts) {
     opts = opts || {};
     var resetShown = opts.resetShown !== false;
@@ -870,11 +1049,17 @@
     if (!grid) return;
 
     renderFeaturedStrip(apiRows);
+    renderCategoryCounts(apiRows);
+    renderHomeStats(apiRows);
+    renderExtraFeeds(apiRows);
+    renderLiveInitial(apiRows);
+    startLiveTicker(apiRows);
     syncHomeSectionHeading();
 
     var displayRows = getGridDisplayRows();
 
     if (displayRows.length === 0) {
+      grid.setAttribute("aria-busy", "false");
       grid.innerHTML = "";
       shownCount = 0;
       updatePager(0, 0);
@@ -886,7 +1071,7 @@
           emptySub,
           true,
           "Sonuç bulunamadı",
-          "No listings found — aramanız veya filtrelerinizle eşleşen ilan yok. Filtreleri temizleyip tekrar deneyin."
+          "Aradığınız kelime veya filtrelerle eşleşen ilan yok. Filtreleri temizleyip tekrar deneyin."
         );
       } else if (homeListingsFetchFailed) {
         setEmptyState(
@@ -894,9 +1079,8 @@
           emptyTitle,
           emptySub,
           true,
-          "İlanlar yüklenemedi",
-          (homeListingsLastErrorMsg ? homeListingsLastErrorMsg + " " : "") +
-            "Bağlantınızı kontrol edin veya «Tekrar dene» ile yenileyin."
+          "Bir hata oluştu",
+          "Listeyi şu an yükleyemedik. Bağlantınızı kontrol edin veya «Tekrar dene» ile yenileyin."
         );
       } else {
         setEmptyState(
@@ -905,7 +1089,7 @@
           emptySub,
           true,
           "Henüz ilan yok",
-          "No listings yet — yeni ilanlar eklendiğinde burada görünecek."
+          "Yeni ilanlar eklendiğinde burada görünecek."
         );
       }
       if (info) info.textContent = "";
@@ -917,12 +1101,14 @@
     syncHomeListingsRetryButton();
 
     if (resetShown) {
+      grid.setAttribute("aria-busy", "false");
       virtualTopTrimmedRows = 0;
       shownCount = Math.min(HOME_INITIAL_RENDER_COUNT, displayRows.length);
       grid.innerHTML = "";
       var topSpacer = ensureTopSpacer(grid);
       if (topSpacer) topSpacer.style.height = "0px";
       appendPage(grid, displayRows.slice(0, shownCount));
+      syncApiFeedFavoriteUi();
     }
 
     updateResultsInfo(info, displayRows.length, shownCount);
@@ -977,9 +1163,8 @@
   }
 
   function wireMarketplaceOnce(grid, info) {
-    var toolbar = document.getElementById("homeMarketToolbar");
-    if (!toolbar || toolbar.getAttribute("data-wired") === "1") return;
-    toolbar.setAttribute("data-wired", "1");
+    if (!grid || grid.getAttribute("data-home-search-wired") === "1") return;
+    grid.setAttribute("data-home-search-wired", "1");
 
     var kwInput = document.getElementById("homeListingKeyword");
     var searchBtn = document.getElementById("homeListingSearchBtn");
@@ -1070,6 +1255,11 @@
   function loadHomeListingsFromApi() {
     if (!document.body || document.body.getAttribute("data-page") !== "home") return;
 
+    if (!window.__JETLE_HOME_FAV_LISTENER__) {
+      window.__JETLE_HOME_FAV_LISTENER__ = true;
+      window.addEventListener("jetle-favorites-changed", syncApiFeedFavoriteUi);
+    }
+
     var grid = document.getElementById("listingsGrid");
     var emptyBox = document.getElementById("emptyResults");
     var emptyTitle = document.getElementById("emptyResultsTitle");
@@ -1153,15 +1343,19 @@
         setTimeout(function () {
           syncHeroCityFromSidebar();
           syncHomeHeroCitySelect();
+          var hc = document.getElementById("homeHeroCity");
+          if (hc && window.JetleTrCitiesUI && typeof JetleTrCitiesUI.refresh === "function") JetleTrCitiesUI.refresh(hc);
         }, 0);
         setTimeout(function () {
           syncHeroCityFromSidebar();
           syncHomeHeroCitySelect();
+          var hc2 = document.getElementById("homeHeroCity");
+          if (hc2 && window.JetleTrCitiesUI && typeof JetleTrCitiesUI.refresh === "function") JetleTrCitiesUI.refresh(hc2);
         }, 650);
       })
       .catch(function (err) {
-        if (window.console && typeof window.console.warn === "function") {
-          console.warn("[JETLE][home-api-listings]", err && err.message ? err.message : err);
+        if (window.JetleCommon && typeof JetleCommon.showToast === "function") {
+          JetleCommon.showToast("Bir hata oluştu.", "error");
         }
         syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
         homeListingsLastErrorMsg = err && err.message ? String(err.message) : "Ağ hatası.";
