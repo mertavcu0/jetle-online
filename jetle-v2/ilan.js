@@ -8999,6 +8999,31 @@
     tryLoadEditListing();
   }
 
+  /**
+   * Demo / önizleme için sahte vitrin kayıtları üretir.
+   * @param {number} [count=12] kayıt sayısı
+   * @returns {Array<{id:number,title:string,price:number,city:string,image:string,time:string}>}
+   */
+  function generateFakeListings(count) {
+    if (count == null || typeof count !== "number" || !isFinite(count) || count < 1) {
+      count = 12;
+    }
+    var cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"];
+    var labels = ["BMW", "Audi", "Daire", "iPhone"];
+    var out = [];
+    for (var i = 0; i < count; i++) {
+      out.push({
+        id: i + 1,
+        title: "Temiz " + labels[i % 4],
+        price: Math.floor(Math.random() * 900000) + 10000,
+        city: cities[i % cities.length],
+        image: "https://picsum.photos/300/200?random=" + i,
+        time: Math.floor(Math.random() * 24) + " saat önce"
+      });
+    }
+    return out;
+  }
+
   window.JetleMarket = {
     get CITIES() {
       return trProvinceNames();
@@ -9034,6 +9059,7 @@
     resetFilters: resetFilters,
     handleFilterControlChange: handleFilterControlChange,
     removeFilterChip: removeFilterChip,
-    renderActiveFilterTags: renderActiveFilterTags
+    renderActiveFilterTags: renderActiveFilterTags,
+    generateFakeListings: generateFakeListings
   };
 })();

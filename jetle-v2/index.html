@@ -21,7 +21,7 @@
     .site-header{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
     .header-inner{display:flex;align-items:center;gap:16px;padding:12px 16px;flex-wrap:wrap}
     .header-inner--market{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px 20px}
-    .container.header-inner--market{max-width:1320px}
+    .container.header-inner--market{max-width:1280px}
     @media (max-width:900px){.header-inner--market{grid-template-columns:1fr auto;grid-template-areas:"logo actions" "search search"}.header-inner--market .logo{grid-area:logo}.header-inner--market .header-search-wrap{grid-area:search}.header-inner--market .header-actions{grid-area:actions;justify-self:end}}
     .main-shell{padding:20px 0 40px}
     body.page-home .site-header{background:#fff;border-bottom:1px solid var(--border,#e2e4e9)}
@@ -100,7 +100,7 @@
     .home-cat-chip.is-active{background:#2563eb;border-color:#2563eb;color:#fff}
     .listing-card__desc{font-size:0.82rem;color:#5c6370;line-height:1.4;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .listing-card__meta--loc{font-size:0.8rem;color:#64748b;margin-top:2px}
-    .home-shell-wide{max-width:1320px;margin:0 auto;padding:0 20px;box-sizing:border-box}
+    .home-shell-wide{max-width:1280px;margin:0 auto;padding:0 20px;box-sizing:border-box}
     @media (max-width:640px){.home-shell-wide{padding:0 14px}}
     .home-hero-band{background:#f5f7fa;width:100%;margin:0;border-bottom:1px solid #e8ecf0;box-sizing:border-box}
     .home-hero-band__inner{max-width:1320px;margin:0 auto;padding:clamp(40px,7vw,80px) 20px;box-sizing:border-box;text-align:center}
@@ -144,7 +144,7 @@
     .listing-card--api-feed .listing-card__media{position:relative;border-radius:0}
     .listing-grid__spacer{grid-column:1/-1;height:0;pointer-events:none}
     .listing-card.is-skeleton{pointer-events:none;animation:none}
-    .listing-card.is-skeleton .listing-card__media{background:linear-gradient(120deg,#f1f5f9,#e2e8f0)}
+    .listing-card.is-skeleton .listing-img{background:linear-gradient(120deg,#f1f5f9,#e2e8f0);min-height:160px;border-radius:0}
     .listing-skel-line{height:10px;border-radius:999px;background:#e2e8f0}
     .listing-skel-line--price{width:42%;height:14px}
     .listing-skel-line--title{width:78%}
@@ -195,6 +195,14 @@
     </div>
   </header>
 
+  <div class="home-market-stats" role="region" aria-label="Liste özeti">
+    <div class="home-shell-wide home-market-stats__inner">
+      <span class="home-market-stats__line" id="homeStatTodayLine">Bugün … yeni kayıt</span>
+      <span class="home-market-stats__sep" aria-hidden="true"></span>
+      <span class="home-market-stats__line" id="homeStatTotalLine">Toplam … kayıt</span>
+    </div>
+  </div>
+
   <div class="home-trust-row" role="region" aria-label="Platform güvencesi">
     <div class="home-trust-row__inner">
       <span class="home-trust-row__text">Güvenli alışveriş • Kolay iletişim • Hızlı ilan</span>
@@ -230,7 +238,8 @@
     </div>
 
     <div class="home-shell-wide main-grid main-grid--marketplace">
-      <aside class="sidebar sidebar--home-pro" aria-label="Kategoriler ve filtreler">
+      <aside class="sidebar sidebar--home-pro sidebar--market" aria-label="Kategoriler ve filtreler">
+        <div class="sidebar-market-unified">
         <div class="sidebar-block sidebar-block--cat-tree">
           <h2 class="sidebar-title">Kategoriler</h2>
           <nav class="home-cat-blocks home-cat-blocks--sidebar" aria-label="Hızlı kategori">
@@ -273,9 +282,8 @@
           <nav class="category-nav category-tree" id="categoryNav" aria-label="Ürün kategorileri"></nav>
         </div>
         <div class="sidebar-block sidebar-block--filters home-filter-shell">
-          <div class="home-filter-shell__intro">
-            <h2 class="sidebar-title home-filter-shell__title">Filtreler</h2>
-            <p class="home-filter-shell__lead text-small text-muted">Kategori, fiyat, il / ilçe ve detaylı kriterlerle sonuçları daraltın.</p>
+          <div class="home-filter-shell__intro home-filter-shell__intro--compact">
+            <p class="home-filter-shell__lead text-small text-muted">Fiyat, konum ve detaylı kriterlerle daraltın.</p>
           </div>
           <div id="homeFilterActiveTags" class="home-filter-active-tags" aria-label="Seçili filtreler" hidden></div>
           <button type="button" class="home-filter-open-btn btn btn-secondary btn-sm" id="homeFilterOpenBtn" aria-expanded="false" aria-controls="homeFilterPanel">
@@ -572,13 +580,14 @@
             </div>
           </div>
         </div>
+        </div>
       </aside>
 
       <div class="marketplace-center">
       <div class="content-main content-main--home-pro">
         <div id="homeListingsLoading" class="home-listings-loading home-listings-loading--pro" aria-live="polite" aria-busy="true">
           <div class="home-listings-loading__spinner" aria-hidden="true"></div>
-          <p class="home-listings-loading__text" id="homeListingsLoadingText">İlanlar yükleniyor…</p>
+          <p class="home-listings-loading__text" id="homeListingsLoadingText">Liste yükleniyor…</p>
         </div>
 
         <section class="listing-section listing-section--home-main home-featured-market" aria-labelledby="homeFeaturedHeading">
@@ -605,12 +614,16 @@
                 <path d="M32 32l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
-            <p class="empty-state__title" id="emptyResultsTitle">Henüz ilan yok</p>
+            <p class="empty-state__title" id="emptyResultsTitle">Kayıt bulunamadı</p>
             <p class="empty-state__sub" id="emptyResultsSub">Filtreleri gevşetmeyi veya farklı bir kategori denemeyi düşünebilirsiniz.</p>
             <div class="empty-state__actions">
               <button type="button" class="btn btn-primary btn-sm" id="emptyResetBtn">Filtreleri temizle</button>
               <button type="button" class="btn btn-secondary btn-sm" id="homeListingsRetryBtn" hidden>Tekrar dene</button>
-              <a href="index.html" class="btn btn-secondary btn-sm">Tüm ilanlara dön</a>
+              <a href="index.html" class="btn btn-secondary btn-sm">Tümüne dön</a>
+            </div>
+            <div class="empty-state__suggested" id="emptySuggestedWrap" hidden>
+              <p class="empty-state__suggested-title" id="emptySuggestedTitle">Önerilen kayıtlar</p>
+              <div class="listing-grid listing-grid--home listing-grid--market-dense" id="emptySuggestedGrid" aria-live="polite"></div>
             </div>
             <div class="empty-state__discover" id="emptyResultsDiscover" hidden>
               <p class="empty-state__discover-title">Hızlı keşif</p>
@@ -640,7 +653,7 @@
         <div class="ad-vertical">
           <div class="ad-vertical__inner">
             <span class="ad-vertical__label">Reklam</span>
-            <img class="ad-vertical__img" src="https://placehold.co/300x600/f1f5f9/64748b/png?text=300+%C3%97+600" alt="" width="300" height="600" loading="lazy" decoding="async" />
+            <img class="ad-vertical__img" src="https://picsum.photos/seed/jetle-side-rail/600/900" alt="" width="300" height="600" loading="lazy" decoding="async" />
             <span class="ad-vertical__size">300 × 600</span>
           </div>
         </div>
