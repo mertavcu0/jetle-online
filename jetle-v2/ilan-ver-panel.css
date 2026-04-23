@@ -10,7 +10,8 @@
   --lp-accent2: #0d4a9c;
   --lp-radius: 14px;
   --lp-radius-sm: 10px;
-  --lp-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 12px 32px rgba(15, 23, 42, 0.08);
+  --lp-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 28px rgba(15, 23, 42, 0.1), 0 28px 56px rgba(15, 23, 42, 0.08);
+  --lp-card-border: #e8eaef;
   --lp-focus: 0 0 0 3px rgba(21, 101, 216, 0.22);
 }
 
@@ -27,13 +28,14 @@
 
 .ilan-ver-v2__intro {
   padding-top: 1.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .ilan-ver-v2__title {
-  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.85rem, 3.2vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   color: var(--lp-ink);
 }
 
@@ -45,12 +47,12 @@
 
 /* Progress */
 .ilan-wizard__progress-wrap {
-  background: var(--lp-surface);
-  border: 1px solid var(--lp-line);
+  background: #fff;
+  border: 1px solid var(--lp-card-border);
   border-radius: var(--lp-radius);
   box-shadow: var(--lp-shadow);
   padding: 1rem 1.25rem 1.1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .ilan-wizard__progress-track {
@@ -63,53 +65,88 @@
 .ilan-wizard__progress-fill {
   height: 100%;
   border-radius: 99px;
-  background: linear-gradient(90deg, var(--lp-accent2), var(--lp-accent));
+  background: var(--lp-accent);
   transition: width 0.35s ease;
 }
 
-.ilan-wizard__progress-steps {
-  margin-top: 0.85rem;
+.page-ilan-ver .ilan-wizard__progress-steps {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
 }
 
-.ilan-wizard__progress-step {
-  color: var(--lp-muted);
-  font-size: 0.8125rem;
-  transition: color 0.2s ease, transform 0.2s ease;
+@media (max-width: 640px) {
+  .page-ilan-ver .ilan-wizard__progress-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    text-align: center;
+  }
 }
 
-.ilan-wizard__progress-step span:first-child {
-  border: 1px solid var(--lp-line);
-  background: var(--lp-surface);
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.25s ease, transform 0.25s ease;
+.page-ilan-ver .ilan-wizard__progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  transition: color 0.2s ease;
 }
 
-.ilan-wizard__progress-step.is-done {
-  color: #334155;
+.page-ilan-ver .ilan-wizard__progress-step span:first-child {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid #d1d5db;
+  background: #f1f5f9;
+  color: #64748b;
+  box-shadow: none;
+  transform: none;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.ilan-wizard__progress-step.is-done span:first-child {
-  background: #e8f1fc;
-  border-color: #b9d4f3;
-  color: var(--lp-accent2);
+.page-ilan-ver .ilan-wizard__progress-step.is-done {
+  color: #64748b;
 }
 
-.ilan-wizard__progress-step.is-active {
+.page-ilan-ver .ilan-wizard__progress-step.is-done span:first-child {
+  background: #e5e7eb;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.page-ilan-ver .ilan-wizard__progress-step.is-active {
   color: var(--lp-ink);
   font-weight: 600;
 }
 
-.ilan-wizard__progress-step.is-active span:first-child {
+.page-ilan-ver .ilan-wizard__progress-step.is-active span:first-child {
   border-color: var(--lp-accent);
-  background: linear-gradient(145deg, #1a6fd4, var(--lp-accent));
+  background: var(--lp-accent);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(21, 101, 216, 0.35);
-  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(21, 101, 216, 0.32);
 }
 
 .ilan-wizard__legend {
   color: var(--lp-muted);
   font-size: 0.8125rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 /* 2 kolon */
@@ -118,8 +155,8 @@
   margin: 0 auto;
   padding: 0 1.25rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 2.5rem;
   align-items: start;
 }
 
@@ -145,37 +182,74 @@
 
 .ilan-wizard__surface,
 .ilan-lp-aside .preview-card {
-  background: var(--lp-surface);
-  border: 1px solid var(--lp-line);
+  background: #fff;
+  border: 1px solid var(--lp-card-border);
   border-radius: var(--lp-radius);
   box-shadow: var(--lp-shadow);
 }
 
 .ilan-wizard__surface {
-  padding: 1.25rem 1.35rem 1.5rem;
+  padding: 1.35rem 1.45rem 1.6rem;
 }
 
 /* Form kartları */
+.ilan-lp-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ilan-lp-stack > .ilan-wizard__card {
+  margin-bottom: 0;
+}
+
 .ilan-wizard__card {
-  background: var(--lp-soft);
-  border: 1px solid var(--lp-line);
+  background: #fff;
+  border: 1px solid var(--lp-card-border);
   border-radius: var(--lp-radius-sm);
-  padding: 1.15rem 1.2rem 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1.2rem 1.25rem 1.35rem;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.ilan-wizard__panel > .ilan-wizard__card:last-of-type {
+  margin-bottom: 0;
+}
+
+.ilan-lp-elevated {
+  background: #fff;
+  border: 1px solid var(--lp-card-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.07), 0 20px 44px rgba(15, 23, 42, 0.06);
+}
+
+.ilan-lp-card-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.ilan-lp-hr {
+  border: none;
+  border-top: 1px solid var(--lp-line);
+  margin: 1.35rem 0 1.15rem;
 }
 
 .ilan-wizard__card-title {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
   color: var(--lp-ink);
+  letter-spacing: -0.02em;
 }
 
 .ilan-wizard__card-lead {
   color: var(--lp-muted);
   font-size: 0.9rem;
-  margin-top: 0.25rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  margin-top: 0.35rem;
+  margin-bottom: 1.15rem;
+  line-height: 1.55;
 }
 
 .ilan-wizard__subhead {
@@ -203,7 +277,12 @@
   background: #f1f5f9;
   border: 1px solid var(--lp-line);
   border-radius: var(--lp-radius-sm);
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+}
+
+.page-ilan-ver .ilan-wizard__auth-note,
+.page-ilan-ver .ilan-wizard__form-error {
+  margin-bottom: 20px;
 }
 
 /* Inputs */
@@ -241,17 +320,34 @@
   margin-bottom: 0.35rem;
 }
 
+.page-ilan-ver .ilan-wizard__field {
+  margin-bottom: 20px;
+}
+
+.page-ilan-ver .ilan-wizard__field:last-child {
+  margin-bottom: 0;
+}
+
+.page-ilan-ver .ilan-wizard__vehicle-block {
+  margin-bottom: 20px;
+}
+
+.page-ilan-ver .ilan-wizard__dynamic {
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
 /* Önizleme paneli */
 .ilan-lp-aside .preview-card {
-  padding: 1.1rem 1.15rem 1.2rem;
+  padding: 1.5rem 1.45rem 1.55rem;
 }
 
 .ilan-lp-aside .preview-card > h3 {
-  margin: 0 0 0.75rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  margin: 0 0 1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
   color: var(--lp-muted);
 }
 
@@ -259,36 +355,38 @@
   font-size: 0.8125rem;
   color: var(--lp-accent);
   font-weight: 600;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.5rem;
 }
 
 .ilan-lp-preview-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.35;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.25;
   color: var(--lp-ink);
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.65rem;
   word-break: break-word;
+  letter-spacing: -0.02em;
 }
 
 .ilan-lp-preview-price {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--lp-ink);
-  margin: 0 0 0.75rem;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
 }
 
 .ilan-lp-preview-meta {
   font-size: 0.8125rem;
   color: var(--lp-muted);
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.85rem;
   line-height: 1.45;
 }
 
 .ilan-lp-preview-desc {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: #475569;
-  line-height: 1.5;
+  line-height: 1.55;
   margin: 0;
   max-height: 9.5rem;
   overflow: auto;
@@ -363,15 +461,16 @@
 
 /* Nav butonları */
 .ilan-wizard__nav {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--lp-line);
 }
 
 .page-ilan-ver .ilan-wizard__btn--primary {
-  padding: 0.65rem 1.35rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
   border: none;
   border-radius: var(--lp-radius-sm);
   color: #fff;
@@ -392,11 +491,13 @@
 }
 
 .page-ilan-ver .ilan-wizard__btn--ghost {
-  padding: 0.6rem 1rem;
+  min-height: 48px;
+  padding: 0.7rem 1.25rem;
   border-radius: var(--lp-radius-sm);
   border: 1px solid var(--lp-line);
   background: #fff;
   font-weight: 500;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
@@ -407,11 +508,14 @@
 }
 
 .page-ilan-ver .ilan-wizard__submit {
+  display: block;
   width: 100%;
-  margin-top: 0.5rem;
-  padding: 0.75rem 1rem;
-  font-weight: 600;
-  font-size: 0.95rem;
+  box-sizing: border-box;
+  margin-top: 0.65rem;
+  min-height: 52px;
+  padding: 0.85rem 1.15rem;
+  font-weight: 700;
+  font-size: 1rem;
   border: none;
   border-radius: var(--lp-radius-sm);
   color: #fff;
