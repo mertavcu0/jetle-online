@@ -10,6 +10,12 @@ const router = express.Router();
 router.post("/register", registerValidator, validateRequest(), authController.register);
 router.post("/login", loginValidator, validateRequest(), authController.login);
 router.post("/logout", requireAuth, authController.logout);
+router.get("/auth/me", requireAuth, (req, res) => {
+  res.json({
+    ok: true,
+    user: req.user
+  });
+});
 router.get("/me", requireAuth, authController.me);
 router.use("/me", dashboardRouter);
 
