@@ -726,3 +726,41 @@
     flex: 1 1 100%;
   }
 }
+
+/* Ana ilan grid’i, kart, fiyat ve reklam alanları */
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.listing-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.listing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.listing-price {
+  font-weight: 700;
+  color: #111;
+}
+
+.ad-banner {
+  height: 120px;
+  background: #e5e7eb;
+  border-radius: 12px;
+}
+
+.ad-vertical {
+  width: 300px;
+  height: 600px;
+  background: #e5e7eb;
+  position: sticky;
+  top: 20px;
+}

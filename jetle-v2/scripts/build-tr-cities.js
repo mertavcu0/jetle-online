@@ -1,6 +1,8 @@
 /**
- * One-off: raw JSON -> jetle-v2/tr-cities.js
+ * Ham JSON -> tr-cities.js (eski yol).
  * Run: node scripts/build-tr-cities.js <path-to-turkey_provinces_districts.json>
+ *
+ * Güncel üretim (81 il, alfabetik, yazım düzeltmeleri): `node scripts/build-professional-tr-cities.cjs`
  */
 const fs = require("fs");
 const path = require("path");

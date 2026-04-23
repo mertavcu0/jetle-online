@@ -14,6 +14,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
   <style id="jetle-critical-css">
     :root{--bg:#fff;--bg-muted:#f4f5f7;--border:#e2e4e9;--text:#1a1d24;--accent:#2563eb;--radius:6px;--font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     *,::before,::after{box-sizing:border-box}
     body{margin:0;font-family:var(--font);color:var(--text);background:#fff;line-height:1.45}
     .container{max-width:1200px;margin:0 auto;padding:0 16px}
@@ -129,7 +130,7 @@
     .featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding:6px 0 14px}
     .jetle-badge{position:relative;z-index:2;font-size:10px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;padding:4px 8px;border-radius:6px;line-height:1.2;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
     .jetle-badge--acil{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
-    .jetle-badge--vitrin{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff}
+    .jetle-badge--vitrin{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff}
     .jetle-badge--one{background:#2563eb;color:#fff}
     .jetle-badges{position:absolute;top:0;left:0;right:0;display:flex;flex-wrap:wrap;gap:6px;padding:10px;pointer-events:none}
     .listing-card--api-feed{border-radius:10px;border:1px solid #e5e7eb;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:border-color .15s ease,box-shadow .15s ease}
@@ -164,6 +165,7 @@
   <link rel="preload" href="style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="style.min.css" /></noscript>
   <link rel="stylesheet" href="home-platform.css" />
+  <link rel="stylesheet" href="home-marketplace.css" />
   <link rel="stylesheet" href="tr-cities.css" />
 </head>
 <body data-page="home" class="page-home font-inter">
@@ -183,7 +185,7 @@
       <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
       <div class="header-search-wrap">
         <form class="header-search" id="headerSearchForm" action="#" method="get" role="search">
-          <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Başlık, marka, model, şehir veya kategori ara" autocomplete="off" />
+          <input type="search" name="q" id="headerSearchInput" class="header-search-input" placeholder="Başlık, marka, model, şehir ara" autocomplete="off" />
           <button type="submit" class="header-search-btn">Ara</button>
         </form>
       </div>
@@ -193,116 +195,81 @@
     </div>
   </header>
 
-  <div class="jetle-trust-strip" role="region" aria-label="Platform güvencesi">
-    <div class="container jetle-trust-strip__inner">
-      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Moderasyonlu ilan akışı</span>
-      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Kayıtlı mesajlaşma</span>
-      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Şeffaf fiyat ve konum filtreleri</span>
+  <div class="home-trust-row" role="region" aria-label="Platform güvencesi">
+    <div class="home-trust-row__inner">
+      <span class="home-trust-row__text">Güvenli alışveriş • Kolay iletişim • Hızlı ilan</span>
+      <a href="ilan-ver.html" class="home-trust-row__cta">+ İlan Ver</a>
+    </div>
+  </div>
+
+  <div class="home-shell-wide" style="padding-top:4px;padding-bottom:2px">
+    <div class="ad-banner" role="complementary" aria-label="Reklam alanı">
+      <a href="#" class="ad-banner__link" tabindex="-1" aria-hidden="true">
+        <img class="ad-banner__img" src="https://placehold.co/1200x120/f1f5f9/64748b/png?text=1200+%C3%97+120" alt="" width="1200" height="120" decoding="async" fetchpriority="low" />
+      </a>
     </div>
   </div>
 
   <div id="jetleAdHero" class="jetle-ad-hero" data-jetle-ad="hero" role="complementary" aria-label="Kampanya alanı" hidden></div>
 
   <main class="main-shell">
-    <div class="home-hero-band home-hero-band--pro" aria-label="Ana arama">
-      <div class="home-hero-band__inner home-hero-band__inner--pro">
-        <section class="home-hero home-hero--pro">
-          <p class="home-hero__eyebrow">JETLE.online — Türkiye ilan pazarı</p>
-          <h1 class="home-hero__headline">Aradığınız ilan bir arama ötesinde</h1>
-          <div class="home-hero__search home-hero__search--pro" role="search">
-            <div class="home-hero__search-primary">
-              <label class="sr-only" for="homeListingKeyword">Ne arıyorsun?</label>
-              <input type="search" id="homeListingKeyword" class="home-hero__kw home-hero__kw--pro" placeholder="Kelime, marka, model veya mahalle…" autocomplete="off" />
-            </div>
-            <div class="home-hero__search-filters">
-              <label class="sr-only" for="homeHeroCategory">Kategori</label>
-              <select id="homeHeroCategory" class="home-hero__cat home-hero__cat--pro" aria-label="Kategori">
-                <option value="">Tüm kategoriler</option>
-                <option value="vasita">Vasıta</option>
-                <option value="emlak">Emlak</option>
-                <option value="elektronik">Elektronik</option>
-                <option value="alisveris">Alışveriş</option>
-                <option value="hizmet">Hizmet</option>
-              </select>
-              <label class="sr-only" for="homeHeroCity">İl</label>
-              <select id="homeHeroCity" class="home-hero__city home-hero__city--pro" aria-label="İl">
-                <option value="">Tüm iller</option>
-              </select>
-              <button type="button" class="home-hero__submit home-hero__submit--pro" id="homeListingSearchBtn">İlan ara</button>
-            </div>
-          </div>
-          <div class="home-hero__meta-row">
-            <p class="home-hero__subline home-hero__subline--pro">Moderasyonlu yayın · Kayıtlı iletişim · Şeffaf filtreler</p>
-            <a href="ilan-ver.html" class="home-hero__cta home-hero__cta--pro">Ücretsiz ilan ver</a>
-          </div>
-        </section>
-        <section class="home-stats-bar home-stats-bar--pro" aria-label="Platform rakamları">
-          <article class="home-stats-bar__card home-stats-bar__card--today">
-            <span class="home-stats-bar__icon" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
-            </span>
-            <p class="home-stats-bar__line" id="homeStatTodayLine">Bugün … ilan eklendi</p>
-          </article>
-          <article class="home-stats-bar__card home-stats-bar__card--total">
-            <span class="home-stats-bar__icon" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </span>
-            <p class="home-stats-bar__line" id="homeStatTotalLine">Toplam … ilan</p>
-          </article>
-        </section>
-      </div>
+    <div class="visually-hidden" aria-hidden="true">
+      <input type="text" id="homeListingKeyword" autocomplete="off" tabindex="-1" />
+      <select id="homeHeroCategory" aria-label="Kategori">
+        <option value="">Tüm kategoriler</option>
+        <option value="vasita">Vasıta</option>
+        <option value="emlak">Emlak</option>
+        <option value="elektronik">Elektronik</option>
+        <option value="alisveris">Alışveriş</option>
+        <option value="hizmet">Hizmet</option>
+      </select>
+      <select id="homeHeroCity" aria-label="İl">
+        <option value="">Tüm iller</option>
+      </select>
+      <button type="button" id="homeListingSearchBtn" tabindex="-1">İlan ara</button>
     </div>
 
-    <div class="home-cat-strip home-cat-strip--pro">
-      <div class="home-shell-wide">
-        <header class="home-cat-strip__head">
-          <h2 class="home-cat-strip__title">Kategoriler</h2>
-          <p class="home-cat-strip__lead">İlgilendiğiniz gruba geçin; ilan listesi anında güncellenir.</p>
-        </header>
-        <nav class="home-cat-blocks home-cat-blocks--hero-top home-cat-blocks--pro" aria-label="Kategorilere göz at">
-          <button type="button" class="home-cat-block" data-home-cat="vasita" id="homeBlockVasita">
-            <span class="home-cat-block__ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14v-5l-3-4H8L5 12v5zM7 17v2M17 17v2"/></svg>
-            </span>
-            <span class="home-cat-block__label">Vasıta</span>
-            <span class="home-cat-block__count" id="homeCatCountVasita">(0 ilan)</span>
-          </button>
-          <button type="button" class="home-cat-block" data-home-cat="emlak" id="homeBlockEmlak">
-            <span class="home-cat-block__ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
-            </span>
-            <span class="home-cat-block__label">Emlak</span>
-            <span class="home-cat-block__count" id="homeCatCountEmlak">(0 ilan)</span>
-          </button>
-          <button type="button" class="home-cat-block" data-home-cat="elektronik" id="homeBlockElektronik">
-            <span class="home-cat-block__ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
-            </span>
-            <span class="home-cat-block__label">Elektronik</span>
-            <span class="home-cat-block__count" id="homeCatCountElektronik">(0 ilan)</span>
-          </button>
-          <button type="button" class="home-cat-block" data-home-cat="alisveris" id="homeBlockShop">
-            <span class="home-cat-block__ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2 12h10l2-8H7"/></svg>
-            </span>
-            <span class="home-cat-block__label">Alışveriş</span>
-            <span class="home-cat-block__count" id="homeCatCountAlisveris">(0 ilan)</span>
-          </button>
-          <button type="button" class="home-cat-block" data-home-cat="hizmet" id="homeBlockSvc">
-            <span class="home-cat-block__ic" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            </span>
-            <span class="home-cat-block__label">Hizmet</span>
-            <span class="home-cat-block__count" id="homeCatCountHizmet">(0 ilan)</span>
-          </button>
-        </nav>
-      </div>
-    </div>
-
-    <div class="container home-shell-wide main-grid main-grid--home-pro">
+    <div class="home-shell-wide main-grid main-grid--marketplace">
       <aside class="sidebar sidebar--home-pro" aria-label="Kategoriler ve filtreler">
         <div class="sidebar-block sidebar-block--cat-tree">
           <h2 class="sidebar-title">Kategoriler</h2>
+          <nav class="home-cat-blocks home-cat-blocks--sidebar" aria-label="Hızlı kategori">
+            <button type="button" class="home-cat-block" data-home-cat="vasita" id="homeBlockVasita">
+              <span class="home-cat-block__ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14v-5l-3-4H8L5 12v5zM7 17v2M17 17v2"/></svg>
+              </span>
+              <span class="home-cat-block__label">Vasıta</span>
+              <span class="home-cat-block__count" id="homeCatCountVasita">(0)</span>
+            </button>
+            <button type="button" class="home-cat-block" data-home-cat="emlak" id="homeBlockEmlak">
+              <span class="home-cat-block__ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              </span>
+              <span class="home-cat-block__label">Emlak</span>
+              <span class="home-cat-block__count" id="homeCatCountEmlak">(0)</span>
+            </button>
+            <button type="button" class="home-cat-block" data-home-cat="elektronik" id="homeBlockElektronik">
+              <span class="home-cat-block__ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+              </span>
+              <span class="home-cat-block__label">Elektronik</span>
+              <span class="home-cat-block__count" id="homeCatCountElektronik">(0)</span>
+            </button>
+            <button type="button" class="home-cat-block" data-home-cat="alisveris" id="homeBlockShop">
+              <span class="home-cat-block__ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2 12h10l2-8H7"/></svg>
+              </span>
+              <span class="home-cat-block__label">Alışveriş</span>
+              <span class="home-cat-block__count" id="homeCatCountAlisveris">(0)</span>
+            </button>
+            <button type="button" class="home-cat-block" data-home-cat="hizmet" id="homeBlockSvc">
+              <span class="home-cat-block__ic" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </span>
+              <span class="home-cat-block__label">Hizmet</span>
+              <span class="home-cat-block__count" id="homeCatCountHizmet">(0)</span>
+            </button>
+          </nav>
           <nav class="category-nav category-tree" id="categoryNav" aria-label="Ürün kategorileri"></nav>
         </div>
         <div class="sidebar-block sidebar-block--filters home-filter-shell">
@@ -607,31 +574,30 @@
         </div>
       </aside>
 
+      <div class="marketplace-center">
       <div class="content-main content-main--home-pro">
-        <div class="home-market-head">
-          <div class="home-market-head__titles">
-            <h2 class="home-market-head__title" id="allHeading"><span id="allHeadingLabel">İlanlar</span></h2>
-            <p class="home-market-head__sub" id="allHeadingSub">Filtrelerinize uyan sonuçlar</p>
-          </div>
-          <div class="home-market-head__stats">
-            <p class="home-market-head__count" id="resultsInfo" aria-live="polite">Yükleniyor…</p>
-          </div>
-        </div>
-
-        <section class="listing-section listing-section--home-main home-live-stream home-live-stream--pro" aria-labelledby="homeLiveHeading">
-          <div class="section-head section-head--compact home-listings-head home-listings-head--inline">
-            <h2 id="homeLiveHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark home-listings-head__mark--pulse" aria-hidden="true"></span>Canlı ilan akışı</h2>
-            <p class="home-listings-head__sub">Yeni eklenenlerden anlık örnekler</p>
-          </div>
-          <div class="listing-grid listing-grid--home listing-grid--live" id="homeLiveStreamGrid" aria-live="polite"></div>
-        </section>
-
         <div id="homeListingsLoading" class="home-listings-loading home-listings-loading--pro" aria-live="polite" aria-busy="true">
           <div class="home-listings-loading__spinner" aria-hidden="true"></div>
           <p class="home-listings-loading__text" id="homeListingsLoadingText">İlanlar yükleniyor…</p>
         </div>
 
-        <section class="listing-section listing-section--home-main home-listings-primary" aria-labelledby="allHeading">
+        <section class="listing-section listing-section--home-main home-featured-market" aria-labelledby="homeFeaturedHeading">
+          <div class="section-head section-head--compact home-listings-head">
+            <h2 id="homeFeaturedHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span>Öne çıkan ilanlar</h2>
+            <p class="home-listings-head__sub">Güncel ve dikkat çeken seçkiler</p>
+          </div>
+          <p id="homeDemoNote" class="home-demo-note" hidden>Örnek ilanlar gösteriliyor; canlı liste geldiğinde otomatik güncellenir.</p>
+          <div id="homeFeaturedGrid" class="listing-grid listing-grid--home listing-grid--market-dense" aria-live="polite"></div>
+        </section>
+
+        <section class="listing-section listing-section--home-main home-listings-primary" aria-labelledby="homeMainListHeading">
+          <div class="section-head section-head--compact home-listings-head home-listings-head--split">
+            <div>
+              <h2 id="homeMainListHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span><span id="allHeadingLabel">Yeni ilanlar</span></h2>
+              <p class="home-listings-head__sub" id="allHeadingSub">Filtrelerinize uyan sonuçlar</p>
+            </div>
+            <p class="home-market-head__count home-listings-head__count" id="resultsInfo" aria-live="polite">Yükleniyor…</p>
+          </div>
           <div class="empty-state empty-state--rich empty-state--home-pro" id="emptyResults" hidden>
             <div class="empty-state__icon" aria-hidden="true">
               <svg width="56" height="56" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -656,28 +622,29 @@
               </div>
             </div>
           </div>
-          <div class="listing-grid listing-grid--home" id="listingsGrid"></div>
+          <div class="listing-grid listing-grid--home listing-grid--market-dense" id="listingsGrid"></div>
           <div id="listingsPager" class="listings-pager" hidden>
             <button type="button" class="btn btn-secondary btn-sm" id="listingsLoadMore">Daha fazla göster</button>
           </div>
         </section>
 
-        <section class="listing-section listing-section--home-main home-extra-feed home-extra-feed--pro" aria-labelledby="homeNewestHeading">
-          <div class="section-head section-head--compact home-listings-head">
-            <h2 id="homeNewestHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span>Yeni ilanlar</h2>
-            <p class="home-listings-head__sub">Son yayınlananlar arasından seçtiklerimiz</p>
-          </div>
-          <div class="listing-grid listing-grid--home" id="homeNewestGrid"></div>
-        </section>
-
-        <section class="listing-section listing-section--home-main home-extra-feed home-extra-feed--pro" aria-labelledby="homePopularHeading">
-          <div class="section-head section-head--compact home-listings-head">
-            <h2 id="homePopularHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span>En çok görüntülenenler</h2>
-            <p class="home-listings-head__sub">İlgi odağındaki ilanlar</p>
-          </div>
-          <div class="listing-grid listing-grid--home" id="homePopularGrid"></div>
-        </section>
+        <div class="ad-banner ad-banner--bottom" role="complementary" aria-label="Reklam alanı">
+          <a href="#" class="ad-banner__link" tabindex="-1" aria-hidden="true">
+            <img class="ad-banner__img" src="https://placehold.co/1200x120/eef2f7/64748b/png?text=Alt+banner" alt="" width="1200" height="120" loading="lazy" decoding="async" />
+          </a>
+        </div>
       </div>
+      </div>
+
+      <aside class="ad-rail" aria-label="Reklam sütunu">
+        <div class="ad-vertical">
+          <div class="ad-vertical__inner">
+            <span class="ad-vertical__label">Reklam</span>
+            <img class="ad-vertical__img" src="https://placehold.co/300x600/f1f5f9/64748b/png?text=300+%C3%97+600" alt="" width="300" height="600" loading="lazy" decoding="async" />
+            <span class="ad-vertical__size">300 × 600</span>
+          </div>
+        </div>
+      </aside>
     </div>
   </main>
 
