@@ -164,6 +164,18 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    if (document.body.getAttribute("data-page") === "admin-panel") init();
+    if (document.body.getAttribute("data-page") !== "admin-panel") return;
+    if (!window.JetleAPI || !window.JetleAuth || typeof JetleAuth.bootstrap !== "function") return;
+    JetleAuth.bootstrap().then(function () {
+      if (!JetleAuth.isLoggedIn()) {
+        window.location.replace("login.html?next=" + encodeURIComponent("admin-panel.html"));
+        return;
+      }
+      if (!JetleAuth.isAdmin()) {
+        window.location.replace("index.html");
+        return;
+      }
+      init();
+    });
   });
 })();

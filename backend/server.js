@@ -1,6 +1,5 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
-console.log("MONGO URI:", process.env.MONGODB_URI);
 
 process.on("uncaughtException", function (err) {
   console.error("UNCAUGHT ERROR:", err);
@@ -36,20 +35,32 @@ const app = express();
 // TRUST PROXY (Railway / reverse proxy)
 app.set("trust proxy", 1);
 
-app.use(cors({
-  origin: [
-    "https://jetle.online",
-    "http://127.0.0.1:5500",
-    "http://localhost:5500"
-  ],
-  credentials: true
-}));
-app.options(/.*/, cors());
-app.use(express.json({ limit: "10mb" }));
-
-console.log(
-  "[jetle-api] env loaded: PORT=" + (env.PORT ? "yes" : "no") + ", MONGODB_URI=" + (env.MONGODB_URI ? "yes" : "no")
+/** CORS: canlı site + .env CLIENT_ORIGIN (virgülle çoklu). Statik barındırma URL’nizi buraya yazın. */
+var corsAllowed = ["https://jetle.online", "https://www.jetle.online"].concat(
+  Array.isArray(env.CLIENT_ORIGINS) ? env.CLIENT_ORIGINS : []
 );
+(function dedupeOrigins() {
+  var seen = Object.create(null);
+  corsAllowed = corsAllowed.filter(function (o) {
+    var k = String(o || "").trim();
+    if (!k || seen[k]) return false;
+    seen[k] = true;
+    return true;
+  });
+})();
+
+app.use(
+  cors({
+    origin: corsAllowed,
+    credentials: true
+  })
+);
+app.options(/.*/, cors());
+app.use(express.json({ limit: env.JSON_LIMIT || "10mb" }));
+
+if (env.NODE_ENV !== "production") {
+  console.log("[jetle-api] env ok | PORT=" + env.PORT + " | CORS origins=" + corsAllowed.length);
+}
 
 app.disable("x-powered-by");
 app.use(
@@ -72,7 +83,7 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: env.JSON_LIMIT || "10mb" }));
 app.use(requestLogger);
 app.use(
   "/api",
@@ -209,8 +220,7 @@ app.use(function logUnhandledApiError(err, req, res, next) {
 });
 app.use(errorHandler);
 
-console.log("ENV PORT:", process.env.PORT);
-const PORT = process.env.PORT || 8080;
+const PORT = env.PORT || Number(process.env.PORT) || 8080;
 
 connectDb().catch(function onDbError(err) {
   console.error("[jetle-api] DB bağlantısı kurulamadı (sunucu dinlemeye devam ediyor):", err && err.message ? err.message : err);
@@ -228,6 +238,10 @@ connectDb().catch(function onDbError(err) {
   }
 });
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on port", PORT);
+app.listen(PORT, "0.0.0.0", function () {
+  if (env.NODE_ENV !== "production") {
+    console.log("[jetle-api] listening on port", PORT);
+  } else {
+    console.log("[jetle-api] server started");
+  }
 });

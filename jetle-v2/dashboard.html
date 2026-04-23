@@ -273,16 +273,18 @@
   <script src="script.js"></script>
   <script>
     (function () {
-      JetleAuth.init();
-      if (!JetleAuth.isLoggedIn()) {
-        window.location.replace("login.html?next=" + encodeURIComponent("dashboard.html"));
-        return;
-      }
-      var me = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
-      var lbl = document.getElementById("dashAdminLabel");
-      if (me && String(me.role || "").toLowerCase() === "admin" && lbl) {
-        lbl.hidden = false;
-      }
+      if (!window.JetleAuth || typeof JetleAuth.bootstrap !== "function") return;
+      JetleAuth.bootstrap().then(function () {
+        if (!JetleAuth.isLoggedIn()) {
+          window.location.replace("login.html?next=" + encodeURIComponent("dashboard.html"));
+          return;
+        }
+        var me = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
+        var lbl = document.getElementById("dashAdminLabel");
+        if (me && String(me.role || "").toLowerCase() === "admin" && lbl) {
+          lbl.hidden = false;
+        }
+      });
     })();
   </script>
 </body>

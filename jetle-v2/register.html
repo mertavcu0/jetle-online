@@ -77,8 +77,7 @@
   <script src="script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      JetleAuth.init();
-      JetleAuth.renderHeaderBar();
+      JetleAuth.bootstrap();
       var err = document.getElementById("regError");
       var termsWrap = document.getElementById("regTermsWrap");
       var termsEl = document.getElementById("regTerms");
@@ -142,7 +141,10 @@
           err.hidden = false;
           return;
         }
-        window.location.href = "index.html";
+        JetleAuth.renderNavbar(window.currentUser);
+        window.setTimeout(function () {
+          window.location.href = "dashboard.html";
+        }, 200);
       });
     });
   </script>

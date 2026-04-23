@@ -6651,13 +6651,42 @@
     function pickMediaImages() {
       return imageItems.map(function (x) { return x.url; }).filter(Boolean);
     }
+    var API_BASE = "https://jetle-online-production.up.railway.app";
+    function mediaAbsUrl(path) {
+      var p = String(path || "");
+      if (p.indexOf("/") !== 0) p = "/" + p;
+      var base = API_BASE;
+      try {
+        if (window.JetleAPI && JetleAPI.API_BASE) {
+          var ab = String(JetleAPI.API_BASE).trim().replace(/\/+$/, "");
+          if (/^https?:\/\//i.test(ab)) base = ab;
+        } else {
+          var gw = window.JetleAPI && JetleAPI.API_GATEWAY;
+          if (gw && gw.baseUrl) {
+            var bu = String(gw.baseUrl).trim().replace(/\/+$/, "");
+            if (/^https?:\/\//i.test(bu)) base = bu;
+          }
+        }
+      } catch (eM) {}
+      return String(base).replace(/\/+$/, "") + p;
+    }
     function mediaUploadEnabled() {
       return !!(window.JetleAPI && JetleAPI.backendEnabled && JetleAPI.backendEnabled());
     }
     function getBackendAccessToken() {
+      try {
+        var ls = localStorage.getItem("token") || localStorage.getItem("jetle_v2_access_token") || "";
+        if (ls) return String(ls).trim();
+      } catch (eLs) {}
+      try {
+        if (window.JetleAuth && typeof JetleAuth.getRawAccessToken === "function") {
+          var jt = JetleAuth.getRawAccessToken();
+          if (jt) return String(jt).trim();
+        }
+      } catch (eJ) {}
       if (!window.JetleAPI || !JetleAPI.authStorage || !JetleAPI.authStorage.read) return "";
       var s = JetleAPI.authStorage.read();
-      return s && s.accessToken ? String(s.accessToken) : "";
+      return s && s.accessToken ? String(s.accessToken).trim() : "";
     }
     function uploadMultipartToBackend(url, field, files, onProgress) {
       var token = getBackendAccessToken();
@@ -6666,8 +6695,7 @@
       Array.prototype.slice.call(files || [], 0).forEach(function (file) {
         fd.append(field, file);
       });
-      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-      var full = base ? base.replace(/\/+$/, "") + url : url;
+      var full = mediaAbsUrl(url);
       return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", full, true);
@@ -6699,8 +6727,7 @@
       if (!token) return Promise.reject(new Error("Medya yüklemek için tekrar giriş yapın."));
       var fd = new FormData();
       fd.append(field, file);
-      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-      var full = base ? base.replace(/\/+$/, "") + url : url;
+      var full = mediaAbsUrl(url);
       var xhr = new XMLHttpRequest();
       var promise = new Promise(function (resolve, reject) {
         xhr.open("POST", full, true);
@@ -6724,8 +6751,7 @@
     function backendJson(method, url, body) {
       var token = getBackendAccessToken();
       if (!token) return Promise.reject(new Error("Medya yüklemek için tekrar giriş yapın."));
-      var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-      var full = base ? base.replace(/\/+$/, "") + url : url;
+      var full = mediaAbsUrl(url);
       return fetch(full, {
         method: method,
         credentials: "include",
@@ -6750,8 +6776,7 @@
         videoChunkUpload.sessionId = sessionId;
         videoChunkUpload.cancelled = false;
         var token = getBackendAccessToken();
-        var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-        var full = (base ? base.replace(/\/+$/, "") : "") + "/api/media/upload-video/chunk";
+        var full = mediaAbsUrl("/api/media/upload-video/chunk");
 
         function sendChunk(offset) {
           if (videoChunkUpload.cancelled) return Promise.reject(new Error("Yükleme iptal edildi."));
@@ -8129,8 +8154,7 @@
             if (mediaUploadEnabled() && item.assetId) {
               var tk = getBackendAccessToken();
               if (tk) {
-                var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-                var full = base ? base.replace(/\/+$/, "") + "/api/media/" + encodeURIComponent(item.assetId) : "/api/media/" + encodeURIComponent(item.assetId);
+                var full = mediaAbsUrl("/api/media/" + encodeURIComponent(item.assetId));
                 fetch(full, { method: "DELETE", headers: { Authorization: "Bearer " + tk }, credentials: "include" }).catch(function () {});
               }
             }
@@ -8702,8 +8726,7 @@
         if (mediaUploadEnabled() && videoItem && videoItem.assetId) {
           var tk = getBackendAccessToken();
           if (tk) {
-            var base = (window.JetleAPI && JetleAPI.API_GATEWAY && JetleAPI.API_GATEWAY.baseUrl) || "";
-            var full = base ? base.replace(/\/+$/, "") + "/api/media/" + encodeURIComponent(videoItem.assetId) : "/api/media/" + encodeURIComponent(videoItem.assetId);
+            var full = mediaAbsUrl("/api/media/" + encodeURIComponent(videoItem.assetId));
             fetch(full, { method: "DELETE", headers: { Authorization: "Bearer " + tk }, credentials: "include" }).catch(function () {});
           }
         }

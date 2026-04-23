@@ -30,10 +30,10 @@ This backend is a production-ready **technical skeleton** for migrating the curr
 - `DELETE /api/listings/:id`
 
 ### User Dashboard
-- `GET /api/me/listings`
-- `GET /api/me/favorites`
-- `GET /api/me/messages`
-- `GET /api/me/packages`
+- `GET /api/auth/me/listings`
+- `GET /api/auth/me/favorites`
+- `GET /api/auth/me/messages`
+- `GET /api/auth/me/packages`
 
 ### Favorites
 - `POST /api/favorites/:listingId`

@@ -4,12 +4,14 @@ const { asyncHandler } = require("../utils/asyncHandler");
 
 const register = asyncHandler(async function register(req, res) {
   var data = await authService.register(req.body || {});
+  console.log("LOGIN SECRET:", process.env.JWT_ACCESS_SECRET);
   res.cookie(env.REFRESH_COOKIE_NAME, data.refreshToken, authService.refreshCookieOptions());
   res.status(201).json({ ok: true, data: data });
 });
 
 const login = asyncHandler(async function login(req, res) {
   var data = await authService.login(req.body || {});
+  console.log("LOGIN SECRET:", process.env.JWT_ACCESS_SECRET);
   res.cookie(env.REFRESH_COOKIE_NAME, data.refreshToken, authService.refreshCookieOptions());
   res.json({ ok: true, data: data });
 });

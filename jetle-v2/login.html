@@ -58,34 +58,31 @@
     document.addEventListener("DOMContentLoaded", function () {
       function sanitizeNext(next) {
         var v = String(next || "").trim();
-        if (!v) return "index.html";
-        if (/^https?:\/\//i.test(v) || v.indexOf("//") === 0) return "index.html";
-        if (v.indexOf("javascript:") === 0) return "index.html";
+        if (!v) return "dashboard.html";
+        if (/^https?:\/\//i.test(v) || v.indexOf("//") === 0) return "dashboard.html";
+        if (v.indexOf("javascript:") === 0) return "dashboard.html";
         if (v.charAt(0) === "/") v = v.slice(1);
-        return v || "index.html";
+        var base = v.split("?")[0].toLowerCase();
+        if (base === "login.html" || base === "register.html") return "dashboard.html";
+        return v || "dashboard.html";
       }
-      function shouldSendNonAdminHomeFromDashboard(next, role) {
-        if (String(role || "").toLowerCase() === "admin") return false;
-        var n = String(next || "");
-        if (n.indexOf("dashboard.html") === -1) return false;
-        return n.indexOf("#") === -1;
+      function go(href) {
+        window.setTimeout(function () {
+          window.location.href = href;
+        }, 200);
       }
-      JetleAuth.init();
-      JetleAuth.renderHeaderBar();
-      if (JetleAuth.getCurrentUser()) {
-        var next0 = sanitizeNext(new URLSearchParams(location.search).get("next"));
-        var me0 = JetleAuth.getCurrentUser();
-        if (next0.indexOf("admin.html") !== -1 && me0.role !== "admin") {
-          window.location.href = "index.html";
+      JetleAuth.bootstrap().then(function () {
+        if (JetleAuth.getCurrentUser()) {
+          var next0 = sanitizeNext(new URLSearchParams(location.search).get("next"));
+          var me0 = JetleAuth.getCurrentUser();
+          if (next0.indexOf("admin.html") !== -1 && me0.role !== "admin") {
+            go("dashboard.html");
+            return;
+          }
+          go(next0);
           return;
         }
-        if (shouldSendNonAdminHomeFromDashboard(next0, me0.role)) {
-          window.location.href = "index.html";
-          return;
-        }
-        window.location.href = next0;
-        return;
-      }
+      });
       var err = document.getElementById("loginError");
       document.getElementById("forgotLink").addEventListener("click", function (e) {
         e.preventDefault();
@@ -113,6 +110,7 @@
           err.hidden = false;
           return;
         }
+        JetleAuth.renderNavbar(window.currentUser);
         var next = sanitizeNext(new URLSearchParams(location.search).get("next"));
         var me = JetleAuth.getCurrentUser();
         if (next.indexOf("admin.html") !== -1 && me && me.role !== "admin") {
@@ -121,11 +119,9 @@
           err.hidden = false;
           return;
         }
-        if (shouldSendNonAdminHomeFromDashboard(next, me && me.role)) {
-          window.location.href = "index.html";
-          return;
-        }
-        window.location.href = next;
+        window.setTimeout(function () {
+          window.location.href = next;
+        }, 200);
       });
     });
   </script>

@@ -1,22 +1,34 @@
-const { ApiError } = require("../utils/ApiError");
-const { verifyAccessToken } = require("../utils/jwt");
+const jwt = require("jsonwebtoken");
+const { getAccessTokenSecret } = require("../utils/jwt");
 
+/**
+ * Bearer doğrulama — `getAccessTokenSecret()` login’deki `jwt.sign` ile birebir aynı anahtar.
+ */
 function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("VERIFY SECRET:", process.env.JWT_ACCESS_SECRET);
+    console.log("TOKEN:", "(yok)");
+    return res.status(401).json({ ok: false, message: "No token" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  console.log("VERIFY SECRET:", process.env.JWT_ACCESS_SECRET);
+  console.log("TOKEN:", token);
+
   try {
-    var hdr = req.headers.authorization || "";
-    var token = "";
-    if (hdr && hdr.indexOf("Bearer ") === 0) token = hdr.slice(7).trim();
-    if (!token) return next(new ApiError(401, "Unauthorized"));
-    var decoded = verifyAccessToken(token);
+    const decoded = jwt.verify(token, getAccessTokenSecret());
+    req.user = decoded;
     req.auth = {
       userId: String(decoded.sub),
       role: decoded.role || "user",
       email: decoded.email || ""
     };
-    req.user = req.auth;
     return next();
   } catch (err) {
-    return next(new ApiError(401, "Invalid or expired token"));
+    return res.status(401).json({ ok: false, message: "Invalid token" });
   }
 }
 

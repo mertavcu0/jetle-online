@@ -44,6 +44,8 @@ async function buildTokenPair(userDoc) {
   await persistRefreshToken(userDoc._id, refreshToken);
   return {
     accessToken: accessToken,
+    /** İstemciler `data.token` bekleyebilir — `accessToken` ile aynı JWT. */
+    token: accessToken,
     refreshToken: refreshToken,
     tokenType: "Bearer",
     expiresInSec: 900,

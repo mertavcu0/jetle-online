@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="jetle-api-base" content="https://jetle-online-production.up.railway.app" />
   <link rel="dns-prefetch" href="https://jetle-online-production.up.railway.app" />
+  <link rel="preconnect" href="https://jetle-online-production.up.railway.app" crossorigin />
   <title>JETLE.online — İlan Pazarı</title>
   <meta name="description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
   <meta property="og:title" content="JETLE.online — İlan Pazarı" />
@@ -13,7 +14,7 @@
   <style id="jetle-critical-css">
     :root{--bg:#fff;--bg-muted:#f4f5f7;--border:#e2e4e9;--text:#1a1d24;--accent:#2563eb;--radius:6px;--font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
     *,::before,::after{box-sizing:border-box}
-    body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg-muted);line-height:1.45}
+    body{margin:0;font-family:var(--font);color:var(--text);background:#fff;line-height:1.45}
     .container{max-width:1200px;margin:0 auto;padding:0 16px}
     .site-header{background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
     .header-inner{display:flex;align-items:center;gap:16px;padding:12px 16px;flex-wrap:wrap}
@@ -21,7 +22,7 @@
     .container.header-inner--market{max-width:1320px}
     @media (max-width:900px){.header-inner--market{grid-template-columns:1fr auto;grid-template-areas:"logo actions" "search search"}.header-inner--market .logo{grid-area:logo}.header-inner--market .header-search-wrap{grid-area:search}.header-inner--market .header-actions{grid-area:actions;justify-self:end}}
     .main-shell{padding:20px 0 40px}
-    body.page-home .site-header{background:#f5f7fa;border-bottom:none}
+    body.page-home .site-header{background:#fff;border-bottom:1px solid var(--border,#e2e4e9)}
     body.page-home .main-shell{padding:0 0 40px}
     .main-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
     .content-main{min-width:0}
@@ -46,18 +47,18 @@
       .home-featured-premium::-webkit-scrollbar-thumb{background:#c5cad3;border-radius:4px}
       .home-featured-premium .featured-card--premium{flex:0 0 min(260px,82vw);max-width:280px;scroll-snap-align:start}
     }
-    .featured-card.featured-card--premium{position:relative;display:block;background:#fff;border-radius:16px;padding:0;overflow:hidden;border:1px solid #e8ecf1;box-shadow:0 4px 18px rgba(15,23,42,0.07);text-decoration:none;color:inherit;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
-    @media (hover:hover){.featured-card.featured-card--premium:hover{transform:translateY(-4px) scale(1.025);box-shadow:0 18px 40px rgba(15,23,42,0.14);border-color:rgba(37,99,235,0.35)}}
+    .featured-card.featured-card--premium{position:relative;display:block;background:#fff;border-radius:12px;padding:0;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(15,23,42,0.05);text-decoration:none;color:inherit;transition:border-color .15s ease,box-shadow .15s ease}
+    @media (hover:hover){.featured-card.featured-card--premium:hover{box-shadow:0 4px 12px rgba(15,23,42,0.08);border-color:#cbd5e1}}
     .featured-card--premium:focus-visible{outline:2px solid #2563eb;outline-offset:3px}
     .featured-card__badge-one{position:absolute;top:10px;right:10px;z-index:3;font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;padding:6px 10px;border-radius:8px;background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,0.45);line-height:1.2}
-    .featured-card__media-wrap{position:relative;border-radius:16px 16px 0 0;overflow:hidden}
+    .featured-card__media-wrap{position:relative;border-radius:12px 12px 0 0;overflow:hidden}
     .featured-card--premium .featured-card__media{aspect-ratio:4/3;background:linear-gradient(145deg,#eef2f7,#e2e8f0)}
     .featured-card__media--placeholder{background:linear-gradient(135deg,#dbeafe,#e0e7ff)}
     .featured-card--premium .featured-card__media img{width:100%;height:100%;object-fit:cover;display:block}
-    .featured-card--premium .featured-card__body{padding:12px 14px 14px}
-    .featured-card--premium .featured-card__price{font-weight:800;color:#0f172a;font-size:1rem;margin-bottom:6px}
-    .featured-card--premium .featured-card__title{font-size:0.86rem;font-weight:600;line-height:1.35;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .featured-card--premium .featured-card__meta{font-size:0.78rem;color:#64748b;margin:0}
+    .featured-card--premium .featured-card__body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px}
+    .featured-card--premium .featured-card__title{font-size:0.8rem;font-weight:600;line-height:1.35;margin:0;color:#334155;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .featured-card--premium .featured-card__price{font-weight:800;color:#0f172a;font-size:1.05rem;letter-spacing:-0.02em;margin:4px 0 0;line-height:1.15}
+    .featured-card--premium .featured-card__meta{font-size:0.72rem;color:#9ca3af;margin:2px 0 0;line-height:1.35}
     .badge-doping{position:absolute;top:8px;left:8px;z-index:2;background:#2563eb;color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;line-height:1.2;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
     #loginModal{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:16px}
     #loginModal[hidden]{display:none!important}
@@ -116,32 +117,36 @@
     .home-filter-chips{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
     .home-cat-strip{background:#fff;border-bottom:1px solid #e8ecf0;padding:18px 0 22px}
     .home-cat-strip .home-shell-wide{max-width:1320px}
-    .home-cat-blocks{display:grid;gap:14px;margin:0}
-    .home-cat-blocks--hero-top{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));max-width:920px;margin:0 auto}
+    .home-cat-blocks{display:grid;gap:10px;margin:0}
+    .home-cat-blocks--hero-top{grid-template-columns:repeat(auto-fill,minmax(108px,1fr));max-width:920px;margin:0 auto}
     @media (min-width:880px){.home-cat-blocks--hero-top{grid-template-columns:repeat(5,1fr);max-width:none}}
-    .home-cat-block{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px 12px;border:1px solid #e2e8f0;border-radius:16px;background:#fff;text-decoration:none;color:#0f172a;font-size:0.85rem;font-weight:700;text-align:center;box-shadow:0 2px 8px rgba(15,23,42,0.04);cursor:pointer;font:inherit;width:100%;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
-    @media (hover:hover){.home-cat-block:hover{transform:scale(1.045);border-color:#2563eb;box-shadow:0 8px 22px rgba(37,99,235,0.14)}}
-    .home-cat-block__ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#eff6ff,#dbeafe);color:#1d4ed8;flex-shrink:0}
-    .home-cat-block[data-home-cat="emlak"] .home-cat-block__ic{background:linear-gradient(145deg,#ecfdf5,#d1fae5);color:#047857}
-    .home-cat-block[data-home-cat="vasita"] .home-cat-block__ic{background:linear-gradient(145deg,#eff6ff,#dbeafe);color:#1d4ed8}
-    .home-cat-block[data-home-cat="elektronik"] .home-cat-block__ic{background:linear-gradient(145deg,#faf5ff,#ede9fe);color:#6d28d9}
-    .home-cat-block[data-home-cat="alisveris"] .home-cat-block__ic{background:linear-gradient(145deg,#fff7ed,#ffedd5);color:#c2410c}
-    .home-cat-block[data-home-cat="hizmet"] .home-cat-block__ic{background:linear-gradient(145deg,#f0f9ff,#e0f2fe);color:#0369a1}
-    .home-cat-block[data-home-cat=""] .home-cat-block__ic{background:linear-gradient(145deg,#f1f5f9,#e2e8f0);color:#475569}
+    .home-cat-block{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;text-decoration:none;color:#1e293b;font-size:0.8125rem;font-weight:600;text-align:left;box-shadow:0 1px 2px rgba(15,23,42,0.04);cursor:pointer;font:inherit;width:100%;transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease}
+    @media (hover:hover){.home-cat-block:hover{border-color:#cbd5e1;background:#fafbfc;box-shadow:0 1px 3px rgba(15,23,42,0.06)}}
+    .home-cat-block__ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#f4f6f8;color:#2563eb;flex-shrink:0}
+    .home-cat-block[data-home-cat="emlak"] .home-cat-block__ic,.home-cat-block[data-home-cat="vasita"] .home-cat-block__ic,.home-cat-block[data-home-cat="elektronik"] .home-cat-block__ic,.home-cat-block[data-home-cat="alisveris"] .home-cat-block__ic,.home-cat-block[data-home-cat="hizmet"] .home-cat-block__ic,.home-cat-block[data-home-cat=""] .home-cat-block__ic{background:#f4f6f8;color:#2563eb}
     .featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding:6px 0 14px}
     .jetle-badge{position:relative;z-index:2;font-size:10px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;padding:4px 8px;border-radius:6px;line-height:1.2;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
     .jetle-badge--acil{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
     .jetle-badge--vitrin{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff}
     .jetle-badge--one{background:#2563eb;color:#fff}
     .jetle-badges{position:absolute;top:0;left:0;right:0;display:flex;flex-wrap:wrap;gap:6px;padding:10px;pointer-events:none}
-    .listing-card--api-feed{border-radius:14px;border:1px solid #e8ecf1;overflow:hidden;box-shadow:0 2px 12px rgba(15,23,42,0.06);transition:transform .22s ease,box-shadow .22s ease}
-    @media (hover:hover){.listing-card--api-feed:hover{transform:scale(1.02);box-shadow:0 22px 48px rgba(15,23,42,0.14)}}
+    .listing-card--api-feed{border-radius:10px;border:1px solid #e5e7eb;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:border-color .15s ease,box-shadow .15s ease}
+    @media (hover:hover){.listing-card--api-feed:hover{border-color:#d1d5db;box-shadow:0 4px 12px rgba(15,23,42,0.07)}}
     .listing-card__kurumsal-badge{position:absolute;top:10px;right:10px;z-index:4;font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;padding:6px 10px;border-radius:8px;background:linear-gradient(135deg,#0f172a,#334155);color:#fff;box-shadow:0 4px 14px rgba(15,23,42,0.4);pointer-events:none;line-height:1.2}
-    .listing-card--api-feed .listing-card__price{font-size:1.54rem;font-weight:900;color:#1d4ed8;line-height:1.08}
-    .listing-card__meta--citytime{margin:8px 0 0;font-size:0.8rem;color:#64748b;line-height:1.35}
+    .listing-card--api-feed .listing-card__body{padding:10px 12px 11px;display:flex;flex-direction:column;gap:4px}
+    .listing-card--api-feed .listing-card__title{font-size:0.875rem;font-weight:600;color:#1e293b;line-height:1.35;margin:0}
+    .listing-card--api-feed .listing-card__price{font-size:1.2rem;font-weight:800;color:#111827;letter-spacing:-0.02em;line-height:1.12;margin:2px 0 0}
+    .listing-card__meta--citytime{margin:0;font-size:0.72rem;color:#9ca3af;line-height:1.35;font-weight:500}
     .listing-card__media-wrap{position:relative;border-radius:14px 14px 0 0;overflow:hidden}
     .listing-card--api-feed .listing-card__media{position:relative;border-radius:0}
-    .home-cat-block.is-active{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,0.2);background:#f8fafc}
+    .listing-grid__spacer{grid-column:1/-1;height:0;pointer-events:none}
+    .listing-card.is-skeleton{pointer-events:none;animation:none}
+    .listing-card.is-skeleton .listing-card__media{background:linear-gradient(120deg,#f1f5f9,#e2e8f0)}
+    .listing-skel-line{height:10px;border-radius:999px;background:#e2e8f0}
+    .listing-skel-line--price{width:42%;height:14px}
+    .listing-skel-line--title{width:78%}
+    .listing-skel-line--meta{width:56%}
+    .home-cat-block.is-active{border-color:#93c5fd;background:#eff6ff;box-shadow:0 1px 2px rgba(37,99,235,0.08)}
     .home-listings-head{margin:0 0 10px}
     .home-listings-head__title{margin:0;display:flex;align-items:center;gap:10px;font-weight:700;color:#0f172a;line-height:1.2}
     .home-listings-head__mark{display:inline-block;width:4px;height:20px;border-radius:999px;background:#2563eb;flex-shrink:0}
@@ -150,9 +155,11 @@
     @media (min-width:520px){.listing-grid--home{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
     @media (min-width:768px){.listing-grid--home{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}}
     @media (min-width:1100px){.listing-grid--home{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+    @media (prefers-reduced-motion:reduce){
+      .featured-card.featured-card--premium,.listing-card--api-feed{transition:none!important}
+    }
   </style>
-  <link rel="preload" href="style.min.css" as="style" />
-  <link rel="stylesheet" href="style.min.css" media="print" onload="this.media='all'" />
+  <link rel="preload" href="style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="style.min.css" /></noscript>
 </head>
 <body data-page="home" class="page-home font-inter">
@@ -560,7 +567,7 @@
 
         <div id="homeListingsLoading" class="home-listings-loading" aria-live="polite" aria-busy="true">
           <div class="home-listings-loading__spinner" aria-hidden="true"></div>
-          <p class="home-listings-loading__text">İlanlar yükleniyor…</p>
+          <p class="home-listings-loading__text" id="homeListingsLoadingText">İlanlar yükleniyor…</p>
         </div>
 
         <section class="listing-section listing-section--home-main" aria-labelledby="allHeading">
@@ -579,6 +586,7 @@
             <p class="empty-state__sub" id="emptyResultsSub">Seçtiğiniz kriterlere uygun sonuç yok. Filtreleri genişletmeyi veya ana sayfadan yeniden aramayı deneyin.</p>
             <div class="empty-state__actions">
               <button type="button" class="btn btn-primary btn-sm" id="emptyResetBtn">Filtreleri temizle</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="homeListingsRetryBtn" hidden>Tekrar dene</button>
               <a href="index.html" class="btn btn-secondary btn-sm">Tüm ilanlara dön</a>
             </div>
           </div>
@@ -812,9 +820,34 @@
   </script>
   <script src="api.js?v=20260217" defer></script>
   <script src="auth.js" defer></script>
-  <script src="ilan.js" defer></script>
-  <script src="script.js" defer></script>
   <script src="home-api-listings.js" defer></script>
+  <script>
+    (function () {
+      function loadScript(src) {
+        var s = document.createElement("script");
+        s.src = src;
+        s.defer = true;
+        document.body.appendChild(s);
+      }
+      function loadNonCritical() {
+        loadScript("script.js");
+      }
+      var loaded = false;
+      function trigger() {
+        if (loaded) return;
+        loaded = true;
+        loadNonCritical();
+        window.removeEventListener("pointerdown", trigger, true);
+        window.removeEventListener("touchstart", trigger, true);
+        window.removeEventListener("keydown", trigger, true);
+        window.removeEventListener("scroll", trigger, true);
+      }
+      window.addEventListener("pointerdown", trigger, { capture: true, passive: true });
+      window.addEventListener("touchstart", trigger, { capture: true, passive: true });
+      window.addEventListener("keydown", trigger, { capture: true });
+      window.addEventListener("scroll", trigger, { capture: true, passive: true });
+    })();
+  </script>
   <script>
     (function () {
       function dismissSplash() {

@@ -64,11 +64,25 @@
     return Boolean(COLLECTION_ENDPOINTS[name]);
   }
 
+  function getApiBearerToken() {
+    try {
+      const t = localStorage.getItem('token');
+      return t ? String(t).trim() : '';
+    } catch (e) {
+      return '';
+    }
+  }
+
   async function requestJson(url, options) {
     const nextOptions = Object.assign({}, options || {});
     const headers = Object.assign({
       Accept: 'application/json'
     }, nextOptions.headers || {});
+
+    const bearer = getApiBearerToken();
+    if (bearer && !headers.Authorization) {
+      headers.Authorization = 'Bearer ' + bearer;
+    }
 
     if (Object.prototype.hasOwnProperty.call(nextOptions, 'data')) {
       headers['Content-Type'] = 'application/json';

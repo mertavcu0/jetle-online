@@ -10,63 +10,73 @@
   }
 
   ready(function () {
-    if (window.JetleAPI && window.JetleAuth) JetleAuth.init();
-    if (window.JetleAuth) JetleAuth.renderHeaderBar();
+    var authChain =
+      window.JetleAuth && typeof JetleAuth.bootstrap === "function"
+        ? JetleAuth.bootstrap()
+        : Promise.resolve();
 
-    (function wireHeaderPanelOrAdminLink() {
-      if (!window.JetleAuth) return;
+    authChain.then(function () {
+      (function wireHeaderPanelOrAdminLink() {
+        if (!window.JetleAuth) return;
 
-      var SESSION_KEY = "jetle_v2_session";
+        var SESSION_KEY = "jetle_v2_session";
 
-      function readRoleFromStoredSession() {
-        try {
-          var raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
-          if (raw) {
-            var s = JSON.parse(raw);
-            if (s && s.user && s.user.role != null) return String(s.user.role).toLowerCase();
-            if (s && typeof s.role === "string") return s.role.toLowerCase();
-          }
-        } catch (e) {}
-        try {
+        function readRoleFromStoredSession() {
+          try {
+            var raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+            if (raw) {
+              var s = JSON.parse(raw);
+              if (s && s.user && s.user.role != null) return String(s.user.role).toLowerCase();
+              if (s && typeof s.role === "string") return s.role.toLowerCase();
+            }
+          } catch (e) {}
+          try {
+            var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
+            if (u && u.role != null) return String(u.role).toLowerCase();
+          } catch (e2) {}
+          return null;
+        }
+
+        function applyHeaderPanelOrAdminLink() {
+          var slot = document.getElementById("headerUserSlot");
+          if (!slot) return;
+          var prev = document.getElementById("adminPanelBtn");
+          if (prev) prev.remove();
+
           var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
-          if (u && u.role != null) return String(u.role).toLowerCase();
-        } catch (e2) {}
-        return null;
-      }
+          if (!u) return;
 
-      function applyHeaderPanelOrAdminLink() {
-        var slot = document.getElementById("headerUserSlot");
-        if (!slot) return;
-        var prev = document.getElementById("adminPanelBtn");
-        if (prev) prev.remove();
+          var role = readRoleFromStoredSession();
+          if (role == null && u.role) role = String(u.role).toLowerCase();
+          var isAdmin = role === "admin";
 
-        var u = JetleAuth.getCurrentUser && JetleAuth.getCurrentUser();
-        if (!u) return;
+          if (!isAdmin) return;
+          var a = document.createElement("a");
+          a.id = "adminPanelBtn";
+          a.className = "btn btn-outline btn-sm";
+          a.href = "dashboard.html";
+          a.textContent = "Admin Paneli";
+          a.setAttribute("data-jetle-header-link", "admin-panel");
+          slot.insertBefore(a, slot.firstChild);
+        }
 
-        var role = readRoleFromStoredSession();
-        if (role == null && u.role) role = String(u.role).toLowerCase();
-        var isAdmin = role === "admin";
-
-        if (!isAdmin) return;
-        var a = document.createElement("a");
-        a.id = "adminPanelBtn";
-        a.className = "btn btn-outline btn-sm";
-        a.href = "dashboard.html";
-        a.textContent = "Admin Paneli";
-        a.setAttribute("data-jetle-header-link", "admin-panel");
-        slot.insertBefore(a, slot.firstChild);
-      }
-
-      if (!JetleAuth._jetlePanelLinkWrapped) {
-        JetleAuth._jetlePanelLinkWrapped = true;
-        var origRender = JetleAuth.renderHeaderBar;
-        JetleAuth.renderHeaderBar = function () {
-          origRender.apply(JetleAuth, arguments);
-          applyHeaderPanelOrAdminLink();
-        };
-      }
-      applyHeaderPanelOrAdminLink();
-    })();
+        if (!JetleAuth._jetlePanelLinkWrapped) {
+          JetleAuth._jetlePanelLinkWrapped = true;
+          var origNavbar = JetleAuth.renderNavbar;
+          JetleAuth.renderNavbar = function () {
+            origNavbar.apply(JetleAuth, arguments);
+            applyHeaderPanelOrAdminLink();
+          };
+          var origHeaderBar = JetleAuth.renderHeaderBar;
+          JetleAuth.renderHeaderBar = function () {
+            origHeaderBar.apply(JetleAuth, arguments);
+            applyHeaderPanelOrAdminLink();
+          };
+        }
+        applyHeaderPanelOrAdminLink();
+      })();
+    })
+    .then(function () {
 
     var footerYearEl = document.getElementById("footerYear");
     if (footerYearEl) footerYearEl.textContent = String(new Date().getFullYear());
@@ -135,7 +145,9 @@
             return;
           }
           close();
-          window.location.href = "ilan-ver.html";
+          window.setTimeout(function () {
+            window.location.href = "ilan-ver.html";
+          }, 200);
         });
 
         return wrap;
@@ -260,11 +272,15 @@
 
     if (page === "home" && window.JetleMarket) {
       var homeLoad = document.getElementById("homeListingsLoading");
+      var useHomeApiListings = false;
       try {
-        if (homeLoad) homeLoad.hidden = false;
+        useHomeApiListings = !!window.__JETLE_USE_HOME_API_LISTINGS__;
+      } catch (eHome) {}
+      try {
+        if (!useHomeApiListings && homeLoad) homeLoad.hidden = false;
         JetleMarket.initHome();
       } finally {
-        if (homeLoad) homeLoad.hidden = true;
+        if (!useHomeApiListings && homeLoad) homeLoad.hidden = true;
       }
       window.addEventListener("jetle-listings-changed", function () {
         JetleMarket.refreshAll();
@@ -1837,5 +1853,6 @@
         renderPricingCatalogInto(pm, { userId: usr ? usr.id : null, readOnly: false });
       }
     }
+    });
   });
 })();

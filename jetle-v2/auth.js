@@ -4,6 +4,10 @@
 (function () {
   "use strict";
 
+  try {
+    window.currentUser = null;
+  } catch (e0root) {}
+
   var KEYS = {
     USERS: "jetle_v2_users",
     SESSION: "jetle_v2_session",
@@ -11,6 +15,10 @@
     /** jetle-backend ve frontend ortak: Bearer token (localStorage) */
     ACCESS_TOKEN: "jetle_v2_access_token"
   };
+  var LEGACY_TOKEN_KEY = "token";
+  /** Üretim API kökü — göreli `/api/...` yok; tüm istekler mutlak URL. */
+  var API_BASE = "https://jetle-online-production.up.railway.app";
+  const ME_ENDPOINT = "/api/auth/me";
 
   /** Yerel (backend kapalı) kayıtta bu e-posta ile hesap admin rolü alır; backend için `ADMIN_REGISTRATION_EMAIL`. */
   var LOCAL_ADMIN_REGISTRATION_EMAIL = "admin@jetle.online";
@@ -43,14 +51,24 @@
 
   function backendUrl(path) {
     var gw = window.JetleAPI && JetleAPI.API_GATEWAY;
-    var base = (gw && gw.baseUrl) || "";
-    return base ? base.replace(/\/+$/, "") + path : path;
+    var base = (gw && gw.baseUrl) ? String(gw.baseUrl).trim() : "";
+    if (!base || /^\/\//.test(base)) base = API_BASE;
+    var b = base.replace(/\/+$/, "");
+    var p = String(path || "").indexOf("/") === 0 ? path : "/" + path;
+    return b + p;
+  }
+
+  function resolveBackendRequestUrl(path) {
+    var pathStr = String(path || "");
+    if (/^https?:\/\//i.test(pathStr)) return pathStr;
+    return backendUrl(pathStr);
   }
 
   function syncBackendRequest(method, path, body, accessToken) {
     try {
       var xhr = new XMLHttpRequest();
-      xhr.open(method, backendUrl(path), false);
+      var resolvedUrl = resolveBackendRequestUrl(path);
+      xhr.open(method, resolvedUrl, false);
       xhr.setRequestHeader("Content-Type", "application/json");
       if (accessToken) xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
       xhr.withCredentials = true;
@@ -62,7 +80,7 @@
       if (xhr.status >= 200 && xhr.status < 300) return { ok: true, status: xhr.status, data: data };
       var attemptedUrl = "";
       try {
-        attemptedUrl = backendUrl(path);
+        attemptedUrl = resolvedUrl;
       } catch (eu) {}
       var errMsg = (data && data.message) || "İstek başarısız.";
       if (xhr.status === 0 && !data.message) {
@@ -80,7 +98,7 @@
     } catch (err) {
       var attempted = "";
       try {
-        attempted = backendUrl(path);
+        attempted = resolveBackendRequestUrl(path);
       } catch (e2) {}
       var em = err && err.message ? String(err.message) : "Ağ hatası";
       return {
@@ -111,6 +129,7 @@
   function clearSessionState() {
     try {
       localStorage.removeItem(KEYS.ACCESS_TOKEN);
+      localStorage.removeItem(LEGACY_TOKEN_KEY);
     } catch (e0) {}
     var storage = getAuthStorage();
     if (storage && typeof storage.clear === "function") {
@@ -120,15 +139,15 @@
     localStorage.removeItem(KEYS.SESSION);
   }
 
-  /** Oturum veya localStorage’daki kalıcı token (jetle-backend uyumu). */
+  /** JWT: önce kalıcı `token`, sonra oturum içi accessToken (sayfa yenilemede tutarlı). */
   function getRawAccessToken() {
+    try {
+      var lsTok = localStorage.getItem(LEGACY_TOKEN_KEY) || localStorage.getItem(KEYS.ACCESS_TOKEN) || "";
+      if (lsTok) return String(lsTok);
+    } catch (e0) {}
     var s = readSessionState();
     if (s && s.accessToken) return String(s.accessToken);
-    try {
-      return localStorage.getItem(KEYS.ACCESS_TOKEN) || "";
-    } catch (e) {
-      return "";
-    }
+    return "";
   }
 
   /** JWT payload (role, userId) — imza doğrulaması sunucuda; istemci sadece okur. */
@@ -228,6 +247,7 @@
     );
     if (tok) {
       try {
+        localStorage.setItem(LEGACY_TOKEN_KEY, tok);
         localStorage.setItem(KEYS.ACCESS_TOKEN, tok);
       } catch (e) {}
     }
@@ -273,10 +293,11 @@
     var tok = getRawAccessToken();
     if (!tok) return null;
     var pl = decodeJwtPayload(tok);
-    if (!pl || !pl.userId) return null;
+    var uid = pl && (pl.sub != null ? pl.sub : pl.userId);
+    if (!pl || uid == null || String(uid).trim() === "") return null;
     var role = pl.role ? String(pl.role) : "user";
     return {
-      id: String(pl.userId),
+      id: String(uid),
       name: "",
       email: "",
       phone: "",
@@ -287,22 +308,114 @@
     };
   }
 
+  /** Sunucudan oturum doğrulama (async); window.currentUser güncellenir. */
+  function syncCurrentUserFromBackendAsync() {
+    if (!backendEnabled()) return Promise.resolve(null);
+    var tok = getRawAccessToken();
+    if (!tok) {
+      clearSession();
+      try {
+        window.currentUser = null;
+      } catch (eTok) {}
+      return Promise.resolve(null);
+    }
+    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    var bearerLs = "";
+    try {
+      bearerLs = localStorage.getItem("token") || "";
+    } catch (eLs) {}
+    return fetch(API_BASE + ME_ENDPOINT, {
+      method: "GET",
+      credentials: "include",
+      headers: { Authorization: "Bearer " + String(bearerLs), Accept: "application/json" }
+    })
+      .then(function (res) {
+        return res.text().then(function (txt) {
+          var j = null;
+          try {
+            j = txt ? JSON.parse(txt) : null;
+          } catch (e) {
+            j = null;
+          }
+          return { res: res, j: j };
+        });
+      })
+      .then(function (op) {
+        var res = op.res;
+        var j = op.j;
+        if (res.status === 401 || res.status === 403) {
+          clearSession();
+          try {
+            window.currentUser = null;
+          } catch (e401) {}
+          return null;
+        }
+        var me = j && j.data != null ? j.data : null;
+        if (res.ok && me && typeof me === "object") {
+          var s = readSessionState();
+          setBackendSession(
+            {
+              accessToken: String(tok),
+              refreshToken: s && s.refreshToken ? String(s.refreshToken) : "",
+              user: me
+            },
+            !!(s && s.persist)
+          );
+          var norm = normalizeBackendUser(me);
+          try {
+            window.currentUser = norm;
+          } catch (eOk) {}
+          return norm;
+        }
+        var fallback = userFromJwtOnly();
+        var out = fallback ? normalizeBackendUser(fallback) : null;
+        try {
+          window.currentUser = out;
+        } catch (eFb) {}
+        return out;
+      })
+      .catch(function () {
+        var fallback = userFromJwtOnly();
+        var out = fallback ? normalizeBackendUser(fallback) : null;
+        try {
+          window.currentUser = out;
+        } catch (eCatch) {}
+        return out;
+      });
+  }
+
   function syncCurrentUserFromBackend() {
     if (!backendEnabled()) return null;
     var tok = getRawAccessToken();
     if (!tok) {
       clearSession();
+      try {
+        window.currentUser = null;
+      } catch (e) {}
       return null;
     }
     var s = readSessionState();
-    var meRes = syncBackendRequest("GET", "/api/me", null, String(tok));
+    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    var meUrlSync = API_BASE.replace(/\/+$/, "") + ME_ENDPOINT;
+    var bearerSync = "";
+    try {
+      bearerSync = localStorage.getItem("token") || "";
+    } catch (eLs2) {}
+    var meRes = syncBackendRequest("GET", meUrlSync, null, String(bearerSync));
     if (!meRes.ok || !meRes.data || !meRes.data.data) {
       if (meRes.status === 401 || meRes.status === 403) {
         clearSession();
+        try {
+          window.currentUser = null;
+        } catch (e2) {}
         return null;
       }
       var fallback = userFromJwtOnly();
-      return fallback ? normalizeBackendUser(fallback) : null;
+      var out = fallback ? normalizeBackendUser(fallback) : null;
+      try {
+        window.currentUser = out;
+      } catch (e3) {}
+      return out;
     }
     var me = meRes.data.data;
     setBackendSession(
@@ -313,7 +426,11 @@
       },
       !!(s && s.persist)
     );
-    return normalizeBackendUser(me);
+    var norm = normalizeBackendUser(me);
+    try {
+      window.currentUser = norm;
+    } catch (e4) {}
+    return norm;
   }
 
   function findUserByEmail(email) {
@@ -325,24 +442,43 @@
 
   function login(email, password, remember) {
     if (backendEnabled()) {
-      var loginRes = syncBackendRequest("POST", "/api/login", {
+      console.log("LOGIN FETCH URL:", API_BASE + "/api/auth/login");
+      var loginRes = syncBackendRequest("POST", "/api/auth/login", {
         email: String(email || "").trim().toLowerCase(),
         password: String(password || "")
       });
       if (!loginRes.ok) return { ok: false, message: mapBackendMessage(loginRes, "Giriş başarısız.") };
-      var pl = loginRes.data && loginRes.data.data;
+      var body = loginRes.data || {};
+      console.log("LOGIN RESPONSE:", body);
+      var pl = body.data;
       if (!pl || !pl.user) return { ok: false, message: "Geçersiz backend yanıtı." };
-      var token = pl.accessToken || pl.token;
+      var token = pl.token || pl.accessToken;
       if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
+      try {
+        if (pl.token) {
+          localStorage.setItem("token", String(pl.token));
+        } else if (pl.accessToken) {
+          localStorage.setItem("token", String(pl.accessToken));
+        }
+        localStorage.setItem(KEYS.ACCESS_TOKEN, String(token));
+      } catch (eTok) {}
+      console.log("SAVED TOKEN:", (function () {
+        try {
+          return localStorage.getItem("token");
+        } catch (eSt) {
+          return "";
+        }
+      })());
       var u = pl.user;
+      var disp = (u && (u.fullName || u.name)) || "";
       setBackendSession(
         {
           accessToken: String(token),
           refreshToken: pl.refreshToken || "",
           user: {
             id: u.id,
-            fullName: u.name || u.fullName || "",
-            name: u.name || u.fullName || "",
+            fullName: disp,
+            name: disp,
             email: u.email || "",
             role: u.role || "user",
             phone: u.phone || "",
@@ -353,6 +489,9 @@
         },
         !!remember
       );
+      try {
+        window.currentUser = normalizeBackendUser(u);
+      } catch (eLogin) {}
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -370,7 +509,29 @@
     }
     if (u.active === false) return { ok: false, message: "Hesap pasif." };
     setSession(u.id, !!remember);
+    try {
+      window.currentUser = getCurrentUserLocalFromSession();
+    } catch (eLocLogin) {}
     return { ok: true };
+  }
+
+  function getCurrentUserLocalFromSession() {
+    var s = getSession();
+    if (!s) return null;
+    var u = getUsers().find(function (x) {
+      return x.id === s.userId;
+    });
+    if (!u || u.active === false) return null;
+    return {
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone || "",
+      role: u.role || "user",
+      city: u.city || "",
+      district: u.district || "",
+      profileType: u.profileType || "Bireysel"
+    };
   }
 
   function logout() {
@@ -383,29 +544,84 @@
       }
     }
     clearSession();
+    try {
+      window.currentUser = null;
+    } catch (eLo) {}
+    invalidateAuthBootstrap();
+  }
+
+  /**
+   * Eski token/JWT temizliği: sunucu çıkışı (mümkünse) + `localStorage.clear()` + `sessionStorage.clear()`,
+   * ardından sayfa yenileme. Sonra yeniden giriş yapıp `API_BASE + ME_ENDPOINT` test edin.
+   * @param {{ reload?: boolean }} opts reload false ise yenileme yapmaz (varsayılan true).
+   */
+  function forceHardLogoutClear(opts) {
+    opts = opts || {};
+    var reload = opts.reload !== false;
+    try {
+      logout();
+    } catch (eOut) {}
+    try {
+      localStorage.clear();
+    } catch (e1) {}
+    try {
+      sessionStorage.clear();
+    } catch (e2) {}
+    try {
+      window.currentUser = null;
+    } catch (e3) {}
+    invalidateAuthBootstrap();
+    if (reload) {
+      try {
+        location.reload();
+      } catch (e4) {}
+    }
   }
 
   function register(payload) {
     if (backendEnabled()) {
-      var regRes = syncBackendRequest("POST", "/api/register", {
-        name: JetleAPI.sanitizeText(payload.name || payload.fullName || "", 120),
+      var regRes = syncBackendRequest("POST", "/api/auth/register", {
+        fullName: JetleAPI.sanitizeText(payload.name || payload.fullName || "", 120),
         email: String(payload.email || "").trim().toLowerCase(),
-        password: String(payload.password || "")
+        password: String(payload.password || ""),
+        phone: String(payload.phone || "").replace(/\D+/g, ""),
+        city: JetleAPI.sanitizeText(payload.city || "", 60),
+        district: JetleAPI.sanitizeText(payload.district || "", 60),
+        profileType: JetleAPI.sanitizeText(payload.profileType || "Bireysel", 40) || "Bireysel",
+        termsAccepted: payload.termsAccepted === true || payload.termsAccepted === "true"
       });
       if (!regRes.ok) return { ok: false, message: mapBackendMessage(regRes, "Kayıt başarısız.") };
-      var rd = regRes.data && regRes.data.data;
+      var regBody = regRes.data || {};
+      console.log("REGISTER RESPONSE:", regBody);
+      var rd = regBody.data;
       if (!rd || !rd.user) return { ok: false, message: "Geçersiz backend yanıtı." };
-      var token = rd.accessToken || rd.token;
+      var token = rd.token || rd.accessToken;
       if (!token) return { ok: false, message: "Geçersiz backend yanıtı (token yok)." };
+      try {
+        if (rd.token) {
+          localStorage.setItem("token", String(rd.token));
+        } else if (rd.accessToken) {
+          localStorage.setItem("token", String(rd.accessToken));
+        }
+        localStorage.setItem(KEYS.ACCESS_TOKEN, String(token));
+      } catch (eTokR) {}
+      console.log("SAVED TOKEN:", (function () {
+        try {
+          return localStorage.getItem("token");
+        } catch (eSr) {
+          return "";
+        }
+      })());
       var u = rd.user;
+      var dispR = (u && (u.fullName || u.name)) || "";
       setBackendSession(
         {
           accessToken: String(token),
           refreshToken: rd.refreshToken || "",
           user: {
             id: u.id,
-            fullName: u.name || u.fullName || "",
-            name: u.name || u.fullName || "",
+            fullName: dispR,
+            name: dispR,
             email: u.email || "",
             role: u.role || "user",
             phone: u.phone || "",
@@ -416,6 +632,9 @@
         },
         payload && payload.remember !== false
       );
+      try {
+        window.currentUser = normalizeBackendUser(u);
+      } catch (eRegB) {}
       return { ok: true };
     }
     seedUsersIfEmpty();
@@ -454,29 +673,24 @@
     list.push(user);
     saveUsers(list);
     setSession(id, payload && payload.remember !== false);
+    try {
+      window.currentUser = getCurrentUserLocalFromSession();
+    } catch (eLocReg) {}
     return { ok: true };
   }
 
   function getCurrentUser() {
     if (backendEnabled()) {
-      return syncCurrentUserFromBackend();
+      try {
+        return window.currentUser != null ? window.currentUser : null;
+      } catch (eGc) {
+        return null;
+      }
     }
-    var s = getSession();
-    if (!s) return null;
-    var u = getUsers().find(function (x) {
-      return x.id === s.userId;
-    });
-    if (!u) return null;
-    return {
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      phone: u.phone,
-      role: u.role || "user",
-      city: u.city,
-      district: u.district || "",
-      profileType: u.profileType
-    };
+    try {
+      if (window.currentUser != null) return window.currentUser;
+    } catch (eGc2) {}
+    return getCurrentUserLocalFromSession();
   }
 
   function isLoggedIn() {
@@ -539,16 +753,16 @@
     return getCurrentUser();
   }
 
-  function renderHeaderBar() {
+  function renderNavbar(user) {
     var slot = document.getElementById("headerUserSlot");
     if (!slot) return;
     while (slot.firstChild) slot.removeChild(slot.firstChild);
     slot.className = "header-user-slot";
 
-    function addHeaderLink(href, text) {
+    function addHeaderLink(href, text, extraClass) {
       var a = document.createElement("a");
       a.href = href;
-      a.className = "header-link";
+      a.className = "header-link" + (extraClass ? " " + extraClass : "");
       a.textContent = text;
       slot.appendChild(a);
     }
@@ -561,138 +775,31 @@
       slot.appendChild(iv);
     }
 
-    var u = getCurrentUser();
+    var u = arguments.length >= 1 ? user : window.currentUser;
     if (u) {
-      var wrap = document.createElement("div");
-      wrap.className = "header-account-wrap";
-
-      var trigger = document.createElement("button");
-      trigger.type = "button";
-      trigger.className = "header-account-trigger";
-      trigger.setAttribute("aria-expanded", "false");
-      trigger.setAttribute("aria-haspopup", "true");
-      trigger.setAttribute("aria-controls", "headerAccountMenu");
-
-      var nameEl = document.createElement("span");
-      nameEl.className = "header-account-trigger__name";
-      nameEl.textContent = u.name;
-      nameEl.title = u.name;
-      var caret = document.createElement("span");
-      caret.className = "header-account-trigger__caret";
-      caret.setAttribute("aria-hidden", "true");
-      caret.textContent = "▾";
-      trigger.appendChild(nameEl);
-      trigger.appendChild(caret);
-
-      var menu = document.createElement("div");
-      menu.id = "headerAccountMenu";
-      menu.className = "header-account-dropdown";
-      menu.hidden = true;
-      menu.setAttribute("role", "menu");
-
-      function menuItem(href, label, isButton) {
-        var el = isButton ? document.createElement("button") : document.createElement("a");
-        el.className = "header-account-dropdown__item";
-        el.setAttribute("role", "menuitem");
-        if (isButton) {
-          el.type = "button";
-          el.textContent = label;
-        } else {
-          el.href = href;
-          el.textContent = label;
-        }
-        return el;
-      }
-
-      var outsideHandler = null;
-      function escHandler(ev) {
-        if (ev.key === "Escape") closeMenu();
-      }
-
-      function closeMenu() {
-        menu.hidden = true;
-        trigger.setAttribute("aria-expanded", "false");
-        wrap.classList.remove("is-open");
-        if (outsideHandler) {
-          document.removeEventListener("click", outsideHandler, true);
-          outsideHandler = null;
-        }
-        document.removeEventListener("keydown", escHandler);
-      }
-
-      function openMenu() {
-        menu.hidden = false;
-        trigger.setAttribute("aria-expanded", "true");
-        wrap.classList.add("is-open");
-        document.removeEventListener("keydown", escHandler);
-        document.addEventListener("keydown", escHandler);
-      }
-
-      menu.appendChild(menuItem("dashboard.html#profile", "Profilim", false));
-      menu.appendChild(menuItem("dashboard.html#listings", "İlanlarım", false));
-      menu.appendChild(menuItem("dashboard.html#favorites", "Favorilerim", false));
-      menu.appendChild(menuItem("dashboard.html#messages", "Mesajlarım", false));
-
-      var pageTag = document.body ? document.body.getAttribute("data-page") : "";
-      var onAdminPage = pageTag === "admin" || pageTag === "admin-panel";
-      if (isAdmin() && !onAdminPage) {
-        var adm = menuItem("admin-panel.html", "İlan moderasyonu", false);
-        adm.className = "header-account-dropdown__item header-account-dropdown__item--admin";
-        menu.appendChild(adm);
-        var adm2 = menuItem("admin.html", "Yönetim paneli", false);
-        adm2.className = "header-account-dropdown__item header-account-dropdown__item--admin";
-        menu.appendChild(adm2);
-      }
-
-      var div = document.createElement("div");
-      div.className = "header-account-dropdown__sep";
-      menu.appendChild(div);
-
-      var out = menuItem("", "Çıkış", true);
-      out.className = "header-account-dropdown__item header-account-dropdown__item--danger";
+      addHeaderLink("dashboard.html#profile", "Profil", "header-link--auth");
+      var out = document.createElement("button");
+      out.type = "button";
+      out.className = "header-link header-link--auth";
+      out.style.cssText = "background:none;border:none;cursor:pointer;font:inherit;padding:0;color:inherit;text-decoration:inherit;";
+      out.textContent = "Çıkış Yap";
+      out.setAttribute("aria-label", "Çıkış Yap");
       out.addEventListener("click", function () {
         logout();
         location.reload();
       });
-      menu.appendChild(out);
+      slot.appendChild(out);
 
-      trigger.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (menu.hidden) {
-          openMenu();
-          setTimeout(function () {
-            outsideHandler = function (ev) {
-              if (!wrap.contains(ev.target)) closeMenu();
-            };
-            document.addEventListener("click", outsideHandler, true);
-          }, 0);
-        } else {
-          closeMenu();
-        }
-      });
-
-      menu.addEventListener("click", function (e) {
-        if (e.target.tagName === "A") closeMenu();
-      });
-
-      wrap.appendChild(trigger);
-      wrap.appendChild(menu);
-      slot.appendChild(wrap);
       addIlanVerButton();
     } else {
-      var a = document.createElement("a");
-      a.href = "login.html";
-      a.className = "header-link header-link--auth";
-      a.textContent = "Giriş";
-      slot.appendChild(a);
-      var r = document.createElement("a");
-      r.href = "register.html";
-      r.className = "header-link header-link--auth";
-      r.textContent = "Kayıt ol";
-      slot.appendChild(r);
+      addHeaderLink("login.html", "Giriş", "header-link--auth");
+      addHeaderLink("register.html", "Kayıt ol", "header-link--auth");
       addIlanVerButton();
     }
+  }
+
+  function renderHeaderBar() {
+    renderNavbar(window.currentUser);
   }
 
   function updateProfile(patch) {
@@ -710,7 +817,7 @@
       }
       if (Object.keys(body).length === 0) return { ok: true };
       var s = readSessionState();
-      var res = syncBackendRequest("PATCH", "/api/me/profile", body, getRawAccessToken());
+      var res = syncBackendRequest("PATCH", ME_ENDPOINT + "/profile", body, getRawAccessToken());
       if (!res.ok) return { ok: false, message: mapBackendMessage(res, "Profil güncellenemedi.") };
       syncCurrentUserFromBackend();
       return { ok: true };
@@ -726,6 +833,9 @@
     if (patch.district != null) fu.district = JetleAPI.sanitizeText(patch.district, 60);
     if (patch.profileType != null) fu.profileType = JetleAPI.sanitizeText(patch.profileType, 40);
     saveUsers(list);
+    try {
+      window.currentUser = getCurrentUserLocalFromSession();
+    } catch (eUpLoc) {}
     return { ok: true };
   }
 
@@ -748,10 +858,133 @@
     return { ok: true };
   }
 
+  var _bootstrapPromise = null;
+
+  function showAuthBootstrapLoading() {
+    try {
+      if (document.documentElement) document.documentElement.setAttribute("data-jetle-auth-loading", "1");
+    } catch (eL1) {}
+    var host = document.body || document.documentElement;
+    if (!host || document.getElementById("jetle-auth-bootstrap-loading")) return;
+    var el = document.createElement("div");
+    el.id = "jetle-auth-bootstrap-loading";
+    el.setAttribute("role", "status");
+    el.setAttribute("aria-live", "polite");
+    el.setAttribute("aria-busy", "true");
+    el.style.cssText =
+      "position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;" +
+      "background:rgba(255,255,255,.92);font:600 15px system-ui,sans-serif;color:#111827;";
+    el.textContent = "Yükleniyor…";
+    host.appendChild(el);
+  }
+
+  function hideAuthBootstrapLoading() {
+    try {
+      if (document.documentElement) document.documentElement.removeAttribute("data-jetle-auth-loading");
+    } catch (eH1) {}
+    var el = document.getElementById("jetle-auth-bootstrap-loading");
+    if (el) el.remove();
+  }
+
   function init() {
     seedUsersIfEmpty();
-    JetleAPI.init();
-    if (backendEnabled()) syncCurrentUserFromBackend();
+    if (window.JetleAPI && typeof JetleAPI.init === "function") JetleAPI.init();
+    if (backendEnabled()) {
+      var tok = getRawAccessToken();
+      if (!tok) {
+        try {
+          window.currentUser = null;
+        } catch (eIn1) {}
+        return Promise.resolve(null);
+      }
+      return syncCurrentUserFromBackendAsync();
+    }
+    try {
+      window.currentUser = getCurrentUserLocalFromSession();
+    } catch (eIn2) {
+      try {
+        window.currentUser = null;
+      } catch (eIn3) {}
+    }
+    return Promise.resolve(window.currentUser);
+  }
+
+  function bootstrap() {
+    if (_bootstrapPromise) return _bootstrapPromise;
+    showAuthBootstrapLoading();
+    _bootstrapPromise = init()
+      .then(function () {
+        renderNavbar(window.currentUser);
+      })
+      .catch(function () {
+        try {
+          window.currentUser = null;
+        } catch (eB1) {}
+        renderNavbar(null);
+      })
+      .finally(function () {
+        hideAuthBootstrapLoading();
+      });
+    return _bootstrapPromise;
+  }
+
+  function invalidateAuthBootstrap() {
+    _bootstrapPromise = null;
+  }
+
+  /** Konsoldan: `JetleAuth.debugAuth()` — token + GET `ME_ENDPOINT` yanıtını loglar. */
+  function debugAuth() {
+    var token = "";
+    try {
+      token = localStorage.getItem("token") || "";
+    } catch (eT) {}
+    console.log("TOKEN:", token || "(yok)");
+    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    return fetch(API_BASE + ME_ENDPOINT, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + String(localStorage.getItem("token") || "")
+      }
+    })
+      .then(function (res) {
+        return res.text().then(function (txt) {
+          var data;
+          try {
+            data = txt ? JSON.parse(txt) : {};
+          } catch (eJ) {
+            data = { _parseError: true, _raw: txt };
+          }
+          console.log("ME STATUS:", res.status);
+          console.log("ME RESPONSE:", data);
+          return { ok: res.ok, status: res.status, data: data };
+        });
+      })
+      .catch(function (err) {
+        console.error("ME ERROR:", err && err.message ? err.message : err);
+        throw err;
+      });
+  }
+
+  /**
+   * Konsol: `JetleAuth.fetchMeConsole()` — `API_BASE + ME_ENDPOINT` + `Authorization: Bearer` + `token`,
+   * ardından `r.json()` ve `console.log` (sizin fetch zinciriyle aynı mantık).
+   */
+  function fetchMeConsole() {
+    console.log("CALLING:", API_BASE + ME_ENDPOINT);
+    return fetch(API_BASE + ME_ENDPOINT, {
+      headers: {
+        Authorization: "Bearer " + String(localStorage.getItem("token") || "")
+      }
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (data) {
+        console.log(data);
+        return data;
+      });
   }
 
   window.JetleAuth = {
@@ -759,6 +992,9 @@
     getRawAccessToken: getRawAccessToken,
     decodeJwtPayload: decodeJwtPayload,
     init: init,
+    bootstrap: bootstrap,
+    invalidateAuthBootstrap: invalidateAuthBootstrap,
+    renderNavbar: renderNavbar,
     login: login,
     logout: logout,
     register: register,
@@ -771,6 +1007,9 @@
     requireAdmin: requireAdmin,
     renderHeaderBar: renderHeaderBar,
     updateProfile: updateProfile,
-    changePassword: changePassword
+    changePassword: changePassword,
+    debugAuth: debugAuth,
+    fetchMeConsole: fetchMeConsole,
+    forceHardLogoutClear: forceHardLogoutClear
   };
 })();

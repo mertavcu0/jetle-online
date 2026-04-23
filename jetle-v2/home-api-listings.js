@@ -8,18 +8,25 @@
     window.__JETLE_USE_HOME_API_LISTINGS__ = true;
   } catch (e) {}
 
-  var DEFAULT_LISTINGS_URL = "https://jetle-online-production.up.railway.app/api/listings";
+  var API_BASE = "https://jetle-online-production.up.railway.app";
+  var DEFAULT_LISTINGS_URL = API_BASE + "/api/listings";
   /** İlk yüklemede sadece 6 kart; kalanlar lazy chunk halinde gelir. */
   var HOME_INITIAL_RENDER_COUNT = 6;
   var HOME_LAZY_BATCH_SIZE = 6;
-  var CARD_IMG_W = 320;
-  var CARD_IMG_H = 240;
+  var HOME_CACHE_KEY = "jetle_home_listings_cache_v1";
+  var HOME_CACHE_TTL_MS = 2 * 60 * 1000;
+  var MAX_RENDERED_CARDS = 30;
+  var EST_CARD_ROW_HEIGHT = 332;
+  var CARD_IMG_W = 280;
+  var CARD_IMG_H = 210;
   var DESC_MAX = 140;
 
   /** Ham API satırları (filtre öncesi). */
   var apiRows = [];
-  /** API boş / hata: grid örnek ilanlarla doldurulur; filtre eşleşmezse yine örnekler gösterilir. */
-  var homeGridIsDemo = false;
+  /** Son çekimde ağ/HTTP hatası (boş grid ile ayırt etmek için). */
+  var homeListingsFetchFailed = false;
+  /** Hata durumunda boş ekranda gösterilecek kısa teknik/insani mesaj. */
+  var homeListingsLastErrorMsg = "";
   var shownCount = 0;
   var filterKeyword = "";
   var filterCategory = "";
@@ -29,70 +36,7 @@
   var lazyLoadQueued = false;
   var infiniteObserver = null;
   var scrollFallbackWired = false;
-
-  /** API yok veya öne çıkan yokken gösterilecek örnek ilanlar (4–6 adet). */
-  var FAKE_FEATURED = [
-    {
-      _id: "jetle-demo-1",
-      title: "2019 BMW 320i M Sport",
-      price: 1285000,
-      city: "Ankara",
-      district: "Çankaya",
-      category: "Vasıta",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat1/640/480"
-    },
-    {
-      _id: "jetle-demo-2",
-      title: "Satılık 3+1 Daire · Deniz manzaralı",
-      price: 4250000,
-      city: "İzmir",
-      district: "Karşıyaka",
-      category: "Emlak",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat2/640/480"
-    },
-    {
-      _id: "jetle-demo-3",
-      title: "MacBook Pro 14\" M3 · Garantili",
-      price: 67900,
-      city: "İstanbul",
-      district: "Beşiktaş",
-      category: "Elektronik",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat3/640/480"
-    },
-    {
-      _id: "jetle-demo-4",
-      title: "Vespa Primavera 150 · Az kullanılmış",
-      price: 185000,
-      city: "Antalya",
-      district: "Muratpaşa",
-      category: "Vasıta",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat4/640/480"
-    },
-    {
-      _id: "jetle-demo-5",
-      title: "Ofis taşıma & montaj paketi",
-      price: 8500,
-      city: "Bursa",
-      district: "Osmangazi",
-      category: "Hizmet",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat5/640/480"
-    },
-    {
-      _id: "jetle-demo-6",
-      title: "Yeni sezon ayakkabı & çanta lotu",
-      price: 3200,
-      city: "İstanbul",
-      district: "Ümraniye",
-      category: "Alışveriş",
-      featured: true,
-      coverImage: "https://picsum.photos/seed/jetlefeat6/640/480"
-    }
-  ];
+  var virtualTopTrimmedRows = 0;
 
   function idKey(item) {
     if (!item || typeof item !== "object") return "";
@@ -126,187 +70,26 @@
         return Object.assign({ featured: true }, x);
       });
     }
-    if (picked.length === 0) {
-      picked = FAKE_FEATURED.slice(0, 6);
-    }
     return picked.slice(0, 6);
   }
 
-  /** Ana grid: API yoksa örnek ilanlar (≥12 kart için yeterli adet). */
-  var FAKE_GRID_LISTINGS = [
-    {
-      _id: "jetle-grid-1",
-      title: "Renault Clio 1.0 TCe Joy",
-      price: 565000,
-      city: "İstanbul",
-      district: "Kadıköy",
-      category: "Vasıta",
-      description: "Bakımlı, tek sahip, ekspertiz raporu mevcut.",
-      coverImage: "https://picsum.photos/seed/jetleg1/640/480",
-      createdAt: "2026-04-21T08:30:00.000Z",
-      featured: false
-    },
-    {
-      _id: "jetle-grid-2",
-      title: "3+1 Kiralık Daire · Metro yakını",
-      price: 18500,
-      city: "Ankara",
-      district: "Çankaya",
-      category: "Emlak",
-      description: "Eşyalı seçeneği, güvenlikli site, otopark.",
-      coverImage: "https://picsum.photos/seed/jetleg2/640/480",
-      createdAt: "2026-04-21T06:15:00.000Z",
-      sellerType: "Kurumsal"
-    },
-    {
-      _id: "jetle-grid-3",
-      title: "iPhone 15 Pro 256 GB",
-      price: 42900,
-      city: "İzmir",
-      district: "Bornova",
-      category: "Elektronik",
-      description: "Fatura garantili, kutulu, takas düşünülür.",
-      coverImage: "https://picsum.photos/seed/jetleg3/640/480",
-      createdAt: "2026-04-20T19:00:00.000Z"
-    },
-    {
-      _id: "jetle-grid-4",
-      title: "Ford Focus 1.5 TDCi Titanium",
-      price: 698000,
-      city: "Bursa",
-      district: "Nilüfer",
-      category: "Vasıta",
-      description: "Düşük km, cam tavan, kış lastiği dahil.",
-      coverImage: "https://picsum.photos/seed/jetleg4/640/480",
-      createdAt: "2026-04-20T14:22:00.000Z"
-    },
-    {
-      _id: "jetle-grid-5",
-      title: "Villa · Havuzlu · Güvenlikli site",
-      price: 18500000,
-      city: "Antalya",
-      district: "Konyaaltı",
-      category: "Emlak",
-      description: "Denize 800 m, müstakil bahçe, hazır mutfak.",
-      coverImage: "https://picsum.photos/seed/jetleg5/640/480",
-      createdAt: "2026-04-19T11:40:00.000Z",
-      sellerType: "Kurumsal"
-    },
-    {
-      _id: "jetle-grid-6",
-      title: "Gaming PC · RTX 4070 · 32 GB RAM",
-      price: 38500,
-      city: "İstanbul",
-      district: "Ümraniye",
-      category: "Elektronik",
-      description: "Garantili parçalar, temiz kurulum.",
-      coverImage: "https://picsum.photos/seed/jetleg6/640/480",
-      createdAt: "2026-04-21T04:05:00.000Z"
-    },
-    {
-      _id: "jetle-grid-7",
-      title: "Kış lastiği seti · 205/55 R16",
-      price: 4200,
-      city: "Kocaeli",
-      district: "İzmit",
-      category: "Alışveriş",
-      description: "Az kullanılmış, diş derinliği iyi.",
-      coverImage: "https://picsum.photos/seed/jetleg7/640/480",
-      createdAt: "2026-04-18T16:20:00.000Z"
-    },
-    {
-      _id: "jetle-grid-8",
-      title: "Ev temizlik & ütü paketi",
-      price: 1200,
-      city: "İstanbul",
-      district: "Ataşehir",
-      category: "Hizmet",
-      description: "Haftalık veya tek seferlik, referanslı ekip.",
-      coverImage: "https://picsum.photos/seed/jetleg8/640/480",
-      createdAt: "2026-04-21T09:50:00.000Z"
-    },
-    {
-      _id: "jetle-grid-9",
-      title: "Hyundai Tucson 1.6 CRDi Premium",
-      price: 1125000,
-      city: "Adana",
-      district: "Seyhan",
-      category: "Vasıta",
-      description: "Otomatik, deri döşeme, servis bakımlı.",
-      coverImage: "https://picsum.photos/seed/jetleg9/640/480",
-      createdAt: "2026-04-17T09:00:00.000Z"
-    },
-    {
-      _id: "jetle-grid-10",
-      title: "Ofis mobilyası · toplu satış",
-      price: 28000,
-      city: "İstanbul",
-      district: "Şişli",
-      category: "Alışveriş",
-      description: "Masa, dolap ve koltuk takımı; yerinde teslim.",
-      coverImage: "https://picsum.photos/seed/jetleg10/640/480",
-      createdAt: "2026-04-16T13:30:00.000Z",
-      sellerType: "Kurumsal"
-    },
-    {
-      _id: "jetle-grid-11",
-      title: "Peugeot 3008 1.5 BlueHDi Allure",
-      price: 925000,
-      city: "Mersin",
-      district: "Yenişehir",
-      category: "Vasıta",
-      description: "Garaj arabası, cam filmi, navigasyon.",
-      coverImage: "https://picsum.photos/seed/jetleg11/640/480",
-      createdAt: "2026-04-21T10:00:00.000Z"
-    },
-    {
-      _id: "jetle-grid-12",
-      title: "Stüdyo daire · Öğrenciye uygun",
-      price: 9500,
-      city: "Eskişehir",
-      district: "Tepebaşı",
-      category: "Emlak",
-      description: "Eşyalı, internet dahil, merkeze yürüme.",
-      coverImage: "https://picsum.photos/seed/jetleg12/640/480",
-      createdAt: "2026-04-20T22:15:00.000Z"
-    },
-    {
-      _id: "jetle-grid-13",
-      title: "PlayStation 5 + 2 kol",
-      price: 14200,
-      city: "İstanbul",
-      district: "Bakırköy",
-      category: "Elektronik",
-      description: "Kutu açılmamış oyun hediye; garanti devredilir.",
-      coverImage: "https://picsum.photos/seed/jetleg13/640/480",
-      createdAt: "2026-04-19T18:45:00.000Z"
-    },
-    {
-      _id: "jetle-grid-14",
-      title: "Nakliye · şehir içi kamyonet",
-      price: 2500,
-      city: "Konya",
-      district: "Selçuklu",
-      category: "Hizmet",
-      description: "Aynı gün randevu, sigortalı taşıma.",
-      coverImage: "https://picsum.photos/seed/jetleg14/640/480",
-      createdAt: "2026-04-21T07:20:00.000Z",
-      sellerType: "Kurumsal"
-    }
-  ];
-
   function featuredCardHref(item) {
     var id = idKey(item);
-    if (!id || /^jetle-demo-/i.test(String(id))) return "index.html";
+    if (!id) return "index.html";
     return detailPageHref(id);
   }
 
   function resolveListingsUrl() {
     try {
+      if (window.JetleAPI && JetleAPI.API_BASE) {
+        var jb = String(JetleAPI.API_BASE).trim().replace(/\/+$/, "");
+        if (/^https?:\/\//i.test(jb)) return jb + "/api/listings";
+      }
       var meta = document.querySelector('meta[name="jetle-api-base"]');
       var base = meta && meta.getAttribute("content");
       if (base && String(base).trim()) {
-        return String(base).trim().replace(/\/+$/, "") + "/api/listings";
+        var b = String(base).trim().replace(/\/+$/, "");
+        if (/^https?:\/\//i.test(b)) return b + "/api/listings";
       }
     } catch (err) {}
     return DEFAULT_LISTINGS_URL;
@@ -420,6 +203,27 @@
     return "";
   }
 
+  function toWebpCandidate(url) {
+    var s = String(url || "").trim();
+    if (!s) return "";
+    // local/static jpg/png/jpeg uzantılarını webp olarak dene.
+    if (/\.(jpe?g|png)(\?.*)?$/i.test(s)) {
+      return s.replace(/\.(jpe?g|png)(\?.*)?$/i, ".webp$2");
+    }
+    return s;
+  }
+
+  function getImageByCategory(category) {
+    var images = {
+      araba: "images/car.jpg",
+      emlak: "images/house.jpg",
+      elektronik: "images/phone.jpg",
+      hizmet: "images/service.jpg"
+    };
+    var key = String(category || "").toLocaleLowerCase("tr-TR").trim();
+    return images[key] || "images/default.jpg";
+  }
+
   function formatTry(n) {
     var num = Number(n);
     if (!Number.isFinite(num)) return "—";
@@ -531,7 +335,6 @@
 
   function gridListingHref(id) {
     if (!id) return "index.html";
-    if (/^jetle-(demo|grid)-/i.test(String(id))) return "index.html";
     return detailPageHref(id);
   }
 
@@ -671,16 +474,14 @@
   }
 
   function getGridDisplayRows() {
-    var filtered = getFilteredRows();
-    if (homeGridIsDemo && filtered.length === 0 && apiRows.length) return apiRows;
-    return filtered;
+    return getFilteredRows();
   }
 
   function syncHomeSectionHeading() {
     try {
       var h = document.getElementById("allHeading");
       var label = document.getElementById("allHeadingLabel");
-      var t = homeGridIsDemo ? "Yeni ilanlar" : "İlanlar";
+      var t = "İlanlar";
       if (label) label.textContent = t;
       else if (h) h.textContent = t;
     } catch (e) {}
@@ -705,14 +506,24 @@
     wrap.appendChild(badgeOne);
 
     var thumb = pickThumbUrl(item);
+    var thumbWebp = toWebpCandidate(thumb);
     if (thumb) {
       var media = document.createElement("div");
       media.className = "featured-card__media";
       var img = document.createElement("img");
-      img.src = thumb;
+      img.src = thumbWebp || thumb;
+      if (thumbWebp && thumbWebp !== thumb) {
+        img.onerror = function () {
+          img.onerror = null;
+          img.src = thumb;
+        };
+      }
       img.alt = "";
+      img.width = 480;
+      img.height = 360;
       img.loading = "lazy";
       img.decoding = "async";
+      img.fetchPriority = "low";
       media.appendChild(img);
       wrap.appendChild(media);
     } else {
@@ -727,20 +538,20 @@
     var body = document.createElement("div");
     body.className = "featured-card__body";
 
-    var priceEl = document.createElement("div");
-    priceEl.className = "featured-card__price";
-    priceEl.textContent = formatTry(item.price);
-
     var titleEl = document.createElement("p");
     titleEl.className = "featured-card__title";
     titleEl.textContent = title;
+
+    var priceEl = document.createElement("div");
+    priceEl.className = "featured-card__price";
+    priceEl.textContent = formatTry(item.price);
 
     var meta = document.createElement("p");
     meta.className = "featured-card__meta";
     meta.textContent = loc;
 
-    body.appendChild(priceEl);
     body.appendChild(titleEl);
+    body.appendChild(priceEl);
     body.appendChild(meta);
     link.appendChild(body);
 
@@ -797,6 +608,9 @@
     inner.className = "listing-card__link listing-card__link--api";
 
     var thumb = pickThumbUrl(item);
+    var thumbWebp = toWebpCandidate(thumb);
+    var fallbackByCat = getImageByCategory(item.category);
+    var fallbackWebp = toWebpCandidate(fallbackByCat);
     var mediaWrap = document.createElement("div");
     mediaWrap.className = "listing-card__media-wrap";
     if (showKurumsalBadge(item)) {
@@ -815,47 +629,67 @@
       var media = document.createElement("div");
       media.className = "listing-card__media";
       var img = document.createElement("img");
-      img.src = thumb;
+      var primary = item.image || thumbWebp || thumb || fallbackWebp || fallbackByCat;
+      var backup = item.image || thumb || fallbackByCat;
+      img.src = primary;
+      if (primary !== backup) {
+        img.onerror = function () {
+          img.onerror = null;
+          img.src = backup;
+        };
+      }
       img.alt = title;
       img.width = CARD_IMG_W;
       img.height = CARD_IMG_H;
       img.loading = "lazy";
       img.decoding = "async";
+      img.fetchPriority = "low";
       media.appendChild(img);
       mediaWrap.appendChild(media);
     } else {
-      var ph = document.createElement("div");
-      ph.className = "listing-card__media";
-      ph.setAttribute("aria-hidden", "true");
-      mediaWrap.appendChild(ph);
+      var mediaNoThumb = document.createElement("div");
+      mediaNoThumb.className = "listing-card__media";
+      var imgNoThumb = document.createElement("img");
+      var primaryNoThumb = item.image || fallbackWebp || fallbackByCat;
+      var backupNoThumb = item.image || fallbackByCat;
+      imgNoThumb.src = primaryNoThumb;
+      if (primaryNoThumb !== backupNoThumb) {
+        imgNoThumb.onerror = function () {
+          imgNoThumb.onerror = null;
+          imgNoThumb.src = backupNoThumb;
+        };
+      }
+      imgNoThumb.alt = title;
+      imgNoThumb.width = CARD_IMG_W;
+      imgNoThumb.height = CARD_IMG_H;
+      imgNoThumb.loading = "lazy";
+      imgNoThumb.decoding = "async";
+      imgNoThumb.fetchPriority = "low";
+      mediaNoThumb.appendChild(imgNoThumb);
+      mediaWrap.appendChild(mediaNoThumb);
     }
     inner.appendChild(mediaWrap);
 
     var body = document.createElement("div");
     body.className = "listing-card__body";
 
-    var priceEl = document.createElement("div");
-    priceEl.className = "listing-card__price";
-    priceEl.textContent = formatTry(item.price);
-
     var titleEl = document.createElement("h3");
     titleEl.className = "listing-card__title";
     titleEl.textContent = title;
+
+    var priceEl = document.createElement("div");
+    priceEl.className = "listing-card__price";
+    priceEl.textContent = formatTry(item.price);
 
     var meta = document.createElement("p");
     meta.className = "listing-card__meta listing-card__meta--citytime listing-card__meta--loc";
     meta.textContent = cityAndTimeLine(item);
 
-    body.appendChild(priceEl);
     body.appendChild(titleEl);
+    body.appendChild(priceEl);
     body.appendChild(meta);
 
-    if (descShort) {
-      var descEl = document.createElement("p");
-      descEl.className = "listing-card__desc";
-      descEl.textContent = descShort;
-      body.appendChild(descEl);
-    }
+    // DOM yükünü azaltmak için kartta açıklama satırını render etmiyoruz.
 
     inner.appendChild(body);
     art.appendChild(inner);
@@ -867,6 +701,24 @@
     emptyBox.hidden = !show;
     if (titleEl && titleText != null) titleEl.textContent = titleText;
     if (subEl && subText != null) subEl.textContent = subText;
+  }
+
+  function syncHomeListingsLoadingBar(busy, text) {
+    var loadEl = document.getElementById("homeListingsLoading");
+    var loadTxt = document.getElementById("homeListingsLoadingText");
+    if (loadEl) {
+      loadEl.hidden = !busy;
+      loadEl.setAttribute("aria-busy", busy ? "true" : "false");
+    }
+    if (loadTxt && text != null && text !== "") loadTxt.textContent = text;
+  }
+
+  function syncHomeListingsRetryButton() {
+    var retryBtn = document.getElementById("homeListingsRetryBtn");
+    if (!retryBtn) return;
+    var emptyBox = document.getElementById("emptyResults");
+    var show = !!(emptyBox && !emptyBox.hidden && homeListingsFetchFailed);
+    retryBtn.hidden = !show;
   }
 
   function updateResultsInfo(infoEl, totalFiltered, shown) {
@@ -889,9 +741,45 @@
   }
 
   function appendPage(grid, rows) {
+    var frag = document.createDocumentFragment();
     rows.forEach(function (item) {
-      grid.appendChild(buildCard(item));
+      frag.appendChild(buildCard(item));
     });
+    grid.appendChild(frag);
+  }
+
+  function getGridColumnsCount() {
+    if (window.matchMedia("(min-width: 1100px)").matches) return 4;
+    if (window.matchMedia("(min-width: 768px)").matches) return 3;
+    if (window.matchMedia("(min-width: 520px)").matches) return 2;
+    return 1;
+  }
+
+  function ensureTopSpacer(grid) {
+    if (!grid) return null;
+    var s = grid.querySelector(".listing-grid__spacer-top");
+    if (s) return s;
+    s = document.createElement("div");
+    s.className = "listing-grid__spacer listing-grid__spacer-top";
+    s.style.height = "0px";
+    grid.insertBefore(s, grid.firstChild);
+    return s;
+  }
+
+  function pruneVirtualizedCards(grid) {
+    if (!grid) return;
+    var cards = grid.querySelectorAll(".listing-card--api-feed");
+    if (cards.length <= MAX_RENDERED_CARDS) return;
+    var removeCount = cards.length - MAX_RENDERED_CARDS;
+    var cols = getGridColumnsCount();
+    var removeRows = Math.ceil(removeCount / cols);
+    var actualRemove = Math.min(removeRows * cols, cards.length);
+    for (var i = 0; i < actualRemove; i++) {
+      cards[i].remove();
+    }
+    virtualTopTrimmedRows += removeRows;
+    var spacer = ensureTopSpacer(grid);
+    if (spacer) spacer.style.height = String(virtualTopTrimmedRows * EST_CARD_ROW_HEIGHT) + "px";
   }
 
   function appendNextLazyChunk(grid, info) {
@@ -900,6 +788,7 @@
     var next = displayRows.slice(shownCount, shownCount + HOME_LAZY_BATCH_SIZE);
     shownCount += next.length;
     appendPage(grid, next);
+    pruneVirtualizedCards(grid);
     updateResultsInfo(info, displayRows.length, shownCount);
     updatePager(displayRows.length, shownCount);
   }
@@ -918,6 +807,55 @@
     }
   }
 
+  function renderGridSkeleton(grid, count) {
+    if (!grid) return;
+    var n = Math.max(0, Number(count) || 0);
+    if (!n) return;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+      var sk = document.createElement("article");
+      sk.className = "listing-card listing-card--api-feed is-skeleton";
+      sk.setAttribute("aria-hidden", "true");
+      sk.innerHTML =
+        '<div class="listing-card__media"></div>' +
+        '<div class="listing-card__body">' +
+        '<div class="listing-skel-line listing-skel-line--title"></div>' +
+        '<div class="listing-skel-line listing-skel-line--price"></div>' +
+        '<div class="listing-skel-line listing-skel-line--meta"></div>' +
+        "</div>";
+      frag.appendChild(sk);
+    }
+    grid.innerHTML = "";
+    var spacer = ensureTopSpacer(grid);
+    if (spacer) spacer.style.height = "0px";
+    grid.appendChild(frag);
+  }
+
+  function readCachedRows() {
+    try {
+      var raw = localStorage.getItem(HOME_CACHE_KEY);
+      if (!raw) return [];
+      var p = JSON.parse(raw);
+      if (!p || !Array.isArray(p.rows) || !Number.isFinite(p.ts)) return [];
+      if (Date.now() - p.ts > HOME_CACHE_TTL_MS) return [];
+      return p.rows;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function writeCachedRows(rows) {
+    try {
+      localStorage.setItem(
+        HOME_CACHE_KEY,
+        JSON.stringify({
+          ts: Date.now(),
+          rows: Array.isArray(rows) ? rows.slice(0, 240) : []
+        })
+      );
+    } catch (e) {}
+  }
+
   function applyMainView(opts) {
     opts = opts || {};
     var resetShown = opts.resetShown !== false;
@@ -931,11 +869,6 @@
 
     if (!grid) return;
 
-    if (apiRows.length === 0) {
-      apiRows = FAKE_GRID_LISTINGS.slice();
-      homeGridIsDemo = true;
-    }
-
     renderFeaturedStrip(apiRows);
     syncHomeSectionHeading();
 
@@ -945,23 +878,50 @@
       grid.innerHTML = "";
       shownCount = 0;
       updatePager(0, 0);
-      setEmptyState(
-        emptyBox,
-        emptyTitle,
-        emptySub,
-        true,
-        "İlan bulunamadı",
-        "Seçtiğiniz kriterlere uygun sonuç yok. Filtreleri genişletmeyi deneyin."
-      );
+      var hasRows = apiRows.length > 0;
+      if (hasRows) {
+        setEmptyState(
+          emptyBox,
+          emptyTitle,
+          emptySub,
+          true,
+          "Sonuç bulunamadı",
+          "No listings found — aramanız veya filtrelerinizle eşleşen ilan yok. Filtreleri temizleyip tekrar deneyin."
+        );
+      } else if (homeListingsFetchFailed) {
+        setEmptyState(
+          emptyBox,
+          emptyTitle,
+          emptySub,
+          true,
+          "İlanlar yüklenemedi",
+          (homeListingsLastErrorMsg ? homeListingsLastErrorMsg + " " : "") +
+            "Bağlantınızı kontrol edin veya «Tekrar dene» ile yenileyin."
+        );
+      } else {
+        setEmptyState(
+          emptyBox,
+          emptyTitle,
+          emptySub,
+          true,
+          "Henüz ilan yok",
+          "No listings yet — yeni ilanlar eklendiğinde burada görünecek."
+        );
+      }
       if (info) info.textContent = "";
+      syncHomeListingsRetryButton();
       return;
     }
 
     setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
+    syncHomeListingsRetryButton();
 
     if (resetShown) {
+      virtualTopTrimmedRows = 0;
       shownCount = Math.min(HOME_INITIAL_RENDER_COUNT, displayRows.length);
       grid.innerHTML = "";
+      var topSpacer = ensureTopSpacer(grid);
+      if (topSpacer) topSpacer.style.height = "0px";
       appendPage(grid, displayRows.slice(0, shownCount));
     }
 
@@ -978,6 +938,7 @@
         }
       };
     } catch (err) {}
+    syncHomeListingsRetryButton();
   }
 
   function wireLoadMore(grid, info) {
@@ -1114,28 +1075,57 @@
     var emptyTitle = document.getElementById("emptyResultsTitle");
     var emptySub = document.getElementById("emptyResultsSub");
     var info = document.getElementById("resultsInfo");
-    var loadEl = document.getElementById("homeListingsLoading");
 
     if (!grid) return;
+
+    wireHomeListingsRetryOnce();
+
+    homeListingsLastErrorMsg = "";
+    homeListingsFetchFailed = false;
+    setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
+    syncHomeListingsRetryButton();
 
     readUrlFilters();
     syncSearchInputs();
     syncCategoryChips();
     listingsFetchSettled = false;
     wireMarketplaceOnce(grid, info);
+    renderGridSkeleton(grid, HOME_INITIAL_RENDER_COUNT);
 
     var url = resolveListingsUrl();
 
+    syncHomeListingsLoadingBar(true, "İlanlar yükleniyor…");
     if (info) info.textContent = "İlanlar yükleniyor…";
+
+    var cachedRows = readCachedRows();
+    var hadCacheThisLoad = cachedRows.length > 0;
+    if (hadCacheThisLoad) {
+      apiRows = cachedRows;
+      homeListingsFetchFailed = false;
+      listingsFetchSettled = true;
+      applyMainView({ resetShown: true });
+      syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
+      if (info) info.textContent = "Güncel liste alınıyor…";
+    }
+
+    var fetchHeaders = { Accept: "application/json" };
+    try {
+      if (window.JetleAPI && typeof JetleAPI.buildFetchAuthHeaders === "function") {
+        fetchHeaders = JetleAPI.buildFetchAuthHeaders({}, {});
+      } else {
+        var tk0 = localStorage.getItem("token") || localStorage.getItem("jetle_v2_access_token") || "";
+        if (tk0) fetchHeaders.Authorization = "Bearer " + tk0;
+      }
+    } catch (eh) {}
 
     fetch(url, {
       method: "GET",
       credentials: "omit",
       cache: "force-cache",
-      headers: { Accept: "application/json" }
+      headers: fetchHeaders
     })
       .then(function (res) {
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        if (!res.ok) throw new Error("Sunucu yanıtı: HTTP " + res.status);
         return res.json();
       })
       .then(function (json) {
@@ -1143,19 +1133,20 @@
         shownCount = 0;
         listingsFetchSettled = true;
 
-        if (loadEl) loadEl.hidden = true;
+        syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
 
         var kwInput = document.getElementById("homeListingKeyword");
         if (kwInput && String(kwInput.value || "").trim()) {
           filterKeyword = kwInput.value || "";
         }
 
+        homeListingsFetchFailed = false;
+        homeListingsLastErrorMsg = "";
         if (rows.length === 0) {
-          apiRows = FAKE_GRID_LISTINGS.slice();
-          homeGridIsDemo = true;
+          apiRows = [];
         } else {
           apiRows = rows;
-          homeGridIsDemo = false;
+          writeCachedRows(rows);
         }
 
         applyMainView({ resetShown: true });
@@ -1169,16 +1160,36 @@
         }, 650);
       })
       .catch(function (err) {
-        console.log("[JETLE][home-api-listings]", err);
-        if (loadEl) loadEl.hidden = true;
-        apiRows = FAKE_GRID_LISTINGS.slice();
-        homeGridIsDemo = true;
+        if (window.console && typeof window.console.warn === "function") {
+          console.warn("[JETLE][home-api-listings]", err && err.message ? err.message : err);
+        }
+        syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
+        homeListingsLastErrorMsg = err && err.message ? String(err.message) : "Ağ hatası.";
+        if (hadCacheThisLoad && apiRows.length) {
+          homeListingsFetchFailed = false;
+          listingsFetchSettled = true;
+          if (info) info.textContent = "Canlı liste alınamadı; önbellekteki ilanlar gösteriliyor.";
+          applyMainView({ resetShown: true });
+          return;
+        }
+        apiRows = [];
+        homeListingsFetchFailed = true;
         shownCount = 0;
         listingsFetchSettled = true;
-        setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
         if (info) info.textContent = "";
         applyMainView({ resetShown: true });
       });
+  }
+
+  function wireHomeListingsRetryOnce() {
+    var btn = document.getElementById("homeListingsRetryBtn");
+    if (!btn || btn.getAttribute("data-wired") === "1") return;
+    btn.setAttribute("data-wired", "1");
+    btn.addEventListener("click", function () {
+      homeListingsFetchFailed = false;
+      homeListingsLastErrorMsg = "";
+      loadHomeListingsFromApi();
+    });
   }
 
   if (document.readyState === "loading") {

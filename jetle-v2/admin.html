@@ -168,24 +168,6 @@
 <body data-page="admin" class="page-admin">
   <script src="api.js?v=20260217"></script>
   <script src="auth.js"></script>
-  <script>
-    (function () {
-      if (!window.JetleAPI || !window.JetleAuth) {
-        window.location.replace("login.html?next=" + encodeURIComponent("admin.html"));
-        return;
-      }
-      JetleAPI.init();
-      JetleAuth.init();
-      if (!JetleAuth.isLoggedIn()) {
-        window.location.replace("login.html?next=" + encodeURIComponent("admin.html"));
-        return;
-      }
-      if (!JetleAuth.isAdmin()) {
-        window.location.replace("index.html");
-        return;
-      }
-    })();
-  </script>
 
   <div class="admin-app">
     <aside class="admin-app__sidebar" aria-label="Admin menüsü">
@@ -417,9 +399,23 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         if (document.body.getAttribute("data-page") !== "admin") return;
-        var ref = document.getElementById("adminHtmlRefresh");
-        if (ref) ref.addEventListener("click", loadAdminListings);
-        loadAdminListings();
+        if (!window.JetleAPI || !window.JetleAuth || typeof JetleAuth.bootstrap !== "function") {
+          window.location.replace("login.html?next=" + encodeURIComponent("admin.html"));
+          return;
+        }
+        JetleAuth.bootstrap().then(function () {
+          if (!JetleAuth.isLoggedIn()) {
+            window.location.replace("login.html?next=" + encodeURIComponent("admin.html"));
+            return;
+          }
+          if (!JetleAuth.isAdmin()) {
+            window.location.replace("index.html");
+            return;
+          }
+          var ref = document.getElementById("adminHtmlRefresh");
+          if (ref) ref.addEventListener("click", loadAdminListings);
+          loadAdminListings();
+        });
       });
     })();
   </script>
