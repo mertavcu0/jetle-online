@@ -5,7 +5,7 @@
   "use strict";
 
   var API_BASE = "https://jetle-online-production.up.railway.app";
-  var TOTAL_STEPS = 6;
+  var TOTAL_STEPS = 5;
   var currentStep = 1;
 
   var CITIES = [
@@ -497,24 +497,20 @@
         ok2 = false;
       }
       if (!validateDynamicFields()) ok2 = false;
-      return ok2;
-    }
-    if (step === 4) {
       var city = document.getElementById("ilanCity");
       var dist = document.getElementById("ilanDistrict");
-      var ok3 = true;
       if (!city || !String(city.value || "").trim()) {
         showMsg(document.getElementById("ilanErrCity"), "Şehir seçin.");
-        ok3 = false;
+        ok2 = false;
       }
       var di = dist && String(dist.value || "").trim();
       if (!di || di.length < 2) {
         showMsg(document.getElementById("ilanErrDistrict"), "İlçe veya semt en az 2 karakter olmalıdır.");
-        ok3 = false;
+        ok2 = false;
       }
-      return ok3;
+      return ok2;
     }
-    if (step === 5) {
+    if (step === 4) {
       return true;
     }
     return true;
@@ -599,7 +595,7 @@
       fillSubcategoryOptions(getCategory());
       renderDynamicFields(getCategory());
     }
-    if (step === 6) buildPreview();
+    if (step === 5) buildPreview();
     syncLivePreview();
   }
 
@@ -860,7 +856,7 @@
         return;
       }
       showFormError("");
-      if (!validateStep(2) || !validateStep(3) || !validateStep(4)) {
+      if (!validateStep(2) || !validateStep(3)) {
         showFormError("Lütfen tüm zorunlu adımları kontrol edin.");
         return;
       }
