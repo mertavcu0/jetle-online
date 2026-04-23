@@ -1,10 +1,14 @@
 /**
- * Türkiye 81 il ve ilçeleri (resmi ilçe adları).
- * Kaynak: beratdogan/turkey_provinces_districts.json (gist) — JETLE için { name, districts } biçimine dönüştürülmüştür.
+ * Türkiye — 81 il ve tüm ilçeler (TÜİK / İçişleri güncel ilçe adlarına yakın UTF-8).
+ * Alfabetik: iller ve her ilin ilçeleri `tr-TR` sıralı; yinelenen ilçe adları kaldırıldı.
+ *
+ * Tarayıcı (klasik script): `globalThis.JETLE_TR_CITIES` + `JetleTrCities` API.
+ * ESM / TypeScript: `export const TR_CITIES` ile aynı yapıda dizi (aşağıdaki TR_CITIES).
+ *
+ * Veri üretimi: `node scripts/build-professional-tr-cities.cjs`
  */
-(function (global) {
-  "use strict";
-  global.JETLE_TR_CITIES = [
+const TR_CITIES =
+[
   {
     "name": "Adana",
     "districts": [
@@ -13,27 +17,27 @@
       "Çukurova",
       "Feke",
       "İmamoğlu",
-      "Karaisali",
+      "Karaisalı",
       "Karataş",
       "Kozan",
-      "Pozanti",
+      "Pozantı",
       "Saimbeyli",
-      "Sariçam",
+      "Sarıçam",
       "Seyhan",
       "Tufanbeyli",
-      "Yumurtalik",
+      "Yumurtalık",
       "Yüreğir"
     ]
   },
   {
-    "name": "Adiyaman",
+    "name": "Adıyaman",
     "districts": [
-      "Merkez",
       "Besni",
       "Çelikhan",
       "Gerger",
-      "Gölbaşi",
+      "Gölbaşı",
       "Kahta",
+      "Merkez",
       "Samsat",
       "Sincik",
       "Tut"
@@ -42,46 +46,58 @@
   {
     "name": "Afyonkarahisar",
     "districts": [
-      "Merkez",
-      "Başmakçi",
+      "Başmakçı",
       "Bayat",
       "Bolvadin",
       "Çay",
       "Çobanlar",
-      "Dazkiri",
+      "Dazkırı",
       "Dinar",
       "Emirdağ",
       "Evciler",
       "Hocalar",
       "İhsaniye",
       "İscehisar",
-      "Kizilören",
-      "Sandikli",
+      "Kızılören",
+      "Merkez",
+      "Sandıklı",
       "Sinanpaşa",
-      "Sultandaği",
+      "Sultandağı",
       "Şuhut"
     ]
   },
   {
-    "name": "Ağri",
+    "name": "Ağrı",
     "districts": [
-      "Merkez",
       "Diyadin",
-      "Doğubayazit",
+      "Doğubayazıt",
       "Eleşkirt",
       "Hamur",
+      "Merkez",
       "Patnos",
-      "Taşliçay",
+      "Taşlıçay",
       "Tutak"
+    ]
+  },
+  {
+    "name": "Aksaray",
+    "districts": [
+      "Ağaçören",
+      "Eskil",
+      "Gülağaç",
+      "Güzelyurt",
+      "Merkez",
+      "Ortaköy",
+      "Sariyahşi"
     ]
   },
   {
     "name": "Amasya",
     "districts": [
-      "Merkez",
       "Göynücek",
-      "Gümüşhaciköy",
+      "Gümüşhacıköy",
       "Hamamözü",
+      "Merkez",
       "Merzifon",
       "Suluova",
       "Taşova"
@@ -91,26 +107,26 @@
     "name": "Ankara",
     "districts": [
       "Akyurt",
-      "Altindağ",
+      "Altındağ",
       "Ayaş",
       "Bala",
-      "Beypazari",
-      "Çamlidere",
+      "Beypazarı",
+      "Çamlıdere",
       "Çankaya",
       "Çubuk",
       "Elmadağ",
       "Etimesgut",
       "Evren",
-      "Gölbaşi",
+      "Gölbaşı",
       "Güdül",
       "Haymana",
+      "Kahramankazan",
       "Kalecik",
-      "Kazan",
       "Keçiören",
-      "Kizilcahamam",
+      "Kızılcahamam",
       "Mamak",
-      "Nallihan",
-      "Polatli",
+      "Nallıhan",
+      "Polatlı",
       "Pursaklar",
       "Sincan",
       "Şereflikoçhisar",
@@ -142,18 +158,29 @@
     ]
   },
   {
+    "name": "Ardahan",
+    "districts": [
+      "Çıldır",
+      "Damal",
+      "Göle",
+      "Hanak",
+      "Merkez",
+      "Posof"
+    ]
+  },
+  {
     "name": "Artvin",
     "districts": [
-      "Merkez",
       "Ardanuç",
       "Arhavi",
       "Borçka",
       "Hopa",
+      "Merkez",
       "Yusufeli"
     ]
   },
   {
-    "name": "Aydin",
+    "name": "Aydın",
     "districts": [
       "Bozdoğan",
       "Buharkent",
@@ -174,7 +201,7 @@
     ]
   },
   {
-    "name": "Balikesir",
+    "name": "Balıkesir",
     "districts": [
       "Ayvalik",
       "Balya",
@@ -197,12 +224,40 @@
     ]
   },
   {
+    "name": "Bartın",
+    "districts": [
+      "Amasra",
+      "Kurucaşile",
+      "Merkez",
+      "Ulus"
+    ]
+  },
+  {
+    "name": "Batman",
+    "districts": [
+      "Beşiri",
+      "Gercüş",
+      "Hasankeyf",
+      "Kozluk",
+      "Merkez",
+      "Sason"
+    ]
+  },
+  {
+    "name": "Bayburt",
+    "districts": [
+      "Aydintepe",
+      "Demirözü",
+      "Merkez"
+    ]
+  },
+  {
     "name": "Bilecik",
     "districts": [
-      "Merkez",
       "Bozüyük",
       "Gölpazari",
       "İnhisar",
+      "Merkez",
       "Osmaneli",
       "Pazaryeri",
       "Söğüt",
@@ -212,11 +267,11 @@
   {
     "name": "Bingöl",
     "districts": [
-      "Merkez",
       "Adakli",
       "Genç",
       "Karliova",
       "Kiği",
+      "Merkez",
       "Solhan",
       "Yayladere",
       "Yedisu"
@@ -225,11 +280,11 @@
   {
     "name": "Bitlis",
     "districts": [
-      "Merkez",
       "Adilcevaz",
       "Ahlat",
       "Güroymak",
       "Hizan",
+      "Merkez",
       "Mutki",
       "Tatvan"
     ]
@@ -237,12 +292,12 @@
   {
     "name": "Bolu",
     "districts": [
-      "Merkez",
       "Dörtdivan",
       "Gerede",
       "Göynük",
       "Kibriscik",
       "Mengen",
+      "Merkez",
       "Mudurnu",
       "Seben",
       "Yeniçağa"
@@ -251,7 +306,6 @@
   {
     "name": "Burdur",
     "districts": [
-      "Merkez",
       "Ağlasun",
       "Altinyayla",
       "Bucak",
@@ -260,6 +314,7 @@
       "Gölhisar",
       "Karamanli",
       "Kemer",
+      "Merkez",
       "Tefenni",
       "Yeşilova"
     ]
@@ -289,7 +344,6 @@
   {
     "name": "Çanakkale",
     "districts": [
-      "Merkez",
       "Ayvacik",
       "Bayramiç",
       "Biga",
@@ -300,13 +354,13 @@
       "Gelibolu",
       "İmroz",
       "Lapseki",
+      "Merkez",
       "Yenice"
     ]
   },
   {
-    "name": "Çankiri",
+    "name": "Çankırı",
     "districts": [
-      "Merkez",
       "Atkaracalar",
       "Bayramören",
       "Çerkeş",
@@ -315,6 +369,7 @@
       "Kizilirmak",
       "Korgun",
       "Kurşunlu",
+      "Merkez",
       "Orta",
       "Şabanözü",
       "Yaprakli"
@@ -323,7 +378,6 @@
   {
     "name": "Çorum",
     "districts": [
-      "Merkez",
       "Alaca",
       "Bayat",
       "Boğazkale",
@@ -332,6 +386,7 @@
       "Kargi",
       "Laçin",
       "Mecitözü",
+      "Merkez",
       "Oğuzlar",
       "Ortaköy",
       "Osmancik",
@@ -363,7 +418,7 @@
     ]
   },
   {
-    "name": "Diyarbakir",
+    "name": "Diyarbakır",
     "districts": [
       "Bağlar",
       "Bismil",
@@ -385,15 +440,28 @@
     ]
   },
   {
+    "name": "Düzce",
+    "districts": [
+      "Akçakoca",
+      "Cumayeri",
+      "Çilimli",
+      "Gölyaka",
+      "Gümüşova",
+      "Kaynaşlı",
+      "Merkez",
+      "Yığılca"
+    ]
+  },
+  {
     "name": "Edirne",
     "districts": [
-      "Merkez",
       "Enez",
       "Havsa",
       "İpsala",
       "Keşan",
       "Lalapaşa",
       "Meriç",
+      "Merkez",
       "Süloğlu",
       "Uzunköprü"
     ]
@@ -401,7 +469,6 @@
   {
     "name": "Elaziğ",
     "districts": [
-      "Merkez",
       "Ağin",
       "Alacakaya",
       "Aricak",
@@ -410,6 +477,7 @@
       "Keban",
       "Kovancilar",
       "Maden",
+      "Merkez",
       "Palu",
       "Sivrice"
     ]
@@ -417,11 +485,11 @@
   {
     "name": "Erzincan",
     "districts": [
-      "Merkez",
       "Çayirli",
       "İliç",
       "Kemah",
       "Kemaliye",
+      "Merkez",
       "Otlukbeli",
       "Refahiye",
       "Tercan",
@@ -489,7 +557,6 @@
   {
     "name": "Giresun",
     "districts": [
-      "Merkez",
       "Alucra",
       "Bulancak",
       "Çamoluk",
@@ -501,6 +568,7 @@
       "Görele",
       "Güce",
       "Keşap",
+      "Merkez",
       "Piraziz",
       "Şebinkarahisar",
       "Tirebolu",
@@ -510,10 +578,10 @@
   {
     "name": "Gümüşhane",
     "districts": [
-      "Merkez",
       "Kelkit",
       "Köse",
       "Kürtün",
+      "Merkez",
       "Şiran",
       "Torul"
     ]
@@ -521,8 +589,8 @@
   {
     "name": "Hakkari",
     "districts": [
-      "Merkez",
       "Çukurca",
+      "Merkez",
       "Şemdinli",
       "Yüksekova"
     ]
@@ -544,15 +612,24 @@
     ]
   },
   {
+    "name": "Iğdır",
+    "districts": [
+      "Aralık",
+      "Karakoyunlu",
+      "Merkez",
+      "Tuzluca"
+    ]
+  },
+  {
     "name": "Isparta",
     "districts": [
-      "Merkez",
       "Aksu",
       "Atabey",
       "Eğirdir",
       "Gelendost",
       "Gönen",
       "Keçiborlu",
+      "Merkez",
       "Senirkent",
       "Sütçüler",
       "Şarkikaraağaç",
@@ -562,34 +639,15 @@
     ]
   },
   {
-    "name": "Mersin",
-    "districts": [
-      "Merkez",
-      "Akdeniz",
-      "Anamur",
-      "Aydincik",
-      "Bozyazi",
-      "Çamliyayla",
-      "Erdemli",
-      "Gülnar",
-      "Mezitli",
-      "Mut",
-      "Silifke",
-      "Tarsus",
-      "Toroslar",
-      "Yenişehir"
-    ]
-  },
-  {
     "name": "İstanbul",
     "districts": [
       "Adalar",
       "Arnavutköy",
       "Ataşehir",
-      "Avcilar",
-      "Bağcilar",
+      "Avcılar",
+      "Bağcılar",
       "Bahçelievler",
-      "Bakirköy",
+      "Bakırköy",
       "Başakşehir",
       "Bayrampaşa",
       "Beşiktaş",
@@ -601,18 +659,18 @@
       "Çekmeköy",
       "Esenler",
       "Esenyurt",
-      "Eyüp",
+      "Eyüpsultan",
       "Fatih",
       "Gaziosmanpaşa",
       "Güngören",
-      "Kadiköy",
-      "Kağithane",
+      "Kadıköy",
+      "Kağıthane",
       "Kartal",
       "Küçükçekmece",
       "Maltepe",
       "Pendik",
       "Sancaktepe",
-      "Sariyer",
+      "Sarıyer",
       "Silivri",
       "Sultanbeyli",
       "Sultangazi",
@@ -629,7 +687,7 @@
     "districts": [
       "Aliağa",
       "Balçova",
-      "Bayindir",
+      "Bayındır",
       "Bayrakli",
       "Bergama",
       "Beydağ",
@@ -645,7 +703,7 @@
       "Karaburun",
       "Karşiyaka",
       "Kemalpaşa",
-      "Kinik",
+      "Kınık",
       "Kiraz",
       "Konak",
       "Menderes",
@@ -655,18 +713,54 @@
       "Seferihisar",
       "Selçuk",
       "Tire",
-      "Torbali",
+      "Torbalı",
       "Urla"
+    ]
+  },
+  {
+    "name": "Kahramanmaraş",
+    "districts": [
+      "Afşin",
+      "Andirin",
+      "Çağlayancerit",
+      "Ekinözü",
+      "Elbistan",
+      "Göksun",
+      "Nurhak",
+      "Pazarcik",
+      "Türkoğlu"
+    ]
+  },
+  {
+    "name": "Karabük",
+    "districts": [
+      "Eflani",
+      "Eskipazar",
+      "Merkez",
+      "Ovacık",
+      "Safranbolu",
+      "Yenice"
+    ]
+  },
+  {
+    "name": "Karaman",
+    "districts": [
+      "Ayranci",
+      "Başyayla",
+      "Ermenek",
+      "Kazimkarabekir",
+      "Merkez",
+      "Sariveliler"
     ]
   },
   {
     "name": "Kars",
     "districts": [
-      "Merkez",
       "Akyaka",
       "Arpaçay",
       "Digor",
       "Kağizman",
+      "Merkez",
       "Sarikamiş",
       "Selim",
       "Susuz"
@@ -675,7 +769,6 @@
   {
     "name": "Kastamonu",
     "districts": [
-      "Merkez",
       "Abana",
       "Ağli",
       "Araç",
@@ -690,6 +783,7 @@
       "İhsangazi",
       "İnebolu",
       "Küre",
+      "Merkez",
       "Pinarbaşi",
       "Seydiler",
       "Şenpazar",
@@ -719,28 +813,51 @@
     ]
   },
   {
-    "name": "Kirklareli",
+    "name": "Kırıkkale",
     "districts": [
+      "Bahşili",
+      "Balişeyh",
+      "Çelebi",
+      "Delice",
+      "Karakeçili",
+      "Keskin",
       "Merkez",
+      "Sulakyurt",
+      "Yahşihan"
+    ]
+  },
+  {
+    "name": "Kırklareli",
+    "districts": [
       "Babaeski",
       "Demirköy",
       "Kofçaz",
       "Lüleburgaz",
+      "Merkez",
       "Pehlivanköy",
       "Pinarhisar",
       "Vize"
     ]
   },
   {
-    "name": "Kirşehir",
+    "name": "Kırşehir",
     "districts": [
-      "Merkez",
       "Akçakent",
       "Akpinar",
       "Boztepe",
       "Çiçekdaği",
       "Kaman",
+      "Merkez",
       "Mucur"
+    ]
+  },
+  {
+    "name": "Kilis",
+    "districts": [
+      "Elbeyli",
+      "Merkez",
+      "Musabeyli",
+      "Polateli"
     ]
   },
   {
@@ -799,7 +916,6 @@
   {
     "name": "Kütahya",
     "districts": [
-      "Merkez",
       "Altintaş",
       "Aslanapa",
       "Çavdarhisar",
@@ -808,6 +924,7 @@
       "Emet",
       "Gediz",
       "Hisarcik",
+      "Merkez",
       "Pazarlar",
       "Simav",
       "Şaphane",
@@ -853,20 +970,6 @@
     ]
   },
   {
-    "name": "Kahramanmaraş",
-    "districts": [
-      "Afşin",
-      "Andirin",
-      "Çağlayancerit",
-      "Ekinözü",
-      "Elbistan",
-      "Göksun",
-      "Nurhak",
-      "Pazarcik",
-      "Türkoğlu"
-    ]
-  },
-  {
     "name": "Mardin",
     "districts": [
       "Dargeçit",
@@ -878,6 +981,25 @@
       "Ömerli",
       "Savur",
       "Yeşilli"
+    ]
+  },
+  {
+    "name": "Mersin",
+    "districts": [
+      "Akdeniz",
+      "Anamur",
+      "Aydıncık",
+      "Bozyazi",
+      "Çamliyayla",
+      "Erdemli",
+      "Gülnar",
+      "Merkez",
+      "Mezitli",
+      "Mut",
+      "Silifke",
+      "Tarsus",
+      "Toroslar",
+      "Yenişehir"
     ]
   },
   {
@@ -899,35 +1021,35 @@
   {
     "name": "Muş",
     "districts": [
-      "Merkez",
       "Bulanik",
       "Hasköy",
       "Korkut",
       "Malazgirt",
+      "Merkez",
       "Varto"
     ]
   },
   {
     "name": "Nevşehir",
     "districts": [
-      "Merkez",
       "Acigöl",
       "Avanos",
       "Derinkuyu",
       "Gülşehir",
       "Hacibektaş",
       "Kozakli",
+      "Merkez",
       "Ürgüp"
     ]
   },
   {
     "name": "Niğde",
     "districts": [
-      "Merkez",
       "Altunhisar",
       "Bor",
       "Çamardi",
       "Çiftlik",
+      "Merkez",
       "Ulukişla"
     ]
   },
@@ -955,9 +1077,20 @@
     ]
   },
   {
+    "name": "Osmaniye",
+    "districts": [
+      "Bahçe",
+      "Düziçi",
+      "Hasanbeyli",
+      "Kadirli",
+      "Merkez",
+      "Sumbas",
+      "Toprakkale"
+    ]
+  },
+  {
     "name": "Rize",
     "districts": [
-      "Merkez",
       "Ardeşen",
       "Çamlihemşin",
       "Çayeli",
@@ -968,6 +1101,7 @@
       "İkizdere",
       "İyidere",
       "Kalkandere",
+      "Merkez",
       "Pazar"
     ]
   },
@@ -1017,11 +1151,11 @@
   {
     "name": "Siirt",
     "districts": [
-      "Merkez",
       "Aydinlar",
       "Baykan",
       "Eruh",
       "Kurtalan",
+      "Merkez",
       "Pervari",
       "Şirvan"
     ]
@@ -1029,13 +1163,13 @@
   {
     "name": "Sinop",
     "districts": [
-      "Merkez",
       "Ayancik",
       "Boyabat",
       "Dikmen",
       "Durağan",
       "Erfelek",
       "Gerze",
+      "Merkez",
       "Saraydüzü",
       "Türkeli"
     ]
@@ -1043,7 +1177,6 @@
   {
     "name": "Sivas",
     "districts": [
-      "Merkez",
       "Akincilar",
       "Altinyayla",
       "Divriği",
@@ -1055,11 +1188,39 @@
       "İmranli",
       "Kangal",
       "Koyulhisar",
+      "Merkez",
       "Suşehri",
       "Şarkişla",
       "Ulaş",
       "Yildizeli",
       "Zara"
+    ]
+  },
+  {
+    "name": "Şanlıurfa",
+    "districts": [
+      "Akçakale",
+      "Birecik",
+      "Bozova",
+      "Ceylanpinar",
+      "Halfeti",
+      "Harran",
+      "Hilvan",
+      "Siverek",
+      "Suruç",
+      "Viranşehir"
+    ]
+  },
+  {
+    "name": "Şirnak",
+    "districts": [
+      "Beytüşşebap",
+      "Cizre",
+      "Güçlükonak",
+      "İdil",
+      "Merkez",
+      "Silopi",
+      "Uludere"
     ]
   },
   {
@@ -1078,11 +1239,11 @@
   {
     "name": "Tokat",
     "districts": [
-      "Merkez",
       "Almus",
       "Artova",
       "Başçiftlik",
       "Erbaa",
+      "Merkez",
       "Niksar",
       "Pazar",
       "Reşadiye",
@@ -1117,38 +1278,23 @@
   {
     "name": "Tunceli",
     "districts": [
-      "Merkez",
       "Çemişgezek",
       "Hozat",
       "Mazgirt",
+      "Merkez",
       "Nazimiye",
-      "Ovacik",
+      "Ovacık",
       "Pertek",
       "Pülümür"
     ]
   },
   {
-    "name": "Şanliurfa",
-    "districts": [
-      "Akçakale",
-      "Birecik",
-      "Bozova",
-      "Ceylanpinar",
-      "Halfeti",
-      "Harran",
-      "Hilvan",
-      "Siverek",
-      "Suruç",
-      "Viranşehir"
-    ]
-  },
-  {
     "name": "Uşak",
     "districts": [
-      "Merkez",
       "Banaz",
       "Eşme",
       "Karahalli",
+      "Merkez",
       "Sivasli",
       "Ulubey"
     ]
@@ -1170,206 +1316,52 @@
     ]
   },
   {
+    "name": "Yalova",
+    "districts": [
+      "Altınova",
+      "Armutlu",
+      "Çınarcık",
+      "Çiftlikköy",
+      "Merkez",
+      "Termal"
+    ]
+  },
+  {
     "name": "Yozgat",
     "districts": [
-      "Merkez",
       "Akdağmadeni",
-      "Aydincik",
-      "Boğazliyan",
-      "Çandir",
-      "Çayiralan",
+      "Aydıncık",
+      "Boğazlıyan",
+      "Çandır",
+      "Çayıralan",
       "Çekerek",
-      "Kadişehri",
+      "Kadışehri",
+      "Merkez",
       "Saraykent",
-      "Sarikaya",
+      "Sarıkaya",
       "Sorgun",
       "Şefaatli",
-      "Yenifakili",
+      "Yenifakılı",
       "Yerköy"
     ]
   },
   {
     "name": "Zonguldak",
     "districts": [
-      "Merkez",
-      "Alapli",
+      "Alaplı",
       "Çaycuma",
       "Devrek",
       "Ereğli",
-      "Gökçebey"
-    ]
-  },
-  {
-    "name": "Aksaray",
-    "districts": [
-      "Merkez",
-      "Ağaçören",
-      "Eskil",
-      "Gülağaç",
-      "Güzelyurt",
-      "Ortaköy",
-      "Sariyahşi"
-    ]
-  },
-  {
-    "name": "Bayburt",
-    "districts": [
-      "Merkez",
-      "Aydintepe",
-      "Demirözü"
-    ]
-  },
-  {
-    "name": "Karaman",
-    "districts": [
-      "Merkez",
-      "Ayranci",
-      "Başyayla",
-      "Ermenek",
-      "Kazimkarabekir",
-      "Sariveliler"
-    ]
-  },
-  {
-    "name": "Kirikkale",
-    "districts": [
-      "Merkez",
-      "Bahşili",
-      "Balişeyh",
-      "Çelebi",
-      "Delice",
-      "Karakeçili",
-      "Keskin",
-      "Sulakyurt",
-      "Yahşihan"
-    ]
-  },
-  {
-    "name": "Batman",
-    "districts": [
-      "Merkez",
-      "Beşiri",
-      "Gercüş",
-      "Hasankeyf",
-      "Kozluk",
-      "Sason"
-    ]
-  },
-  {
-    "name": "Şirnak",
-    "districts": [
-      "Merkez",
-      "Beytüşşebap",
-      "Cizre",
-      "Güçlükonak",
-      "İdil",
-      "Silopi",
-      "Uludere"
-    ]
-  },
-  {
-    "name": "Bartin",
-    "districts": [
-      "Merkez",
-      "Amasra",
-      "Kurucaşile",
-      "Ulus"
-    ]
-  },
-  {
-    "name": "Ardahan",
-    "districts": [
-      "Merkez",
-      "Çildir",
-      "Damal",
-      "Göle",
-      "Hanak",
-      "Posof"
-    ]
-  },
-  {
-    "name": "Iğdir",
-    "districts": [
-      "Merkez",
-      "Aralik",
-      "Karakoyunlu",
-      "Tuzluca"
-    ]
-  },
-  {
-    "name": "Yalova",
-    "districts": [
-      "Merkez",
-      "Altinova",
-      "Armutlu",
-      "Çinarcik",
-      "Çiftlikköy",
-      "Termal"
-    ]
-  },
-  {
-    "name": "Karabük",
-    "districts": [
-      "Merkez",
-      "Eflani",
-      "Eskipazar",
-      "Ovacik",
-      "Safranbolu",
-      "Yenice"
-    ]
-  },
-  {
-    "name": "Kilis",
-    "districts": [
-      "Merkez",
-      "Elbeyli",
-      "Musabeyli",
-      "Polateli"
-    ]
-  },
-  {
-    "name": "Osmaniye",
-    "districts": [
-      "Merkez",
-      "Bahçe",
-      "Düziçi",
-      "Hasanbeyli",
-      "Kadirli",
-      "Sumbas",
-      "Toprakkale"
-    ]
-  },
-  {
-    "name": "Düzce",
-    "districts": [
-      "Merkez",
-      "Akçakoca",
-      "Cumayeri",
-      "Çilimli",
-      "Gölyaka",
-      "Gümüşova",
-      "Kaynaşli",
-      "Yiğilca"
+      "Gökçebey",
+      "Merkez"
     ]
   }
 ];
-  var _PROVINCE_NAME_FIX = {
-    Adiyaman: "Adıyaman",
-    Aydin: "Aydın",
-    Ağri: "Ağrı",
-    Balikesir: "Balıkesir",
-    Çankiri: "Çankırı",
-    Diyarbakir: "Diyarbakır",
-    Kirklareli: "Kırklareli",
-    Kirşehir: "Kırşehir",
-    Şanliurfa: "Şanlıurfa",
-    Kirikkale: "Kırıkkale",
-    Bartin: "Bartın",
-    Iğdir: "Iğdır"
-  };
-  global.JETLE_TR_CITIES.forEach(function (row) {
-    if (_PROVINCE_NAME_FIX[row.name]) row.name = _PROVINCE_NAME_FIX[row.name];
-  });
+
+(function (global) {
+  "use strict";
+  global.JETLE_TR_CITIES = TR_CITIES;
+  global.TR_CITIES = TR_CITIES;
   global.JetleTrCities = {
     getAll: function () {
       return global.JETLE_TR_CITIES;
@@ -1389,4 +1381,8 @@
       return [];
     }
   };
-})(typeof window !== "undefined" ? window : this);
+})(typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : this);
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports.TR_CITIES = TR_CITIES;
+}

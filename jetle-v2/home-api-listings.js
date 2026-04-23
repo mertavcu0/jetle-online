@@ -16,7 +16,7 @@
   var HOME_CACHE_KEY = "jetle_home_listings_cache_v1";
   var HOME_CACHE_TTL_MS = 2 * 60 * 1000;
   var MAX_RENDERED_CARDS = 48;
-  var EST_CARD_ROW_HEIGHT = 332;
+  var EST_CARD_ROW_HEIGHT = 268;
   var CARD_IMG_W = 280;
   var CARD_IMG_H = 210;
   var DESC_MAX = 140;
@@ -85,7 +85,8 @@
     try {
       var u = new URL(window.location.href);
       if (u.searchParams.has("q")) filterKeyword = u.searchParams.get("q") || "";
-      if (u.searchParams.has("cat")) filterCategory = (u.searchParams.get("cat") || "").toLowerCase();
+      if (u.searchParams.has("category")) filterCategory = (u.searchParams.get("category") || "").toLowerCase();
+      else if (u.searchParams.has("cat")) filterCategory = (u.searchParams.get("cat") || "").toLowerCase();
       if (u.searchParams.has("city")) filterCity = u.searchParams.get("city") || "";
     } catch (err) {}
   }
@@ -96,8 +97,13 @@
       var q = String(filterKeyword || "").trim();
       if (q) u.searchParams.set("q", q);
       else u.searchParams.delete("q");
-      if (filterCategory) u.searchParams.set("cat", filterCategory);
-      else u.searchParams.delete("cat");
+      if (filterCategory) {
+        u.searchParams.set("cat", filterCategory);
+        u.searchParams.set("category", filterCategory);
+      } else {
+        u.searchParams.delete("cat");
+        u.searchParams.delete("category");
+      }
       var c = String(filterCity || "").trim();
       if (c) u.searchParams.set("city", c);
       else u.searchParams.delete("city");
@@ -200,14 +206,9 @@
   }
 
   function getImageByCategory(category) {
-    var images = {
-      araba: "images/car.jpg",
-      emlak: "images/house.jpg",
-      elektronik: "images/phone.jpg",
-      hizmet: "images/service.jpg"
-    };
     var key = String(category || "").toLocaleLowerCase("tr-TR").trim();
-    return images[key] || "images/default.jpg";
+    var label = key === "vasita" || key === "araba" ? "Vasıta" : key === "emlak" ? "Emlak" : key === "elektronik" ? "Elektronik" : key === "hizmet" ? "Hizmet" : key === "alisveris" ? "Alışveriş" : "İlan";
+    return "https://placehold.co/400x300/e2e8f0/475569/png?text=" + encodeURIComponent(label);
   }
 
   function formatTry(n) {
@@ -405,8 +406,93 @@
     return true;
   }
 
+  function placeholderListings() {
+    var t = Date.now();
+    return [
+      {
+        _id: "jetle-demo-1",
+        title: "2019 Volkswagen Golf 1.6 TDI Comfortline",
+        price: 985000,
+        city: "Ankara",
+        district: "Çankaya",
+        category: "vasita",
+        description: "vasıta otomobil",
+        createdAt: new Date(t - 7200000).toISOString()
+      },
+      {
+        _id: "jetle-demo-2",
+        title: "Satılık 3+1 daire — metro yakını",
+        price: 6750000,
+        city: "İstanbul",
+        district: "Kadıköy",
+        category: "emlak",
+        description: "emlak konut daire",
+        createdAt: new Date(t - 5400000).toISOString()
+      },
+      {
+        _id: "jetle-demo-3",
+        title: "iPhone 14 Pro 256 GB — kutulu",
+        price: 42900,
+        city: "İzmir",
+        district: "Bornova",
+        category: "elektronik",
+        description: "elektronik telefon",
+        createdAt: new Date(t - 3600000).toISOString()
+      },
+      {
+        _id: "jetle-demo-4",
+        title: "Hemen teslim koltuk takımı",
+        price: 18500,
+        city: "Bursa",
+        district: "Nilüfer",
+        category: "alisveris",
+        description: "alışveriş mobilya",
+        createdAt: new Date(t - 1800000).toISOString()
+      },
+      {
+        _id: "jetle-demo-5",
+        title: "Özel ders — matematik YKS/LGS",
+        price: 500,
+        city: "Antalya",
+        district: "Muratpaşa",
+        category: "hizmet",
+        description: "hizmet özel ders",
+        createdAt: new Date(t - 900000).toISOString()
+      },
+      {
+        _id: "jetle-demo-6",
+        title: "2021 Renault Clio E-Tech hibrit",
+        price: 1125000,
+        city: "Kocaeli",
+        district: "İzmit",
+        category: "vasita",
+        description: "vasıta araç",
+        createdAt: new Date(t - 300000).toISOString()
+      }
+    ];
+  }
+
+  function getBaseRows() {
+    if (apiRows.length > 0) return apiRows;
+    if (homeListingsFetchFailed) return [];
+    if (!listingsFetchSettled) return [];
+    return placeholderListings();
+  }
+
+  function isPlaceholderMode() {
+    return apiRows.length === 0 && !homeListingsFetchFailed && listingsFetchSettled;
+  }
+
+  function readKeywordFromUi() {
+    var h = document.getElementById("headerSearchInput");
+    var k = document.getElementById("homeListingKeyword");
+    var fromH = h && h.value != null ? String(h.value).trim() : "";
+    if (fromH) return fromH;
+    return k && k.value != null ? String(k.value || "").trim() : "";
+  }
+
   function getFilteredRows() {
-    return apiRows.filter(function (item) {
+    return getBaseRows().filter(function (item) {
       return (
         categoryMatches(item, filterCategory) &&
         keywordMatches(item, filterKeyword) &&
@@ -421,12 +507,16 @@
 
   function syncHomeSectionHeading() {
     try {
-      var h = document.getElementById("allHeading");
       var label = document.getElementById("allHeadingLabel");
-      var t = "İlanlar";
+      var t = "Yeni ilanlar";
       if (label) label.textContent = t;
-      else if (h) h.textContent = t;
     } catch (e) {}
+  }
+
+  function syncHomeDemoNote() {
+    var el = document.getElementById("homeDemoNote");
+    if (!el) return;
+    el.hidden = !isPlaceholderMode();
   }
 
   function buildFeaturedCard(item) {
@@ -496,11 +586,22 @@
   }
 
   function renderFeaturedStrip(rows) {
+    var grid = document.getElementById("homeFeaturedGrid");
     var rowEl = document.getElementById("homeFeaturedRow");
     var emptyEl = document.getElementById("homeFeaturedEmpty");
-    if (!rowEl || !emptyEl) return;
-
     var list = selectFeaturedList(rows || []);
+
+    if (grid) {
+      grid.innerHTML = "";
+      if (!list.length) return;
+      list.forEach(function (item) {
+        grid.appendChild(buildCard(item));
+      });
+      syncApiFeedFavoriteUi();
+      return;
+    }
+
+    if (!rowEl || !emptyEl) return;
 
     while (rowEl.firstChild) rowEl.removeChild(rowEl.firstChild);
 
@@ -780,15 +881,7 @@
   }
 
   function renderExtraFeeds(rows) {
-    var list = Array.isArray(rows) ? rows.slice() : [];
-    var byNewest = list.slice().sort(function (a, b) {
-      return (parseListingDateMs(b) || 0) - (parseListingDateMs(a) || 0);
-    });
-    var byViews = list.slice().sort(function (a, b) {
-      return fakeViews(b) - fakeViews(a);
-    });
-    renderExtraSection("homeNewestGrid", byNewest);
-    renderExtraSection("homePopularGrid", byViews);
+    void rows;
   }
 
   function updatePager(totalFiltered, shown) {
@@ -806,8 +899,9 @@
   }
 
   function getGridColumnsCount() {
-    if (window.matchMedia("(min-width: 1100px)").matches) return 4;
-    if (window.matchMedia("(min-width: 768px)").matches) return 3;
+    if (window.matchMedia("(min-width: 1240px)").matches) return 5;
+    if (window.matchMedia("(min-width: 980px)").matches) return 4;
+    if (window.matchMedia("(min-width: 720px)").matches) return 3;
     if (window.matchMedia("(min-width: 520px)").matches) return 2;
     return 1;
   }
@@ -1048,13 +1142,15 @@
 
     if (!grid) return;
 
-    renderFeaturedStrip(apiRows);
-    renderCategoryCounts(apiRows);
-    renderHomeStats(apiRows);
+    var filteredForStrip = getFilteredRows();
+    renderFeaturedStrip(filteredForStrip.length ? filteredForStrip : getBaseRows());
+    renderCategoryCounts(getBaseRows());
+    renderHomeStats(getBaseRows());
     renderExtraFeeds(apiRows);
     renderLiveInitial(apiRows);
     startLiveTicker(apiRows);
     syncHomeSectionHeading();
+    syncHomeDemoNote();
 
     var displayRows = getGridDisplayRows();
 
@@ -1063,7 +1159,7 @@
       grid.innerHTML = "";
       shownCount = 0;
       updatePager(0, 0);
-      var hasRows = apiRows.length > 0;
+      var hasRows = getBaseRows().length > 0;
       if (hasRows) {
         setEmptyState(
           emptyBox,
@@ -1174,7 +1270,7 @@
       var cityEl = document.getElementById("homeHeroCity");
       if (catEl) filterCategory = String(catEl.value || "").toLowerCase();
       if (cityEl) filterCity = cityEl.value || "";
-      if (kwInput) filterKeyword = kwInput.value || "";
+      filterKeyword = readKeywordFromUi();
       syncCategoryChips();
       syncSearchInputs();
       pushUrlFilters();
@@ -1194,6 +1290,15 @@
     }
     if (kwInput) {
       kwInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runHomeSearch();
+        }
+      });
+    }
+    var headerKw = document.getElementById("headerSearchInput");
+    if (headerKw) {
+      headerKw.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
           e.preventDefault();
           runHomeSearch();
@@ -1325,10 +1430,8 @@
 
         syncHomeListingsLoadingBar(false, "İlanlar yükleniyor…");
 
-        var kwInput = document.getElementById("homeListingKeyword");
-        if (kwInput && String(kwInput.value || "").trim()) {
-          filterKeyword = kwInput.value || "";
-        }
+        var fromUi = readKeywordFromUi();
+        if (fromUi) filterKeyword = fromUi;
 
         homeListingsFetchFailed = false;
         homeListingsLastErrorMsg = "";
