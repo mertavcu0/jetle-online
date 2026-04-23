@@ -181,7 +181,12 @@
       credentials: "include"
     })
       .then(function (res) {
-        return res.ok;
+        return res.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (data) {
+        return data && data.ok === true;
       })
       .catch(function () {
         return false;
