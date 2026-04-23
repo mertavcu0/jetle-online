@@ -1,9 +1,84 @@
 /**
- * Jetle V2 — ilan-detay.html premium sekmeler (Açıklama / Özellikler).
- * initDetailPage sonunda ilan.js içinden bindIlanDetayPremiumTabs() çağrılır.
+ * Jetle V2 — ilan-detay.html: sekmeler + fotoğraf slider okları.
+ * initDetailPage sonunda ilan.js bindIlanDetayDetailTabs / bindIlanDetayGallerySlider çağırır.
  */
 (function () {
   "use strict";
+
+  function bindIlanDetayGallerySlider() {
+    var root = document.getElementById("detailRoot");
+    var thumbs = document.getElementById("ilanThumbs");
+    var prev = document.getElementById("detailSliderPrev");
+    var next = document.getElementById("detailSliderNext");
+    var cEl = document.getElementById("detailSliderCounter");
+    var idxEl = document.getElementById("detailSliderIndex");
+    var totEl = document.getElementById("detailSliderTotal");
+    if (!root || !thumbs || !prev || !next) return;
+
+    function photoButtons() {
+      return Array.prototype.slice.call(thumbs.querySelectorAll('.detail-thumb[data-kind="photo"]'));
+    }
+
+    function activePhotoIndex() {
+      var btns = photoButtons();
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i].classList.contains("is-active")) return i;
+      }
+      return 0;
+    }
+
+    function activeIsVideo() {
+      var active = thumbs.querySelector(".detail-thumb.is-active");
+      return !!(active && active.getAttribute("data-kind") === "video");
+    }
+
+    function setByIndex(i) {
+      var btns = photoButtons();
+      if (!btns.length) return;
+      var clamped = Math.max(0, Math.min(btns.length - 1, i));
+      btns[clamped].click();
+    }
+
+    function refresh() {
+      var btns = photoButtons();
+      var n = btns.length;
+      if (n <= 1 || activeIsVideo()) {
+        prev.disabled = true;
+        next.disabled = true;
+        if (cEl) cEl.hidden = true;
+        return;
+      }
+      if (cEl) cEl.hidden = false;
+      if (totEl) totEl.textContent = String(n);
+      var ai = activePhotoIndex();
+      if (idxEl) idxEl.textContent = String(ai + 1);
+      prev.disabled = ai <= 0;
+      next.disabled = ai >= n - 1;
+    }
+
+    prev.onclick = function () {
+      var ai = activePhotoIndex();
+      if (ai > 0) setByIndex(ai - 1);
+      setTimeout(refresh, 0);
+    };
+    next.onclick = function () {
+      var btns = photoButtons();
+      var ai = activePhotoIndex();
+      if (ai < btns.length - 1) setByIndex(ai + 1);
+      setTimeout(refresh, 0);
+    };
+
+    if (root.getAttribute("data-slider-delegation") !== "1") {
+      root.setAttribute("data-slider-delegation", "1");
+      root.addEventListener("click", function (e) {
+        if (e.target.closest("#ilanThumbs .detail-thumb")) requestAnimationFrame(refresh);
+      });
+    }
+
+    refresh();
+  }
+
+  window.bindIlanDetayGallerySlider = bindIlanDetayGallerySlider;
 
   function setTab(name) {
     var descBtn = document.getElementById("detailTabDescBtn");
@@ -47,7 +122,10 @@
     setTab("desc");
   }
 
-  window.bindIlanDetayPremiumTabs = function () {
+  function bindIlanDetayDetailTabs() {
     bindOnce();
-  };
+  }
+
+  window.bindIlanDetayDetailTabs = bindIlanDetayDetailTabs;
+  window.bindIlanDetayPremiumTabs = bindIlanDetayDetailTabs;
 })();

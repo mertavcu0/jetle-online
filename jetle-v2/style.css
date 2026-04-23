@@ -247,6 +247,52 @@ body.page-home {
   text-decoration: none;
 }
 
+.header-dropdown {
+  position: relative;
+}
+
+.header-dropdown__btn {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #334155;
+  border-radius: 10px;
+  padding: 7px 11px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.header-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.13);
+  padding: 6px;
+  z-index: 120;
+}
+
+.header-dropdown__menu[hidden] {
+  display: none;
+}
+
+.header-dropdown__item {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.header-dropdown__item:hover {
+  background: #f8fafc;
+  text-decoration: none;
+}
+
 /* Üst bar: giriş / kayıt metin, İlan Ver dolu mavi */
 .header-actions .header-link--auth {
   color: #334155;
@@ -1458,6 +1504,15 @@ body.page-home .home-filter-form select:focus {
   font-size: 1.1rem;
   color: var(--text);
   margin-bottom: 8px;
+}
+
+.empty-state--rich.empty-state--error {
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+.empty-state--rich.empty-state--error .empty-state__title {
+  color: #9f1239;
 }
 
 .empty-state__sub {

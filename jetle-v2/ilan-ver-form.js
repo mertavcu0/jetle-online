@@ -5,32 +5,8 @@
   "use strict";
 
   var API_BASE = "https://jetle-online-production.up.railway.app";
-  var TOTAL_STEPS = 5;
+  var TOTAL_STEPS = 3;
   var currentStep = 1;
-
-  var CITIES = [
-    "Adana",
-    "Ankara",
-    "Antalya",
-    "Bursa",
-    "Denizli",
-    "Diyarbakır",
-    "Erzurum",
-    "Eskişehir",
-    "Gaziantep",
-    "İstanbul",
-    "İzmir",
-    "Kayseri",
-    "Kocaeli",
-    "Konya",
-    "Malatya",
-    "Mersin",
-    "Samsun",
-    "Sakarya",
-    "Trabzon",
-    "Van",
-    "Diğer"
-  ];
 
   var SUBCATEGORIES = {
     Emlak: ["Satılık konut", "Kiralık konut", "Arsa", "İşyeri", "Projeler", "Diğer"],
@@ -55,6 +31,70 @@
       { key: "experienceYears", label: "Deneyim (yıl)", type: "number", min: 0, max: 80, placeholder: "5" }
     ]
   };
+
+  function fillIlanVerDistrictOptions(cityName) {
+    var distSel = document.getElementById("ilanDistrict");
+    if (!distSel || distSel.tagName !== "SELECT") return;
+    var keep = distSel.value;
+    while (distSel.firstChild) distSel.removeChild(distSel.firstChild);
+    var p = document.createElement("option");
+    p.value = "";
+    p.textContent = cityName ? "İlçe seçin" : "Önce il seçin";
+    distSel.appendChild(p);
+    var list = (window.JetleTrCities && JetleTrCities.getDistricts(cityName)) || [];
+    list.forEach(function (d) {
+      var o = document.createElement("option");
+      o.value = d;
+      o.textContent = d;
+      distSel.appendChild(o);
+    });
+    distSel.disabled = !cityName;
+    var keepValid = false;
+    if (keep) {
+      for (var i = 0; i < distSel.options.length; i++) {
+        if (distSel.options[i].value === keep) {
+          keepValid = true;
+          break;
+        }
+      }
+    }
+    distSel.value = keepValid ? keep : "";
+    if (window.JetleTrCitiesUI && typeof JetleTrCitiesUI.refresh === "function") {
+      JetleTrCitiesUI.refresh(distSel);
+    }
+  }
+
+  function fillIlanVerCityOptions() {
+    var citySel = document.getElementById("ilanCity");
+    if (!citySel || citySel.tagName !== "SELECT") return;
+    var keepCity = citySel.value;
+    while (citySel.firstChild) citySel.removeChild(citySel.firstChild);
+    var o0 = document.createElement("option");
+    o0.value = "";
+    o0.textContent = "İl seçin";
+    citySel.appendChild(o0);
+    var names = (window.JetleTrCities && JetleTrCities.getProvinceNames()) || [];
+    names.forEach(function (n) {
+      var o = document.createElement("option");
+      o.value = n;
+      o.textContent = n;
+      citySel.appendChild(o);
+    });
+    var cityOk = false;
+    if (keepCity) {
+      for (var j = 0; j < citySel.options.length; j++) {
+        if (citySel.options[j].value === keepCity) {
+          cityOk = true;
+          break;
+        }
+      }
+    }
+    citySel.value = cityOk ? keepCity : "";
+    fillIlanVerDistrictOptions(citySel.value);
+    if (window.JetleTrCitiesUI && typeof JetleTrCitiesUI.refresh === "function") {
+      JetleTrCitiesUI.refresh(citySel);
+    }
+  }
 
   var previewUrls = [];
 
@@ -216,7 +256,7 @@
     if (!opts || !opts.length) {
       var o0 = document.createElement("option");
       o0.value = "";
-      o0.textContent = "Önce ana kategori seçin";
+      o0.textContent = "Önce sol menüden kategori seçin";
       sel.appendChild(o0);
       return;
     }
@@ -240,10 +280,10 @@
     if (!defs || !defs.length) return;
     defs.forEach(function (def) {
       var wrap = document.createElement("div");
-      wrap.className = "ilan-wizard__field";
+      wrap.className = "ilan-wizard__field ilan-wizard__field--stack-pro";
       var id = "ilanSpec_" + def.key;
       var lab = document.createElement("label");
-      lab.className = "ilan-wizard__label";
+      lab.className = "ilan-wizard__label ilan-wizard__label--pro";
       lab.setAttribute("for", id);
       lab.appendChild(document.createTextNode(def.label + " "));
       if (def.optional) {
@@ -261,7 +301,7 @@
       if (def.type === "select") {
         var s = document.createElement("select");
         s.id = id;
-        s.className = "ilan-wizard__input ilan-wizard__select";
+        s.className = "ilan-wizard__input ilan-wizard__select ilan-wizard__input--pro";
         s.setAttribute("data-spec-key", def.key);
         if (!def.optional) s.required = true;
         var ph = document.createElement("option");
@@ -279,7 +319,7 @@
         var inp = document.createElement("input");
         inp.type = "number";
         inp.id = id;
-        inp.className = "ilan-wizard__input";
+        inp.className = "ilan-wizard__input ilan-wizard__input--pro";
         inp.setAttribute("data-spec-key", def.key);
         if (def.min != null) inp.min = String(def.min);
         if (def.max != null) inp.max = String(def.max);
@@ -290,7 +330,7 @@
         var t = document.createElement("input");
         t.type = "text";
         t.id = id;
-        t.className = "ilan-wizard__input";
+        t.className = "ilan-wizard__input ilan-wizard__input--pro";
         t.setAttribute("data-spec-key", def.key);
         if (def.max) t.maxLength = def.max;
         if (def.placeholder) t.placeholder = def.placeholder;
@@ -372,8 +412,8 @@
     var loc = document.getElementById("ilanPvLoc");
     if (loc) {
       var c = city && city.value ? city.value : "";
-      var di = dist && String(dist.value || "").trim();
-      loc.textContent = c || di ? (c + (di ? " · " + di : "")) : "Konum —";
+      var di = dist && dist.value ? String(dist.value).trim() : "";
+      loc.textContent = c || di ? (c + (di ? " / " + di : "")) : "Konum —";
     }
     var sub = document.getElementById("ilanSubcategory");
     var extras = document.getElementById("ilanPvExtras");
@@ -460,13 +500,10 @@
     if (step === 1) {
       var c = getCategory();
       if (!c) {
-        showMsg(document.getElementById("ilanErrStep1"), "Lütfen bir kategori seçin.");
+        showMsg(document.getElementById("ilanErrStep1"), "Lütfen sol menüden bir kategori seçin.");
         return false;
       }
       showMsg(document.getElementById("ilanErrStep1"), "");
-      return true;
-    }
-    if (step === 2) {
       var title = document.getElementById("ilanTitle");
       var desc = document.getElementById("ilanDesc");
       var t = title && String(title.value || "").trim();
@@ -480,37 +517,33 @@
         showMsg(document.getElementById("ilanErrDesc"), "Açıklama en az 10 karakter olmalıdır.");
         ok = false;
       }
-      return ok;
-    }
-    if (step === 3) {
       var sub = document.getElementById("ilanSubcategory");
       var price = document.getElementById("ilanPrice");
-      var ok2 = true;
       if (!sub || !String(sub.value || "").trim()) {
         showMsg(document.getElementById("ilanErrSubcat"), "Alt kategori seçin.");
-        ok2 = false;
+        ok = false;
       }
       var pRaw = price && String(price.value || "").trim();
-      var p = pRaw === "" ? NaN : Number(price.value);
+      var p = pRaw === "" ? NaN : Number(price && price.value);
       if (!Number.isFinite(p) || p < 0) {
         showMsg(document.getElementById("ilanErrPrice"), "Geçerli bir fiyat girin.");
-        ok2 = false;
+        ok = false;
       }
-      if (!validateDynamicFields()) ok2 = false;
+      if (!validateDynamicFields()) ok = false;
       var city = document.getElementById("ilanCity");
       var dist = document.getElementById("ilanDistrict");
       if (!city || !String(city.value || "").trim()) {
-        showMsg(document.getElementById("ilanErrCity"), "Şehir seçin.");
-        ok2 = false;
+        showMsg(document.getElementById("ilanErrCity"), "İl seçin.");
+        ok = false;
       }
       var di = dist && String(dist.value || "").trim();
-      if (!di || di.length < 2) {
-        showMsg(document.getElementById("ilanErrDistrict"), "İlçe veya semt en az 2 karakter olmalıdır.");
-        ok2 = false;
+      if (!di) {
+        showMsg(document.getElementById("ilanErrDistrict"), "İlçe seçin.");
+        ok = false;
       }
-      return ok2;
+      return ok;
     }
-    if (step === 4) {
+    if (step === 2) {
       return true;
     }
     return true;
@@ -544,7 +577,9 @@
     }
     if (next) {
       next.hidden = step >= TOTAL_STEPS;
-      next.textContent = step === TOTAL_STEPS - 1 ? "Önizlemeye geç" : "İleri";
+      if (step === 1) next.textContent = "Fotoğraflar";
+      else if (step === 2) next.textContent = "Yayınla";
+      else next.textContent = "İleri";
     }
   }
 
@@ -573,7 +608,7 @@
     row("Fiyat", Number.isFinite(pv) ? pv.toLocaleString("tr-TR") + " ₺" : "");
     var city = document.getElementById("ilanCity");
     var dist = document.getElementById("ilanDistrict");
-    row("Konum", (city && city.value ? city.value : "") + (dist && dist.value ? " · " + dist.value : ""));
+    row("Konum", (city && city.value ? city.value : "") + (dist && dist.value ? " / " + dist.value : ""));
     var ph = document.getElementById("ilanPhone");
     row("Telefon", ph && ph.value ? ph.value : "—");
     var specs = collectSpecs();
@@ -591,11 +626,11 @@
     setStepPanels(step);
     updateProgressMarkers(step);
     syncNavButtons(step);
-    if (step === 3) {
+    if (step === 1) {
       fillSubcategoryOptions(getCategory());
       renderDynamicFields(getCategory());
     }
-    if (step === 5) buildPreview();
+    if (step === 3) buildPreview();
     syncLivePreview();
   }
 
@@ -675,12 +710,16 @@
     var successBox = document.getElementById("ilanWizardSuccess");
     var formShell = document.getElementById("ilanWizardFormShell");
 
-    if (citySel && citySel.options.length <= 1) {
-      CITIES.forEach(function (c) {
-        var o = document.createElement("option");
-        o.value = c;
-        o.textContent = c;
-        citySel.appendChild(o);
+    if (citySel) {
+      fillIlanVerCityOptions();
+      var distSel = document.getElementById("ilanDistrict");
+      if (window.JetleTrCitiesUI && typeof JetleTrCitiesUI.enhanceSelect === "function") {
+        JetleTrCitiesUI.enhanceSelect(citySel, { wrapClass: "ilan-wizard-tr-combo" });
+        if (distSel) JetleTrCitiesUI.enhanceSelect(distSel, { wrapClass: "ilan-wizard-tr-combo" });
+      }
+      citySel.addEventListener("change", function () {
+        fillIlanVerDistrictOptions(citySel.value);
+        syncLivePreview();
       });
     }
 
@@ -705,7 +744,7 @@
         catCards.forEach(function (b) {
           b.classList.toggle("is-selected", b === btn);
         });
-        if (prev !== val && currentStep >= 3) {
+        if (prev !== val && currentStep >= 1) {
           var sub = document.getElementById("ilanSubcategory");
           if (sub) sub.value = "";
         }
@@ -856,8 +895,9 @@
         return;
       }
       showFormError("");
-      if (!validateStep(2) || !validateStep(3)) {
-        showFormError("Lütfen tüm zorunlu adımları kontrol edin.");
+      if (!validateStep(1)) {
+        showFormError("Lütfen tüm zorunlu alanları kontrol edin.");
+        goToStep(1);
         return;
       }
       if (!window.JetleAPI || !JetleAPI.backendEnabled || !JetleAPI.backendEnabled()) {
@@ -928,9 +968,19 @@
                 "İlan kaydedilemedi (HTTP " + res.status + ").";
               throw new Error(msg);
             }
+            var createdId = "";
+            if (res && res.json) {
+              createdId =
+                (res.json.data && (res.json.data.id || res.json.data.listingId)) ||
+                (res.json.listing && res.json.listing.id) ||
+                res.json.id ||
+                "";
+            }
             if (formShell) formShell.hidden = true;
             var asideEl = document.querySelector(".ilan-lp-aside");
             if (asideEl) asideEl.hidden = true;
+            var railEl = document.querySelector(".ilan-wizard__rail");
+            if (railEl) railEl.hidden = true;
             if (successBox) successBox.hidden = false;
             form.reset();
             if (catHidden) catHidden.value = "";
@@ -944,6 +994,11 @@
             currentStep = 1;
             updateProgressMarkers(1);
             syncLivePreview();
+            if (createdId) {
+              window.setTimeout(function () {
+                window.location.href = "ilan-detay.html?id=" + encodeURIComponent(createdId);
+              }, 700);
+            }
           })
           .catch(function (err) {
             var m = err && err.message ? err.message : "Bilinmeyen hata.";

@@ -26,8 +26,8 @@
     var approved = list.filter(function (L) {
       return L.status === "approved";
     }).length;
-    var prem = list.filter(function (L) {
-      return L.featured && L.status === "approved";
+    var draft = list.filter(function (L) {
+      return L.status === "draft";
     }).length;
     var mount = $("adminStats");
     if (!mount) return;
@@ -50,7 +50,7 @@
     card("Aktif kullanıcı", users.filter(function (u) {
       return u.active !== false;
     }).length);
-    card("Öne çıkan (yayında)", prem);
+    card("Taslak ilan", draft);
   }
 
   function renderRecentListings() {

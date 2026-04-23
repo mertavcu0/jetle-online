@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://jetle-online-production.up.railway.app" crossorigin />
   <title>JETLE.online — İlan Pazarı</title>
   <meta name="description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
+  <meta name="robots" content="index, follow" />
   <meta property="og:title" content="JETLE.online — İlan Pazarı" />
   <meta property="og:description" content="JETLE'de vasıta, emlak, alışveriş ve hizmet ilanlarını güvenle keşfedin." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
@@ -25,8 +26,9 @@
     body.page-home .site-header{background:#fff;border-bottom:1px solid var(--border,#e2e4e9)}
     body.page-home .main-shell{padding:0 0 40px}
     .main-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+    .main-grid--home-pro{grid-template-columns:minmax(252px,288px) minmax(0,1fr);gap:28px;align-items:start}
     .content-main{min-width:0}
-    @media (max-width:900px){.main-grid{grid-template-columns:1fr}}
+    @media (max-width:900px){.main-grid,.main-grid--home-pro{grid-template-columns:1fr}}
     #splash-screen{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#111,#1a1a1a)}
     @media (max-width:767px){body.page-home #splash-screen{display:flex}}
     .splash-logo{font-size:32px;font-weight:700;color:#fff;letter-spacing:2px}
@@ -34,10 +36,10 @@
     .splash-sub{font-size:12px;color:#aaa;margin-top:6px;opacity:.8}
   </style>
   <style>
-    .home-doping-strip{margin:0 0 18px}
-    .home-doping-strip__title{font-size:1.12rem;font-weight:800;margin:0 0 12px;color:#0f172a;letter-spacing:-0.03em}
-    .home-doping-strip__row{margin:0;padding:0}
-    .home-doping-strip__empty{margin:0;padding:8px 0 4px;color:#5c6370;font-size:0.9rem}
+    .home-featured-strip{margin:0 0 18px}
+    .home-featured-strip__title{font-size:1.12rem;font-weight:800;margin:0 0 12px;color:#0f172a;letter-spacing:-0.03em}
+    .home-featured-strip__row{margin:0;padding:0}
+    .home-featured-strip__empty{margin:0;padding:8px 0 4px;color:#5c6370;font-size:0.9rem}
     .home-featured-premium{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;padding:4px 0 8px;max-width:100%}
     @media (min-width:1100px){.home-featured-premium{grid-template-columns:repeat(3,1fr)}}
     @media (min-width:1400px){.home-featured-premium{grid-template-columns:repeat(6,1fr)}}
@@ -156,11 +158,13 @@
     @media (min-width:768px){.listing-grid--home{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}}
     @media (min-width:1100px){.listing-grid--home{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
     @media (prefers-reduced-motion:reduce){
-      .featured-card.featured-card--premium,.listing-card--api-feed{transition:none!important}
+      .featured-card,.listing-card--api-feed{transition:none!important}
     }
   </style>
   <link rel="preload" href="style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="style.min.css" /></noscript>
+  <link rel="stylesheet" href="home-platform.css" />
+  <link rel="stylesheet" href="tr-cities.css" />
 </head>
 <body data-page="home" class="page-home font-inter">
   <script>
@@ -189,78 +193,114 @@
     </div>
   </header>
 
+  <div class="jetle-trust-strip" role="region" aria-label="Platform güvencesi">
+    <div class="container jetle-trust-strip__inner">
+      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Moderasyonlu ilan akışı</span>
+      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Kayıtlı mesajlaşma</span>
+      <span class="jetle-trust-strip__item"><span class="jetle-trust-strip__ic" aria-hidden="true">✓</span>Şeffaf fiyat ve konum filtreleri</span>
+    </div>
+  </div>
+
   <div id="jetleAdHero" class="jetle-ad-hero" data-jetle-ad="hero" role="complementary" aria-label="Kampanya alanı" hidden></div>
 
   <main class="main-shell">
-    <div class="home-hero-band" aria-label="Ana arama">
-      <div class="home-hero-band__inner">
-        <section class="home-hero">
-          <div class="home-hero__search" role="search">
-            <label class="sr-only" for="homeListingKeyword">Ne arıyorsun?</label>
-            <input type="search" id="homeListingKeyword" class="home-hero__kw" placeholder="Ne arıyorsun?" autocomplete="off" />
-            <label class="sr-only" for="homeHeroCategory">Kategori</label>
-            <select id="homeHeroCategory" class="home-hero__cat" aria-label="Kategori">
-              <option value="">Tümü</option>
-              <option value="vasita">Vasıta</option>
-              <option value="emlak">Emlak</option>
-              <option value="elektronik">Elektronik</option>
-              <option value="alisveris">Alışveriş</option>
-              <option value="hizmet">Hizmet</option>
-            </select>
-            <label class="sr-only" for="homeHeroCity">Şehir</label>
-            <select id="homeHeroCity" class="home-hero__city" aria-label="Şehir">
-              <option value="">Tüm şehirler</option>
-            </select>
-            <button type="button" class="home-hero__submit" id="homeListingSearchBtn">Ara</button>
+    <div class="home-hero-band home-hero-band--pro" aria-label="Ana arama">
+      <div class="home-hero-band__inner home-hero-band__inner--pro">
+        <section class="home-hero home-hero--pro">
+          <p class="home-hero__eyebrow">JETLE.online — Türkiye ilan pazarı</p>
+          <h1 class="home-hero__headline">Aradığınız ilan bir arama ötesinde</h1>
+          <div class="home-hero__search home-hero__search--pro" role="search">
+            <div class="home-hero__search-primary">
+              <label class="sr-only" for="homeListingKeyword">Ne arıyorsun?</label>
+              <input type="search" id="homeListingKeyword" class="home-hero__kw home-hero__kw--pro" placeholder="Kelime, marka, model veya mahalle…" autocomplete="off" />
+            </div>
+            <div class="home-hero__search-filters">
+              <label class="sr-only" for="homeHeroCategory">Kategori</label>
+              <select id="homeHeroCategory" class="home-hero__cat home-hero__cat--pro" aria-label="Kategori">
+                <option value="">Tüm kategoriler</option>
+                <option value="vasita">Vasıta</option>
+                <option value="emlak">Emlak</option>
+                <option value="elektronik">Elektronik</option>
+                <option value="alisveris">Alışveriş</option>
+                <option value="hizmet">Hizmet</option>
+              </select>
+              <label class="sr-only" for="homeHeroCity">İl</label>
+              <select id="homeHeroCity" class="home-hero__city home-hero__city--pro" aria-label="İl">
+                <option value="">Tüm iller</option>
+              </select>
+              <button type="button" class="home-hero__submit home-hero__submit--pro" id="homeListingSearchBtn">İlan ara</button>
+            </div>
           </div>
-          <p class="home-hero__subline">Güvenli alışveriş • Kolay iletişim • Hızlı ilan</p>
-          <div class="home-hero__actions">
-            <a href="ilan-ver.html" class="home-hero__cta">+ İlan Ver</a>
+          <div class="home-hero__meta-row">
+            <p class="home-hero__subline home-hero__subline--pro">Moderasyonlu yayın · Kayıtlı iletişim · Şeffaf filtreler</p>
+            <a href="ilan-ver.html" class="home-hero__cta home-hero__cta--pro">Ücretsiz ilan ver</a>
           </div>
-          <p class="home-hero__daily" id="homeHeroDailyStats" aria-live="polite"></p>
+        </section>
+        <section class="home-stats-bar home-stats-bar--pro" aria-label="Platform rakamları">
+          <article class="home-stats-bar__card home-stats-bar__card--today">
+            <span class="home-stats-bar__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+            </span>
+            <p class="home-stats-bar__line" id="homeStatTodayLine">Bugün … ilan eklendi</p>
+          </article>
+          <article class="home-stats-bar__card home-stats-bar__card--total">
+            <span class="home-stats-bar__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+            <p class="home-stats-bar__line" id="homeStatTotalLine">Toplam … ilan</p>
+          </article>
         </section>
       </div>
     </div>
 
-    <div class="home-cat-strip">
+    <div class="home-cat-strip home-cat-strip--pro">
       <div class="home-shell-wide">
-        <nav class="home-cat-blocks home-cat-blocks--hero-top" aria-label="Kategorilere göz at">
+        <header class="home-cat-strip__head">
+          <h2 class="home-cat-strip__title">Kategoriler</h2>
+          <p class="home-cat-strip__lead">İlgilendiğiniz gruba geçin; ilan listesi anında güncellenir.</p>
+        </header>
+        <nav class="home-cat-blocks home-cat-blocks--hero-top home-cat-blocks--pro" aria-label="Kategorilere göz at">
           <button type="button" class="home-cat-block" data-home-cat="vasita" id="homeBlockVasita">
             <span class="home-cat-block__ic" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14v-5l-3-4H8L5 12v5zM7 17v2M17 17v2"/></svg>
             </span>
-            Vasıta
+            <span class="home-cat-block__label">Vasıta</span>
+            <span class="home-cat-block__count" id="homeCatCountVasita">(0 ilan)</span>
           </button>
           <button type="button" class="home-cat-block" data-home-cat="emlak" id="homeBlockEmlak">
             <span class="home-cat-block__ic" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
             </span>
-            Emlak
+            <span class="home-cat-block__label">Emlak</span>
+            <span class="home-cat-block__count" id="homeCatCountEmlak">(0 ilan)</span>
           </button>
           <button type="button" class="home-cat-block" data-home-cat="elektronik" id="homeBlockElektronik">
             <span class="home-cat-block__ic" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
             </span>
-            Elektronik
+            <span class="home-cat-block__label">Elektronik</span>
+            <span class="home-cat-block__count" id="homeCatCountElektronik">(0 ilan)</span>
           </button>
           <button type="button" class="home-cat-block" data-home-cat="alisveris" id="homeBlockShop">
             <span class="home-cat-block__ic" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M3 4h2l2 12h10l2-8H7"/></svg>
             </span>
-            Alışveriş
+            <span class="home-cat-block__label">Alışveriş</span>
+            <span class="home-cat-block__count" id="homeCatCountAlisveris">(0 ilan)</span>
           </button>
           <button type="button" class="home-cat-block" data-home-cat="hizmet" id="homeBlockSvc">
             <span class="home-cat-block__ic" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             </span>
-            Hizmet
+            <span class="home-cat-block__label">Hizmet</span>
+            <span class="home-cat-block__count" id="homeCatCountHizmet">(0 ilan)</span>
           </button>
         </nav>
       </div>
     </div>
 
-    <div class="container home-shell-wide main-grid">
-      <aside class="sidebar" aria-label="Kategoriler ve filtreler">
+    <div class="container home-shell-wide main-grid main-grid--home-pro">
+      <aside class="sidebar sidebar--home-pro" aria-label="Kategoriler ve filtreler">
         <div class="sidebar-block sidebar-block--cat-tree">
           <h2 class="sidebar-title">Kategoriler</h2>
           <nav class="category-nav category-tree" id="categoryNav" aria-label="Ürün kategorileri"></nav>
@@ -268,7 +308,7 @@
         <div class="sidebar-block sidebar-block--filters home-filter-shell">
           <div class="home-filter-shell__intro">
             <h2 class="sidebar-title home-filter-shell__title">Filtreler</h2>
-            <p class="home-filter-shell__lead text-small text-muted">İlanları konum, fiyat ve kriterlere göre daraltın.</p>
+            <p class="home-filter-shell__lead text-small text-muted">Kategori, fiyat, il / ilçe ve detaylı kriterlerle sonuçları daraltın.</p>
           </div>
           <div id="homeFilterActiveTags" class="home-filter-active-tags" aria-label="Seçili filtreler" hidden></div>
           <button type="button" class="home-filter-open-btn btn btn-secondary btn-sm" id="homeFilterOpenBtn" aria-expanded="false" aria-controls="homeFilterPanel">
@@ -310,23 +350,45 @@
                 <input type="number" id="maxPrice" name="maxPrice" min="0" step="1" placeholder="Üst sınır" inputmode="numeric" />
               </div>
             </div>
+            <div class="home-filter-price-presets" role="group" aria-label="Hızlı fiyat aralığı">
+              <span class="home-filter-price-presets__label">Hızlı seçim</span>
+              <div class="home-filter-price-presets__row">
+                <button type="button" class="home-filter-chip-btn" data-home-price-preset data-min="" data-max="250000">≤ 250.000 ₺</button>
+                <button type="button" class="home-filter-chip-btn" data-home-price-preset data-min="250000" data-max="500000">250–500 bin</button>
+                <button type="button" class="home-filter-chip-btn" data-home-price-preset data-min="500000" data-max="1000000">500 bin – 1M</button>
+                <button type="button" class="home-filter-chip-btn" data-home-price-preset data-min="1000000" data-max="">1M+</button>
+              </div>
+            </div>
               </div>
             </details>
             <details class="home-filter-accordion" open>
               <summary class="home-filter-accordion__summary">Konum</summary>
               <div class="home-filter-accordion__content">
             <div class="field">
-              <label for="citySelect">Şehir</label>
+              <label for="citySelect">İl</label>
               <select id="citySelect" name="city">
-                <option value="">Tüm şehirler</option>
+                <option value="">Tüm iller</option>
               </select>
             </div>
             <div class="field">
               <label for="districtSelect">İlçe</label>
               <select id="districtSelect" name="district" disabled>
-                <option value="">Önce şehir seçin</option>
+                <option value="">Önce il seçin</option>
               </select>
+              <p class="field-hint--bind">Önce il seçin; ilçe listesi buna göre dolar.</p>
             </div>
+              </div>
+            </details>
+            <details class="home-filter-accordion" open>
+              <summary class="home-filter-accordion__summary">Alt kategori</summary>
+              <div class="home-filter-accordion__content">
+                <div class="field">
+                  <label for="filterMarketSubcategory">Liste alt kırılımı</label>
+                  <select id="filterMarketSubcategory" name="marketSubcategory">
+                    <option value="">Tüm alt kategoriler</option>
+                  </select>
+                  <p class="field-hint--bind">Seçenekler mevcut ilanlara ve sol menüdeki kategori kapsamına göre dolar.</p>
+                </div>
               </div>
             </details>
             <details class="home-filter-accordion" open>
@@ -545,55 +607,75 @@
         </div>
       </aside>
 
-      <div class="content-main content-main--home-simple">
-        <div class="home-filter-chips" id="homeMarketToolbar" role="group" aria-label="Hızlı kategori filtresi">
-          <button type="button" class="home-cat-chip is-active" data-home-cat="" id="homeCatAll">Tümü</button>
-          <button type="button" class="home-cat-chip" data-home-cat="vasita" id="homeCatVasita">Vasıta</button>
-          <button type="button" class="home-cat-chip" data-home-cat="emlak" id="homeCatEmlak">Emlak</button>
-          <button type="button" class="home-cat-chip" data-home-cat="elektronik" id="homeCatElektronik">Elektronik</button>
-          <button type="button" class="home-cat-chip" data-home-cat="alisveris" id="homeCatShop">Alışveriş</button>
-          <button type="button" class="home-cat-chip" data-home-cat="hizmet" id="homeCatSvc">Hizmet</button>
+      <div class="content-main content-main--home-pro">
+        <div class="home-market-head">
+          <div class="home-market-head__titles">
+            <h2 class="home-market-head__title" id="allHeading"><span id="allHeadingLabel">İlanlar</span></h2>
+            <p class="home-market-head__sub" id="allHeadingSub">Filtrelerinize uyan sonuçlar</p>
+          </div>
+          <div class="home-market-head__stats">
+            <p class="home-market-head__count" id="resultsInfo" aria-live="polite">Yükleniyor…</p>
+          </div>
         </div>
 
-        <section class="home-doping-strip" aria-labelledby="homeFeaturedHeading" id="homeDopingStrip">
-          <h2 id="homeFeaturedHeading" class="home-doping-strip__title">Öne çıkan ilanlar</h2>
-          <div id="homeFeaturedRow" class="home-featured-premium home-doping-strip__row" role="region" aria-label="Öne çıkan ilanlar" hidden></div>
-          <p id="homeFeaturedEmpty" class="home-doping-strip__empty" hidden>Öne çıkan ilan bulunmuyor</p>
+        <section class="listing-section listing-section--home-main home-live-stream home-live-stream--pro" aria-labelledby="homeLiveHeading">
+          <div class="section-head section-head--compact home-listings-head home-listings-head--inline">
+            <h2 id="homeLiveHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark home-listings-head__mark--pulse" aria-hidden="true"></span>Canlı ilan akışı</h2>
+            <p class="home-listings-head__sub">Yeni eklenenlerden anlık örnekler</p>
+          </div>
+          <div class="listing-grid listing-grid--home listing-grid--live" id="homeLiveStreamGrid" aria-live="polite"></div>
         </section>
 
-        <div class="results-bar" id="resultsBar">
-          <p class="results-count" id="resultsInfo">Yükleniyor…</p>
-        </div>
-
-        <div id="homeListingsLoading" class="home-listings-loading" aria-live="polite" aria-busy="true">
+        <div id="homeListingsLoading" class="home-listings-loading home-listings-loading--pro" aria-live="polite" aria-busy="true">
           <div class="home-listings-loading__spinner" aria-hidden="true"></div>
           <p class="home-listings-loading__text" id="homeListingsLoadingText">İlanlar yükleniyor…</p>
         </div>
 
-        <section class="listing-section listing-section--home-main" aria-labelledby="allHeading">
-          <div class="section-head section-head--compact home-listings-head">
-            <h2 id="allHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span><span id="allHeadingLabel">Yeni ilanlar</span></h2>
-            <p class="home-listings-head__sub">Son eklenen ilanlar</p>
-          </div>
-          <div class="empty-state empty-state--rich" id="emptyResults" hidden>
+        <section class="listing-section listing-section--home-main home-listings-primary" aria-labelledby="allHeading">
+          <div class="empty-state empty-state--rich empty-state--home-pro" id="emptyResults" hidden>
             <div class="empty-state__icon" aria-hidden="true">
               <svg width="56" height="56" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="22" cy="22" r="9" stroke="currentColor" stroke-width="2"/>
                 <path d="M32 32l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
-            <p class="empty-state__title" id="emptyResultsTitle">İlan bulunamadı</p>
-            <p class="empty-state__sub" id="emptyResultsSub">Seçtiğiniz kriterlere uygun sonuç yok. Filtreleri genişletmeyi veya ana sayfadan yeniden aramayı deneyin.</p>
+            <p class="empty-state__title" id="emptyResultsTitle">Henüz ilan yok</p>
+            <p class="empty-state__sub" id="emptyResultsSub">Filtreleri gevşetmeyi veya farklı bir kategori denemeyi düşünebilirsiniz.</p>
             <div class="empty-state__actions">
               <button type="button" class="btn btn-primary btn-sm" id="emptyResetBtn">Filtreleri temizle</button>
               <button type="button" class="btn btn-secondary btn-sm" id="homeListingsRetryBtn" hidden>Tekrar dene</button>
               <a href="index.html" class="btn btn-secondary btn-sm">Tüm ilanlara dön</a>
+            </div>
+            <div class="empty-state__discover" id="emptyResultsDiscover" hidden>
+              <p class="empty-state__discover-title">Hızlı keşif</p>
+              <div class="empty-state__chips">
+                <a class="empty-state__chip" href="index.html?category=vasita">Vasıta</a>
+                <a class="empty-state__chip" href="index.html?category=emlak">Emlak</a>
+                <a class="empty-state__chip" href="index.html?category=elektronik">Elektronik</a>
+                <a class="empty-state__chip" href="ilan-ver.html">+ İlan ver</a>
+              </div>
             </div>
           </div>
           <div class="listing-grid listing-grid--home" id="listingsGrid"></div>
           <div id="listingsPager" class="listings-pager" hidden>
             <button type="button" class="btn btn-secondary btn-sm" id="listingsLoadMore">Daha fazla göster</button>
           </div>
+        </section>
+
+        <section class="listing-section listing-section--home-main home-extra-feed home-extra-feed--pro" aria-labelledby="homeNewestHeading">
+          <div class="section-head section-head--compact home-listings-head">
+            <h2 id="homeNewestHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span>Yeni ilanlar</h2>
+            <p class="home-listings-head__sub">Son yayınlananlar arasından seçtiklerimiz</p>
+          </div>
+          <div class="listing-grid listing-grid--home" id="homeNewestGrid"></div>
+        </section>
+
+        <section class="listing-section listing-section--home-main home-extra-feed home-extra-feed--pro" aria-labelledby="homePopularHeading">
+          <div class="section-head section-head--compact home-listings-head">
+            <h2 id="homePopularHeading" class="section-title home-listings-head__title"><span class="home-listings-head__mark" aria-hidden="true"></span>En çok görüntülenenler</h2>
+            <p class="home-listings-head__sub">İlgi odağındaki ilanlar</p>
+          </div>
+          <div class="listing-grid listing-grid--home" id="homePopularGrid"></div>
         </section>
       </div>
     </div>
@@ -747,15 +829,19 @@
           <p id="footer-col2" class="footer-pro__heading">Hizmetler</p>
           <ul class="footer-pro__list">
             <li><a href="hizmetlerimiz.html">Hizmetlerimiz</a></li>
-            <li><a href="hizmetlerimiz.html#doping">Doping</a></li>
+            <li><a href="hizmetlerimiz.html#ilan">İlan yayını</a></li>
             <li><a href="hizmetlerimiz.html#mobil">Mobil</a></li>
-            <li><a href="hizmetlerimiz.html#reklam">Reklam Alanı</a></li>
+            <li><a href="hizmetlerimiz.html#iletisim">İletişim</a></li>
           </ul>
         </nav>
         <nav class="footer-pro__col" aria-labelledby="footer-col3">
           <p id="footer-col3" class="footer-pro__heading">Yasal</p>
           <ul class="footer-pro__list">
-            <li><a href="gizlilik.html">Gizlilik ve kullanım</a></li>
+            <li><a href="kvkk.html">KVKK</a></li>
+            <li><a href="gizlilik.html">Gizlilik</a></li>
+            <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
+            <li><a href="mesafeli-satis.html">Mesafeli Satış</a></li>
+            <li><a href="iletisim.html">İletişim</a></li>
             <li><a href="guvenli-alisveris.html">Güvenli alışveriş ipuçları</a></li>
             <li><a href="sozlesmeler.html">Sözleşmeler</a></li>
             <li><a href="hesap-sozlesmesi.html">Hesap sözleşmesi</a></li>
@@ -804,22 +890,13 @@
     </div>
   </div>
 
-  <script>
-    (function () {
-      function fillHeroDailyStats() {
-        var el = document.getElementById("homeHeroDailyStats");
-        if (!el) return;
-        var lo = 180;
-        var hi = 420;
-        var n = lo + Math.floor(Math.random() * (hi - lo + 1));
-        el.textContent = "Bugün " + n + " yeni ilan eklendi";
-      }
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fillHeroDailyStats);
-      else fillHeroDailyStats();
-    })();
-  </script>
   <script src="api.js?v=20260217" defer></script>
+  <script src="jetle-api.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="tr-cities.js" defer></script>
+  <script src="tr-cities-ui.js" defer></script>
+  <script src="ilan.js" defer></script>
+  <script src="common.js" defer></script>
   <script src="home-api-listings.js" defer></script>
   <script>
     (function () {

@@ -4,12 +4,24 @@
 (function () {
   "use strict";
 
+  try {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  } catch (eSr) {}
+  window.addEventListener("pageshow", function (ev) {
+    try {
+      if (ev && ev.persisted) window.scrollTo(0, 0);
+    } catch (ePs) {}
+  });
+
   function ready(fn) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
     else fn();
   }
 
   ready(function () {
+    try {
+      window.scrollTo(0, 0);
+    } catch (eTop) {}
     var authChain =
       window.JetleAuth && typeof JetleAuth.bootstrap === "function"
         ? JetleAuth.bootstrap()
@@ -22,6 +34,13 @@
         var SESSION_KEY = "jetle_v2_session";
 
         function readRoleFromStoredSession() {
+          try {
+            var userRaw = localStorage.getItem("user");
+            if (userRaw) {
+              var ju = JSON.parse(userRaw);
+              if (ju && ju.role != null) return String(ju.role).toLowerCase();
+            }
+          } catch (eU) {}
           try {
             var raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
             if (raw) {
@@ -199,75 +218,11 @@
     }
     /**
      * @param {HTMLElement} mount
-     * @param {{ userId: string|null, readOnly?: boolean, onPurchased?: function(): void }} opts
      */
     function renderPricingCatalogInto(mount, opts) {
-      if (!mount || !window.JetleAPI || typeof JetleAPI.getPricingCatalog !== "function") return;
-      var uid = opts && opts.userId ? opts.userId : null;
-      var readOnly = !!(opts && opts.readOnly);
-      var onPurchased = opts && typeof opts.onPurchased === "function" ? opts.onPurchased : null;
-      mount.innerHTML = "";
-      var cat = JetleAPI.getPricingCatalog();
-      function sectionTitle(text, anchorId) {
-        var h = document.createElement("h2");
-        h.className = "pricing-section-title";
-        if (anchorId) h.id = anchorId;
-        h.textContent = text;
-        mount.appendChild(h);
-      }
-      function card(row, subtitle) {
-        var popular = !!row.popular;
-        var article = document.createElement("article");
-        article.className = "pricing-card panel" + (popular ? " pricing-card--popular" : "");
-        var ul = (row.perks || []).map(function (t) { return "<li>" + escHtml(t) + "</li>"; }).join("");
-        var priceLine = formatTry(row.price);
-        if (row.period) priceLine += " <span class=\"pricing-card__period\">/ " + escHtml(row.period) + "</span>";
-        if (row.unit && !row.period) priceLine += " <span class=\"pricing-card__period\">· " + escHtml(row.unit) + "</span>";
-        article.innerHTML =
-          (popular ? "<span class=\"pricing-card__badge\">En popüler</span>" : "") +
-          "<h3 class=\"pricing-card__title\">" + escHtml(row.name) + "</h3>" +
-          (subtitle ? "<p class=\"pricing-card__sub\">" + escHtml(subtitle) + "</p>" : "") +
-          "<p class=\"pricing-card__price\">" + priceLine + "</p>" +
-          "<ul class=\"pricing-card__perks\">" + ul + "</ul>";
-        var b = document.createElement("button");
-        b.type = "button";
-        b.className = "btn btn-primary btn-sm pricing-card__cta";
-        if (readOnly) {
-          b.textContent = "Liste fiyatı";
-          b.disabled = true;
-          b.title = "Satın alma kullanıcı panelinden yapılır";
-        } else if (!uid) {
-          b.textContent = "Seç";
-          b.addEventListener("click", function () {
-            window.location.href = "login.html?next=" + encodeURIComponent("dashboard.html#packages");
-          });
-        } else {
-          b.textContent = "Seç";
-          b.addEventListener("click", function () {
-            var res = JetleAPI.purchasePricingProduct(uid, row.id);
-            window.alert(res.ok ? res.message : res.message);
-            if (onPurchased) onPurchased();
-          });
-        }
-        article.appendChild(b);
-        return article;
-      }
-      function grid(rows, sub) {
-        var g = document.createElement("div");
-        g.className = "pricing-card-grid";
-        rows.forEach(function (row) {
-          g.appendChild(card(row, sub));
-        });
-        mount.appendChild(g);
-      }
-      sectionTitle("Doping ürünleri", "pack-doping");
-      grid(cat.dopings, "Yayın güçlendirme");
-      sectionTitle("Mağaza / kurumsal paketler", "pack-magaza");
-      grid(cat.stores, "Aylık abonelik");
-      sectionTitle("Ek ilan hakları", "pack-ekilan");
-      grid(cat.extras, "Kota aşımı");
-      sectionTitle("Doping kredisi", "pack-kredi");
-      grid(cat.credits, "Kredi kullanımı panelde tanımlıdır");
+      if (!mount) return;
+      mount.innerHTML =
+        '<p class="text-muted text-small" style="padding:12px 0;margin:0">Ücretli paket, vitrin, doping ve ödeme arayüzü kaldırılmıştır.</p>';
     }
 
     if (page === "home" && window.JetleMarket) {
@@ -307,6 +262,9 @@
               } catch (err) {}
             }, 450);
             JetleMarket.onFavClick(id);
+            try {
+              window.dispatchEvent(new CustomEvent("jetle-favorites-changed"));
+            } catch (eFavEv) {}
           }
           return;
         }
@@ -400,6 +358,23 @@
         });
       }
 
+      var filterFormEl = document.getElementById("filterForm");
+      if (filterFormEl) {
+        filterFormEl.addEventListener("click", function (e) {
+          var preset = e.target && e.target.closest ? e.target.closest("[data-home-price-preset]") : null;
+          if (!preset || !window.JetleMarket) return;
+          e.preventDefault();
+          var minEl = document.getElementById("minPrice");
+          var maxEl = document.getElementById("maxPrice");
+          var mn = preset.getAttribute("data-min");
+          var mx = preset.getAttribute("data-max");
+          if (minEl) minEl.value = mn != null && mn !== "" ? mn : "";
+          if (maxEl) maxEl.value = mx != null && mx !== "" ? mx : "";
+          JetleMarket.applyFilters();
+          if (window.matchMedia && window.matchMedia("(max-width: 900px)").matches) setHomeFilterDrawer(false);
+        });
+      }
+
       var resetBtn = document.getElementById("filterReset");
       if (resetBtn) {
         resetBtn.addEventListener("click", function () {
@@ -448,6 +423,9 @@
           if (id) {
             JetleMarket.onFavClick(id);
             JetleMarket.initDetailPage();
+            try {
+              window.dispatchEvent(new CustomEvent("jetle-favorites-changed"));
+            } catch (eFavEv2) {}
           }
         }
       });
@@ -486,24 +464,13 @@
         var raw = (location.hash || "").replace(/^#/, "");
         var parts = raw.split("--");
         var tabKey = (parts[0] || "").split("&")[0];
-        var map = { listings: "listings", favorites: "favorites", messages: "messages", packages: "packages", profile: "profile" };
+        var map = { listings: "listings", favorites: "favorites", messages: "messages", profile: "profile" };
+        if (tabKey === "packages") {
+          tabKey = "listings";
+          setHashTab("listings");
+        }
         var target = map[tabKey] ? tabKey : "listings";
         showTab(map[target] || "listings");
-        if (tabKey === "packages" && parts[1]) {
-          setTimeout(function () {
-            var el = document.getElementById("pack-" + parts[1]);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 80);
-        }
-      }
-      function sanitizePkg(pkg) {
-        var s = String(pkg == null ? "basic" : pkg).replace(/[^\w\-]/g, "");
-        return s.slice(0, 48) || "basic";
-      }
-      function storePlanLabel(plan) {
-        if (!plan) return "—";
-        var m = { baslangic: "Başlangıç", standart: "Standart", pro: "Pro", kurumsal_plus: "Kurumsal Plus" };
-        return m[plan] || plan;
       }
       function listingDateStr(L) {
         var iso = L.updatedAt || L.createdAt;
@@ -513,91 +480,6 @@
         } catch (e) {
           return "—";
         }
-      }
-      function daysLeftText(iso) {
-        if (!iso) return "";
-        var ms = new Date(iso).getTime() - Date.now();
-        if (!isFinite(ms)) return "";
-        if (ms <= 0) return "Süresi doldu";
-        var days = Math.ceil(ms / 86400000);
-        return days + " gün";
-      }
-      function activateDopingForListing(listingId, type) {
-        var kind = String(type || "");
-        if (kind === "featured" && !JetleAPI.userCanFeatured(user.id)) {
-          return { ok: false, message: "Öne çıkarma için paket, slot veya kredi gerekir. Paketler sekmesinden satın alın." };
-        }
-        if (kind === "showcase" && !JetleAPI.userCanShowcase(user.id)) {
-          return { ok: false, message: "Vitrin için paket, slot veya en az 2 kredi gerekir. Paketler sekmesinden satın alın." };
-        }
-        if ((kind === "urgent" || kind === "highlight") && !JetleAPI.userCanFeatured(user.id)) {
-          return { ok: false, message: "ACİL / renkli vitrin için kredi veya uygun paket gerekir. Paketler sekmesinden satın alın." };
-        }
-        if (typeof JetleAPI.activateDoping === "function") {
-          return JetleAPI.activateDoping(listingId, user.id, type);
-        }
-        var patch = {};
-        if (type === "featured") {
-          patch.featured = true;
-          patch.featuredUntil = new Date(Date.now() + 7 * 864e5).toISOString();
-        } else if (type === "showcase") {
-          patch.showcase = true;
-          patch.showcaseUntil = new Date(Date.now() + 7 * 864e5).toISOString();
-        } else if (type === "urgent") {
-          patch.urgent = true;
-        } else if (type === "highlight") {
-          patch.highlight = true;
-        }
-        var L = JetleAPI.updateListingFields(listingId, patch);
-        if (!L) return { ok: false, message: "Doping aktif edilemedi." };
-        return { ok: true, listing: L, message: "Paket aktif edildi." };
-      }
-      function renderPackageSummary() {
-        var sum = d$("packageSummaryMount");
-        if (!sum) return;
-        var e = JetleAPI.getEntitlements(user.id);
-        var until = e.storeActiveUntil ? new Date(e.storeActiveUntil).toLocaleDateString("tr-TR") : "—";
-        var hasPlan = !!e.storePlan;
-        var hasExtras =
-          (e.featuredSlots || 0) > 0 ||
-          (e.showcaseSlots || 0) > 0 ||
-          (e.dopingCredits || 0) > 0 ||
-          (e.bumpCredits || 0) > 0 ||
-          (e.extraListingSlots || 0) > 0;
-        if (!hasPlan && !hasExtras) {
-          sum.innerHTML =
-            '<div class="dash-empty dash-empty--compact">' +
-            '<p class="dash-empty__title">Henüz aktif paket veya doping yok</p>' +
-            '<p class="dash-empty__text text-small text-muted">Yayınınızı güçlendirmek için aşağıdan ürün seçebilirsiniz.</p>' +
-            '<a class="btn btn-primary btn-sm" href="#packages">Ürünlere göz at</a>' +
-            "</div>";
-          return;
-        }
-        sum.innerHTML =
-          '<div class="panel pricing-dash-summary__inner">' +
-          '<h2 class="pricing-dash-summary__h">Aktif haklarınız</h2>' +
-          "<ul class=\"pricing-dash-summary__list\">" +
-          "<li><strong>Mağaza paketi:</strong> " +
-          escHtml(storePlanLabel(e.storePlan)) +
-          " · Bitiş: " +
-          escHtml(until) +
-          "</li>" +
-          "<li><strong>Öne çıkarma:</strong> " +
-          (JetleAPI.userCanFeatured(user.id) && (e.storePlan === "standart" || e.storePlan === "pro" || e.storePlan === "kurumsal_plus")
-            ? "paket kapsamında"
-            : escHtml(String(e.featuredSlots)) + " slot · " + escHtml(String(e.dopingCredits)) + " kredi") +
-          "</li>" +
-          "<li><strong>Vitrin:</strong> " +
-          escHtml(String(e.showcaseSlots)) +
-          " slot (" +
-          (JetleAPI.userCanShowcase(user.id) && (e.storePlan === "pro" || e.storePlan === "kurumsal_plus") ? "paketle uyumlu" : "ek ürün gerekebilir") +
-          ")</li>" +
-          "<li><strong>Güncelleme (Güncelim):</strong> " +
-          escHtml(String(e.bumpCredits)) +
-          " · <strong>Ek ilan slotu:</strong> " +
-          escHtml(String(e.extraListingSlots)) +
-          "</li>" +
-          "</ul></div>";
       }
       function statusBadgeClass(s) {
         if (s === "draft") return "status-badge status-badge--draft";
@@ -686,12 +568,7 @@
             escHtml(listingDateStr(L)) +
             "</div>" +
             '<div class="dash-lrow__flags text-small">' +
-            (L.featured ? '<span class="dash-flag dash-flag--feat">Öne çıkan' + (L.featuredUntil ? " · " + escHtml(daysLeftText(L.featuredUntil)) : "") + "</span>" : "") +
-            (L.showcase ? '<span class="dash-flag dash-flag--show">Vitrin' + (L.showcaseUntil ? " · " + escHtml(daysLeftText(L.showcaseUntil)) : "") + "</span>" : "") +
-            (L.urgent ? '<span class="dash-flag dash-flag--urgent">ACİL</span>' : "") +
-            (L.highlight ? '<span class="dash-flag dash-flag--highlight">Renkli vitrin</span>' : "") +
             (L.status === "rejected" && L.rejectionReason ? '<span class="dash-flag dash-flag--no">Red nedeni: ' + escHtml(L.rejectionReason) + "</span>" : "") +
-            (!L.featured && !L.showcase && !L.urgent && !L.highlight ? '<span class="text-muted">Standart yayın</span>' : "") +
             "</div>" +
             "</div>" +
             "</div>" +
@@ -760,91 +637,6 @@
               if (window.JetleMarket && JetleMarket.refreshAll) JetleMarket.refreshAll();
             });
           }
-          var canFeatured = JetleAPI.userCanFeatured(user.id);
-          var canShowcase = JetleAPI.userCanShowcase(user.id);
-          addBtn(
-            L.featured ? "Öne çıkarıldı" : "Öne Çıkar",
-            "",
-            function () {
-              if (L.status !== "approved") {
-                window.alert("Öne çıkarma yalnızca yayındaki ilanlar için geçerlidir.");
-                return;
-              }
-              if (!canFeatured) {
-                if (window.confirm("Öne çıkarma için paket veya kredi gerekir. Paketler sekmesine geçilsin mi?")) {
-                  setHashTab("packages");
-                  applyHash();
-                }
-                return;
-              }
-              var resFeatured = activateDopingForListing(L.id, "featured");
-              if (!resFeatured.ok) {
-                window.alert(resFeatured.message || "Paket aktif edilemedi.");
-                return;
-              }
-              window.alert("Paket aktif edildi.");
-              renderMyListings();
-              renderPackageSummary();
-              if (window.JetleMarket && JetleMarket.refreshAll) JetleMarket.refreshAll();
-            },
-            L.featured,
-            L.featured ? "Aktif" : !canFeatured ? "Kredi veya paket gerekir; tıklayınca paketlere yönlendirilebilirsiniz." : ""
-          );
-          addBtn(
-            L.showcase ? "Vitrinde" : "Vitrine Al",
-            "",
-            function () {
-              if (L.status !== "approved") {
-                window.alert("Vitrin yalnızca yayındaki ilanlar için geçerlidir.");
-                return;
-              }
-              if (!canShowcase) {
-                if (window.confirm("Vitrin için paket, slot veya kredi gerekir. Paketler sekmesine geçilsin mi?")) {
-                  setHashTab("packages");
-                  applyHash();
-                }
-                return;
-              }
-              var resShowcase = activateDopingForListing(L.id, "showcase");
-              if (!resShowcase.ok) {
-                window.alert(resShowcase.message || "Paket aktif edilemedi.");
-                return;
-              }
-              window.alert("Paket aktif edildi.");
-              renderMyListings();
-              renderPackageSummary();
-              if (window.JetleMarket && JetleMarket.refreshAll) JetleMarket.refreshAll();
-            },
-            L.showcase,
-            L.showcase ? "Aktif" : !canShowcase ? "Vitrin için hak gerekir; tıklayınca paketlere yönlendirilebilirsiniz." : ""
-          );
-          addBtn(
-            L.urgent ? "ACİL" : "ACİL Yap",
-            "",
-            function () {
-              if (L.status !== "approved") {
-                window.alert("ACİL etiketi yalnızca yayındaki ilanlar için geçerlidir.");
-                return;
-              }
-              if (!canFeatured) {
-                if (window.confirm("ACİL için kredi veya paket gerekir. Paketler sekmesine geçilsin mi?")) {
-                  setHashTab("packages");
-                  applyHash();
-                }
-                return;
-              }
-              var resUrgent = activateDopingForListing(L.id, "urgent");
-              if (!resUrgent.ok) {
-                window.alert(resUrgent.message || "Paket aktif edilemedi.");
-                return;
-              }
-              window.alert("Paket aktif edildi.");
-              renderMyListings();
-              if (window.JetleMarket && JetleMarket.refreshAll) JetleMarket.refreshAll();
-            },
-            L.urgent,
-            L.urgent ? "Aktif" : !canFeatured ? "Kredi veya paket gerekir; tıklayınca paketlere yönlendirilebilirsiniz." : ""
-          );
           wrap.appendChild(row);
         });
         mount.appendChild(wrap);
@@ -1006,87 +798,6 @@
             full.role === "admin" ? "Yönetici" : full.role === "store" ? "Mağaza hesabı" : "Standart kullanıcı";
         }
       }
-      function renderPackages() {
-        renderPackageSummary();
-        var listSel = d$("dopingListingSelect");
-        var quickMsg = d$("dopingQuickMsg");
-        function setQuickMsg(msg, ok) {
-          if (!quickMsg) return;
-          quickMsg.hidden = false;
-          quickMsg.textContent = msg || "";
-          quickMsg.className = "text-small " + (ok ? "dash-doping-msg dash-doping-msg--ok" : "dash-doping-msg dash-doping-msg--err");
-        }
-        function getSelectedListingId() {
-          return listSel && listSel.value ? listSel.value : "";
-        }
-        function wireQuick(btnId, type) {
-          var btn = d$(btnId);
-          if (!btn) return;
-          btn.onclick = function () {
-            var listingId = getSelectedListingId();
-            if (!listingId) {
-              setQuickMsg("Önce bir ilan seçin.", false);
-              return;
-            }
-            var res = activateDopingForListing(listingId, type);
-            if (!res.ok) {
-              setQuickMsg(res.message || "Paket aktif edilemedi.", false);
-              return;
-            }
-            setQuickMsg("Paket aktif edildi.", true);
-            renderMyListings();
-            renderPackageSummary();
-            renderPackages();
-            if (window.JetleMarket && JetleMarket.refreshAll) JetleMarket.refreshAll();
-          };
-        }
-        if (listSel) {
-          var keep = listSel.value;
-          listSel.innerHTML = '<option value="">İlan seçin</option>';
-          JetleAPI.getListingsByUser(user.id)
-            .filter(function (L) { return L.status === "approved"; })
-            .forEach(function (L) {
-              var o = document.createElement("option");
-              o.value = L.id;
-              o.textContent = (L.listingNo || L.id) + " · " + L.title;
-              listSel.appendChild(o);
-            });
-          if (keep) listSel.value = keep;
-        }
-        wireQuick("btnDopingFeatured", "featured");
-        wireQuick("btnDopingShowcase", "showcase");
-        wireQuick("btnDopingUrgent", "urgent");
-        wireQuick("btnDopingHighlight", "highlight");
-        function gateDashDopingBtn(btnId, canFn) {
-          var b = d$(btnId);
-          if (!b) return;
-          var ok = canFn();
-          b.disabled = !ok;
-          b.title = ok ? "" : "Yetersiz paket/kredi. Paketler sekmesinden satın alın.";
-        }
-        gateDashDopingBtn("btnDopingFeatured", function () {
-          return JetleAPI.userCanFeatured(user.id);
-        });
-        gateDashDopingBtn("btnDopingShowcase", function () {
-          return JetleAPI.userCanShowcase(user.id);
-        });
-        gateDashDopingBtn("btnDopingUrgent", function () {
-          return JetleAPI.userCanFeatured(user.id);
-        });
-        gateDashDopingBtn("btnDopingHighlight", function () {
-          return JetleAPI.userCanFeatured(user.id);
-        });
-        var mount = d$("packageGrid");
-        if (!mount) return;
-        renderPricingCatalogInto(mount, {
-          userId: user.id,
-          readOnly: false,
-          onPurchased: function () {
-            renderPackageSummary();
-            renderMyListings();
-          }
-        });
-      }
       document.querySelectorAll(".dash-tab").forEach(function (btn) {
         btn.addEventListener("click", function () {
           var name = btn.getAttribute("data-tab");
@@ -1162,7 +873,6 @@
       renderMyListings();
       renderFavorites();
       renderThreads();
-      renderPackages();
       loadProfile();
       applyHash();
     }
@@ -1235,7 +945,7 @@
 
     if (page === "admin" && window.JetleAPI && window.JetleAuth && window.JetleMarket) {
       var adminState = {
-        listing: { q: "", status: "all", category: "all", subcategory: "all", city: "all", user: "", featured: "all", date: "all" },
+        listing: { q: "", status: "all", category: "all", subcategory: "all", city: "all", user: "", date: "all" },
         users: { q: "", role: "all", status: "all" },
         complaints: { q: "", status: "all" }
       };
@@ -1314,7 +1024,7 @@
           ["Pasif ilan", listings.filter(function (x) { return x.status === "passive"; }).length],
           ["Toplam kullanıcı", users.length],
           ["Şikayet sayısı", complaints.length],
-          ["Premium / vitrin ilan", listings.filter(function (x) { return !!x.featured || !!x.showcase || !!x.sponsored; }).length],
+          ["Taslak ilan", listings.filter(function (x) { return x.status === "draft"; }).length],
           ["Aktif reklam", ads.filter(function (x) { return !!x.active; }).length]
         ].forEach(function (it) {
           var el = document.createElement("div");
@@ -1357,49 +1067,19 @@
         if (!drawer || !body) return;
         var specs = L.specs || {};
         var specRows = Object.keys(specs).slice(0, 20).map(function (k) { return "<tr><th>" + escHtml(k) + "</th><td>" + escHtml(specs[k]) + "</td></tr>"; }).join("");
-        var pkgOpts = ["basic", "baslangic", "standart", "pro", "kurumsal_plus", "featured", "showcase", "store"];
-        var pkgSel = pkgOpts
-          .map(function (v) {
-            return "<option value=\"" + escHtml(v) + "\"" + (String(L.packageType || "basic") === v ? " selected" : "") + ">" + escHtml(v) + "</option>";
-          })
-          .join("");
         body.innerHTML =
           "<h4>" + escHtml(L.title) + "</h4>" +
           "<p class='text-small text-muted'>" + escHtml(L.category) + " › " + escHtml(L.subcategory) + " · " + escHtml(L.city) + "/" + escHtml(L.district || "") + "</p>" +
           "<p><strong>" + escHtml(new Intl.NumberFormat("tr-TR").format(L.price) + " ₺") + "</strong></p>" +
           "<p class='text-small'>" + escHtml(L.description || "") + "</p>" +
           "<div class='admin-drawer__imgs'>" + (L.images || []).slice(0, 3).map(function (u) { return "<img src='" + String(u).replace(/"/g, "") + "' alt='ilan görseli'>"; }).join("") + "</div>" +
-          "<table class='data-table data-table--specs'><tbody>" + specRows + "</tbody></table>" +
-          "<div class='admin-prem panel'>" +
-          "<h5 class=\"admin-prem__h\">Premium alanları</h5>" +
-          "<p class=\"text-small text-muted\">featured / showcase / sponsored ve paket etiketi. Kayıt anında liste güncellenir.</p>" +
-          "<div class=\"admin-prem__row\">" +
-          "<label class=\"admin-prem__chk\"><input type=\"checkbox\" id=\"adminPremFeat\"" + (L.featured ? " checked" : "") + "> featured</label>" +
-          "<label class=\"admin-prem__chk\"><input type=\"checkbox\" id=\"adminPremShow\"" + (L.showcase ? " checked" : "") + "> showcase</label>" +
-          "<label class=\"admin-prem__chk\"><input type=\"checkbox\" id=\"adminPremSpon\"" + (L.sponsored ? " checked" : "") + "> sponsored</label>" +
-          "</div>" +
-          "<div class=\"field\"><label for=\"adminPremPkg\">packageType</label><select id=\"adminPremPkg\">" + pkgSel + "</select></div>" +
-          "<button type=\"button\" class=\"btn btn-primary btn-sm\" id=\"adminPremSave\">Kaydet</button>" +
-          "</div>";
-        var saveBtn = aid("adminPremSave");
-        if (saveBtn) {
-          saveBtn.onclick = function () {
-            JetleAPI.updateListingFields(L.id, {
-              featured: !!aid("adminPremFeat").checked,
-              showcase: !!aid("adminPremShow").checked,
-              sponsored: !!aid("adminPremSpon").checked,
-              packageType: aid("adminPremPkg").value || "basic"
-            });
-            panelRefresh();
-            drawer.hidden = true;
-          };
-        }
+          "<table class='data-table data-table--specs'><tbody>" + specRows + "</tbody></table>";
         drawer.hidden = false;
       }
       function renderAdminPricing() {
         var root = aid("adminPricingCatalog");
         if (!root) return;
-        renderPricingCatalogInto(root, { userId: null, readOnly: true });
+        root.innerHTML = '<p class="text-muted text-small" style="margin:0">Ücretli paket kataloğu kaldırılmıştır.</p>';
       }
       function renderListings() {
         var root = aid("adminListingsTable");
@@ -1413,9 +1093,6 @@
           if (adminState.listing.category !== "all" && L.category !== adminState.listing.category) return false;
           if (adminState.listing.subcategory !== "all" && L.subcategory !== adminState.listing.subcategory) return false;
           if (adminState.listing.city !== "all" && L.city !== adminState.listing.city) return false;
-          var anyPremium = !!L.featured || !!L.showcase || !!L.sponsored;
-          if (adminState.listing.featured === "yes" && !anyPremium) return false;
-          if (adminState.listing.featured === "no" && anyPremium) return false;
           if (!listingDateMatch(L, adminState.listing.date)) return false;
           var uname = (um[L.createdBy] && um[L.createdBy].name) || L.sellerName || "";
           if (adminState.listing.user && s(uname).indexOf(s(adminState.listing.user)) === -1) return false;
@@ -1428,7 +1105,7 @@
         }).sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
         var tb = document.createElement("table");
         tb.className = "data-table";
-        tb.innerHTML = "<thead><tr><th>İlan No</th><th>Başlık</th><th>Kategori</th><th>Şehir</th><th>Kullanıcı</th><th>Tarih</th><th>Durum</th><th>featured</th><th>showcase</th><th>sponsored</th><th>packageType</th><th>Aksiyonlar</th></tr></thead>";
+        tb.innerHTML = "<thead><tr><th>İlan No</th><th>Başlık</th><th>Kategori</th><th>Şehir</th><th>Kullanıcı</th><th>Tarih</th><th>Durum</th><th>Aksiyonlar</th></tr></thead>";
         var body = document.createElement("tbody");
         rows.forEach(function (L) {
           var uname = (um[L.createdBy] && um[L.createdBy].name) || L.sellerName || "—";
@@ -1446,14 +1123,6 @@
           ab("Reddet", function () { JetleAPI.updateListingStatus(L.id, "rejected"); panelRefresh(); });
           ab("Pasife Al", function () { JetleAPI.updateListingStatus(L.id, "passive"); panelRefresh(); });
           ab("Detayı Gör", function () { openDrawer(L); });
-          ab(L.featured ? "Öne çıkarma kapat" : "Öne çıkar", function () { JetleAPI.updateListingFields(L.id, { featured: !L.featured, packageType: !L.featured ? "featured" : (L.packageType || "basic") }); panelRefresh(); });
-          ab(L.showcase ? "Vitrinden çıkar" : "Vitrine al", function () { JetleAPI.updateListingFields(L.id, { showcase: !L.showcase, packageType: !L.showcase ? "showcase" : (L.packageType || "basic") }); panelRefresh(); });
-          ab(L.sponsored ? "Sponsor kaldır" : "Sponsorlu yap", function () { JetleAPI.updateListingFields(L.id, { sponsored: !L.sponsored, packageType: !L.sponsored ? "store" : (L.packageType || "basic") }); panelRefresh(); });
-          ab("Paket değiştir", function () {
-            var next = L.packageType === "basic" ? "featured" : L.packageType === "featured" ? "showcase" : L.packageType === "showcase" ? "store" : "basic";
-            JetleAPI.updateListingFields(L.id, { packageType: next });
-            panelRefresh();
-          });
           body.appendChild(rCell([
             L.listingNo || "—",
             L.title,
@@ -1462,10 +1131,6 @@
             uname,
             new Date(L.createdAt).toLocaleDateString("tr-TR"),
             badge(L.status),
-            badge(L.featured ? "yes" : "no"),
-            badge(L.showcase ? "yes" : "no"),
-            badge(L.sponsored ? "yes" : "no"),
-            L.packageType || "basic",
             actions
           ]));
         });
@@ -1680,24 +1345,7 @@
       function renderFeatured() {
         var root = aid("adminFeaturedTable");
         if (!root) return;
-        root.innerHTML = "";
-        var rows = JetleAPI.getAllListings().filter(function (L) { return !!L.featured || !!L.showcase || !!L.sponsored; });
-        var tb = document.createElement("table");
-        tb.className = "data-table";
-        tb.innerHTML = "<thead><tr><th>İlan No</th><th>Başlık</th><th>featured</th><th>showcase</th><th>sponsored</th><th>Paket</th><th>Aksiyon</th></tr></thead>";
-        var body = document.createElement("tbody");
-        rows.forEach(function (L) {
-          var act = document.createElement("td");
-          var b = document.createElement("button");
-          b.type = "button";
-          b.className = "btn btn-secondary btn-sm";
-          b.textContent = "Sıfırla";
-          b.addEventListener("click", function () { JetleAPI.updateListingFields(L.id, { featured: false, showcase: false, sponsored: false, packageType: "basic" }); panelRefresh(); });
-          act.appendChild(b);
-          body.appendChild(rCell([L.listingNo, L.title, badge(L.featured ? "yes" : "no"), badge(L.showcase ? "yes" : "no"), badge(L.sponsored ? "yes" : "no"), L.packageType || "basic", act]));
-        });
-        tb.appendChild(body);
-        root.appendChild(tb);
+        root.innerHTML = '<p class="text-muted text-small" style="margin:0">Öne çıkarma / vitrin yönetimi kaldırılmıştır.</p>';
       }
       function renderCategories() {
         var root = aid("adminCategoryTree");
@@ -1766,14 +1414,16 @@
         adminState.listing.subcategory = aid("adminListingSubcategory").value || "all";
         adminState.listing.city = aid("adminListingCity").value || "all";
         adminState.listing.user = aid("adminListingUser").value || "";
-        adminState.listing.featured = aid("adminListingFeatured").value || "all";
         adminState.listing.date = aid("adminListingDate").value || "all";
         renderListings();
       });
       aid("adminListingReset").addEventListener("click", function () {
-        adminState.listing = { q: "", status: "all", category: "all", subcategory: "all", city: "all", user: "", featured: "all", date: "all" };
+        adminState.listing = { q: "", status: "all", category: "all", subcategory: "all", city: "all", user: "", date: "all" };
         ["adminListingSearch", "adminListingUser"].forEach(function (id) { aid(id).value = ""; });
-        ["adminListingFilter", "adminListingCategory", "adminListingSubcategory", "adminListingCity", "adminListingFeatured", "adminListingDate"].forEach(function (id) { aid(id).value = "all"; });
+        ["adminListingFilter", "adminListingCategory", "adminListingSubcategory", "adminListingCity", "adminListingDate"].forEach(function (id) {
+          var el = aid(id);
+          if (el) el.value = "all";
+        });
         renderListings();
       });
       aid("adminUserApply").addEventListener("click", function () {

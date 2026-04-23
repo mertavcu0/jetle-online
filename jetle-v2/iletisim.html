@@ -4,152 +4,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>İletişim — JETLE.online</title>
-  <meta name="description" content="Jetle iletişim: destek, kurumsal talepler ve çalışma saatleri." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='30' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='24' fill='%231565D8'%3EJETLE%3C/text%3E%3Ctext x='32' y='50' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='10' fill='%23111318'%3E.online%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="JETLE.online iletişim bilgileri: adres, e-posta ve telefon." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="page-static" data-page="static">
   <header class="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online ana sayfa"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
-      <nav class="header-actions" aria-label="Hızlı bağlantılar">
-        <a href="index.html" class="header-link">Ana sayfa</a>
-        <span id="headerUserSlot" class="header-user-slot"></span>
-      </nav>
+      <a href="index.html" class="logo logo--brand" aria-label="JETLE.online"><span class="logo__mark">JETLE</span><span class="logo__domain">.online</span></a>
+      <nav class="header-actions"><span id="headerUserSlot" class="header-user-slot"></span></nav>
     </div>
   </header>
-
   <main class="main-shell main-shell--static">
     <div class="container static-page">
       <h1>İletişim</h1>
-      <p class="static-lead">Hesabınız, ilanlarınız veya kurumsal iş birlikleri için bizimle iletişime geçebilirsiniz. Talepleriniz kayıt altına alınır ve ilgili ekip tarafından yanıtlanır.</p>
-
-      <section class="static-section" aria-labelledby="kanallar">
-        <h2 id="kanallar">İletişim kanalları</h2>
-        <p><strong>E-posta:</strong> <a href="mailto:destek@jetle.com.tr">destek@jetle.com.tr</a></p>
-        <p><strong>Destek hattı:</strong> 0850 000 00 00 (örnek numara; ücretlendirme operatör tarifesine tabidir.)</p>
-        <p><strong>Çalışma saatleri:</strong> Hafta içi 09:00–18:00</p>
+      <p class="static-lead">Destek, yasal başvurular, kurumsal iş birlikleri ve reklam talepleri için aşağıdaki kanallar üzerinden bizimle iletişime geçebilirsiniz.</p>
+      <section class="static-section">
+        <h2>Adres</h2>
+        <p>JETLE Teknoloji A.Ş.<br />Maslak Mah. Büyükdere Cad. No: 245 İç Kapı No: 12<br />Sarıyer / İstanbul</p>
       </section>
-
-      <section class="static-section" aria-labelledby="kurumsal">
-        <h2 id="kurumsal">Kurumsal talepler ve reklam</h2>
-        <p>Reklam alanı, vitrin paketleri ve mağaza çözümleri için <a href="mailto:reklam@jetle.com.tr">reklam@jetle.com.tr</a> adresine kısa bir tanıtım metni ve iletişim bilgisi göndermeniz yeterlidir.</p>
+      <section class="static-section">
+        <h2>E-posta</h2>
+        <p>Genel iletişim: <a href="mailto:info@jetle.online">info@jetle.online</a></p>
+        <p>Destek: <a href="mailto:destek@jetle.online">destek@jetle.online</a></p>
+        <p>Kurumsal iş birlikleri: <a href="mailto:kurumsal@jetle.online">kurumsal@jetle.online</a></p>
       </section>
-
-      <section class="static-section" aria-labelledby="form">
-        <h2 id="form">İletişim formu</h2>
-        <p class="text-small text-muted">Gönderim sonrası talep numarası e-posta iletilir; acil durumlarda destek hattını arayın.</p>
-        <form class="contact-form" id="contactForm">
-          <div class="field">
-            <label for="cfName">Ad soyad</label>
-            <input type="text" id="cfName" name="name" autocomplete="name" required maxlength="120" />
-          </div>
-          <div class="field">
-            <label for="cfEmail">E-posta</label>
-            <input type="email" id="cfEmail" name="email" autocomplete="email" required maxlength="120" />
-          </div>
-          <div class="field">
-            <label for="cfTopic">Konu</label>
-            <select id="cfTopic" name="topic" required>
-              <option value="">Seçin</option>
-              <option value="destek">Teknik destek</option>
-              <option value="ilan">İlan ve moderasyon</option>
-              <option value="reklam">Reklam / iş birliği</option>
-              <option value="diger">Diğer</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="cfMsg">Mesaj</label>
-            <textarea id="cfMsg" name="message" required maxlength="2000" placeholder="Kısa ve net yazın."></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Gönder</button>
-        </form>
+      <section class="static-section">
+        <h2>Telefon</h2>
+        <p>Müşteri destek hattı: <a href="tel:+908503030303">0 (850) 303 03 03</a></p>
+        <p>Çalışma saatleri: Hafta içi 09:00 – 18:00</p>
       </section>
     </div>
   </main>
-
-  <script>
-    document.getElementById("contactForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      window.alert("Mesajınız kayda alındı. İlgili ekip en kısa sürede yanıtlar.");
-      this.reset();
-    });
-  </script>
-
-  <div class="footer-strip">
-    <div class="container footer-strip__inner">
-      <a href="hakkimizda.html">Hakkımızda</a>
-      <a href="hizmetlerimiz.html">Hizmetlerimiz</a>
-      <a href="guvenli-alisveris.html">Güvenli alışveriş</a>
-      <a href="yardim.html">Yardım</a>
-      <a href="site-haritasi.html">Site haritası</a>
-      <a href="iletisim.html">İletişim</a>
-      <a href="kullanim-kosullari.html">Kullanım koşulları</a>
-      <a href="kisisel-veriler.html">Kişisel veriler</a>
-    </div>
-  </div>
-
-  <footer class="site-footer site-footer--full" id="siteFooter">
-    <div class="container">
-      <div class="footer-columns">
-        <div class="footer-col">
-          <p class="footer-col__title">Kurumsal</p>
-          <ul class="footer-links">
-            <li><a href="hakkimizda.html">Hakkımızda</a></li>
-            <li><a href="site-haritasi.html">Site haritası</a></li>
-            <li><a href="iletisim.html">İletişim</a></li>
-            <li><a href="yardim.html#duyurular">Haberler / duyurular</a></li>
-            <li><a href="hizmetlerimiz.html">Hizmetlerimiz</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Hizmetlerimiz</p>
-          <ul class="footer-links">
-            <li><a href="hizmetlerimiz.html#doping">Doping</a></li>
-            <li><a href="hizmetlerimiz.html#mobil">Mobil</a></li>
-            <li><a href="hizmetlerimiz.html#reklam">Reklam</a></li>
-            <li><a href="hizmetlerimiz.html#vitrin">Vitrin ilanlar</a></li>
-            <li><a href="hizmetlerimiz.html#premium">Premium / mağaza paketleri</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Gizlilik ve kullanım</p>
-          <ul class="footer-links">
-            <li><a href="guvenli-alisveris.html">Güvenli alışveriş ipuçları</a></li>
-            <li><a href="sozlesmeler.html">Sözleşmeler ve kurallar</a></li>
-            <li><a href="hesap-sozlesmesi.html">Hesap sözleşmesi</a></li>
-            <li><a href="kullanim-kosullari.html">Kullanım koşulları</a></li>
-            <li><a href="kisisel-veriler.html">Kişisel verilerin korunması</a></li>
-            <li><a href="cerez-yonetimi.html">Çerez yönetimi</a></li>
-            <li><a href="gizlilik.html">Gizlilik özeti</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col__title">Yardım</p>
-          <ul class="footer-links">
-            <li><a href="yardim.html">Yardım ve işlem rehberi</a></li>
-            <li><a href="yardim.html#sss">Sık sorulan sorular</a></li>
-            <li><a href="yardim.html#ilan-verme">İlan verme rehberi</a></li>
-            <li><a href="yardim.html#ilan-guvenlik">İlan güvenlik rehberi</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="footer-bottom__legal">
-          <p>© <span id="footerYear">2026</span> Jetle Teknoloji A.Ş. Tüm hakları saklıdır.</p>
-          <p class="footer-bottom__note">Kullanıcılar tarafından yayınlanan ilan ve içeriklerin doğruluğu ilan sahiplerinin sorumluluğundadır. Jetle, yalnızca aracı platform olarak moderasyon ve bildirim süreçlerini yürütür.</p>
-        </div>
-        <div class="footer-bottom__social" aria-label="Sosyal medya">
-          <a href="https://www.linkedin.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="LinkedIn">in</a>
-          <a href="https://www.x.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="X">x</a>
-          <a href="https://www.youtube.com" class="footer-social" rel="noopener noreferrer" target="_blank" title="YouTube">▶</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
+  <footer class="site-footer"><div class="container footer-inner"><p>© JETLE.online</p></div></footer>
   <script src="api.js?v=20260217"></script>
+  <script src="jetle-api.js"></script>
   <script src="auth.js"></script>
+  <script src="common.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

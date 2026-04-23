@@ -149,23 +149,26 @@
   margin-bottom: 1.25rem;
 }
 
-/* 2 kolon */
+/* Varsayılan: 2 kolon (klasik ilan ver) */
 .ilan-lp-layout {
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 1.25rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: 2.5rem;
   align-items: start;
 }
 
+.ilan-lp-layout:not(.ilan-lp-layout--pro) {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 2.5rem;
+}
+
 @media (max-width: 960px) {
-  .ilan-lp-layout {
+  .ilan-lp-layout:not(.ilan-lp-layout--pro) {
     grid-template-columns: 1fr;
   }
 
-  .ilan-lp-aside {
+  .ilan-lp-layout:not(.ilan-lp-layout--pro) .ilan-lp-aside {
     position: static;
     order: -1;
   }
@@ -538,4 +541,184 @@
 
 .page-ilan-ver .ilan-wizard__cat-card:hover {
   transform: translateY(-2px);
+}
+
+/* —— Pro panel: sol kategori | form | canlı önizleme —— */
+.ilan-lp--pro {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ilan-lp-head--pro {
+  max-width: 1400px;
+}
+
+.ilan-lp-head--pro .ilan-lp-head__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+
+.ilan-lp-head--pro .ilan-wizard__progress-wrap--pro {
+  flex: 1 1 260px;
+  max-width: 400px;
+  margin-bottom: 0;
+}
+
+.ilan-lp-layout--pro {
+  max-width: 1400px;
+  padding: 0 1.25rem;
+  display: grid;
+  align-items: start;
+  grid-template-columns: minmax(200px, 228px) minmax(0, 1fr) minmax(260px, 320px);
+  gap: 1.5rem 1.75rem;
+}
+
+.ilan-lp-center {
+  min-width: 0;
+}
+
+.ilan-wizard__rail {
+  position: sticky;
+  top: 5.25rem;
+  align-self: start;
+}
+
+.ilan-wizard__rail-inner {
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-card-border);
+  border-radius: var(--lp-radius);
+  box-shadow: var(--lp-shadow);
+  padding: 1.2rem 1rem 1.3rem;
+}
+
+.ilan-wizard__rail-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--lp-ink);
+  letter-spacing: -0.02em;
+}
+
+.ilan-wizard__rail-lead {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--lp-muted);
+}
+
+.page-ilan-ver .ilan-wizard__cat-grid--rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.page-ilan-ver .ilan-wizard__cat-grid--rail .ilan-wizard__cat-card {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  min-height: 0;
+}
+
+.ilan-wizard__field-msg--rail {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.page-ilan-ver .ilan-wizard__surface--pro {
+  padding: 1.5rem 1.6rem 1.75rem;
+}
+
+.page-ilan-ver .ilan-wizard__label--pro {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--lp-ink);
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.01em;
+}
+
+.page-ilan-ver .ilan-wizard__input--pro,
+.page-ilan-ver .ilan-wizard__textarea.ilan-wizard__input--pro,
+.page-ilan-ver select.ilan-wizard__input--pro {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  border-radius: 12px;
+  border-color: #cbd5e1;
+}
+
+.page-ilan-ver .ilan-wizard__textarea.ilan-wizard__input--pro {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.ilan-wizard__field--stack-pro {
+  margin-bottom: 1.35rem;
+}
+
+.ilan-wizard__field--stack-pro:last-child {
+  margin-bottom: 0;
+}
+
+.ilan-wizard__field--stack-pro .ilan-wizard__field-msg {
+  margin-top: 0.4rem;
+}
+
+.ilan-wizard__field--stack-pro .ilan-wizard__hint {
+  margin-top: 0.45rem;
+}
+
+.ilan-lp-aside--pro {
+  top: 5.25rem;
+}
+
+.preview-card--pro {
+  position: relative;
+}
+
+.preview-card__kicker {
+  margin: 0 0 0.85rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lp-muted);
+}
+
+.ilan-lp-aside .preview-card > h3.preview-card__kicker {
+  margin: 0 0 0.85rem;
+}
+
+@media (max-width: 1100px) {
+  .ilan-lp-layout--pro {
+    grid-template-columns: minmax(180px, 200px) minmax(0, 1fr);
+  }
+
+  .ilan-lp-layout--pro > .ilan-lp-aside--pro {
+    grid-column: 1 / -1;
+  }
+
+  .ilan-wizard__rail {
+    top: 4.5rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .ilan-lp-layout--pro {
+    grid-template-columns: 1fr;
+  }
+
+  .ilan-wizard__rail {
+    position: static;
+  }
+
+  .ilan-lp-aside--pro {
+    position: static;
+    order: -1;
+  }
 }
