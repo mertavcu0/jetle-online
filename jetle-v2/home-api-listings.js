@@ -147,20 +147,26 @@
   }
 
   function syncHeroCityFromSidebar() {
-    var src = document.getElementById("citySelect");
     var dst = document.getElementById("homeHeroCity");
-    if (!src || !dst) return;
-    var prev = String(filterCity || dst.value || "").trim();
-    dst.innerHTML = src.innerHTML;
-    if (prev) {
-      var ok = false;
-      for (var i = 0; i < dst.options.length; i++) {
-        if (dst.options[i].value === prev) {
-          ok = true;
-          break;
+    if (!dst) return;
+    var src = document.getElementById("citySelect");
+    if (src) {
+      var prev = String(filterCity || dst.value || "").trim();
+      dst.innerHTML = src.innerHTML;
+      if (prev) {
+        var ok = false;
+        for (var i = 0; i < dst.options.length; i++) {
+          if (dst.options[i].value === prev) {
+            ok = true;
+            break;
+          }
         }
+        if (ok) dst.value = prev;
       }
-      if (ok) dst.value = prev;
+      return;
+    }
+    if (window.JetleMarket && typeof JetleMarket.populateCitySelect === "function") {
+      JetleMarket.populateCitySelect("homeHeroCity");
     }
   }
 

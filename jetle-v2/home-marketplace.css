@@ -1,4 +1,4 @@
-/* Ana sayfa — yoğun marketplace düzeni, reklam alanları, 5 sütun grid */
+/* Ana sayfa — yoğun marketplace düzeni, reklam alanları, 4 sütun grid */
 
 .home-trust-row {
   background: #f8fafc;
@@ -106,59 +106,26 @@
 
 .main-grid--marketplace {
   display: grid;
-  grid-template-columns: minmax(0, 260px) minmax(0, 1fr) minmax(0, 300px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
   gap: 16px;
   align-items: start;
   box-sizing: border-box;
 }
 
-.sidebar--market {
-  width: 260px;
+.main-grid--marketplace > .marketplace-center {
   min-width: 0;
-  max-width: 260px;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.sidebar-market-unified {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  width: 100%;
   max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.sidebar-market-unified .sidebar-block {
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
-
-.sidebar-market-unified .sidebar-block + .sidebar-block {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid #eef2f6;
-}
-
-.sidebar-market-unified .sidebar-title {
-  margin-top: 0;
-}
-
-.home-filter-shell__intro--compact {
-  margin-bottom: 10px;
-}
-
-.home-filter-shell__intro--compact .home-filter-shell__lead {
-  margin: 0;
 }
 
 .marketplace-center {
   min-width: 0;
+}
+
+body.page-home .content-main--home-pro {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .ad-rail {
@@ -212,23 +179,6 @@
   background: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 50%, #eef2f7 100%);
 }
 
-.home-cat-blocks--sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0 0 4px;
-}
-
-.home-cat-blocks--sidebar .home-cat-block {
-  padding: 8px 10px;
-  font-size: 0.78rem;
-}
-
-.home-cat-blocks--sidebar .home-cat-block__ic {
-  width: 32px;
-  height: 32px;
-}
-
 .listing-grid--market-dense {
   gap: 16px;
 }
@@ -248,12 +198,6 @@
 @media (min-width: 980px) {
   .listing-grid--market-dense {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1200px) {
-  .listing-grid--market-dense {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
@@ -446,12 +390,7 @@ body.page-home .listing-card.listing-card--market-v2 .listing-body .meta {
 
 @media (max-width: 1180px) {
   .main-grid--marketplace {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .sidebar--market {
-    width: 100%;
-    max-width: none;
+    grid-template-columns: 1fr;
   }
 
   .ad-rail {
