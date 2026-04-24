@@ -417,88 +417,8 @@
     return true;
   }
 
-  function makeRandomTitle(i, cat) {
-    var brands = ["Toyota", "Volkswagen", "Fiat", "Renault", "Hyundai", "Ford", "Opel", "BMW", "Peugeot", "Skoda"];
-    var models = ["Corolla", "Passat", "Egea", "Clio", "i20", "Focus", "Astra", "320i", "3008", "Octavia"];
-    var rooms = ["2+1", "3+1", "4+1", "1+1"];
-    var yr = 2015 + (hashStr("yy" + i) % 10);
-    if (cat === "vasita") {
-      return brands[hashStr("br" + i) % brands.length] + " " + models[hashStr("mo" + i) % models.length] + " " + yr;
-    }
-    if (cat === "emlak") {
-      return (
-        rooms[hashStr("ro" + i) % rooms.length] +
-        " " +
-        ["satılık daire", "kiralık ofis", "yatırımlık arsa", "villa"][hashStr("em" + i) % 4]
-      );
-    }
-    if (cat === "elektronik") {
-      return ["MacBook Air M2", "iPhone 15", "Samsung TV 55\"", "PlayStation 5", "AirPods Pro"][hashStr("el" + i) % 5];
-    }
-    if (cat === "alisveris") {
-      return ["Koltuk takımı", "Çalışma masası", "Bisiklet", "Kış lastiği seti", "Bebek arabası"][hashStr("al" + i) % 5];
-    }
-    return ["Temizlik paketi", "Özel ders", "Nakliye", "Boyacı ekibi", "Kombi bakımı"][hashStr("hz" + i) % 5];
-  }
-
-  function generateRandomListingPool(count) {
-    var n = Math.max(12, Number(count) || 12);
-    var cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Kocaeli", "Muğla", "Eskişehir", "Trabzon", "Gaziantep"];
-    var districts = ["Kadıköy", "Çankaya", "Karşıyaka", "Nilüfer", "Muratpaşa", "Gebze", "Fethiye", "Tepebaşı", "Ortahisar", "Şahinbey"];
-    var cats = ["vasita", "emlak", "elektronik", "alisveris", "hizmet"];
-    var out = [];
-    for (var i = 0; i < n; i++) {
-      var id = "jetle-r" + i + "-" + hashStr("rid" + i + ":" + (Date.now() % 999983));
-      var seed = encodeURIComponent(String(id).replace(/[^a-z0-9]/gi, "").slice(0, 36) || "x");
-      var cat = cats[hashStr("c" + i) % cats.length];
-      var city = cities[hashStr("ci" + i) % cities.length];
-      var district = districts[hashStr("di" + i) % districts.length];
-      out.push({
-        _id: id,
-        title: makeRandomTitle(i, cat),
-        price: 2500 + (hashStr("p" + i) % 12000000),
-        city: city,
-        district: district,
-        category: cat,
-        description: cat + " " + makeRandomTitle(i, cat),
-        createdAt: new Date(Date.now() - (hashStr("t" + i) % (25 * 86400000))).toISOString(),
-        jetleSynthetic: true,
-        jetleDemoImage: "https://picsum.photos/seed/jetlecard" + seed + "/520/390"
-      });
-    }
-    return out;
-  }
-
-  function ensureMinListings(rows, min) {
-    var r = rows && rows.slice ? rows.slice() : [];
-    if (r.length === 0 || r.length >= min) return r;
-    var pool = generateRandomListingPool(min);
-    var k = 0;
-    while (r.length < min) {
-      var base = pool[k % pool.length];
-      var dup = {};
-      for (var key in base) {
-        if (Object.prototype.hasOwnProperty.call(base, key)) dup[key] = base[key];
-      }
-      dup._id = "jetle-fill-" + r.length + "-" + hashStr("fill" + r.length + ":" + Date.now());
-      dup.jetleSynthetic = true;
-      dup.jetleDemoImage =
-        "https://picsum.photos/seed/jetlefill" + encodeURIComponent(String(dup._id).replace(/[^a-z0-9]/gi, "")) + "/520/390";
-      r.push(dup);
-      k++;
-    }
-    return r;
-  }
-
   function getBaseRows() {
-    if (apiRows.length > 0) return ensureMinListings(apiRows, 12);
-    if (homeListingsFetchFailed) return [];
-    if (!listingsFetchSettled) return [];
-    return generateRandomListingPool(12);
-  }
-
-  function isPlaceholderMode() {
-    return apiRows.length === 0 && !homeListingsFetchFailed && listingsFetchSettled;
+    return apiRows && apiRows.slice ? apiRows.slice() : [];
   }
 
   function readKeywordFromUi() {
@@ -531,49 +451,10 @@
     } catch (e) {}
   }
 
-  function syncHomeDemoNote() {
-    var el = document.getElementById("homeDemoNote");
-    if (!el) return;
-    el.hidden = true;
-  }
-
   function displayListingTitle(item) {
     var t = item && item.title != null ? String(item.title).trim() : "";
     if (!t || /^isimsiz/i.test(t)) return "Başlık belirtilmemiş";
     return t.replace(/\s+ilan\s*$/i, "").replace(/\s+ilan\.\s*$/i, "").trim() || "Başlık belirtilmemiş";
-  }
-
-  function resolveListingCardImageUrl(item, thumb) {
-    if (item && item.jetleDemoImage) return String(item.jetleDemoImage).trim();
-    if (thumb) return String(thumb).trim();
-    var id = idKey(item) || "x";
-    var seed = encodeURIComponent(String(id).replace(/[^a-z0-9]/gi, "").slice(0, 36) || "x");
-    return "https://picsum.photos/seed/jetlelist" + seed + "/520/390";
-  }
-
-  function renderEmptySuggestions(rows) {
-    var wrap = document.getElementById("emptySuggestedWrap");
-    var grid = document.getElementById("emptySuggestedGrid");
-    if (!wrap || !grid) return;
-    if (!rows || !rows.length) {
-      wrap.hidden = true;
-      grid.innerHTML = "";
-      return;
-    }
-    wrap.hidden = false;
-    grid.innerHTML = "";
-    rows.slice(0, 6).forEach(function (item) {
-      grid.appendChild(buildCard(item));
-    });
-    syncApiFeedFavoriteUi();
-  }
-
-  function suggestionPoolForEmptyState() {
-    return getBaseRows()
-      .slice()
-      .sort(function (a, b) {
-        return (parseListingDateMs(b) || 0) - (parseListingDateMs(a) || 0);
-      });
   }
 
   function buildFeaturedCard(item) {
@@ -741,37 +622,40 @@
     var thumb = pickThumbUrl(item);
     var thumbWebp = toWebpCandidate(thumb);
     var fallbackByCat = getImageByCategory(item.category);
-    var picsFallback = resolveListingCardImageUrl(item, "");
 
     var mediaWrap = document.createElement("div");
     mediaWrap.className = "listing-card__media-wrap";
 
     var media = document.createElement("div");
     media.className = "listing-card__media";
-    var img = document.createElement("img");
     if (thumb) {
+      var img = document.createElement("img");
       img.src = thumbWebp || thumb;
       img.alt = title;
+      img.width = CARD_IMG_W;
+      img.height = CARD_IMG_H;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.fetchPriority = "low";
       if (thumbWebp && thumbWebp !== thumb) {
         img.onerror = function () {
           img.onerror = null;
           img.src = thumb;
+          img.onerror = function () {
+            img.onerror = null;
+            img.src = fallbackByCat;
+          };
+        };
+      } else {
+        img.onerror = function () {
+          img.onerror = null;
+          img.src = fallbackByCat;
         };
       }
+      media.appendChild(img);
     } else {
-      img.src = item.jetleDemoImage || picsFallback;
-      img.alt = title;
-      img.onerror = function () {
-        img.onerror = null;
-        img.src = fallbackByCat;
-      };
+      media.setAttribute("aria-hidden", "true");
     }
-    img.width = CARD_IMG_W;
-    img.height = CARD_IMG_H;
-    img.loading = "lazy";
-    img.decoding = "async";
-    img.fetchPriority = "low";
-    media.appendChild(img);
     mediaWrap.appendChild(media);
 
     var favBtn = document.createElement("button");
@@ -816,18 +700,6 @@
     return art;
   }
 
-  function setEmptyState(emptyBox, titleEl, subEl, show, titleText, subText) {
-    if (!emptyBox) return;
-    emptyBox.hidden = !show;
-    if (show) {
-      emptyBox.classList.toggle("empty-state--error", titleText === "Bir hata oluştu");
-    } else {
-      emptyBox.classList.remove("empty-state--error");
-    }
-    if (titleEl && titleText != null) titleEl.textContent = titleText;
-    if (subEl && subText != null) subEl.textContent = subText;
-  }
-
   function syncHomeListingsLoadingBar(busy, text) {
     var loadEl = document.getElementById("homeListingsLoading");
     var loadTxt = document.getElementById("homeListingsLoadingText");
@@ -839,11 +711,11 @@
   }
 
   function syncHomeListingsRetryButton() {
+    var wrap = document.getElementById("homeListingsFooterActions");
     var retryBtn = document.getElementById("homeListingsRetryBtn");
     if (!retryBtn) return;
-    var emptyBox = document.getElementById("emptyResults");
-    var show = !!(emptyBox && !emptyBox.hidden && homeListingsFetchFailed);
-    retryBtn.hidden = !show;
+    var show = !!(homeListingsFetchFailed && listingsFetchSettled);
+    if (wrap) wrap.hidden = !show;
   }
 
   function updateResultsInfo(infoEl, totalFiltered, shown) {
@@ -892,26 +764,6 @@
     set("homeCatCountElektronik", map.elektronik);
     set("homeCatCountAlisveris", map.alisveris);
     set("homeCatCountHizmet", map.hizmet);
-  }
-
-  function renderHomeStats(rows) {
-    var list = Array.isArray(rows) ? rows : [];
-    var n = list.length;
-    var todayFromApi = 0;
-    list.forEach(function (item) {
-      var t = parseListingDateMs(item);
-      if (t != null && Date.now() - t < 24 * 60 * 60 * 1000) todayFromApi += 1;
-    });
-    var todayVal = 260 + (hashStr("statday:" + n) % 220);
-    var totalVal = 14000 + (hashStr("stattot:" + n) % 12000);
-    if (apiRows.length > 0) {
-      todayVal = Math.max(todayFromApi + 40 + stableInt("todayb:" + n, 30, 120), todayVal - 80);
-      totalVal = Math.max(n * 35 + stableInt("totbase:" + n, 8000, 22000), totalVal - 2000);
-    }
-    var lineToday = document.getElementById("homeStatTodayLine");
-    var lineTotal = document.getElementById("homeStatTotalLine");
-    if (lineToday) lineToday.textContent = "Bugün " + formatCompactNumber(todayVal) + " yeni ilan";
-    if (lineTotal) lineTotal.textContent = "Toplam " + formatCompactNumber(totalVal) + " ilan";
   }
 
   function renderExtraSection(gridId, rows) {
@@ -1186,22 +1038,16 @@
     if (!listingsFetchSettled) return;
 
     var grid = document.getElementById("listingsGrid");
-    var emptyBox = document.getElementById("emptyResults");
-    var emptyTitle = document.getElementById("emptyResultsTitle");
-    var emptySub = document.getElementById("emptyResultsSub");
     var info = document.getElementById("resultsInfo");
 
     if (!grid) return;
 
-    var filteredForStrip = getFilteredRows();
-    renderFeaturedStrip(filteredForStrip.length ? filteredForStrip : getBaseRows());
+    renderFeaturedStrip(getFilteredRows());
     renderCategoryCounts(getBaseRows());
-    renderHomeStats(getBaseRows());
     renderExtraFeeds(apiRows);
     renderLiveInitial(apiRows);
     startLiveTicker(apiRows);
     syncHomeSectionHeading();
-    syncHomeDemoNote();
 
     var displayRows = getGridDisplayRows();
 
@@ -1210,45 +1056,11 @@
       grid.innerHTML = "";
       shownCount = 0;
       updatePager(0, 0);
-      var hasRows = getBaseRows().length > 0;
-      if (hasRows) {
-        setEmptyState(
-          emptyBox,
-          emptyTitle,
-          emptySub,
-          true,
-          "Eşleşme bulunamadı",
-          "Filtreleri gevşetebilir veya aşağıdaki önerilen kayıtlara göz atabilirsiniz."
-        );
-        renderEmptySuggestions(suggestionPoolForEmptyState());
-      } else if (homeListingsFetchFailed) {
-        renderEmptySuggestions([]);
-        setEmptyState(
-          emptyBox,
-          emptyTitle,
-          emptySub,
-          true,
-          "Bir hata oluştu",
-          "Listeyi şu an yükleyemedik. Bağlantınızı kontrol edin veya «Tekrar dene» ile yenileyin."
-        );
-      } else {
-        renderEmptySuggestions([]);
-        setEmptyState(
-          emptyBox,
-          emptyTitle,
-          emptySub,
-          true,
-          "Kayıt bulunamadı",
-          "Yeni kayıtlar eklendiğinde burada görünecek."
-        );
-      }
       if (info) info.textContent = "";
       syncHomeListingsRetryButton();
       return;
     }
 
-    renderEmptySuggestions([]);
-    setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
     syncHomeListingsRetryButton();
 
     if (resetShown) {
@@ -1421,9 +1233,6 @@
     }
 
     var grid = document.getElementById("listingsGrid");
-    var emptyBox = document.getElementById("emptyResults");
-    var emptyTitle = document.getElementById("emptyResultsTitle");
-    var emptySub = document.getElementById("emptyResultsSub");
     var info = document.getElementById("resultsInfo");
 
     if (!grid) return;
@@ -1432,7 +1241,6 @@
 
     homeListingsLastErrorMsg = "";
     homeListingsFetchFailed = false;
-    setEmptyState(emptyBox, emptyTitle, emptySub, false, "", "");
     syncHomeListingsRetryButton();
 
     readUrlFilters();

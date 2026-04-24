@@ -49,9 +49,25 @@ img {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 16px;
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.layout > .sidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.layout > .main-content {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Header */
