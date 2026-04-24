@@ -14,7 +14,7 @@
       <div class="container listing-info-bar-inner">
         <div class="listing-info-bar__cluster">
           <p id="resultsInfo" class="listing-info-bar__text">Toplam 0 ilan bulundu</p>
-          <p class="listing-info-bar__tagline">Vasıta, emlak, alışveriş ve hizmet ilanlarında arayın; kategoriyi soldan, sonucu buradan yönetin.</p>
+          <p class="listing-info-bar__tagline">Vasıta, emlak, alışveriş ve hizmet ilanlarında arayın; kategoriyi soldan seçin, sonuçları buradan takip edin.</p>
         </div>
       </div>
     </div>
@@ -30,10 +30,31 @@
       <select id="cityFilter" class="filter-select filter-select--cities"><option value="all">Tüm şehirler</option></select>
       <select id="brandFilter" disabled><option value="all">Tüm markalar</option></select>
       <select id="modelFilter" disabled><option value="all">Önce marka seçin</option></select>
+      <input type="number" id="minPriceFilter" min="0" tabindex="-1" value="" aria-hidden="true" />
+      <input type="number" id="maxPriceFilter" min="0" tabindex="-1" value="" aria-hidden="true" />
+      <select id="citySelect" class="filter-select filter-select--cities" tabindex="-1" title="İl seçin" aria-hidden="true">
+        <option value="all">Tüm şehirler</option>
+      </select>
+      <select id="dateFilter" class="filter-select filter-select--date" tabindex="-1" title="İlan tarihi" aria-hidden="true">
+        <option value="all">Tümü</option>
+        <option value="24h">Son 24 saat</option>
+        <option value="3">Son 3 gün</option>
+        <option value="7">Son 7 gün</option>
+        <option value="30">Son 30 gün</option>
+      </select>
+      <select id="sortFilter" tabindex="-1" aria-hidden="true">
+        <option value="recommended">Önerilen sıralama</option>
+        <option value="newest">En yeni</option>
+        <option value="price-asc">En düşük fiyat</option>
+        <option value="price-desc">En yüksek fiyat</option>
+        <option value="km-asc">En düşük KM</option>
+        <option value="km-desc">En yüksek KM</option>
+        <option value="oldest">En eski</option>
+      </select>
     </div>
 
     <section class="container main-layout main-layout--marketplace">
-      <button type="button" class="mobile-sidebar-toggle" id="mobileSidebarToggle">Kategoriler ve filtreler</button>
+      <button type="button" class="mobile-sidebar-toggle" id="mobileSidebarToggle">Kategoriler</button>
       <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
       <aside class="sidebar-column sidebar-column--guide" id="sidebarColumn">
@@ -121,46 +142,7 @@
                 </div>
               </div>
             </nav>
-            <div class="sidebar-marketplace-filters">
-              <h3 class="sidebar-filters-title">Filtreler</h3>
-              <div class="sidebar-price-row">
-                <div class="form-group">
-                  <label for="minPriceFilter">Fiyat min (₺)</label>
-                  <input type="number" id="minPriceFilter" placeholder="0" min="0" />
-                </div>
-                <div class="form-group">
-                  <label for="maxPriceFilter">Fiyat max (₺)</label>
-                  <input type="number" id="maxPriceFilter" placeholder="Sınırsız" min="0" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="citySelect">Şehir</label>
-                <select id="citySelect" class="filter-select filter-select--cities" title="İl seçin">
-                  <option value="all">Tüm şehirler</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="dateFilter">Tarih</label>
-                <select id="dateFilter" class="filter-select filter-select--date" title="İlan tarihi">
-                  <option value="all">Tümü</option>
-                  <option value="24h">Son 24 saat</option>
-                  <option value="3">Son 3 gün</option>
-                  <option value="7">Son 7 gün</option>
-                  <option value="30">Son 30 gün</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="sidebar-aux-card">
-            <h3 class="sidebar-aux-title">Popüler aramalar</h3>
-            <div class="sidebar-chip-list">
-              <button type="button" class="sidebar-search-chip" data-home-quick-search="otomobil ikinci el">İkinci el otomobil</button>
-              <button type="button" class="sidebar-search-chip" data-home-quick-search="kiralık daire">Kiralık daire</button>
-              <button type="button" class="sidebar-search-chip" data-home-quick-search="İstanbul">İstanbul</button>
-              <button type="button" class="sidebar-search-chip" data-home-quick-search="laptop">Laptop</button>
-              <button type="button" class="sidebar-search-chip" data-home-quick-search="suv">SUV</button>
-            </div>
+            <div class="filters" aria-hidden="true"></div>
           </div>
 
           <div class="sidebar-aux-card">
@@ -209,22 +191,12 @@
         <div class="home-results-toolbar-wrap">
           <div class="home-listing-rail-head">
             <h3 class="home-listing-rail-head__title">İlan araması</h3>
-            <p class="home-listing-rail-head__lead">Kelime, sıralama ve soldaki filtrelerle listeyi daraltın.</p>
+            <p class="home-listing-rail-head__lead">Kelime ile arayın; kategoriyi soldan seçerek listeyi daraltın.</p>
           </div>
         <div class="panel listing-toolbar-marketplace">
           <div class="listing-toolbar-marketplace__row">
             <input type="search" id="searchInput" class="listing-toolbar-marketplace__search" placeholder="Kelime ile ara" autocomplete="off" />
             <div class="listing-toolbar-marketplace__actions">
-              <label class="sr-only" for="sortFilter">Sıralama</label>
-              <select id="sortFilter" class="listing-toolbar-marketplace__sort">
-                <option value="recommended">Önerilen sıralama</option>
-                <option value="newest">En yeni</option>
-                <option value="price-asc">En düşük fiyat</option>
-                <option value="price-desc">En yüksek fiyat</option>
-                <option value="km-asc">En düşük KM</option>
-                <option value="km-desc">En yüksek KM</option>
-                <option value="oldest">En eski</option>
-              </select>
               <button type="button" class="btn btn-light btn-sm" id="saveSearchBtn">Aramayı kaydet</button>
             </div>
           </div>
@@ -241,7 +213,7 @@
               <div class="empty-state__actions">
                 <div id="listingEmptyShortcuts" class="empty-state__shortcuts">
                   <a href="ilan-ver.html" class="btn btn-primary">Ücretsiz ilan ver</a>
-                  <p class="empty-state__hint empty-state__hint--sidebar">Kategori ve filtreler için sol menüyü kullanın.</p>
+                  <p class="empty-state__hint empty-state__hint--sidebar">Kategori seçimi için sol menüyü kullanın.</p>
                 </div>
                 <button type="button" class="btn btn-light hidden" id="listingEmptyResetFilters">Filtreleri temizle</button>
               </div>
