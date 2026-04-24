@@ -167,40 +167,6 @@
     }
   }
 
-  function ensureCorporateDropdown() {
-    try {
-      var host = document.querySelector(".header-actions");
-      if (!host) return;
-      if (host.querySelector(".header-dropdown")) return;
-      var wrap = document.createElement("div");
-      wrap.className = "header-dropdown";
-      wrap.innerHTML =
-        '<button type="button" class="header-dropdown__btn" aria-expanded="false">Kurumsal</button>' +
-        '<div class="header-dropdown__menu" hidden>' +
-        '<a class="header-dropdown__item" href="hakkimizda.html">Hakkımızda</a>' +
-        '<a class="header-dropdown__item" href="kvkk.html">KVKK</a>' +
-        '<a class="header-dropdown__item" href="gizlilik.html">Gizlilik Politikası</a>' +
-        '<a class="header-dropdown__item" href="kullanim-sartlari.html">Kullanım Şartları</a>' +
-        '<a class="header-dropdown__item" href="mesafeli-satis.html">Mesafeli Satış Sözleşmesi</a>' +
-        '<a class="header-dropdown__item" href="iletisim.html">İletişim</a>' +
-        "</div>";
-      host.insertBefore(wrap, host.firstChild);
-      var btn = wrap.querySelector(".header-dropdown__btn");
-      var menu = wrap.querySelector(".header-dropdown__menu");
-      btn.addEventListener("click", function () {
-        var open = menu.hidden;
-        menu.hidden = !open;
-        btn.setAttribute("aria-expanded", open ? "true" : "false");
-      });
-      document.addEventListener("click", function (ev) {
-        if (!wrap.contains(ev.target)) {
-          menu.hidden = true;
-          btn.setAttribute("aria-expanded", "false");
-        }
-      });
-    } catch (e) {}
-  }
-
   function authGuard() {
     try {
       var body = document.body;
@@ -240,7 +206,6 @@
       if (window.JetleAuth && typeof JetleAuth.bootstrap === "function") {
         JetleAuth.bootstrap().then(function () {
           applyNavbarState();
-          ensureCorporateDropdown();
           authGuard();
           hideSkeleton();
         }).catch(function () {
@@ -248,7 +213,6 @@
           hideSkeleton();
         });
       } else {
-        ensureCorporateDropdown();
         hideSkeleton();
       }
     } catch (e) {

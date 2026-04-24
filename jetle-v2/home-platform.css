@@ -581,8 +581,16 @@
   top: 76px;
   align-self: start;
   max-height: calc(100vh - 92px);
+  overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 8px;
+  min-width: 0;
+}
+
+.sidebar--home-pro .category-tree,
+.sidebar--home-pro .home-filter-shell {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 @media (max-width: 900px) {
