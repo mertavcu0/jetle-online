@@ -212,12 +212,6 @@
   background: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 50%, #eef2f7 100%);
 }
 
-.home-listings-footer-actions {
-  margin-top: 14px;
-  display: flex;
-  justify-content: center;
-}
-
 .home-cat-blocks--sidebar {
   display: flex;
   flex-direction: column;
