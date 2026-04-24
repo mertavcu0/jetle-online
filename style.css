@@ -11328,3 +11328,19 @@ body[data-page="home"] .homepage-showcase-panel--primary .section-link {
     font-size: 10px;
   }
 }
+
+.main-container {
+  display: block !important;
+}
+
+.listing-area {
+  width: 100% !important;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}

@@ -30,17 +30,21 @@
   }
 
   var _homeTrCombosReady = false;
+  var _homeHeroTrComboReady = false;
   function ensureHomeFilterSearchCombos() {
-    if (_homeTrCombosReady) return;
     if (!window.JetleTrCitiesUI || typeof JetleTrCitiesUI.enhanceSelect !== "function") return;
     var cs = document.getElementById("citySelect");
     var ds = document.getElementById("districtSelect");
-    if (!cs || !ds) return;
-    _homeTrCombosReady = true;
-    JetleTrCitiesUI.enhanceSelect(cs, { wrapClass: "home-filter-tr-combo" });
-    JetleTrCitiesUI.enhanceSelect(ds, { wrapClass: "home-filter-tr-combo" });
+    if (cs && ds && !_homeTrCombosReady) {
+      _homeTrCombosReady = true;
+      JetleTrCitiesUI.enhanceSelect(cs, { wrapClass: "home-filter-tr-combo" });
+      JetleTrCitiesUI.enhanceSelect(ds, { wrapClass: "home-filter-tr-combo" });
+    }
     var hc = document.getElementById("homeHeroCity");
-    if (hc) JetleTrCitiesUI.enhanceSelect(hc, { wrapClass: "home-hero-tr-combo" });
+    if (hc && !_homeHeroTrComboReady) {
+      _homeHeroTrComboReady = true;
+      JetleTrCitiesUI.enhanceSelect(hc, { wrapClass: "home-hero-tr-combo" });
+    }
   }
 
   var CATEGORY_TREE = [
@@ -5338,7 +5342,8 @@
 
   function handleFilterControlChange(id) {
     if (id === "citySelect") {
-      state.city = document.getElementById("citySelect").value || "";
+      var cityEl = document.getElementById("citySelect");
+      state.city = cityEl && cityEl.value ? cityEl.value : "";
       state.district = "";
       syncDistrictFilter();
       return;
@@ -5465,7 +5470,11 @@
     }
     var si = document.getElementById("headerSearchInput");
     if (si) si.value = state.search;
-    populateCitySelect("citySelect");
+    if (document.getElementById("citySelect")) {
+      populateCitySelect("citySelect");
+    } else if (document.getElementById("homeHeroCity")) {
+      populateCitySelect("homeHeroCity");
+    }
     syncDistrictFilter();
     syncVehicleFilterVisibility();
     syncVehicleFilterSelects();
