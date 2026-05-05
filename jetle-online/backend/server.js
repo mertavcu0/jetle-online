@@ -3,6 +3,7 @@ require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const http = require("http");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const listingsRoutes = require("./routes/listings");
@@ -69,6 +70,13 @@ app.get("/", (req, res) => {
 
 // index.html fallback
 app.get("*", (req, res) => {
+  const publicDir = path.join(__dirname, "../public");
+  const htmlPath = path.join(publicDir, req.path.endsWith(".html") ? req.path : req.path + ".html");
+
+  if (htmlPath.startsWith(publicDir) && fs.existsSync(htmlPath)) {
+    return res.sendFile(htmlPath);
+  }
+
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
