@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Öne Çıkanlar - jetle.online</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f3f5;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .jetle {
+      color: #007bff;
+    }
+
+    .online {
+      color: #111;
+    }
+
+    .menu a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .menu a:hover {
+      color: #007bff;
+    }
+
+    .header-area {
+      margin: 30px 40px 10px 40px;
+    }
+
+    .header-area h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header-area p {
+      margin-top: 5px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .empty-box {
+      margin: 30px 40px;
+      padding: 40px;
+      background: #fff;
+      border: 1px dashed #ddd;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .empty-box h3 {
+      margin-bottom: 10px;
+    }
+
+    .empty-box p {
+      color: #777;
+    }
+
+    .empty-box {
+      display: none !important;
+    }
+
+    .coming-soon {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html" class="logo">
+      <span class="jetle">jetle</span><span class="online">.online</span>
+    </a>
+
+    <div class="menu">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="ilan-ver.html">İlan Ver</a>
+      <a href="#">Profil</a>
+      <a href="#">Giriş</a>
+    </div>
+  </div>
+
+  <main>
+    <div class="header-area">
+      <h1>Öne Çıkan İlanlar</h1>
+      <p>En çok görüntülenen ve öne çıkarılan ilanlar</p>
+    </div>
+
+    <div class="empty-box">
+      <h3>Henüz öne çıkan ilan yok</h3>
+      <p>İlanlar öne çıkarıldığında burada listelenecek.</p>
+    </div>
+    <div class="coming-soon">
+      <p>İçerikler yakında eklenecektir.</p>
+    </div>
+  </main>
+  <script src="/auth-global.js"></script>
+</body>
+</html>

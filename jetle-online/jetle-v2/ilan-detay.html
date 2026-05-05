@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan Detay</title>
+  <style>
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.left, .right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.image-box {
+  height: 350px;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.thumbs {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbs div {
+  flex: 1;
+  height: 80px;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.desc-box {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.desc-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.desc {
+  color: #444;
+}
+
+.price-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.location {
+  color: gray;
+  margin: 5px 0 15px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #2d6cdf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #1f4fbf;
+}
+
+.seller-box {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.seller-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.seller-name {
+  color: #555;
+}
+
+</style>
+</head>
+<body>
+  <script>
+async function loadDetail() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    document.body.innerHTML = "İlan bulunamadı";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/listings");
+    const list = await res.json();
+    const data = list.find(i => i._id === id);
+
+    if (!data) {
+      document.body.innerHTML = "İlan bulunamadı";
+      return;
+    }
+
+    document.body.innerHTML = `
+<div class="container">
+
+  <div class="left">
+    <div class="image-box"></div>
+
+    <div class="thumbs">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <div class="title">${data.title}</div>
+
+    <div class="desc-box">
+      <div class="desc-title">Açıklama</div>
+      <div class="desc">${data.description}</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="price-box">
+      <div class="price">${data.price} ₺</div>
+      <div class="location">${data.location}</div>
+      <button class="btn">Mesaj Gönder</button>
+      <button class="btn" onclick="report('${data._id}')">Şikayet Et</button>
+    </div>
+
+    <div class="seller-box">
+      <div class="seller-title">Satıcı</div>
+      <div class="seller-name">Jetle Kullanıcısı</div>
+    </div>
+  </div>
+
+</div>
+`;
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = "Hata oluştu";
+  }
+}
+
+loadDetail();
+
+function report(id) {
+  const reason = prompt("Şikayet sebebi nedir?");
+
+  fetch("/api/report", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({
+      listingId: id,
+      reason
+    })
+  });
+
+  alert("Şikayet gönderildi");
+}
+</script>
+</body>
+</html>
+

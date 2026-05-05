@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yönlendiriliyor...</title>
+  <script>
+    const id = new URLSearchParams(window.location.search).get("id") || "";
+    const q = id ? "?id=" + encodeURIComponent(id) : "";
+    window.location.replace("listing-detail.html" + q);
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=listing-detail.html" />
+    <p><a href="listing-detail.html">İlan detayına git</a></p>
+  </noscript>
+</head>
+<body></body>
+</html>

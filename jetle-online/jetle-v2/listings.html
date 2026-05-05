@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlanlar | jetle.online</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #111827;
+    }
+
+    .topbar {
+      width: 100%;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 24px;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      max-width: 1280px;
+      margin: 0 auto;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .jetle {
+      color: #2563eb;
+    }
+
+    .online {
+      color: #111827;
+    }
+
+    .page {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      gap: 20px;
+      padding: 0 16px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+      flex: 0 0 260px;
+    }
+
+    .sidebar h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .sidebar label {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .sidebar input,
+    .sidebar select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .price-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sidebar button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .listing-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #eee;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .listing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body {
+      padding: 10px;
+    }
+
+    .card-body h3 {
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .card-body p {
+      margin: 8px 0 4px;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .card-body span {
+      color: #555;
+      font-size: 13px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .seller-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .seller-badge.verified {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .seller-badge.premium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .seller-badge.corporate {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: relative;
+        width: 100%;
+        flex-basis: auto;
+      }
+
+      .listing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">
+      <span class="jetle">jetle</span><span class="online">.online</span>
+    </div>
+  </div>
+
+  <div class="page">
+    <aside class="sidebar">
+      <h3>Filtrele</h3>
+
+      <label>Kategori</label>
+      <select id="filterCategory">
+        <option value="">Tümü</option>
+        <option value="Otomobil">Otomobil</option>
+        <option value="Emlak">Emlak</option>
+      </select>
+
+      <label>Şehir</label>
+      <input type="text" id="filterCity" placeholder="Şehir yaz">
+
+      <label>Fiyat</label>
+      <div class="price-row">
+        <input type="number" id="minPrice" placeholder="Min">
+        <input type="number" id="maxPrice" placeholder="Max">
+      </div>
+
+      <button id="applyFilter">Filtrele</button>
+    </aside>
+
+    <main class="content">
+      <div id="listingContainer" class="listing-grid"></div>
+    </main>
+  </div>
+  <script src="listings.js"></script>
+</body>
+</html>

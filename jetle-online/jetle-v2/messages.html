@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesajlar</title>
+<style>
+.chat-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100vh;
+}
+
+.chat-list {
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.chat-list div {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.chat-list div:hover {
+  background: #f5f5f5;
+}
+
+.chat-list p {
+  font-size: 12px;
+  color: #666;
+  margin: 2px 0 0;
+}
+
+.chat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message.me {
+  text-align: right;
+}
+
+.message span {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #eee;
+}
+
+.message.me span {
+  background: #2563eb;
+  color: white;
+}
+
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+}
+
+.chat-input button {
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+</style>
+</head>
+<body>
+
+<div class="chat-container">
+
+  <!-- SOL -->
+  <div class="chat-list" id="chatList"></div>
+
+  <!-- SAĞ -->
+  <div class="chat-box">
+
+    <div id="chatMessages" class="messages"></div>
+
+    <div class="chat-input">
+      <input id="msgInput" placeholder="Mesaj yaz..." />
+      <button onclick="sendMsg()">Gönder</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let currentUser = JSON.parse(atob(localStorage.getItem("token").split('.')[1])).id;
+let activeUser = null;
+
+// SOL LİSTE (basit)
+async function loadChats() {
+  const res = await fetch("/api/conversations", {
+    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+  });
+
+  const data = await res.json();
+  const list = document.getElementById("chatList");
+  list.innerHTML = "";
+
+  data.forEach(c => {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <strong>${c.user.name}</strong>
+      <p>${c.lastMessage}</p>
+    `;
+
+    div.onclick = () => loadMessages(c.user._id);
+
+    list.appendChild(div);
+  });
+}
+
+// MESAJLAR
+async function loadMessages(userId) {
+
+  activeUser = userId;
+
+  const res = await fetch("/api/messages/" + userId, {
+    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+  });
+
+  const data = await res.json();
+  const box = document.getElementById("chatMessages");
+
+  box.innerHTML = "";
+
+  data.forEach(m => {
+    const div = document.createElement("div");
+
+    div.classList.add("message");
+    if (m.sender._id === currentUser) div.classList.add("me");
+
+    div.innerHTML = `<span>${m.text}</span>`;
+
+    box.appendChild(div);
+  });
+}
+
+// MESAJ GÖNDER
+function sendMsg() {
+
+  const text = document.getElementById("msgInput").value;
+  if (!activeUser || !text || !text.trim()) return;
+
+  fetch("/api/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({
+      receiverId: activeUser,
+      text
+    })
+  }).then(() => {
+    document.getElementById("msgInput").value = "";
+    loadMessages(activeUser);
+  });
+}
+
+loadChats();
+
+</script>
+</body>
+</html>
+

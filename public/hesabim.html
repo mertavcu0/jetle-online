@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hesabım - Jetle</title>
+  <meta name="description" content="Jetle hesabınızı, ilanlarınızı, favorilerinizi ve mesajlarınızı tek panelden yönetin.">
+  <meta name="keywords" content="Jetle hesabım, profil, ilanlarım, favorilerim, mesajlarım">
+  <meta property="og:title" content="Hesabım - Jetle">
+  <meta property="og:description" content="Jetle profesyonel kullanıcı paneli.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <form class="search" action="/ilanlar.html">
+        <input name="q" placeholder="İlan, marka, model veya şehir ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="account-shell account-pro-shell">
+    <aside class="account-sidebar">
+      <button class="account-menu-item active" type="button" data-account-tab="profile">Profilim</button>
+      <button class="account-menu-item" type="button" data-account-tab="listings">İlanlarım</button>
+      <button class="account-menu-item" type="button" data-account-tab="favorites">Favorilerim</button>
+      <button class="account-menu-item" type="button" data-account-tab="messages">Mesajlarım</button>
+      <button class="account-menu-item" type="button" data-account-tab="settings">Ayarlar</button>
+      <button class="account-menu-item danger" type="button" data-account-tab="logout">Çıkış</button>
+    </aside>
+
+    <section class="account-content">
+      <section class="account-overview-card">
+        <div class="account-user-card">
+          <div class="profile-avatar profile-avatar-lg" id="accountAvatar">J</div>
+          <div>
+            <span class="eyebrow">Hesap Özeti</span>
+            <h1 id="accountName">Kullanıcı</h1>
+            <p id="accountEmail" class="muted">E-posta bilgisi yok</p>
+          </div>
+        </div>
+
+        <div class="account-stats">
+          <div class="account-stat-card">
+            <span>Toplam İlan</span>
+            <strong id="statTotalListings">0</strong>
+          </div>
+          <div class="account-stat-card">
+            <span>Aktif İlan</span>
+            <strong id="statActiveListings">0</strong>
+          </div>
+          <div class="account-stat-card">
+            <span>Mesaj</span>
+            <strong id="statMessageCount">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <div class="account-card account-tab active" id="account-profile">
+        <div class="account-section-head">
+          <div>
+            <h2>Profilim</h2>
+            <p class="muted">Hesap bilgilerinizi görüntüleyin ve şifrenizi güncelleyin.</p>
+          </div>
+        </div>
+
+        <form class="account-form" id="passwordForm">
+          <label>
+            Yeni şifre
+            <input id="accountNewPassword" name="password" type="password" minlength="6" placeholder="En az 6 karakter">
+          </label>
+          <button class="btn-primary" type="submit">Şifreyi Güncelle</button>
+          <p class="form-message" id="passwordMessage"></p>
+        </form>
+      </div>
+
+      <div class="account-card account-tab" id="account-listings">
+        <div class="account-section-head">
+          <div>
+            <h2>İlanlarım</h2>
+            <p class="muted">Yayındaki ve bekleyen ilanlarınızı yönetin.</p>
+          </div>
+          <a class="post-link" href="/ilan-ver.html">Yeni İlan Ver</a>
+        </div>
+        <div class="account-list" id="accountListings">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="account-card account-tab" id="account-favorites">
+        <div class="account-section-head">
+          <div>
+            <h2>Favorilerim</h2>
+            <p class="muted">Kaydettiğiniz ilanlara hızlıca ulaşın.</p>
+          </div>
+        </div>
+        <div class="account-list" id="accountFavorites">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="account-card account-tab" id="account-messages">
+        <div class="account-section-head">
+          <div>
+            <h2>Mesajlarım</h2>
+            <p class="muted">İlanlarınızla ilgili konuşmaları buradan takip edin.</p>
+          </div>
+        </div>
+
+        <div class="inbox-panel">
+          <aside class="conversation-list" id="conversationList">
+            <div class="spinner"></div>
+          </aside>
+
+          <section class="message-panel">
+            <div class="message-panel-head" id="messageHeader">
+              <strong>Konuşma seç</strong>
+              <span>Soldaki listeden bir konuşma açın.</span>
+            </div>
+            <div class="message-thread" id="messageThread">
+              <div class="account-empty-state">Mesajlar burada görünecek.</div>
+            </div>
+            <form class="message-compose" id="messageForm">
+              <input name="text" placeholder="Mesaj yaz" autocomplete="off" disabled>
+              <button class="btn-primary" type="submit" disabled>Gönder</button>
+            </form>
+          </section>
+        </div>
+      </div>
+
+      <div class="account-card account-tab" id="account-settings">
+        <div class="account-section-head">
+          <div>
+            <h2>Ayarlar</h2>
+            <p class="muted">Hesap tercihleri ve güvenlik işlemleri.</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <strong>Oturum</strong>
+            <p class="muted">Bu cihazdaki hesabınızdan güvenli şekilde çıkış yapabilirsiniz.</p>
+            <button class="account-danger-btn" type="button" onclick="logout()">Çıkış Yap</button>
+          </div>
+          <div class="settings-card">
+            <strong>Güvenlik</strong>
+            <p class="muted">Şifrenizi Profilim sekmesinden güncelleyebilirsiniz.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/account.js"></script>
+  <script defer src="/js/messages.js"></script>
+</body>
+</html>

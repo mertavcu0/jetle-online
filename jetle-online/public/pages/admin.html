@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yönetim — Jetle.online</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .admin-wrap { max-width: 960px; margin: 32px auto; padding: 0 20px; }
+    .admin-wrap h1 { font-size: 1.25rem; margin: 0 0 8px; }
+    .admin-wrap .lead { color: #64748b; margin: 0 0 20px; font-size: 0.9rem; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .admin-table th, .admin-table td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; vertical-align: top; }
+    .admin-table th { background: #f8fafc; font-weight: 700; }
+    .admin-table button { padding: 6px 10px; font-size: 0.8125rem; cursor: pointer; border-radius: 6px; border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; font-weight: 600; }
+    .admin-table button:hover { background: #fee2e2; }
+    .admin-msg { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
+    .admin-msg.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .admin-msg.ok { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+    .admin-back { display: inline-block; margin-bottom: 16px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header class="header header--simple">
+    <a href="../index.html" class="logo">Jetle<span>.online</span></a>
+    <nav class="menu"><a href="../index.html">Ana sayfa</a></nav>
+  </header>
+  <main class="admin-wrap">
+    <a class="admin-back" href="../index.html">← Ana sayfa</a>
+    <h1>İlan yönetimi (admin)</h1>
+    <p class="lead">Sadece <strong>role: admin</strong> kullanıcılar tüm ilanları görür ve silebilir. JWT ile giriş yapılmış olmalı.</p>
+    <div id="adminRoot"></div>
+    <p id="adminMsg" class="admin-msg" hidden></p>
+  </main>
+  <script>
+    (function () {
+      var API_BASE = "http://localhost:3000";
+      var root = document.getElementById("adminRoot");
+      var msg = document.getElementById("adminMsg");
+
+      function show(text, isErr) {
+        msg.hidden = false;
+        msg.textContent = text;
+        msg.className = "admin-msg " + (isErr ? "err" : "ok");
+      }
+
+      function headersJson() {
+        var t = localStorage.getItem("token");
+        var h = { "Content-Type": "application/json" };
+        if (t) h.Authorization = "Bearer " + t;
+        return h;
+      }
+
+      function load() {
+        root.innerHTML = "<p>Yükleniyor…</p>";
+        fetch(API_BASE + "/api/auth/me", { headers: headersJson() })
+          .then(function (r) {
+            return r.json().then(function (data) {
+              if (!r.ok) throw new Error(data.msg || "HTTP " + r.status);
+              return data;
+            });
+          })
+          .then(function (me) {
+            if (me.role !== "admin") {
+              root.innerHTML = "<p><strong>Yetkisiz.</strong> Bu sayfa yalnızca admin hesapları içindir.</p>";
+              return null;
+            }
+            return fetch(API_BASE + "/api/listings", { headers: headersJson() });
+          })
+          .then(function (r) {
+            if (!r) return null;
+            return r.json().then(function (data) {
+              if (!r.ok) throw new Error(data.msg || "HTTP " + r.status);
+              return data;
+            });
+          })
+          .then(function (listings) {
+            if (!listings) return;
+            if (!Array.isArray(listings) || !listings.length) {
+              root.innerHTML = "<p>Veritabanında ilan yok.</p>";
+              return;
+            }
+            var table = document.createElement("table");
+            table.className = "admin-table";
+            table.innerHTML =
+              "<thead><tr><th>Başlık</th><th>Fiyat</th><th>Sahip</th><th></th></tr></thead><tbody></tbody>";
+            var tb = table.querySelector("tbody");
+            listings.forEach(function (L) {
+              var tr = document.createElement("tr");
+              var id = L.id || L._id;
+              tr.innerHTML =
+                "<td>" +
+                escapeHtml(L.title || "") +
+                "</td><td>" +
+                escapeHtml(String(L.price != null ? L.price : "")) +
+                "</td><td><code>" +
+                escapeHtml(String(L.userId || "")) +
+                "</code></td><td></td>";
+              var td = tr.querySelector("td:last-child");
+              var btn = document.createElement("button");
+              btn.type = "button";
+              btn.textContent = "Sil";
+              btn.addEventListener("click", function () {
+                if (!confirm("Bu ilanı silmek istediğinize emin misiniz?")) return;
+                fetch(API_BASE + "/api/listings/" + encodeURIComponent(id), {
+                  method: "DELETE",
+                  headers: headersJson(),
+                })
+                  .then(function (r) {
+                    return r.json().then(function (data) {
+                      if (!r.ok) throw new Error(data.msg || "HTTP " + r.status);
+                      return data;
+                    });
+                  })
+                  .then(function () {
+                    show("Silindi.", false);
+                    load();
+                  })
+                  .catch(function (e) {
+                    show(e.message || "Silinemedi", true);
+                  });
+              });
+              td.appendChild(btn);
+              tb.appendChild(tr);
+            });
+            root.innerHTML = "";
+            root.appendChild(table);
+          })
+          .catch(function (e) {
+            root.innerHTML = "<p>Giriş gerekli veya oturum geçersiz. <a href=\"login.html\">Giriş yap</a></p>";
+            show(e.message || "Hata", true);
+          });
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      load();
+    })();
+  </script>
+</body>
+</html>

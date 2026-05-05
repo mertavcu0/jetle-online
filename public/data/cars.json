@@ -1,0 +1,152 @@
+{
+  "BMW": {
+    "1 Serisi": {
+      "116i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "118i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "120i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" }
+    },
+    "3 Serisi": {
+      "316i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "318i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "320i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "320d": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" },
+      "330i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "5 Serisi": {
+      "520i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "520d": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" },
+      "530i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "540i": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "X Serisi": {
+      "X1": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "X3": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" },
+      "X5": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" },
+      "X6": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Mercedes-Benz": {
+    "A Serisi": {
+      "A180": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "A200": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" }
+    },
+    "C Serisi": {
+      "C180": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "C200": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "C300": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "E Serisi": {
+      "E200": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "E220d": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" },
+      "E300": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "SUV": {
+      "GLA": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "GLC": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" },
+      "GLE": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Audi": {
+    "A3": {
+      "1.0 TFSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "1.5 TFSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Hatchback" }
+    },
+    "A4": {
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" },
+      "2.0 TFSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "A6": {
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" },
+      "3.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "Q Serisi": {
+      "Q2": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "Q3": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "Q5": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" },
+      "Q7": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Volkswagen": {
+    "Golf": {
+      "1.0 TSI": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" },
+      "1.5 TSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Hatchback" }
+    },
+    "Passat": {
+      "1.5 TSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "Polo": {
+      "1.0 MPI": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" },
+      "1.0 TSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" }
+    },
+    "Tiguan": {
+      "1.5 TSI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "2.0 TDI": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Renault": {
+    "Clio": {
+      "1.0 TCe": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" },
+      "1.5 dCi": { "fuel": "Dizel", "transmission": "Manuel", "body": "Hatchback" }
+    },
+    "Megane": {
+      "1.3 TCe": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "1.5 dCi": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "SUV": {
+      "Captur": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "Kadjar": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Fiat": {
+    "Egea": {
+      "1.4 Fire": { "fuel": "Benzin", "transmission": "Manuel", "body": "Sedan" },
+      "1.3 Multijet": { "fuel": "Dizel", "transmission": "Manuel", "body": "Sedan" },
+      "1.6 Multijet": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "500": {
+      "1.0 Hybrid": { "fuel": "Hybrid", "transmission": "Otomatik", "body": "Hatchback" }
+    }
+  },
+  "Toyota": {
+    "Corolla": {
+      "1.5 Vision": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "1.8 Hybrid": { "fuel": "Hybrid", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "Yaris": {
+      "1.0 VVT-i": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" },
+      "1.5 Hybrid": { "fuel": "Hybrid", "transmission": "Otomatik", "body": "Hatchback" }
+    }
+  },
+  "Honda": {
+    "Civic": {
+      "1.5 VTEC Turbo": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Sedan" },
+      "1.6 i-DTEC": { "fuel": "Dizel", "transmission": "Manuel", "body": "Sedan" }
+    },
+    "HR-V": {
+      "1.5 i-VTEC": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Hyundai": {
+    "i20": {
+      "1.0 T-GDI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "Hatchback" },
+      "1.2 MPI": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" }
+    },
+    "Tucson": {
+      "1.6 T-GDI": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "2.0 CRDi": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  },
+  "Ford": {
+    "Focus": {
+      "1.0 EcoBoost": { "fuel": "Benzin", "transmission": "Manuel", "body": "Hatchback" },
+      "1.5 TDCi": { "fuel": "Dizel", "transmission": "Otomatik", "body": "Sedan" }
+    },
+    "Kuga": {
+      "1.5 EcoBoost": { "fuel": "Benzin", "transmission": "Otomatik", "body": "SUV" },
+      "2.0 TDCi": { "fuel": "Dizel", "transmission": "Otomatik", "body": "SUV" }
+    }
+  }
+}

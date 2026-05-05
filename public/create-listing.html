@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Oluştur - Jetle</title>
+  <meta name="description" content="Jetle ilan oluşturma sayfası.">
+  <meta name="keywords" content="ilan oluştur, Jetle">
+  <meta property="og:title" content="İlan Oluştur - Jetle">
+  <meta property="og:description" content="Jetle ilan oluşturma sayfası.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="create-page">
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <form class="search" action="/">
+        <input placeholder="İlan ara">
+        <button>Ara</button>
+      </form>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="create-container">
+    <div class="compact-stepbar">
+      <div class="step-pill active"><span>1</span> Bilgiler</div>
+      <div class="step-line"></div>
+      <div class="step-pill"><span>2</span> Fotoğraf</div>
+      <div class="step-line"></div>
+      <div class="step-pill"><span>3</span> Yayınla</div>
+    </div>
+
+    <div class="create-layout">
+      <form class="create-form-card" id="listingForm">
+        <section class="create-section">
+          <h1>İlan Bilgileri</h1>
+          <div class="create-grid">
+            <label>
+              Başlık
+              <input name="title" placeholder="Örn. BMW 3.20d M Sport" required>
+            </label>
+            <label>
+              Fiyat
+              <input name="price" id="priceInput" inputmode="numeric" placeholder="Fiyat TL" required>
+            </label>
+            <label>
+              Kategori
+              <select name="category" required>
+                <option value="">Seçiniz</option>
+                <option>Otomobil</option>
+                <option>Emlak</option>
+                <option>Elektronik</option>
+              </select>
+            </label>
+            <label>
+              Şehir
+              <select name="city" id="citySelect" required>
+                <option value="">Şehir seç</option>
+                <option>İstanbul</option>
+                <option>Ankara</option>
+                <option>İzmir</option>
+                <option>Adana</option>
+                <option>Bursa</option>
+                <option>Antalya</option>
+                <option>Konya</option>
+                <option>Gaziantep</option>
+                <option>Kocaeli</option>
+                <option>Kayseri</option>
+              </select>
+            </label>
+            <label>
+              Marka
+              <select name="brand" id="brand" onchange="onBrandChange()">
+                <option value="">Marka seç</option>
+              </select>
+            </label>
+            <label>
+              Model
+              <select name="model" id="model" onchange="onModelChange()">
+                <option value="">Model seç</option>
+              </select>
+            </label>
+            <label>
+              Seri
+              <select name="series" id="series" onchange="onSeriesChange()">
+                <option value="">Seri seç</option>
+              </select>
+            </label>
+            <label>
+              Yıl
+              <input name="year" id="yearInput" type="number" min="1980" max="2025" placeholder="2020">
+              <small class="field-error" id="yearError"></small>
+            </label>
+            <label>
+              KM
+              <input name="km" id="kmInput" type="number" min="0" max="1000000" placeholder="120000">
+              <small class="field-error" id="kmError"></small>
+            </label>
+            <label>
+              Yakıt
+              <select name="fuel" id="fuel">
+                <option value="">Seçiniz</option>
+                <option>Benzin</option>
+                <option>Dizel</option>
+                <option>Hybrid</option>
+                <option>Elektrik</option>
+              </select>
+            </label>
+            <label>
+              Vites
+              <select name="transmission" id="transmission">
+                <option value="">Seçiniz</option>
+                <option>Otomatik</option>
+                <option>Manuel</option>
+              </select>
+            </label>
+            <label>
+              Kasa Tipi
+              <select name="body" id="body">
+                <option value="">Seçiniz</option>
+                <option>Sedan</option>
+                <option>Hatchback</option>
+                <option>SUV</option>
+                <option>Station Wagon</option>
+                <option>Coupe</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="full-field">
+            Açıklama
+            <textarea name="description" placeholder="İlan açıklamasını kısa ve net yazın" required></textarea>
+          </label>
+        </section>
+
+        <section class="create-section features-box">
+          <h2>Özellikler</h2>
+          <div class="feature-grid">
+            <label><input type="checkbox"> Takas olur</label>
+            <label><input type="checkbox"> Garantili</label>
+            <label><input type="checkbox"> Sahibinden</label>
+            <label><input type="checkbox"> Acil</label>
+            <label><input type="checkbox"> Ekspertizli</label>
+            <label><input type="checkbox"> Krediye uygun</label>
+            <label><input type="checkbox"> Faturalı</label>
+            <label><input type="checkbox"> Pazarlık payı</label>
+          </div>
+        </section>
+
+        <section class="create-section">
+          <h2>Fotoğraflar</h2>
+          <input type="hidden" name="image" value="">
+          <label class="photo-drop">
+            <span>📷</span>
+            <strong>Fotoğraf ekle</strong>
+            <small>En iyi görsel kartta ilk görünür</small>
+            <input name="images" type="file" accept="image/*" multiple>
+          </label>
+          <div class="photo-preview-grid" id="miniPreviewList"></div>
+        </section>
+
+        <div class="create-actions">
+          <a href="/" class="ghost-btn">Vazgeç</a>
+          <button type="submit" id="publishBtn" disabled>İlanı Yayınla</button>
+        </div>
+        <p class="muted" id="listingMessage"></p>
+      </form>
+
+      <aside class="create-preview-card">
+        <div class="preview-image" id="createPreviewImage">Görsel</div>
+        <div class="preview-body">
+          <h3 id="createPreviewTitle">İlan başlığı</h3>
+          <p class="preview-price" id="createPreviewPrice">0 TL</p>
+          <p class="muted" id="createPreviewMeta">Şehir / Kategori</p>
+          <p class="muted" id="createPreviewVehicle">Marka / Model</p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="success-screen" id="successScreen" hidden>
+      <div class="success-card">
+        <h2>İlan başarıyla eklendi</h2>
+        <p>İlanınız Jetle üzerinde yayında. Dilerseniz ilan sayfasına gidebilir veya ana sayfaya dönebilirsiniz.</p>
+        <div>
+          <a class="post-link" id="successDetailLink" href="/">İlana Git</a>
+          <a class="ghost-btn" href="/">Ana Sayfa</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/listings.js"></script>
+</body>
+</html>

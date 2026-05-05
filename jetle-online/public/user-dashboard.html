@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kullanıcı Paneli | Jetle</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f4f6f8;
+      color: #111827;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .navbar {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .brand {
+      color: #2563eb;
+      font-size: 22px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      min-width: 0;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .admin-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      transition: 0.2s ease;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+    }
+
+    .admin-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .admin-card small,
+    .admin-card p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    #myMessages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #myMessages .admin-card {
+      max-width: 72%;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+    }
+
+    #myMessages .admin-card.mine {
+      align-self: flex-end;
+      background: #2563eb;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    #myMessages .admin-card.theirs {
+      align-self: flex-start;
+      background: #fff;
+      border-bottom-left-radius: 4px;
+    }
+
+    #myMessages .admin-card.mine p,
+    #myMessages .admin-card.mine small {
+      color: rgba(255,255,255,0.78);
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .admin-actions a {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #eff6ff;
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .favorite-btn {
+      border: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      transition: 0.2s ease;
+    }
+
+    .favorite-btn:hover {
+      transform: scale(1.08);
+      background: #fee2e2;
+    }
+
+    .favorite-btn.active {
+      background: #fee2e2;
+      color: #e03131;
+    }
+
+    .empty {
+      padding: 14px;
+      border: 1px dashed #d1d5db;
+      border-radius: 10px;
+      color: #6b7280;
+      background: #f9fafb;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .navbar { padding: 0 16px; }
+      .page { padding: 16px; }
+      .admin-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="/">jetle.online</a>
+    <div id="authArea"></div>
+  </header>
+
+  <main class="page">
+    <div class="page-header">
+      <h1>Kullanıcı Paneli</h1>
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="panel">
+        <h2>İlanlarım</h2>
+        <div id="myListings"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Favorilerim</h2>
+        <div id="myFavorites"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Mesajlarım</h2>
+        <div id="myMessages"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    let userId = user.id || user._id;
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function price(value) {
+      return Number(value || 0).toLocaleString("tr-TR") + " TL";
+    }
+
+    function listingCard(item) {
+      return `
+        <div class="admin-card">
+          <div>
+            <strong>${escapeHtml(item.title || "Başlıksız ilan")}</strong>
+            <p>${escapeHtml(item.city || "Şehir yok")} - ${price(item.price)}</p>
+            <small>${escapeHtml(item.category || "Kategori yok")}</small>
+          </div>
+          <div class="admin-actions">
+            <a href="/listing-detail.html?id=${item._id}">Görüntüle</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function favoriteCard(item) {
+      return `
+        <div class="admin-card">
+          <div>
+            <strong>${escapeHtml(item.title || "Başlıksız ilan")}</strong>
+            <p>${escapeHtml(item.city || "Şehir yok")} - ${price(item.price)}</p>
+            <small>${escapeHtml(item.category || "Kategori yok")}</small>
+          </div>
+          <div class="admin-actions">
+            <button class="favorite-btn active" onclick="toggleFavorite('${item._id}')">♥</button>
+            <a href="/listing-detail.html?id=${item._id}">Görüntüle</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function messageCard(item) {
+      const mine = item.sender === userId || item.sender === user.email;
+      return `
+        <div class="admin-card ${mine ? "mine" : "theirs"}">
+          <div>
+            <strong>${escapeHtml(mine ? item.receiver : item.sender || "Gönderen yok")}</strong>
+            <p>${escapeHtml(item.message || "")}</p>
+            <small>${new Date(item.createdAt).toLocaleString("tr-TR")}</small>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadSection(url, targetId, renderer, emptyText) {
+      const target = document.getElementById(targetId);
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("API hata");
+
+        const data = await res.json();
+        target.innerHTML = data.length
+          ? data.map(renderer).join("")
+          : `<div class="empty">${emptyText}</div>`;
+      } catch (err) {
+        target.innerHTML = `<div class="empty">Veriler yüklenemedi.</div>`;
+      }
+    }
+
+    async function loadFavorites() {
+      const url = userId
+        ? `/api/users/${userId}/favorites`
+        : `/api/listings/favorites?email=${encodeURIComponent(user.email || "")}`;
+
+      await loadSection(url, "myFavorites", favoriteCard, "Favori ilanınız yok.");
+    }
+
+    async function toggleFavorite(id) {
+      try {
+        const res = await fetch(`/api/listings/${id}/favorite`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            userId
+          })
+        });
+
+        if (!res.ok) throw new Error("Favori işlemi başarısız");
+        await loadFavorites();
+      } catch (err) {
+        alert("Favori işlemi tamamlanamadı");
+      }
+    }
+
+    async function initDashboard() {
+      if (!userId && !user.email) {
+        document.querySelector(".dashboard-grid").innerHTML = `
+          <div class="empty">Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.</div>
+        `;
+        return;
+      }
+
+      await Promise.all([
+        userId
+          ? loadSection(`/api/users/${userId}/listings`, "myListings", listingCard, "İlanınız yok.")
+          : Promise.resolve(document.getElementById("myListings").innerHTML = `<div class="empty">İlanlar için tekrar giriş yapın.</div>`),
+        loadFavorites(),
+        userId
+          ? loadSection(`/api/messages/${userId}`, "myMessages", messageCard, "Mesajınız yok.")
+          : Promise.resolve(document.getElementById("myMessages").innerHTML = `<div class="empty">Mesajlar için tekrar giriş yapın.</div>`)
+      ]);
+    }
+
+    initDashboard();
+  </script>
+  <script src="/auth-global.js"></script>
+</body>
+</html>

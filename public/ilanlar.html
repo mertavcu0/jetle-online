@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlanlar - Jetle</title>
+  <meta name="description" content="Jetle ilan listeleme sayfasında kategori, şehir, ilçe ve fiyat filtreleriyle aradığınız ilana ulaşın.">
+  <meta name="keywords" content="ilanlar, sahibinden, araç ilanları, emlak ilanları, Jetle">
+  <meta property="og:title" content="İlanlar - Jetle">
+  <meta property="og:description" content="Jetle ilan listeleme sayfasında kategori, şehir, ilçe ve fiyat filtreleriyle aradığınız ilana ulaşın.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <form class="search" onsubmit="event.preventDefault(); loadListingsPage();">
+        <input id="listingSearch" placeholder="İlan, marka, model veya şehir ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="listing-page">
+    <aside class="listing-filter-panel">
+      <div class="filter-head">
+        <h1>İlanlar</h1>
+        <span>Gelişmiş filtre</span>
+      </div>
+
+      <label>
+        Kategori
+        <select id="listingCategory">
+          <option value="">Tümü</option>
+          <option>Otomobil</option>
+          <option>Emlak</option>
+          <option>Elektronik</option>
+          <option>Telefon</option>
+          <option>İş Makineleri</option>
+        </select>
+      </label>
+
+      <label>
+        Şehir
+        <select id="listingCity">
+          <option value="">Tüm şehirler</option>
+        </select>
+      </label>
+
+      <label>
+        İlçe
+        <select id="listingDistrict" disabled>
+          <option value="">Önce şehir seç</option>
+        </select>
+      </label>
+
+      <div class="filter-row">
+        <label>
+          Min fiyat
+          <input id="listingMinPrice" type="number" placeholder="Min">
+        </label>
+        <label>
+          Max fiyat
+          <input id="listingMaxPrice" type="number" placeholder="Max">
+        </label>
+      </div>
+
+      <div id="dynamicFilters"></div>
+
+      <button class="btn-primary" id="clearListingFilters" type="button">Filtreleri Temizle</button>
+    </aside>
+
+    <section class="listing-results">
+      <div class="listing-results-head">
+        <div>
+          <h2>İlanlar</h2>
+          <p id="listingResultCount">İlanlar yükleniyor...</p>
+        </div>
+      </div>
+      <div class="listing-catalog-grid" id="listingCatalogGrid">
+        <div class="spinner"></div>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/listings.js"></script>
+</body>
+</html>

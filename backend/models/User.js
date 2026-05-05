@@ -1,28 +1,62 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema(
-  {
-    fullName: { type: String, required: true, trim: true, maxlength: 120 },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 180 },
-    passwordHash: { type: String, required: true },
-    phone: { type: String, default: "", trim: true, maxlength: 24 },
-    city: { type: String, default: "", trim: true, maxlength: 80 },
-    district: { type: String, default: "", trim: true, maxlength: 80 },
-    role: { type: String, enum: ["user", "admin", "store"], default: "user", index: true },
-    profileType: { type: String, default: "Bireysel", trim: true, maxlength: 40 },
-    isActive: { type: Boolean, default: true, index: true },
-    /** Doping / vitrin hakları (satın alma sonrası artırılır) */
-    dopingCredits: { type: Number, default: 0, min: 0 },
-    featuredSlots: { type: Number, default: 0, min: 0 },
-    showcaseSlots: { type: Number, default: 0, min: 0 },
-    bumpCredits: { type: Number, default: 0, min: 0 },
-    extraListingSlots: { type: Number, default: 0, min: 0 },
-    storePlan: { type: String, default: "", trim: true, maxlength: 40 },
-    storeActiveUntil: { type: Date, default: null }
+const UserSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    trim: true,
   },
-  { timestamps: true }
-);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6,
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Listing",
+  }],
+  notifications: [{
+    text: String,
+    link: String,
+    read: {
+      type: Boolean,
+      default: false,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-userSchema.index({ email: 1 }, { unique: true });
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
-module.exports = mongoose.model("User", userSchema);
+UserSchema.methods.comparePassword = function comparePassword(password) {
+  return bcrypt.compare(password, this.password);
+};
+
+module.exports = mongoose.model("User", UserSchema);

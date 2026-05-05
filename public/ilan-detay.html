@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Detay - Jetle</title>
+  <meta name="description" content="Jetle ilan detay sayfasında fiyat, açıklama, görseller ve satıcı bilgilerini inceleyin.">
+  <meta name="keywords" content="ilan detay, Jetle, fiyat, satıcı">
+  <meta property="og:title" content="İlan Detay - Jetle">
+  <meta property="og:description" content="Jetle ilan detay sayfasında fiyat, açıklama, görseller ve satıcı bilgilerini inceleyin.">
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/listing-detail.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <form class="search" action="/ilanlar.html">
+        <input name="q" placeholder="İlan ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="container listing-detail-shell" id="detail">
+    <div class="spinner"></div>
+  </main>
+</body>
+</html>

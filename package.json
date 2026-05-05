@@ -1,37 +1,20 @@
 {
-  "name": "jetle",
+  "name": "jetle-marketplace",
   "version": "1.0.0",
-  "description": "",
-  "main": "admin.js",
+  "private": true,
+  "main": "backend/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node backend/server.js",
-    "backend:start": "node backend/server.js",
-    "backend:dev": "nodemon backend/server.js",
-    "dev": "nodemon backend/server.js",
-    "backend": "node backend/server.js",
-    "frontend": "npx --yes live-server jetle-v2 --port=5500 --no-browser"
+    "start": "node jetle-online/backend/server.js",
+    "dev": "node backend/server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "body-parser": "^2.2.2",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.1.0",
-    "express-validator": "^7.2.1",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2",
-    "multer": "^2.0.2"
-  },
-  "devDependencies": {
-    "live-server": "^1.2.2",
-    "nodemon": "^3.1.14"
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.8.0",
+    "multer": "^2.1.1",
+    "socket.io": "^4.8.3"
   }
 }

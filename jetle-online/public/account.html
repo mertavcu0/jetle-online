@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hesap Ayarları | Jetle</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      max-width: 520px;
+      margin: 36px auto;
+      padding: 24px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 22px;
+    }
+
+    input {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h2>Hesap Ayarları</h2>
+
+    <input id="name" placeholder="Ad">
+    <input id="city" placeholder="Şehir">
+
+    <button onclick="save()">Kaydet</button>
+  </main>
+
+  <script src="/auth-global.js"></script>
+  <script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+document.getElementById("name").value = user.name || "";
+document.getElementById("city").value = user.city || "";
+
+function save() {
+  fetch("/api/auth/update", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: user.email,
+      name: document.getElementById("name").value,
+      city: document.getElementById("city").value
+    })
+  }).then(() => alert("Kaydedildi"));
+}
+  </script>
+</body>
+</html>

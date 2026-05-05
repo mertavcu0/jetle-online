@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan Düzenle — Jetle.online</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .edit-page {
+      max-width: 760px;
+      margin: 28px auto;
+      padding: 0 16px 24px;
+    }
+    .edit-back {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      text-decoration: none;
+    }
+    .edit-back:hover {
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .edit-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .edit-card h1 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+    }
+    .edit-card p.lead {
+      margin: 0 0 18px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    .edit-field {
+      margin-bottom: 14px;
+    }
+    .edit-field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .edit-field input,
+    .edit-field textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #111827;
+      background: #fff;
+    }
+    .edit-field textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .edit-submit {
+      width: 100%;
+      margin-top: 6px;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .edit-submit:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <header class="header header--simple">
+    <a href="../index.html" class="logo">Jetle<span>.online</span></a>
+    <nav class="menu"><a href="../index.html">Ana sayfa</a></nav>
+  </header>
+
+  <main class="edit-page">
+    <a class="edit-back" href="../index.html">← Ana sayfa</a>
+    <section class="edit-card">
+      <h1>İlan Düzenle</h1>
+      <p class="lead">Değişiklikleri kaydedince ilan güncellenir.</p>
+
+      <form id="ilanEditForm" novalidate>
+        <div class="edit-field">
+          <label for="fieldTitle">Başlık</label>
+          <input id="fieldTitle" type="text" maxlength="200" required />
+        </div>
+        <div class="edit-field">
+          <label for="fieldPrice">Fiyat (TL)</label>
+          <input id="fieldPrice" type="number" min="0" step="1" required />
+        </div>
+        <div class="edit-field">
+          <label for="fieldCategory">Kategori</label>
+          <input id="fieldCategory" type="text" maxlength="120" required />
+        </div>
+        <div class="edit-field">
+          <label for="fieldCity">Şehir</label>
+          <input id="fieldCity" type="text" maxlength="120" required />
+        </div>
+        <div class="edit-field">
+          <label for="fieldDescription">Açıklama</label>
+          <textarea id="fieldDescription" maxlength="8000"></textarea>
+        </div>
+        <button class="edit-submit" type="submit">Kaydet</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function getToken() {
+      return localStorage.getItem("token");
+    }
+
+    function headersJson() {
+      return {
+        "Content-Type": "application/json",
+        Authorization: getToken(),
+      };
+    }
+
+    function requireAuth() {
+      if (getToken()) return true;
+      alert("Giriş yapman gerekiyor");
+      window.location.href = "login.html";
+      return false;
+    }
+
+    function q(id) {
+      return document.getElementById(id);
+    }
+
+    async function loadDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      if (!id) return;
+
+      const res = await fetch("/api/listings/" + id, {
+        headers: headersJson(),
+      });
+      if (!res.ok) {
+        throw new Error("İlan yüklenemedi");
+      }
+      const data = await res.json();
+
+      q("fieldTitle").value = data.title || "";
+      q("fieldPrice").value = data.price != null ? data.price : "";
+      q("fieldCategory").value = data.category || "";
+      q("fieldCity").value = data.city || "";
+      q("fieldDescription").value = data.description || "";
+    }
+
+    async function submitEdit(e) {
+      e.preventDefault();
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      if (!id) return;
+
+      const body = {
+        title: q("fieldTitle").value.trim(),
+        price: Number(q("fieldPrice").value),
+        category: q("fieldCategory").value.trim(),
+        city: q("fieldCity").value.trim(),
+        description: q("fieldDescription").value.trim(),
+      };
+
+      const res = await fetch("/api/listings/" + id, {
+        method: "PUT",
+        headers: headersJson(),
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        alert("İlan güncellendi");
+        window.location.href = "../index.html";
+      } else {
+        alert("Hata oluştu");
+      }
+    }
+
+    (async function boot() {
+      if (!requireAuth()) return;
+      q("ilanEditForm").addEventListener("submit", submitEdit);
+      try {
+        await loadDetail();
+      } catch (err) {
+        alert("İlan yüklenemedi");
+      }
+    })();
+  </script>
+</body>
+</html>
