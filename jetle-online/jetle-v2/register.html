@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kayıt Ol | jetle.online</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    .register-page {
+      background: #f3f4f6;
+      font-family: Arial, sans-serif;
+    }
+
+    .register-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .register-card {
+      width: 400px;
+      background: #fff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .register-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    .register-logo {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .logo-blue {
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .logo-black {
+      color: #111;
+    }
+
+    .register-card h2 {
+      text-align: center;
+      margin: 0 0 20px;
+      color: #111827;
+    }
+
+    .register-card input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .register-card input:hover {
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    }
+
+    .register-card input:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.16);
+    }
+
+    .register-card button {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .register-card button:hover {
+      background: #1e40af;
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(37,99,235,0.28);
+    }
+
+    .register-bottom {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .register-bottom p {
+      font-size: 13px;
+      color: #666;
+      margin: 0 0 6px;
+    }
+
+    .login-link {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: #f3f4f6;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .login-link:hover {
+      background: #e5e7eb;
+    }
+  </style>
+</head>
+<body class="register-page">
+  <div class="register-wrapper">
+    <div class="register-card">
+      <div class="register-logo">
+        <span class="logo-blue">jetle</span><span class="logo-black">.online</span>
+      </div>
+
+      <h2>Kayıt Ol</h2>
+
+      <form id="registerForm">
+        <input type="text" id="name" placeholder="Ad Soyad" required>
+        <input type="email" id="email" placeholder="E-posta adresi" required>
+        <input type="password" id="password" placeholder="Şifre" required>
+        <input type="password" id="passwordConfirm" placeholder="Şifre Tekrar" required>
+        <button type="submit">Hesap Oluştur</button>
+      </form>
+
+      <div class="register-bottom">
+        <p>Zaten hesabın var mı?</p>
+        <a href="login.html" class="login-link">Giriş Yap</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="register.js"></script>
+</body>
+</html>

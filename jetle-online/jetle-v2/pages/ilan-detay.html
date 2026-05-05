@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan detayı — Jetle.online</title>
+  <meta name="description" content="Jetle ilan detayı." />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .detail-load {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      font-size: 0.9375rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .detail-err {
+      max-width: 720px;
+      margin: 24px auto;
+      padding: 20px 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      color: #991b1b;
+      font-size: 0.9375rem;
+    }
+    .detail-err a {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body data-page="ilan-detay">
+  <header class="header header--simple">
+    <a href="../index.html" class="logo">Jetle<span>.online</span></a>
+    <nav class="menu">
+      <a href="../index.html">Ana sayfa</a>
+    </nav>
+  </header>
+
+  <p id="detailLoad" class="detail-load" role="status">İlan yükleniyor…</p>
+  <div id="detailErr" class="detail-err" hidden></div>
+
+  <main class="listing-detail-outer">
+    <div id="detailMain" class="listing-detail-page" hidden>
+      <div class="listing-detail__toolbar">
+        <a class="listing-detail__back" id="detBack" href="../index.html">← Tüm ilanlara dön</a>
+      </div>
+
+      <div class="listing-detail-wrap container">
+        <div class="listing-detail-shell">
+          <!-- SOL: galeri -->
+          <div class="gallery-col">
+            <aside class="listing-detail-gallery" aria-label="İlan görselleri">
+              <figure class="listing-detail__hero">
+                <div
+                  class="listing-detail__hero-inner listing-detail__hero-inner--0"
+                  id="heroMain"
+                ></div>
+              </figure>
+              <div class="listing-detail__thumbs" role="tablist" aria-label="Görsel seç">
+                <button type="button" class="listing-detail__thumb is-active" aria-selected="true" aria-label="1"></button>
+                <button type="button" class="listing-detail__thumb" aria-selected="false" aria-label="2"></button>
+                <button type="button" class="listing-detail__thumb" aria-selected="false" aria-label="3"></button>
+                <button type="button" class="listing-detail__thumb" aria-selected="false" aria-label="4"></button>
+                <button type="button" class="listing-detail__thumb" aria-selected="false" aria-label="5"></button>
+                <button type="button" class="listing-detail__thumb" aria-selected="false" aria-label="6"></button>
+              </div>
+            </aside>
+          </div>
+
+          <!-- ORTA: başlık + fiyat üstte sabit; altında meta / açıklama / özellikler -->
+          <div class="content-col">
+            <div class="topbar">
+              <h1 id="listingTitle" class="title listing-detail__title"></h1>
+              <div class="price listing-detail__price" aria-label="Fiyat"></div>
+            </div>
+
+            <div class="meta">
+              <p class="listing-detail-loc">
+                <span class="city"></span>
+              </p>
+              <p class="listing-detail-when">
+                <span class="date"></span>
+              </p>
+            </div>
+
+            <div class="description">
+              <section class="listing-detail__block" aria-labelledby="descHeading">
+                <h2 id="descHeading" class="listing-detail__block-title">Açıklama</h2>
+                <div class="listing-detail__desc" id="listingDesc"></div>
+              </section>
+            </div>
+
+            <div class="specs">
+              <section class="listing-detail__block" aria-labelledby="specBlockTitle">
+                <h2 id="specBlockTitle" class="listing-detail__block-title">İlan özellikleri</h2>
+                <div class="specs-grid" id="specGrid" aria-label="İlan özellikleri"></div>
+              </section>
+            </div>
+          </div>
+
+          <!-- SAĞ: satıcı -->
+          <div class="seller-col">
+            <aside class="listing-detail-aside" aria-label="Satıcı ile iletişim">
+              <div class="seller-card listing-detail__seller-card">
+                <h2 class="listing-detail__seller-title">Satıcı</h2>
+                <p class="listing-detail__seller-name">Jetle Kullanıcı</p>
+                <a class="btn-primary listing-detail__btn-msg" href="login.html">Mesaj Gönder</a>
+                <p class="listing-detail__phone-label">Telefon</p>
+                <a class="listing-detail__phone" href="tel:+905321112233">0532 111 22 33</a>
+                <p class="listing-detail__trust-note">Güvenli alışveriş önerilir</p>
+              </div>
+            </aside>
+          </div>
+
+          <section class="listing-detail__similar" aria-labelledby="similarHeading">
+            <h2 id="similarHeading" class="listing-detail__similar-title">Benzer ilanlar</h2>
+            <div class="listing-detail__similar-grid" id="similarGrid"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <nav class="site-footer__nav" aria-label="Yasal">
+        <a href="#">KVKK</a>
+        <span class="site-footer__sep" aria-hidden="true">|</span>
+        <a href="#">Gizlilik</a>
+        <span class="site-footer__sep" aria-hidden="true">|</span>
+        <a href="#">Kullanım Şartları</a>
+        <span class="site-footer__sep" aria-hidden="true">|</span>
+        <a href="#">İletişim</a>
+      </nav>
+      <p class="site-footer__copy">© <span id="y"></span> Jetle.online</p>
+    </div>
+  </footer>
+
+  <script src="../script.js" defer></script>
+  <script>
+    document.getElementById("y").textContent = String(new Date().getFullYear());
+  </script>
+</body>
+</html>

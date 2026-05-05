@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jetle Admin Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f6f8;
+      color: #111827;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .admin-layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+    }
+
+    .sidebar {
+      background: #172033;
+      color: #fff;
+      padding: 22px 18px;
+    }
+
+    .brand {
+      margin: 0 0 28px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .brand span { color: #60a5fa; }
+
+    .menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu li {
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: #dbe3ef;
+      cursor: pointer;
+      font-weight: 650;
+      transition: 0.2s ease;
+    }
+
+    .menu li:hover,
+    .menu li.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .main { min-width: 0; }
+
+    .topbar {
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .admin-top-actions,
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-btn,
+    .admin-card button {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #eff6ff;
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .logout-btn:hover,
+    .admin-card button:hover {
+      background: #dbeafe;
+    }
+
+    .admin-card button.danger,
+    .admin-card .danger {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .content {
+      padding: 24px 26px 34px;
+    }
+
+    .content h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    .stats-grid {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      font-weight: bold;
+    }
+
+    .chart-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin: 0 26px 20px;
+      padding: 16px;
+    }
+
+    .chart-card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin: 0 26px 20px;
+    }
+
+    .charts-grid .chart-card {
+      margin: 0;
+    }
+
+    .admin-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      transition: 0.2s ease;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+    }
+
+    .admin-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .admin-card.danger {
+      border-left: 4px solid red;
+      background: #fff5f5;
+    }
+
+    .empty {
+      padding: 14px;
+      border: 1px dashed #d1d5db;
+      border-radius: 10px;
+      color: #6b7280;
+      background: #f9fafb;
+      font-size: 14px;
+    }
+
+    @media (max-width: 620px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .topbar {
+        height: auto;
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+        padding: 16px;
+      }
+      .content { padding: 16px; }
+      .chart-card { margin: 0 16px 16px; }
+      .charts-grid {
+        grid-template-columns: 1fr;
+        margin: 0 16px 16px;
+      }
+
+      .charts-grid .chart-card {
+        margin: 0;
+      }
+      .admin-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+    /* UI polish layer */
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fa;
+    }
+
+    .main {
+      padding: 28px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(10px);
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: 0 12px 28px rgba(15,23,42,0.08);
+    }
+
+    .sidebar,
+    .chart-card,
+    .admin-card,
+    .stat-card {
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.08);
+    }
+
+    .chart-card,
+    .admin-card,
+    .stat-card {
+      padding: 18px;
+    }
+
+    .admin-card {
+      border: 1px solid #e5e7eb;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .admin-card:hover,
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(15,23,42,0.12);
+      border-color: #bfdbfe;
+    }
+
+    .admin-card strong {
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .admin-card div div,
+    .admin-card p,
+    .admin-card small {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .admin-card div div {
+      margin-top: 4px;
+    }
+
+    .admin-card button,
+    .logout-btn {
+      border-radius: 8px;
+      border: 0;
+      padding: 8px 12px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .admin-card button:hover,
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.12);
+    }
+
+    .admin-card button:not(.danger),
+    .admin-actions .primary {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .admin-card button:not(.danger):hover {
+      background: #1d4ed8;
+    }
+
+    .admin-card button.danger,
+    .admin-card .danger,
+    button.danger {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .admin-card button.danger:hover,
+    button.danger:hover {
+      background: #b91c1c;
+    }
+
+    .badge-boost {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #facc15;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      display: inline-flex;
+      margin-bottom: 8px;
+    }
+
+    .badge-passive {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      display: inline-flex;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2 class="brand">Jetle<span>Admin</span></h2>
+      <nav class="menu">
+        <ul>
+          <li class="active" onclick="loadPage('listings')">İlanlar</li>
+          <li onclick="loadPage('users')">Kullanıcılar</li>
+          <li onclick="loadPage('messages')">Mesajlar</li>
+          <li onclick="loadPage('reports')">Raporlar</li>
+          <li onclick="loadPage('notifications')">Bildirimler</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h1>Admin Moderasyon</h1>
+        <div class="admin-top-actions">
+          <span>Admin</span>
+          <button class="logout-btn" onclick="logoutAdmin()">Çıkış</button>
+        </div>
+      </header>
+
+      <div id="stats-box"></div>
+
+      <section class="charts-grid">
+        <div class="chart-card">
+          <h2>Günlük İlan</h2>
+          <canvas id="dailyListingsChart" height="140"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Görüntülenme</h2>
+          <canvas id="dailyViewsChart" height="140"></canvas>
+        </div>
+      </section>
+
+      <section class="content dashboard-content"></section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const admin = localStorage.getItem("admin");
+
+    if (!admin) {
+      window.location.href = "/admin.html";
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      window.location.href = "/admin.html";
+    }
+
+    function number(value) {
+      return new Intl.NumberFormat("tr-TR").format(Number(value || 0));
+    }
+
+    function setActiveMenu(type) {
+      const pages = ["listings", "users", "messages", "reports", "notifications"];
+      document.querySelectorAll(".menu li").forEach((item) => item.classList.remove("active"));
+      const target = document.querySelectorAll(".menu li")[pages.indexOf(type)];
+      if (target) target.classList.add("active");
+    }
+
+    async function loadStats() {
+      const res = await fetch("/api/admin/stats");
+      const data = await res.json();
+
+      document.getElementById("stats-box").innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">Toplam: ${data.totalListings}</div>
+          <div class="stat-card">Aktif: ${data.activeListings}</div>
+          <div class="stat-card">Vitrin: ${data.featuredListings}</div>
+          <div class="stat-card">Bugün: ${data.todayListings}</div>
+        </div>
+      `;
+    }
+
+    let dailyListingsChart = null;
+    let dailyViewsChart = null;
+
+    async function loadAnalytics() {
+      const res = await fetch("/api/admin/analytics");
+      const data = await res.json();
+      const labels = (data.dailyListings || []).map((item) => item.label);
+      const listingCounts = (data.dailyListings || []).map((item) => item.count);
+      const viewCounts = (data.dailyViews || []).map((item) => item.count);
+      const listingsCanvas = document.getElementById("dailyListingsChart");
+      const viewsCanvas = document.getElementById("dailyViewsChart");
+
+      if (!listingsCanvas || !viewsCanvas || typeof Chart === "undefined") return;
+
+      if (dailyListingsChart) {
+        dailyListingsChart.destroy();
+      }
+
+      if (dailyViewsChart) {
+        dailyViewsChart.destroy();
+      }
+
+      dailyListingsChart = new Chart(listingsCanvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Günlük ilan sayısı",
+              data: listingCounts,
+              borderColor: "#2563eb",
+              backgroundColor: "rgba(37,99,235,0.12)",
+              tension: 0.35,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+
+      dailyViewsChart = new Chart(viewsCanvas, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Günlük görüntülenme",
+              data: viewCounts,
+              backgroundColor: "rgba(249,115,22,0.72)",
+              borderColor: "#f97316",
+              borderWidth: 1,
+              borderRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderListings(data) {
+      const container = document.querySelector(".dashboard-content");
+
+      data.forEach(item => {
+        console.log("ID:", item._id);
+      });
+
+      function renderListingBadges(item) {
+        return `
+          ${item.status === "pending" ? '<span class="badge-passive">⏳ Onay Bekliyor</span>' : ''}
+          ${item.status === "rejected" ? '<span class="badge-passive">Reddedildi</span>' : ''}
+          ${item.isFeatured ? '<span class="badge-boost">Vitrin</span>' : ''}
+          ${!item.isFeatured && item.isBoosted ? '<span class="badge-boost">Boost</span>' : ''}
+          ${item.isActive === false ? '<span class="badge-passive">Pasif</span>' : ''}
+        `;
+      }
+
+      function renderListingActions(item) {
+        if (item.status === "pending") {
+          return `
+            <button onclick="approveListing('${item._id}')">Onayla</button>
+            <button class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
+          `;
+        }
+
+        if (item.status === "approved") {
+          return `
+            <button onclick="toggleListing('${item._id}')">
+              ${item.isActive ? "Pasif Yap" : "Aktif Yap"}
+            </button>
+
+            <button onclick="markSuspicious('${item._id}')">
+              Şüpheli
+            </button>
+
+            <button onclick="boostListing('${item._id}')">
+              ${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}
+            </button>
+
+            <button onclick="featureListing('${item._id}')">
+              ${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}
+            </button>
+
+            <button class="danger" onclick="deleteListing('${item._id}')">
+              Sil
+            </button>
+          `;
+        }
+
+        return `
+          <button class="danger" onclick="deleteListing('${item._id}')">
+            Sil
+          </button>
+        `;
+      }
+
+      container.innerHTML = `
+        <h2>İlanlar</h2>
+        ${data.map(item => `
+          <div class="admin-card">
+            <div>
+              ${renderListingBadges(item)}
+              <strong>${item.title}</strong>
+              <div>${item.city || "Şehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
+              <p>Görüntülenme: ${item.views || 0}</p>
+            </div>
+
+            <div class="admin-actions">
+              ${renderListingActions(item)}
+            </div>
+          </div>
+        `).join("") || `<div class="empty">İlan bulunamadı.</div>`}
+      `;
+    }
+
+    function renderUsers(data) {
+      const container = document.querySelector(".dashboard-content");
+
+      container.innerHTML = `
+        <h2>Kullanıcılar</h2>
+        ${data.map(user => `
+          <div class="admin-card">
+            <div>
+              <strong>${user.name || "Kullanıcı"}</strong>
+              <div>${user.email || ""}</div>
+            </div>
+
+            <button onclick="banUser('${user._id}')">
+              ${user.banned ? "Banlandı" : "Banla"}
+            </button>
+          </div>
+        `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
+      `;
+    }
+
+    function renderReports(data) {
+      const container = document.querySelector(".dashboard-content");
+
+      container.innerHTML = `
+        <h2>Şüpheli İlanlar</h2>
+        ${data.map(item => `
+          <div class="admin-card danger">
+            <div>
+              <strong>⚠️ ŞÜPHELİ İLAN</strong>
+              <strong>${item.title}</strong>
+              <div>${item.city || ""}</div>
+            </div>
+
+            <button onclick="toggleListing('${item._id}')">
+              Onayla
+            </button>
+          </div>
+        `).join("") || `<div class="empty">Şüpheli ilan bulunmuyor.</div>`}
+      `;
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch("/api/admin/notifications");
+
+        if (!res.ok) throw new Error("Notification fetch error");
+
+        const data = await res.json();
+        console.log("NOTIFICATIONS DATA:", data);
+        const notifications = Array.isArray(data) ? data.reverse() : [];
+        const notificationIcons = {
+          feature: "⭐",
+          boost: "🚀",
+          approve: "✅",
+          reject: "❌",
+          ban: "⛔"
+        };
+
+        const container = document.querySelector(".dashboard-content");
+
+        container.innerHTML = `
+          <h2>Bildirimler</h2>
+          ${
+            notifications.length === 0
+              ? "<p>Bildirim yok</p>"
+              : notifications.map(n => `
+                <div class="admin-card">
+                  <strong>${notificationIcons[n.type] || "🔔"} ${n.type}</strong>
+                  <p>${n.message}</p>
+                  <small>${new Date(n.createdAt).toLocaleString()}</small>
+                </div>
+              `).join("")
+          }
+        `;
+      } catch (err) {
+        console.error("NOTIFICATION ERROR:", err);
+        alert("Bildirimler yüklenemedi");
+      }
+    }
+
+    function loadPage(type) {
+      setActiveMenu(type);
+      const container = document.querySelector(".dashboard-content");
+
+      if (type === "listings") {
+        fetch("/api/admin/listings")
+          .then(res => {
+            if (!res.ok) throw new Error("API HATA");
+            return res.json();
+          })
+          .then(data => renderListings(data));
+      }
+
+      if (type === "users") {
+        fetch("/api/admin/users")
+          .then(res => {
+            if (!res.ok) throw new Error("API HATA");
+            return res.json();
+          })
+          .then(data => renderUsers(data));
+      }
+
+      if (type === "messages") {
+        container.innerHTML = `
+          <h2>Mesajlar</h2>
+          <div class="empty">Mesaj moderasyonu yakında aktif olacak.</div>
+        `;
+      }
+
+      if (type === "reports") {
+        fetch("/api/admin/suspicious")
+          .then(res => {
+            if (!res.ok) throw new Error("API HATA");
+            return res.json();
+          })
+          .then(data => renderReports(data));
+      }
+
+      if (type === "notifications") {
+        loadNotifications();
+      }
+    }
+
+    async function deleteListing(id) {
+      await fetch("/api/admin/listings/" + id, { method: "DELETE" })
+        .then(res => {
+          if (!res.ok) throw new Error("API HATA");
+          return res.json();
+        });
+      loadPage("listings");
+    }
+
+    async function toggleListing(id) {
+      try {
+        const res = await fetch(`/api/admin/listings/${id}/toggle`, {
+          method: "PATCH"
+        });
+
+        if (!res.ok) {
+          throw new Error("Toggle failed");
+        }
+
+        loadPage("listings");
+        await loadNotifications();
+      } catch (err) {
+        console.error(err);
+        alert("İşlem başarısız");
+      }
+    }
+
+    async function markSuspicious(id) {
+      await fetch("/api/admin/listings/" + id, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isSuspicious: true })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("API HATA");
+          return res.json();
+        });
+      loadPage("listings");
+    }
+
+    async function boostListing(id) {
+      try {
+        const res = await fetch(`/api/admin/listings/${id}/boost`, {
+          method: "PATCH"
+        });
+
+        if (!res.ok) throw new Error("Boost failed");
+
+        loadPage("listings");
+        await loadNotifications();
+      } catch (err) {
+        console.error(err);
+        alert("Boost hatası");
+      }
+    }
+
+    async function featureListing(id) {
+      const res = await fetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
+      if (!res.ok) throw new Error("Feature failed");
+      loadPage("listings");
+      await loadNotifications();
+    }
+
+    async function approveListing(id) {
+      const res = await fetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
+      if (!res.ok) throw new Error("Approve failed");
+      loadPage("listings");
+      await loadNotifications();
+    }
+
+    function rejectListing(id) {
+      fetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
+        .then(() => loadPage("listings"));
+    }
+
+    async function banUser(id) {
+      await fetch("/api/admin/users/" + id + "/ban", { method: "PATCH" })
+        .then(res => {
+          if (!res.ok) throw new Error("API HATA");
+          return res.json();
+        });
+      loadPage("users");
+    }
+
+    loadStats();
+    loadAnalytics();
+    loadPage("listings");
+  </script>
+</body>
+</html>
+

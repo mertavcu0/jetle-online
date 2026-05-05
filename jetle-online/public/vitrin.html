@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vitrin - jetle.online</title>
+  <style>
+    body {
+      background-color: #f2f3f5;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .jetle {
+      color: #007bff;
+    }
+
+    .online {
+      color: #111;
+    }
+
+    .menu a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .vitrin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 30px 40px 10px 40px;
+    }
+
+    .vitrin-header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .vitrin-header p {
+      margin: 5px 0 0 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .vitrin-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .ilan-container,
+    .listing-grid {
+      margin: 20px 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .ilan-card,
+    .listing-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .ilan-card:hover,
+    .listing-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .ilan-card img,
+    .listing-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .ilan-body,
+    .card-body {
+      padding: 15px;
+    }
+
+    .ilan-body h3,
+    .card-body h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .fiyat,
+    .price {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 5px;
+    }
+
+    .detay,
+    .meta {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .ilan-card img {
+      height: 160px !important;
+      object-fit: cover;
+    }
+
+    .vitrin-ilan img {
+      height: 160px !important;
+      object-fit: cover;
+    }
+
+    .demo,
+    .placeholder,
+    .empty-box,
+    .listing-grid > p {
+      display: none !important;
+    }
+
+    .coming-soon {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .listing-grid:has(.listing-card) + .coming-soon {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html" class="logo">
+      <span class="jetle">jetle</span><span class="online">.online</span>
+    </a>
+
+    <div class="menu">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="ilan-ver.html">İlan Ver</a>
+      <a href="#">Profil</a>
+      <a href="#">Giriş</a>
+    </div>
+  </div>
+
+  <main>
+    <section>
+      <div class="vitrin-header">
+        <div>
+          <h1>Vitrin İlanlar</h1>
+          <p>Öne çıkarılan ve en çok görüntülenen ilanlar</p>
+        </div>
+        <a href="/create-listing.html" class="vitrin-btn">İlanını öne çıkar</a>
+      </div>
+
+      <div id="featuredGrid" class="listing-grid ilan-container"></div>
+      <div class="coming-soon">
+        <p>İçerikler yakında eklenecektir.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/auth-global.js"></script>
+  <script>
+    const grid = document.getElementById("featuredGrid");
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatPrice(price) {
+      const number = Number(price || 0);
+      return number.toLocaleString("tr-TR") + " TL";
+    }
+
+    function imageOf(item) {
+      return item.image || item.images?.[0] || "https://picsum.photos/300/200";
+    }
+
+    function listingUrl(item) {
+      return `/listing-detail.html?id=${item._id}`;
+    }
+
+    function cardTemplate(item) {
+      return `
+        <div class="listing-card featured-card" onclick="window.location.href='${listingUrl(item)}'">
+          <div class="img-wrapper">
+            <img src="${escapeHtml(imageOf(item))}" alt="${escapeHtml(item.title || "İlan")}" loading="lazy">
+            <span class="badge-featured">Vitrin</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
+            <p class="price">${formatPrice(item.price)}</p>
+            <div class="meta">
+              <span>${escapeHtml(item.city || item.location || "Konum yok")}</span>
+              <span>${escapeHtml(item.category || "Kategori yok")}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadFeaturedListings() {
+      grid.innerHTML = "<p>Vitrin ilanlar yükleniyor...</p>";
+
+      try {
+        const res = await fetch("/api/listings?featured=true");
+        if (!res.ok) throw new Error("Vitrin ilanlar alınamadı");
+
+        const data = await res.json();
+        const listings = Array.isArray(data) ? data : [];
+
+        grid.innerHTML = listings.length
+          ? listings.map(cardTemplate).join("")
+          : "<p>Henüz vitrin ilan bulunmuyor</p>";
+      } catch (err) {
+        console.error("VITRIN ERROR:", err);
+        grid.innerHTML = "<p>Vitrin ilanlar yüklenemedi</p>";
+      }
+    }
+
+    loadFeaturedListings();
+  </script>
+</body>
+</html>

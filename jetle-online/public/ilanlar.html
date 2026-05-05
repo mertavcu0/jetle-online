@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Jetle.online - İlanlar</title>
+<link rel="stylesheet" href="/style.css">
+
+<style>
+body {
+margin: 0;
+font-family: Arial;
+background: #f5f5f5;
+}
+
+.navbar {
+background: white;
+border-bottom: 1px solid #ddd;
+}
+
+.navbar-inner {
+max-width: 1200px;
+margin: 0 auto;
+display: flex;
+align-items: center;
+padding: 10px;
+}
+
+.logo {
+flex: 1;
+font-weight: bold;
+}
+
+.search {
+flex: 2;
+display: flex;
+justify-content: center;
+gap: 5px;
+}
+
+.search input {
+width: 350px;
+height: 36px;
+}
+
+.search button {
+height: 36px;
+}
+
+.actions {
+flex: 1;
+display: flex;
+justify-content: flex-end;
+gap: 15px;
+}
+
+.post {
+background: #ffc107;
+padding: 8px 12px;
+border-radius: 5px;
+}
+
+.container {
+max-width: 1200px;
+margin: 20px auto;
+}
+
+.cards {
+display: flex;
+gap: 20px;
+flex-wrap: wrap;
+}
+
+.card {
+background: #eee;
+height: 120px;
+flex: 1 1 calc(25% - 20px);
+border-radius: 8px;
+padding: 10px;
+text-decoration: none;
+color: #111;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="navbar-inner">
+
+<div class="logo">Jetle.online</div>
+
+<div class="search">
+  <input placeholder="Kelime, kategori veya şehir ara">
+  <button onclick="window.location.href='ilanlar.html'">Ara</button>
+</div>
+
+<div class="actions">
+  <div id="authArea"></div>
+  <div class="post">İlan Ver</div>
+</div>
+
+  </div>
+</header>
+
+<div class="container">
+<h3>İlan Listesi</h3>
+
+<div class="cards">
+<a class="card" href="ilan-detay.html?id=1">İlan 1</a>
+<a class="card" href="ilan-detay.html?id=2">İlan 2</a>
+<a class="card" href="ilan-detay.html?id=3">İlan 3</a>
+<a class="card" href="ilan-detay.html?id=4">İlan 4</a>
+</div>
+
+</div>
+  <script src="/auth-global.js"></script>
+</body>
+</html>

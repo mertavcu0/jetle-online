@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jetle - Modern İlan Platformu</title>
+  <meta name="description" content="Jetle ile Türkiye genelinde güvenli, hızlı ve modern ilanlara ulaşın.">
+  <meta name="keywords" content="Jetle, ilan, emlak, otomobil, elektronik, ikinci el">
+  <meta property="og:title" content="Jetle - Modern İlan Platformu">
+  <meta property="og:description" content="Jetle ile Türkiye genelinde güvenli, hızlı ve modern ilanlara ulaşın.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <form class="search" action="/ilanlar.html">
+        <input name="q" placeholder="İlan, marka, model veya şehir ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="listing-page home-listing-page">
+    <aside class="listing-filter-panel">
+      <div class="filter-head">
+        <h1>Kategoriler</h1>
+      </div>
+
+      <nav class="sidebar-category-list">
+        <a href="/ilanlar.html?category=Emlak">Emlak</a>
+        <a href="/ilanlar.html?category=Otomobil">Araç</a>
+        <a href="/ilanlar.html?category=Telefon">Telefon</a>
+        <a href="/ilanlar.html?category=Elektronik">Elektronik</a>
+        <a href="/ilanlar.html?category=İş%20Makineleri">İş Makineleri</a>
+      </nav>
+
+      <label>
+        Kategori
+        <select id="listingCategory">
+          <option value="">Tümü</option>
+          <option>Otomobil</option>
+          <option>Emlak</option>
+          <option>Elektronik</option>
+          <option>Telefon</option>
+          <option>İş Makineleri</option>
+        </select>
+      </label>
+
+      <label>
+        Şehir
+        <select id="listingCity">
+          <option value="">Tüm şehirler</option>
+        </select>
+      </label>
+
+      <label>
+        İlçe
+        <select id="listingDistrict" disabled>
+          <option value="">Önce şehir seç</option>
+        </select>
+      </label>
+
+      <div class="filter-row">
+        <label>
+          Min fiyat
+          <input id="listingMinPrice" type="number" placeholder="Min">
+        </label>
+        <label>
+          Max fiyat
+          <input id="listingMaxPrice" type="number" placeholder="Max">
+        </label>
+      </div>
+
+      <div id="dynamicFilters"></div>
+    </aside>
+
+    <section class="listing-results">
+      <div class="listing-results-head">
+        <div>
+          <h2>Popüler İlanlar</h2>
+          <p id="listingResultCount">İlanlar yükleniyor...</p>
+        </div>
+      </div>
+      <div class="listing-catalog-grid" id="listingCatalogGrid">
+        <div class="spinner"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>Kurumsal</h4>
+        <a href="/hakkimizda.html">Hakkımızda</a>
+        <a href="/iletisim.html">İletişim</a>
+      </div>
+      <div>
+        <h4>Hizmetler</h4>
+        <a href="/ilan-ver.html">İlan Ver</a>
+        <a href="/ilanlar.html">İlanlar</a>
+      </div>
+      <div>
+        <h4>Yasal</h4>
+        <a href="/kvkk.html">KVKK</a>
+        <a href="/gizlilik.html">Gizlilik</a>
+      </div>
+      <div>
+        <h4>Hesap</h4>
+        <a href="/login.html">Giriş Yap</a>
+        <a href="/register.html">Kayıt Ol</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <strong>© 2026 Jetle.online</strong>
+      <span>Türkiye'nin modern ilan platformu</span>
+    </div>
+  </footer>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/listings.js"></script>
+</body>
+</html>

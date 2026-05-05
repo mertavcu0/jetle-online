@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jetle - Türkiye'nin ilan platformu</title>
+  <meta name="description" content="Satılık, kiralık, ikinci el ilanlar">
+  <link rel="stylesheet" href="/style.css?v=layout-fix">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .navbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 150px minmax(420px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      color: #2563eb;
+      letter-spacing: -0.2px;
+    }
+
+    .logo span {
+      color: #111827;
+    }
+
+    .search {
+      display: flex;
+      min-width: 0;
+    }
+
+    .search input {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-right: 0;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .search input:focus {
+      border-color: #2563eb;
+      background: #fff;
+    }
+
+    .search button,
+    .primary-btn {
+      height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 0 8px 8px 0;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    #authArea {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #authArea span {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #authArea button {
+      padding: 9px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .login-btn,
+    .register-btn {
+      padding: 9px 12px;
+      border-radius: 9px;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .register-btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+    }
+
+    .post-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 22px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(37,99,235,0.26);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 12px;
+    }
+
+    .quick-filter-bar,
+    .panel,
+    .ad-box,
+    .trust-section,
+    .listing-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .ad-box {
+      min-height: 90px;
+      height: 90px;
+      margin: 16px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      background: #f3f4f6;
+      border: 1px dashed #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .top-ad {
+      width: 100%;
+      max-width: 970px;
+      border-radius: 8px;
+      box-shadow: none;
+    }
+
+    .ad-box.small {
+      min-height: 60px;
+      height: 60px;
+      margin: 10px 0 16px;
+    }
+
+    .ad-box.medium {
+      width: 100%;
+      max-width: 728px;
+      min-height: 90px;
+      height: 90px;
+      margin: 12px 0 16px;
+    }
+
+    .ad-box.vertical {
+      width: 100%;
+      max-width: 300px;
+      min-height: 250px;
+      height: 250px;
+      margin: 0;
+    }
+
+    .market-layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 260px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .left-sidebar,
+    .right-sidebar {
+      position: sticky;
+      top: 78px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 12px;
+    }
+
+    .panel h3,
+    .section-head h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .category-list,
+    .side-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .category-list a,
+    .side-list a,
+    .side-list span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 6px;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 13px;
+    }
+
+    .category-list a:hover,
+    .category-list a.active,
+    .side-list a:hover {
+      background: #eef2ff;
+      color: #2563eb;
+    }
+
+    .content {
+      min-width: 0;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .category-toggle,
+    .sidebar-backdrop {
+      display: none;
+    }
+
+    .category-toggle {
+      width: 100%;
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background: #fff;
+      color: #111827;
+      cursor: pointer;
+      font-weight: 900;
+      text-align: left;
+    }
+
+    .quick-filter-bar {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 0.8fr 0.8fr auto;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 10px;
+    }
+
+    .quick-filter-bar input,
+    .quick-filter-bar select {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      background: #fff;
+    }
+
+    .quick-filter-bar button {
+      padding: 9px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .section-block {
+      margin-bottom: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 9px;
+    }
+
+    .section-head a {
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .listing-slider {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      overflow: visible;
+      padding-bottom: 0;
+    }
+
+    .listing-slider .listing-card {
+      min-height: 220px;
+    }
+
+    .listing-card {
+      display: block;
+      overflow: hidden;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .listing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .card {
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .card img {
+      width: 100%;
+      height: 160px;
+      display: block;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+
+    .card h3 {
+      margin: 0;
+      padding: 10px 12px 4px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .card p {
+      margin: 0;
+      padding: 0 12px 12px;
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .listing-img {
+      position: relative;
+      height: 160px;
+      background: #f3f4f6;
+    }
+
+    .listing-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .featured-ribbon {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .fav-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      color: #9ca3af;
+      border: none;
+      padding: 6px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      transition: 0.2s;
+      z-index: 2;
+    }
+
+    .fav-btn.active {
+      color: #e03131;
+    }
+
+    .img-wrapper {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.3s;
+    }
+
+    .listing-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: gold;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 12px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #777;
+      display: flex;
+      gap: 10px;
+    }
+
+    .city-meta {
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    .category-meta {
+      color: #4b5563;
+      font-size: 12px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-top: 8px;
+      color: #999;
+    }
+
+    .listing-info {
+      padding: 12px;
+    }
+
+    .listing-info h3 {
+      height: 38px;
+      margin: 0 0 6px;
+      overflow: hidden;
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+
+    .price {
+      margin: 0 0 5px;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .city {
+      margin: 0;
+      color: #6b7280;
+      font-size: 11px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 7px;
+    }
+
+    .seller-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      border: 1px solid transparent;
+    }
+
+    .seller-badge.verified {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #86efac;
+    }
+
+    .seller-badge.premium {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fcd34d;
+    }
+
+    .seller-badge.corporate {
+      background: #dbeafe;
+      color: #1e40af;
+      border-color: #93c5fd;
+    }
+
+    .right-card {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .right-card:last-child {
+      border-bottom: 0;
+    }
+
+    .right-card img {
+      width: 52px;
+      height: 42px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+
+    .right-card strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .right-card span {
+      color: #2563eb;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .premium-user {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .premium-user:last-child {
+      border-bottom: 0;
+    }
+
+    .trust-section {
+      margin-top: 28px;
+      padding: 18px;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .trust-item {
+      padding: 12px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .trust-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .trust-item p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .cards-empty-msg {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding: 32px 18px;
+      text-align: center;
+      color: #6b7280;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.06);
+    }
+
+    .loading-spinner {
+      display: block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .footer {
+      background: #fff;
+      margin-top: 24px;
+      padding: 28px 0 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .footer-container {
+      max-width: 1180px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      padding: 0 14px;
+    }
+
+    .footer-col h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-col li {
+      margin-bottom: 7px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .footer a {
+      display: block;
+      margin-bottom: 6px;
+      color: #444;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #2563eb;
+    }
+
+    .footer-bottom {
+      margin-top: 26px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1180px) {
+      .market-layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+
+      .right-sidebar {
+        position: static;
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .listing-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .listing-slider {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .navbar-inner,
+      .market-layout,
+      .quick-filter-bar,
+      .right-sidebar,
+      .trust-grid,
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+
+      .left-sidebar,
+      .right-sidebar {
+        position: static;
+      }
+
+      .category-toggle {
+        display: block;
+      }
+
+      .left-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 60;
+        width: 280px;
+        max-width: 84vw;
+        height: 100vh;
+        padding: 12px;
+        overflow-y: auto;
+        background: #f8fafc;
+        box-shadow: 18px 0 40px rgba(15,23,42,0.18);
+        transform: translateX(-110%);
+        transition: transform 0.2s ease;
+      }
+
+      .left-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 55;
+        background: rgba(15,23,42,0.28);
+      }
+
+      .sidebar-backdrop.open {
+        display: block;
+      }
+
+      .nav-right {
+        width: 100%;
+      }
+
+      .post-btn,
+      .login-btn,
+      .register-btn,
+      .quick-filter-bar button {
+        text-align: center;
+      }
+
+      .listing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .listing-slider {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 12px;
+      }
+
+      .listing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .listing-slider {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .post-btn {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .home-hero {
+      max-width: 1180px;
+      margin: 18px auto 12px;
+      padding: 0 12px;
+    }
+
+    .hero-search {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px auto;
+      gap: 10px;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    .hero-search input,
+    .hero-search select {
+      height: 48px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0 14px;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .hero-search input:focus,
+    .hero-search select:focus {
+      border-color: #2563eb;
+      background: #fff;
+    }
+
+    .hero-search button {
+      height: 48px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 24px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .hero-intro {
+      max-width: 1180px;
+      margin: 26px auto 0;
+      padding: 0 12px;
+      text-align: center;
+    }
+
+    .hero-intro h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      color: #111827;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      min-height: 56px;
+      padding: 0 34px;
+      border-radius: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 14px 30px rgba(37,99,235,0.28);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .hero-cta:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 18px 38px rgba(37,99,235,0.34);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .category-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 74px;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      color: #111827;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .category-card:hover {
+      color: #2563eb;
+      border-color: #bfdbfe;
+      transform: translateY(-4px);
+      box-shadow: 0 16px 34px rgba(15,23,42,0.12);
+    }
+
+    .home-sections {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 12px 26px;
+    }
+
+    .layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 12px 26px;
+    }
+
+    .sidebar {
+      width: 250px;
+      flex: 0 0 250px;
+      position: sticky;
+      top: 86px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+    }
+
+    .sidebar h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .home-section {
+      margin-top: 18px;
+    }
+
+    .home-section .section-head {
+      margin-bottom: 10px;
+    }
+
+    .home-section .listing-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .home-section .listing-slider {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 2px 0 10px;
+      scroll-snap-type: x proximity;
+    }
+
+    .home-section .listing-slider .listing-card {
+      min-width: 260px;
+      scroll-snap-align: start;
+    }
+
+    .hidden-compat {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        position: static;
+        width: auto;
+        margin-bottom: 18px;
+      }
+
+      .hero-search {
+        grid-template-columns: 1fr;
+      }
+
+      .category-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .home-section .listing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .home-section .listing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* UI polish layer */
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fa;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 10px 26px rgba(15,23,42,0.08);
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .navbar-inner {
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+
+    .home-hero {
+      padding-top: 20px;
+      padding-bottom: 16px;
+    }
+
+    .hero-search,
+    .section-block,
+    .panel,
+    .listing-card,
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+    }
+
+    .hero-search {
+      padding: 18px;
+    }
+
+    .home-section {
+      margin-top: 28px;
+    }
+
+    .home-section .section-head {
+      margin-bottom: 16px;
+    }
+
+    .listing-grid,
+    .home-section .listing-grid {
+      gap: 20px;
+    }
+
+    .listing-slider,
+    .home-section .listing-slider {
+      gap: 18px;
+      padding: 4px 2px 16px;
+    }
+
+    .listing-card,
+    .card {
+      border: 1px solid #e5e7eb;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .listing-card:hover,
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 42px rgba(15,23,42,0.14);
+      border-color: #bfdbfe;
+    }
+
+    .title,
+    .card h3,
+    .right-card strong {
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .price,
+    .card p,
+    .right-card span {
+      font-size: 23px;
+      font-weight: 900;
+      color: #2563eb;
+    }
+
+    .meta,
+    .city,
+    .card-footer {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .search button,
+    .hero-search button,
+    .primary-btn,
+    .post-btn {
+      background: #2563eb;
+      color: #fff;
+      border: 0;
+      font-weight: 800;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .search button:hover,
+    .hero-search button:hover,
+    .primary-btn:hover,
+    .post-btn:hover {
+      background: #1d4ed8;
+      opacity: 1;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 14px 28px rgba(37,99,235,0.32);
+    }
+
+    .badge-featured,
+    .badge-boost {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ff9800;
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(255,152,0,0.26);
+    }
+
+    .badge-premium {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #facc15;
+      color: #111827;
+      border: 0;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(250,204,21,0.24);
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="index.html">jetle<span>.online</span></a>
+      <form class="search" id="topSearch">
+        <input id="topSearchInput" type="text" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="create-listing.html" class="post-btn">Ücretsiz İlan Ver</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero-intro">
+    <h1>Türkiye'nin yeni ilan platformu</h1>
+    <a class="hero-cta" href="create-listing.html">Ücretsiz ilan ver</a>
+  </section>
+
+  <section class="home-hero">
+    <form class="hero-search" id="homeSearchForm">
+      <input id="homeSearchInput" type="text" placeholder="Ne arıyorsun?">
+      <select id="homeCategorySelect">
+        <option value="">Tüm Kategoriler</option>
+        <option value="Emlak">Emlak</option>
+        <option value="Otomobil">Araç</option>
+        <option value="Vasıta">Vasıta</option>
+        <option value="Elektronik">Elektronik</option>
+        <option value="İş Makineleri">İş Makineleri</option>
+        <option value="Yedek Parça">Yedek Parça</option>
+      </select>
+      <button type="submit">Ara</button>
+    </form>
+  </section>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <h2>Kategoriler</h2>
+      <div class="category-grid">
+        <a class="category-card" href="/listings.html?category=emlak" onclick="window.location='/listings.html?category=emlak'; return false;">Emlak</a>
+        <a class="category-card" href="/listings.html?category=vasita" onclick="window.location='/listings.html?category=vasita'; return false;">Vasıta</a>
+        <a class="category-card" href="/listings.html?category=elektronik" onclick="window.location='/listings.html?category=elektronik'; return false;">Elektronik</a>
+        <a class="category-card" href="/listings.html?category=telefon" onclick="window.location='/listings.html?category=telefon'; return false;">Telefon</a>
+        <a class="category-card" href="/listings.html?category=is-makineleri" onclick="window.location='/listings.html?category=is-makineleri'; return false;">İş Makineleri</a>
+        <a class="category-card" href="/listings.html?category=yedek-parca" onclick="window.location='/listings.html?category=yedek-parca'; return false;">Yedek Parça</a>
+      </div>
+    </aside>
+
+    <div class="content">
+      <section class="home-section section-block">
+        <div class="section-head">
+          <h2>Vitrin İlanlar</h2>
+          <a href="listings.html?featured=true">Tüm vitrin ilanları</a>
+        </div>
+        <div id="featured-slider" class="listing-slider"></div>
+        <div id="featuredListings" class="featured-container hidden-compat"></div>
+        <div id="featured-listings" class="hidden-compat"></div>
+        <div id="showcaseSlider" class="hidden-compat"></div>
+      </section>
+
+      <section class="home-section section-block">
+        <div class="section-head">
+          <h2>Son Eklenen İlanlar</h2>
+          <a href="listings.html?sort=new">Yeni ilanlar</a>
+        </div>
+        <div id="latestGrid" class="listing-grid"></div>
+      </section>
+
+      <section class="home-section section-block">
+        <div class="section-head">
+          <h2>Öne Çıkan İlanlar</h2>
+          <a href="listings.html">Tümünü gör</a>
+        </div>
+        <div id="featuredGrid" class="listing-grid"></div>
+      </section>
+    </div>
+
+    <div class="hidden-compat">
+      <button id="categoryToggle" type="button"></button>
+      <div id="sidebarBackdrop"></div>
+      <select id="filterCategory">
+        <option value=""></option>
+      </select>
+      <input id="filterCity" type="text">
+      <input id="filterMin" type="number">
+      <input id="filterMax" type="number">
+      <button id="filterBtn" type="button"></button>
+      <div id="realEstateGrid"></div>
+      <div id="vehicleGrid"></div>
+      <div id="electronicsGrid"></div>
+      <ul id="popularSearches"></ul>
+      <div id="premiumUsers"></div>
+      <div id="trendListings"></div>
+      <aside class="left-sidebar"></aside>
+      <aside class="right-sidebar"></aside>
+      <a class="category-link" href="#" data-category=""></a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
+  </footer>
+  <script>
+    const API_ORIGIN =
+      String(window.location.port) === "5000" &&
+      (window.location.protocol === "http:" || window.location.protocol === "https:")
+        ? window.location.origin
+        : "";
+    const DETAIL_PAGE = "listing.html";
+    const state = { listings: [] };
+
+    const els = {
+      featuredListingsTop: document.getElementById("featured-listings"),
+      showcase: document.getElementById("featured-slider"),
+      featuredListings: document.getElementById("featuredListings"),
+      featured: document.getElementById("featuredGrid"),
+      latest: document.getElementById("latestGrid"),
+      realEstate: document.getElementById("realEstateGrid"),
+      vehicle: document.getElementById("vehicleGrid"),
+      electronics: document.getElementById("electronicsGrid"),
+      popularSearches: document.getElementById("popularSearches"),
+      premiumUsers: document.getElementById("premiumUsers"),
+      trendListings: document.getElementById("trendListings"),
+      filterCategory: document.getElementById("filterCategory"),
+      filterCity: document.getElementById("filterCity"),
+      filterMin: document.getElementById("filterMin"),
+      filterMax: document.getElementById("filterMax"),
+      topSearch: document.getElementById("topSearch"),
+      topSearchInput: document.getElementById("topSearchInput")
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatPrice(price) {
+      const num = Number(price);
+      if (Number.isNaN(num)) return "-";
+      return new Intl.NumberFormat("tr-TR").format(num) + " ₺";
+    }
+
+    function listingUrl(listing) {
+      const id = listing._id || listing.id || "";
+      return `${DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
+    }
+
+    function resolveImage(listing, size = "300/200") {
+      const raw =
+        (Array.isArray(listing.images) && listing.images[0]) ||
+        listing.image ||
+        `https://picsum.photos/${size}`;
+      const src = String(raw).trim();
+      if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) return src;
+      return `${API_ORIGIN}/${src.replace(/^\/+/, "")}`;
+    }
+
+    function normalizeCategory(value) {
+      const text = String(value || "").toLocaleLowerCase("tr");
+      if (text.includes("emlak")) return "Emlak";
+      if (text.includes("oto") || text.includes("araç") || text.includes("vasıta") || text.includes("vasita")) return "Araç";
+      if (text.includes("elektronik")) return "Elektronik";
+      return value || "";
+    }
+
+    function listingBadges(listing) {
+      const user = listing.user || {};
+      const badges = Array.isArray(user.badges) ? user.badges : [];
+      const legacy = user.badge && user.badge !== "none" ? [user.badge] : [];
+      return [...new Set([...badges, ...legacy])].filter((badge) =>
+        ["verified", "premium", "corporate"].includes(badge)
+      );
+    }
+
+    function badgeTemplate(listing) {
+      const labels = {
+        verified: "✔ Onaylı",
+        premium: "⭐ Premium",
+        corporate: "🏢 Kurumsal"
+      };
+      const badges = listingBadges(listing);
+      if (!badges.length) return "";
+      return `<div class="badge-row">${badges.map((badge) => `<span class="seller-badge ${badge}">${labels[badge]}</span>`).join("")}</div>`;
+    }
+
+    function listingTag(listing) {
+      if (listing.isFeatured) return "Vitrin";
+      if (listing.isUrgent || listing.urgent) return "Acil";
+      const created = new Date(listing.createdAt || Date.now()).getTime();
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      if (!Number.isNaN(created) && Date.now() - created < threeDays) return "Yeni";
+      return "";
+    }
+
+    function listingStatusBadge(listing) {
+      if (listing.isFeatured) return `<span class="badge-featured">Vitrin</span>`;
+      if (listing.isBoosted) return `<span class="badge-boost">Boost</span>`;
+      if (listing.isPremium) return `<span class="badge-premium">Premium</span>`;
+      return "";
+    }
+
+    function cardTemplate(listing) {
+      const title = escapeHtml(listing.title || "Başlıksız ilan");
+      const city = escapeHtml(listing.city || listing.location || "Konum yok");
+      const category = escapeHtml(listing.category || "Kategori yok");
+      const tag = listingTag(listing);
+      const id = listing._id || listing.id;
+      const favs = JSON.parse(localStorage.getItem("favs") || "[]");
+      return `
+        <div class="listing-card ${listing.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(listing)}'">
+          <div class="img-wrapper">
+            <img src="${resolveImage(listing)}" alt="${title}" loading="lazy">
+            ${listingStatusBadge(listing) || (tag ? `<div class="badge">${tag}</div>` : "")}
+            <button class="fav-btn ${favs.includes(id) ? "active" : ""}" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${id}')">❤</button>
+          </div>
+          <div class="card-body">
+            <h3 class="title">${title}</h3>
+            <p class="price">${formatPrice(listing.price)}</p>
+            <div class="meta">
+              <span class="city-meta">${city}</span>
+              <span class="category-meta">${category}</span>
+            </div>
+            <div class="card-footer">
+              <span class="date">Bugün</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function simpleApiCard(item) {
+      const image = item.image || (Array.isArray(item.images) && item.images[0]) || "https://picsum.photos/300/200";
+      const favs = JSON.parse(localStorage.getItem("favs") || "[]");
+      return `
+        <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(item)}'">
+          <div class="img-wrapper">
+            <img src="${escapeHtml(image)}" alt="${escapeHtml(item.title || "İlan")}" loading="lazy">
+            ${listingStatusBadge(item) || ""}
+            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" onclick="event.stopPropagation(); toggleFavorite('${item._id}')">❤</button>
+          </div>
+          <div class="card-body">
+            <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
+            <p class="price">${escapeHtml(item.price || 0)} TL</p>
+            <div class="meta">
+              <span class="city-meta">${escapeHtml(item.city || item.location || "Konum yok")}</span>
+              <span class="category-meta">${escapeHtml(item.category || "Kategori yok")}</span>
+            </div>
+            <div class="card-footer">
+              <span class="date">Bugün</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleFavorite(id){
+      let favs = JSON.parse(localStorage.getItem("favs") || "[]");
+
+      if(favs.includes(id)){
+        favs = favs.filter(f => f !== id);
+      } else {
+        favs.push(id);
+      }
+
+      localStorage.setItem("favs", JSON.stringify(favs));
+      renderHome(state.listings);
+    }
+
+    function renderApiGrid(container, listings) {
+      if (!container) return;
+      container.innerHTML = "";
+      listings.forEach((item) => {
+        container.innerHTML += simpleApiCard(item);
+      });
+    }
+
+    function renderApiListings(data) {
+      const listings = Array.isArray(data) ? data : [];
+      const vehicles = listings.filter((item) => normalizeCategory(item.category) === "Araç");
+      const featured = listings.filter((item) => item.isFeatured);
+      const latest = [...listings].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      const highlighted = listings.filter((item) => item.isFeatured || item.isBoosted || item.isPremium);
+
+      renderApiGrid(els.showcase, featured.length ? featured.slice(0, 8) : listings.slice(0, 8));
+      renderApiGrid(els.latest, latest.slice(0, 8));
+      renderApiGrid(els.featured, (highlighted.length ? highlighted : listings).slice(0, 8));
+      renderFeatured(featured);
+      renderApiGrid(els.vehicle, vehicles.length ? vehicles : listings);
+    }
+
+    function rightCardTemplate(listing) {
+      return `
+        <a class="right-card" href="${listingUrl(listing)}">
+          <img src="${resolveImage(listing, "120/90")}" alt="${escapeHtml(listing.title || "İlan")}">
+          <div>
+            <strong>${escapeHtml(listing.title || "Başlıksız ilan")}</strong>
+            <span>${formatPrice(listing.price)}</span>
+          </div>
+        </a>
+      `;
+    }
+
+    function emptyTemplate(text) {
+      return `<p class="cards-empty-msg">${escapeHtml(text)}</p>`;
+    }
+
+    function loadingTemplate(text) {
+      return `<p class="cards-empty-msg"><span class="loading-spinner"></span>${escapeHtml(text)}</p>`;
+    }
+
+    function renderGrid(el, listings, limit = 8) {
+      const items = listings.slice(0, limit);
+      el.innerHTML = items.length ? items.map(cardTemplate).join("") : emptyTemplate("Bu bölüm için ilan bulunamadı.");
+    }
+
+    function renderFeatured(listings) {
+      if (!els.featuredListings) return;
+      els.featuredListings.innerHTML = listings.length ? listings.slice(0, 8).map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
+      if (els.featuredListingsTop) {
+        els.featuredListingsTop.innerHTML = `
+          <h2>🔥 Vitrin İlanlar</h2>
+          <div class="featured-row">
+            ${listings.map(item => `
+              <div class="featured-card">
+                <strong>${escapeHtml(item.title || "Başlıksız ilan")}</strong>
+                <p>${formatPrice(item.price)}</p>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+    }
+
+    function renderSidebars(listings) {
+      const searches = ["BMW 3 Serisi", "Satılık daire", "iPhone", "Kiralık ev", "Otomatik araç", "Arsa"];
+      els.popularSearches.innerHTML = searches
+        .map((item) => `<li><a href="listings.html?search=${encodeURIComponent(item)}">${item}<span>›</span></a></li>`)
+        .join("");
+
+      const premiumUsers = [];
+      const seen = new Set();
+      listings.forEach((listing) => {
+        const user = listing.user;
+        if (!user || seen.has(user._id || user.email || user.name)) return;
+        const badges = listingBadges(listing);
+        if (!badges.includes("premium") && !badges.includes("corporate")) return;
+        seen.add(user._id || user.email || user.name);
+        premiumUsers.push({ name: user.name || user.email || "Premium kullanıcı", badges });
+      });
+      els.premiumUsers.innerHTML = premiumUsers.length
+        ? premiumUsers.slice(0, 6).map((user) => `
+          <div class="premium-user">
+            <span>${escapeHtml(user.name)}</span>
+            <span class="seller-badge ${user.badges.includes("corporate") ? "corporate" : "premium"}">${user.badges.includes("corporate") ? "Kurumsal" : "Premium"}</span>
+          </div>
+        `).join("")
+        : `<div class="premium-user"><span>Premium kullanıcı yok</span></div>`;
+
+      const trend = [...listings].sort((a, b) => Number(b.isFeatured || 0) - Number(a.isFeatured || 0) || Number(b.price || 0) - Number(a.price || 0));
+      els.trendListings.innerHTML = trend.slice(0, 5).map(rightCardTemplate).join("") || `<p class="cards-empty-msg">Trend ilan yok.</p>`;
+    }
+
+    function applyFilters(listings) {
+      const category = els.filterCategory.value.trim();
+      const city = els.filterCity.value.trim().toLocaleLowerCase("tr");
+      const min = Number(els.filterMin.value);
+      const max = Number(els.filterMax.value);
+      return listings.filter((listing) => {
+        const normalized = normalizeCategory(listing.category);
+        if (category) {
+          if (category === "Otomobil") {
+            if (normalized !== "Araç") return false;
+          } else if (String(listing.category || "") !== category && normalized !== category) {
+            return false;
+          }
+        }
+        if (city && !String(listing.city || listing.location || "").toLocaleLowerCase("tr").includes(city)) return false;
+        const price = Number(listing.price);
+        if (els.filterMin.value && (Number.isNaN(price) || price < min)) return false;
+        if (els.filterMax.value && (Number.isNaN(price) || price > max)) return false;
+        return true;
+      });
+    }
+
+    function renderHome(listings) {
+      const filtered = applyFilters(listings);
+      const featured = filtered.filter((item) => item.isFeatured);
+      const latest = [...filtered].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      const highlighted = filtered.filter((item) => item.isFeatured || item.isBoosted || item.isPremium);
+      const showcase = featured.length ? featured.slice(0, 8) : filtered.slice(0, 8);
+      els.showcase.innerHTML = showcase.length ? showcase.map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
+      renderFeatured(featured);
+      renderGrid(els.latest, latest, 8);
+      renderGrid(els.featured, highlighted.length ? highlighted : filtered, 8);
+      renderGrid(els.realEstate, filtered.filter((item) => normalizeCategory(item.category) === "Emlak"), 4);
+      renderGrid(els.vehicle, filtered.filter((item) => normalizeCategory(item.category) === "Araç"), 4);
+      renderGrid(els.electronics, filtered.filter((item) => normalizeCategory(item.category) === "Elektronik"), 4);
+      renderSidebars(filtered);
+    }
+
+    async function loadListings() {
+      [els.showcase, els.featuredListings, els.featured, els.latest, els.realEstate, els.vehicle, els.electronics].forEach((el) => {
+        el.innerHTML = loadingTemplate("İlanlar yükleniyor...");
+      });
+      try {
+        const res = await fetch("/api/listings");
+        if (!res.ok) throw new Error("İlanlar alınamadı");
+        const data = await res.json();
+        state.listings = Array.isArray(data) ? data : [];
+      } catch (err) {
+        state.listings = [];
+      }
+      renderApiListings(state.listings);
+    }
+
+    document.querySelectorAll(".category-link").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        document.querySelectorAll(".category-link").forEach((item) => item.classList.remove("active"));
+        link.classList.add("active");
+        els.filterCategory.value = link.dataset.category || "";
+        closeSidebar();
+        renderHome(state.listings);
+      });
+    });
+
+    const categoryToggle = document.getElementById("categoryToggle");
+    const leftSidebar = document.querySelector(".left-sidebar");
+    const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+
+    function closeSidebar() {
+      leftSidebar.classList.remove("open");
+      sidebarBackdrop.classList.remove("open");
+    }
+
+    categoryToggle.addEventListener("click", () => {
+      leftSidebar.classList.add("open");
+      sidebarBackdrop.classList.add("open");
+    });
+
+    sidebarBackdrop.addEventListener("click", closeSidebar);
+
+    document.getElementById("filterBtn").addEventListener("click", () => renderHome(state.listings));
+    [els.filterCategory, els.filterCity, els.filterMin, els.filterMax].forEach((input) => {
+      input.addEventListener("change", () => renderHome(state.listings));
+    });
+
+    els.topSearch.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = els.topSearchInput.value.trim();
+      if (!query) return;
+      window.location.href = `listings.html?search=${encodeURIComponent(query)}`;
+    });
+
+    document.getElementById("homeSearchForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = document.getElementById("homeSearchInput").value.trim();
+      const category = document.getElementById("homeCategorySelect").value;
+      const params = new URLSearchParams();
+      if (query) params.set("search", query);
+      if (category) params.set("category", category);
+      window.location.href = `listings.html?${params.toString()}`;
+    });
+
+
+    document.querySelector(".post-btn").addEventListener("click", (event) => {
+      if (!localStorage.getItem("user")) {
+        event.preventDefault();
+        window.location.href = "login.html";
+      }
+    });
+
+    loadListings();
+  </script>
+  <script src="/auth-global.js"></script>
+</body>
+</html>
+

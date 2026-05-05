@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giriş Yap - Jetle</title>
+  <meta name="description" content="Jetle hesabınıza güvenli şekilde giriş yapın.">
+  <meta name="keywords" content="Jetle giriş, kullanıcı girişi">
+  <meta property="og:title" content="Giriş Yap - Jetle">
+  <meta property="og:description" content="Jetle hesabınıza güvenli şekilde giriş yapın.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <form class="form-card form-container" id="loginForm">
+    <h1>Giriş Yap</h1>
+    <input name="email" type="email" placeholder="E-posta" required>
+    <input name="password" type="password" placeholder="Şifre" required>
+    <label class="remember-row">
+      <input name="remember" type="checkbox">
+      <span>Beni hatırla</span>
+    </label>
+    <a href="/sifremi-unuttum.html">Şifremi unuttum</a>
+    <button type="submit">Giriş Yap</button>
+    <p class="muted" id="authMessage"></p>
+    <a href="/register.html">Hesabın yok mu? Kayıt ol</a>
+  </form>
+  <script defer src="/js/auth.js"></script>
+</body>
+</html>

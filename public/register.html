@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kayıt Ol - Jetle</title>
+  <meta name="description" content="Jetle hesabı oluşturun ve ilan vermeye başlayın.">
+  <meta name="keywords" content="Jetle kayıt, hesap oluştur">
+  <meta property="og:title" content="Kayıt Ol - Jetle">
+  <meta property="og:description" content="Jetle hesabı oluşturun ve ilan vermeye başlayın.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <form class="form-card form-container" id="registerForm">
+    <h1>Kayıt Ol</h1>
+    <input name="username" placeholder="Kullanıcı adı" required>
+    <input name="email" type="email" placeholder="E-posta" required>
+    <input name="password" type="password" placeholder="Şifre" required>
+    <input name="password2" type="password" placeholder="Şifre tekrar" required>
+    <button type="submit">Hesap Oluştur</button>
+    <p class="muted" id="authMessage"></p>
+    <a href="/login.html">Zaten hesabın var mı? Giriş yap</a>
+  </form>
+  <script defer src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giriş — Jetle.online</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .auth-page { max-width: 420px; margin: 40px auto; padding: 0 20px; }
+    .auth-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .auth-card h1 { margin: 0 0 6px; font-size: 1.2rem; }
+    .auth-card p.lead { margin: 0 0 18px; color: #64748b; font-size: 0.9rem; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+    .auth-tabs button {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .auth-tabs button.is-active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .auth-field { margin-bottom: 14px; }
+    .auth-field label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #334155; }
+    .auth-field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .auth-field input:focus { outline: 2px solid #3b82f6; outline-offset: 1px; border-color: #93c5fd; }
+    .auth-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .auth-submit:hover { background: #1d4ed8; }
+    .auth-msg { margin-top: 14px; font-size: 0.9rem; min-height: 1.2em; }
+    .auth-msg.is-err { color: #b91c1c; }
+    .auth-msg.is-ok { color: #15803d; }
+    .auth-back { display: inline-block; margin-bottom: 16px; font-size: 0.9rem; }
+    .auth-panel[hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="header header--simple">
+    <a href="../index.html" class="logo">Jetle<span>.online</span></a>
+    <nav class="menu"><a href="../index.html">Ana sayfa</a></nav>
+  </header>
+  <main class="auth-page">
+    <a class="auth-back" href="../index.html">← Ana sayfa</a>
+    <div class="auth-card">
+      <h1>Hesabın</h1>
+      <p class="lead">Giriş yap veya yeni hesap oluştur; ilanların MongoDB’de saklanır.</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" id="tabLogin" class="is-active" role="tab" aria-selected="true">Giriş</button>
+        <button type="button" id="tabRegister" role="tab" aria-selected="false">Üye ol</button>
+      </div>
+
+      <div id="panelLogin" class="auth-panel" role="tabpanel">
+        <form id="formLogin">
+          <div class="auth-field">
+            <label for="loginEmail">E-posta</label>
+            <input id="loginEmail" name="email" type="email" autocomplete="username" required />
+          </div>
+          <div class="auth-field">
+            <label for="loginPassword">Şifre</label>
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="auth-submit">Giriş yap</button>
+        </form>
+      </div>
+
+      <div id="panelRegister" class="auth-panel" hidden role="tabpanel">
+        <form id="formRegister">
+          <div class="auth-field">
+            <label for="regEmail">E-posta</label>
+            <input id="regEmail" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label for="regPassword">Şifre</label>
+            <input id="regPassword" name="password" type="password" autocomplete="new-password" required minlength="4" />
+          </div>
+          <button type="submit" class="auth-submit">Kayıt ol</button>
+        </form>
+      </div>
+
+      <p id="authMsg" class="auth-msg" aria-live="polite"></p>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var API_BASE = "http://localhost:3000";
+      var tabLogin = document.getElementById("tabLogin");
+      var tabRegister = document.getElementById("tabRegister");
+      var panelLogin = document.getElementById("panelLogin");
+      var panelRegister = document.getElementById("panelRegister");
+      var msg = document.getElementById("authMsg");
+
+      function setTab(register) {
+        tabLogin.classList.toggle("is-active", !register);
+        tabRegister.classList.toggle("is-active", !!register);
+        tabLogin.setAttribute("aria-selected", register ? "false" : "true");
+        tabRegister.setAttribute("aria-selected", register ? "true" : "false");
+        panelLogin.hidden = !!register;
+        panelRegister.hidden = !register;
+        msg.textContent = "";
+        msg.className = "auth-msg";
+      }
+
+      tabLogin.addEventListener("click", function () {
+        setTab(false);
+      });
+      tabRegister.addEventListener("click", function () {
+        setTab(true);
+      });
+
+      function saveSession(data) {
+        var user = data && data.user ? data.user : data;
+        var id = user && (user.id || user._id);
+        if (id) localStorage.setItem("userId", String(id));
+        var em = user && user.email;
+        if (em) localStorage.setItem("userEmail", String(em));
+        if (user && user.role) localStorage.setItem("userRole", String(user.role));
+      }
+
+      document.getElementById("formLogin").addEventListener("submit", function (e) {
+        e.preventDefault();
+        msg.textContent = "Gönderiliyor…";
+        msg.className = "auth-msg";
+        var email = document.getElementById("loginEmail").value.trim();
+        var password = document.getElementById("loginPassword").value;
+        fetch(API_BASE + "/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        })
+          .then(function (r) {
+            return r.text().then(function (text) {
+              var data;
+              try {
+                data = JSON.parse(text);
+              } catch (e) {
+                console.error("API HTML döndü:", text);
+                alert("Backend çalışmıyor veya endpoint yanlış");
+                throw new Error("INVALID_JSON");
+              }
+              if (!r.ok) throw new Error(data.msg || "HTTP " + r.status);
+              return data;
+            });
+          })
+          .then(function (data) {
+            localStorage.setItem("token", data.token);
+            saveSession(data);
+            msg.textContent = "Giriş başarılı. Yönlendiriliyorsunuz…";
+            msg.classList.add("is-ok");
+            window.location.href = "../index.html";
+          })
+          .catch(function (err) {
+            msg.textContent = err.message || "Giriş başarısız.";
+            msg.classList.add("is-err");
+          });
+      });
+
+      document.getElementById("formRegister").addEventListener("submit", function (e) {
+        e.preventDefault();
+        msg.textContent = "Kaydediliyor…";
+        msg.className = "auth-msg";
+        var email = document.getElementById("regEmail").value.trim();
+        var password = document.getElementById("regPassword").value;
+        fetch(API_BASE + "/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, password: password }),
+        })
+          .then(function (r) {
+            return r.json().then(function (data) {
+              if (!r.ok) throw new Error(data.msg || "HTTP " + r.status);
+              return data;
+            });
+          })
+          .then(function (user) {
+            saveSession(user);
+            msg.textContent = "Hesap oluşturuldu. Ana sayfaya yönlendiriliyorsunuz…";
+            msg.classList.add("is-ok");
+            window.location.href = "../index.html";
+          })
+          .catch(function (err) {
+            msg.textContent = err.message || "Kayıt başarısız.";
+            msg.classList.add("is-err");
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

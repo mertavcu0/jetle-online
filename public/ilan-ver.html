@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ä°lan Ver - Jetle</title>
+  <meta name="description" content="Jetle Ã¼zerinde hÄ±zlÄ± ve profesyonel ÅŸekilde ilan oluÅŸturun.">
+  <meta name="keywords" content="ilan ver, Ã¼cretsiz ilan, Jetle">
+  <meta property="og:title" content="Ä°lan Ver - Jetle">
+  <meta property="og:description" content="Jetle Ã¼zerinde hÄ±zlÄ± ve profesyonel ÅŸekilde ilan oluÅŸturun.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="create-page">
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="create-container">
+    <div class="compact-stepbar">
+      <div class="step-pill active" data-step-pill="1"><span>1</span> Kategori</div>
+      <div class="step-line"></div>
+      <div class="step-pill" data-step-pill="2"><span>2</span> Ä°lan Bilgileri</div>
+      <div class="step-line"></div>
+      <div class="step-pill" data-step-pill="3"><span>3</span> FotoÄŸraf</div>
+    </div>
+
+    <div class="create-layout">
+      <form class="create-form-card" id="listingForm">
+        <div class="step step-1">
+          <h1>Ä°lan Ver</h1>
+          <p class="muted">Ã–nce ilan kategorisini ve konumunu seÃ§.</p>
+
+          <div class="create-grid">
+            <label>
+              Kategori
+              <select name="category" required>
+                <option value="">Kategori seÃ§</option>
+                <option>Otomobil</option>
+                <option>Emlak</option>
+                <option>Elektronik</option>
+              </select>
+            </label>
+            <label>
+              Åehir
+              <select name="city" required>
+                <option value="">Åehir seÃ§</option>
+                <option>Adana</option>
+                <option>AdÄ±yaman</option>
+                <option>Afyonkarahisar</option>
+                <option>AÄŸrÄ±</option>
+                <option>Amasya</option>
+                <option>Ankara</option>
+                <option>Antalya</option>
+                <option>Artvin</option>
+                <option>AydÄ±n</option>
+                <option>BalÄ±kesir</option>
+                <option>Bilecik</option>
+                <option>BingÃ¶l</option>
+                <option>Bitlis</option>
+                <option>Bolu</option>
+                <option>Burdur</option>
+                <option>Bursa</option>
+                <option>Ã‡anakkale</option>
+                <option>Ã‡ankÄ±rÄ±</option>
+                <option>Ã‡orum</option>
+                <option>Denizli</option>
+                <option>DiyarbakÄ±r</option>
+                <option>Edirne</option>
+                <option>ElazÄ±ÄŸ</option>
+                <option>Erzincan</option>
+                <option>Erzurum</option>
+                <option>EskiÅŸehir</option>
+                <option>Gaziantep</option>
+                <option>Giresun</option>
+                <option>GÃ¼mÃ¼ÅŸhane</option>
+                <option>Hakkari</option>
+                <option>Hatay</option>
+                <option>Isparta</option>
+                <option>Mersin</option>
+                <option>Ä°stanbul</option>
+                <option>Ä°zmir</option>
+                <option>Kars</option>
+                <option>Kastamonu</option>
+                <option>Kayseri</option>
+                <option>KÄ±rklareli</option>
+                <option>KÄ±rÅŸehir</option>
+                <option>Kocaeli</option>
+                <option>Konya</option>
+                <option>KÃ¼tahya</option>
+                <option>Malatya</option>
+                <option>Manisa</option>
+                <option>KahramanmaraÅŸ</option>
+                <option>Mardin</option>
+                <option>MuÄŸla</option>
+                <option>MuÅŸ</option>
+                <option>NevÅŸehir</option>
+                <option>NiÄŸde</option>
+                <option>Ordu</option>
+                <option>Rize</option>
+                <option>Sakarya</option>
+                <option>Samsun</option>
+                <option>Siirt</option>
+                <option>Sinop</option>
+                <option>Sivas</option>
+                <option>TekirdaÄŸ</option>
+                <option>Tokat</option>
+                <option>Trabzon</option>
+                <option>Tunceli</option>
+                <option>ÅanlÄ±urfa</option>
+                <option>UÅŸak</option>
+                <option>Van</option>
+                <option>Yozgat</option>
+                <option>Zonguldak</option>
+                <option>Aksaray</option>
+                <option>Bayburt</option>
+                <option>Karaman</option>
+                <option>KÄ±rÄ±kkale</option>
+                <option>Batman</option>
+                <option>ÅÄ±rnak</option>
+                <option>BartÄ±n</option>
+                <option>Ardahan</option>
+                <option>IÄŸdÄ±r</option>
+                <option>Yalova</option>
+                <option>KarabÃ¼k</option>
+                <option>Kilis</option>
+                <option>Osmaniye</option>
+                <option>DÃ¼zce</option>
+              </select>
+            </label>
+            <label>
+              Ä°lÃ§e
+              <select name="district" disabled required>
+                <option value="">Ã–nce ÅŸehir seÃ§</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="features-box vehicle-fields" id="vehicleFields" hidden>
+            <h3>AraÃƒÂ§ Bilgileri</h3>
+            <div class="create-grid">
+              <label>
+                Marka
+                <select id="brand" name="brand" onchange="onBrandChange()">
+                  <option value="">Marka seÃƒÂ§</option>
+                </select>
+                <input class="manual-field" id="brandOther" name="brandOther" placeholder="MarkayÃ„Â± manuel yaz" hidden>
+              </label>
+              <label>
+                Seri
+                <select id="series" name="series" onchange="onSeriesChange()" disabled>
+                  <option value="">Seri seç</option>
+                </select>
+                <input class="manual-field" id="seriesOther" name="seriesOther" placeholder="Seriyi manuel yaz" hidden>
+              </label>
+              <label>
+                Model
+                <select id="model" name="model" onchange="onModelChange()" disabled>
+                  <option value="">Model seç</option>
+                </select>
+                <input class="manual-field" id="modelOther" name="modelOther" placeholder="Modeli manuel yaz" hidden>
+              </label>
+              <label>
+                Kasa tipi
+                <input id="body" name="body" placeholder="Sedan, SUV, Hatchback">
+              </label>
+              <label>
+                Motor hacmi
+                <input id="engine" name="engine" placeholder="1.6, 2.0, 1598 cc">
+              </label>
+              <label>
+                Beygir
+                <input id="power" name="power" type="number" min="0" placeholder="120">
+              </label>
+              <label>
+                YakÃ„Â±t
+                <select id="fuel" name="fuel">
+                  <option value="">YakÃ„Â±t seÃƒÂ§</option>
+                  <option>Benzin</option>
+                  <option>Dizel</option>
+                  <option>Elektrik</option>
+                  <option>Hibrit</option>
+                  <option>LPG</option>
+                </select>
+              </label>
+              <label>
+                Vites
+                <select id="transmission" name="transmission">
+                  <option value="">Vites seÃƒÂ§</option>
+                  <option>Manuel</option>
+                  <option>Otomatik</option>
+                  <option>YarÃ„Â± Otomatik</option>
+                </select>
+              </label>
+              <label>
+                YÃ„Â±l
+                <input id="year" name="year" type="number" min="1980" max="2025" placeholder="2020">
+                <small class="field-error" id="yearError"></small>
+              </label>
+              <label>
+                KM
+                <input id="km" name="km" type="number" min="0" max="1000000" placeholder="120000">
+                <small class="field-error" id="kmError"></small>
+              </label>
+            </div>
+          </div>
+
+          <div class="create-actions">
+            <button type="button" onclick="nextStep(2)">Devam Et</button>
+          </div>
+        </div>
+
+        <div class="step step-2" style="display:none">
+          <h2>Ä°lan Bilgileri</h2>
+          <div class="create-grid">
+            <label>
+              BaÅŸlÄ±k
+              <input name="title" placeholder="BaÅŸlÄ±k" required>
+            </label>
+            <label>
+              Fiyat
+              <input name="price" type="text" placeholder="Fiyat" required>
+            </label>
+          </div>
+          <label>
+            AÃ§Ä±klama
+            <textarea name="description" placeholder="AÃ§Ä±klama" required></textarea>
+          </label>
+
+          <div class="create-actions">
+            <button class="ghost-btn" type="button" onclick="nextStep(1)">Geri</button>
+            <button type="button" onclick="nextStep(3)">Devam Et</button>
+          </div>
+        </div>
+
+        <div class="step step-3" style="display:none">
+          <h2>GÃ¶rseller ve Ã–zellikler</h2>
+
+          <label class="photo-drop" id="photoDrop">
+            <input name="images" type="file" accept="image/*" multiple>
+            <span>FotoÄŸraf</span>
+            <strong>FotoÄŸraflarÄ± buraya sÃ¼rÃ¼kle veya seÃ§</strong>
+            <small>Ä°lk fotoÄŸraf vitrin gÃ¶rseli olacaktÄ±r</small>
+          </label>
+          <div class="photo-preview-grid" id="miniPreviewList"></div>
+
+          <label>
+            GÃ¶rsel URL
+            <input name="image" placeholder="GÃ¶rsel URL">
+          </label>
+
+          <label>
+            Video URL
+            <input name="video" placeholder="YouTube video linki">
+          </label>
+          <div class="video-preview" id="videoPreview"></div>
+
+          <div class="features-box">
+            <h3>GÃ¼venlik</h3>
+            <div class="feature-grid">
+              <label><input type="checkbox" name="features" value="ABS"> ABS</label>
+              <label><input type="checkbox" name="features" value="ESP"> ESP</label>
+              <label><input type="checkbox" name="features" value="Airbag"> Airbag</label>
+              <label><input type="checkbox" name="features" value="ISOFIX"> ISOFIX</label>
+              <label><input type="checkbox" name="features" value="YokuÅŸ kalkÄ±ÅŸ"> YokuÅŸ kalkÄ±ÅŸ</label>
+            </div>
+          </div>
+
+          <div class="features-box">
+            <h3>Ä°Ã§ DonanÄ±m</h3>
+            <div class="feature-grid">
+              <label><input type="checkbox" name="features" value="Klima"> Klima</label>
+              <label><input type="checkbox" name="features" value="Deri koltuk"> Deri koltuk</label>
+              <label><input type="checkbox" name="features" value="Sunroof"> Sunroof</label>
+              <label><input type="checkbox" name="features" value="IsÄ±tmalÄ± koltuk"> IsÄ±tmalÄ± koltuk</label>
+              <label><input type="checkbox" name="features" value="Multimedya"> Multimedya</label>
+            </div>
+          </div>
+
+          <div class="features-box">
+            <h3>DÄ±ÅŸ DonanÄ±m</h3>
+            <div class="feature-grid">
+              <label><input type="checkbox" name="features" value="Park sensÃ¶rÃ¼"> Park sensÃ¶rÃ¼</label>
+              <label><input type="checkbox" name="features" value="Far sensÃ¶rÃ¼"> Far sensÃ¶rÃ¼</label>
+              <label><input type="checkbox" name="features" value="YaÄŸmur sensÃ¶rÃ¼"> YaÄŸmur sensÃ¶rÃ¼</label>
+              <label><input type="checkbox" name="features" value="Jant"> Jant</label>
+            </div>
+          </div>
+
+          <div class="features-box">
+            <h3>Multimedya</h3>
+            <div class="feature-grid">
+              <label><input type="checkbox" name="features" value="Bluetooth"> Bluetooth</label>
+              <label><input type="checkbox" name="features" value="Apple CarPlay"> Apple CarPlay</label>
+              <label><input type="checkbox" name="features" value="Android Auto"> Android Auto</label>
+            </div>
+          </div>
+
+          <div class="damage-box">
+            <div class="section-head">
+              <h3>AraÃ§ Hasar Durumu</h3>
+              <span class="muted">ParÃ§aya tÄ±kla, durumunu seÃ§</span>
+            </div>
+            <div class="damage-layout">
+              <div class="car-map" id="createCarMap"></div>
+              <div class="damage-panel" id="damagePanel" hidden>
+                <strong id="selectedPartName">SeÃ§ili parÃ§a yok</strong>
+                <button type="button" data-damage-status="orijinal">Orijinal</button>
+                <button type="button" data-damage-status="boyali">BoyalÄ±</button>
+                <button type="button" data-damage-status="degisen">DeÄŸiÅŸen</button>
+                <button type="button" data-damage-status="lokal">Lokal BoyalÄ±</button>
+                <div class="damage-summary">
+                  <div>
+                    <h4>BoyalÄ± ParÃ§alar</h4>
+                    <div class="damage-list" id="paintedList"><span>Yok</span></div>
+                  </div>
+                  <div>
+                    <h4>DeÄŸiÅŸen ParÃ§alar</h4>
+                    <div class="damage-list" id="changedList"><span>Yok</span></div>
+                  </div>
+                  <div>
+                    <h4>Lokal BoyalÄ±</h4>
+                    <div class="damage-list" id="localList"><span>Yok</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="create-actions">
+            <button class="ghost-btn" type="button" onclick="nextStep(2)">Geri</button>
+            <button id="publishBtn" type="submit">Ä°lanÄ± YayÄ±nla</button>
+          </div>
+          <p class="muted" id="listingMessage"></p>
+        </div>
+      </form>
+
+      <aside class="create-preview-card">
+        <div class="create-preview-image" id="createPreviewImage">Vitrin gÃ¶rseli</div>
+        <div class="create-preview-body">
+          <strong id="createPreviewTitle">Ä°lan baÅŸlÄ±ÄŸÄ±</strong>
+          <p id="createPreviewPrice">0 TL</p>
+          <small id="createPreviewMeta">Åehir / Kategori</small>
+          <small id="createPreviewVehicle"></small>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/listings.js"></script>
+</body>
+</html>

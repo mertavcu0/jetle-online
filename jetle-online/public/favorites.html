@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorilerim | Jetle</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      max-width: 1000px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    #favoritesList {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .listing-card {
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .listing-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .listing-card h3,
+    .listing-card p {
+      margin: 0;
+      padding: 10px 12px 0;
+      font-size: 14px;
+    }
+
+    .listing-card p {
+      padding-bottom: 12px;
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    @media (max-width: 760px) {
+      #favoritesList {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h2>Favorilerim</h2>
+    <div id="favoritesList"></div>
+  </main>
+
+  <script src="/auth-global.js"></script>
+  <script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+fetch(`/api/listings/favorites?email=${user.email}`)
+  .then(res => res.json())
+  .then(data => {
+    document.body.innerHTML += data.map(l => `
+      <div>
+        <img src="${l.image}" width="200">
+        <h3>${l.title}</h3>
+        <p>${l.price} TL</p>
+      </div>
+    `).join("");
+  });
+</script>
+</body>
+</html>

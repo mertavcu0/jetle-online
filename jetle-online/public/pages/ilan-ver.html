@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan ver — Jetle.online</title>
+  <meta name="description" content="Jetle'de profesyonel ilan oluşturun." />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    .ilan-ver-page {
+      padding: 20px 16px 48px;
+    }
+
+    .ilan-ver-back {
+      display: inline-block;
+      margin-bottom: 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      text-decoration: none;
+    }
+
+    .ilan-ver-back:hover {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .form-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 28px 26px 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-container > h1 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.02em;
+    }
+
+    .form-container > .form-lead {
+      margin: 0 0 24px;
+      font-size: 0.875rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 24px;
+      align-items: start;
+    }
+
+    .form-col {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-static label,
+    #dynamicFields .fv-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-static input,
+    .form-static textarea,
+    .form-static select,
+    #dynamicFields .fv-input,
+    #dynamicFields .fv-select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #111827;
+      background: #fafafa;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    .form-static input:focus,
+    .form-static textarea:focus,
+    .form-static select:focus,
+    #dynamicFields .fv-input:focus,
+    #dynamicFields .fv-select:focus {
+      outline: none;
+      border-color: #93c5fd;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    .form-static textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    #dynamicFields {
+      min-height: 48px;
+    }
+
+    #dynamicFields .fv-field {
+      margin-bottom: 0;
+    }
+
+    #dynamicFields .fv-hint {
+      margin: -8px 0 0;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .form-bottom {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      padding-top: 20px;
+      border-top: 1px solid #ececec;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-bottom .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-upload {
+      position: relative;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 20px 16px;
+      text-align: center;
+      background: #fafafa;
+    }
+
+    .form-upload input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .form-upload__hint {
+      margin: 0;
+      font-size: 0.8125rem;
+      color: #6b7280;
+    }
+
+    .form-upload__list {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+      font-size: 0.8125rem;
+      color: #4b5563;
+    }
+
+    .form-upload__list li {
+      padding: 4px 0;
+      border-top: 1px solid #eee;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      margin-top: 4px;
+      border: none;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: background 0.15s ease;
+    }
+
+    .submit-btn:hover {
+      background: #2563eb;
+    }
+
+    .form-msg {
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 500;
+      min-height: 1.25em;
+    }
+
+    .form-msg.is-ok {
+      color: #15803d;
+    }
+
+    .form-msg.is-err {
+      color: #b91c1c;
+    }
+
+    @media (max-width: 720px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-bottom .form-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body data-page="ilan-ver">
+  <header class="header header--simple">
+    <a href="../index.html" class="logo">Jetle<span>.online</span></a>
+    <nav class="menu">
+      <a href="../index.html">Ana sayfa</a>
+    </nav>
+  </header>
+
+  <main class="ilan-ver-page">
+    <a class="ilan-ver-back" href="../index.html">← Ana sayfa</a>
+
+    <section class="form-container">
+      <h1>İlan Ver</h1>
+      <p class="form-lead">
+        Kategoriye göre alanlar otomatik açılır. Zorunlu alanları eksiksiz doldurun; yayınlamadan önce başlık ve fiyatı kontrol edin.
+      </p>
+
+      <form id="ilanVerForm" class="form-grid" novalidate>
+        <div class="form-col form-static">
+          <div>
+            <label for="fieldTitle">Başlık</label>
+            <input
+              id="fieldTitle"
+              name="title"
+              type="text"
+              maxlength="200"
+              autocomplete="off"
+              placeholder="Örn. BMW 3.20 2018 — bakımlı, ekspertizli"
+            />
+          </div>
+          <div>
+            <label for="fieldDesc">Açıklama</label>
+            <textarea
+              id="fieldDesc"
+              name="description"
+              maxlength="8000"
+              placeholder="Durum, donanım, konum avantajı, tapu / ruhsat bilgisi gibi detayları yazın."
+            ></textarea>
+          </div>
+          <div>
+            <label for="fieldPrice">Fiyat (TL)</label>
+            <input
+              id="fieldPrice"
+              name="price"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              placeholder="Örn. 485000"
+            />
+          </div>
+        </div>
+
+        <div class="form-col form-static">
+          <div>
+            <label for="mainCategory">Ana kategori</label>
+            <select id="mainCategory" name="mainCategory" aria-required="true">
+              <option value="" selected disabled>Seçin</option>
+              <option value="vasita">Vasıta</option>
+              <option value="emlak">Emlak</option>
+            </select>
+          </div>
+          <div id="dynamicFields" aria-live="polite"></div>
+        </div>
+
+        <div class="form-bottom">
+          <div class="form-row-2">
+            <div>
+              <label for="fieldCity">Şehir</label>
+              <input id="fieldCity" name="city" type="text" maxlength="80" placeholder="İstanbul" />
+            </div>
+            <div>
+              <label for="fieldDistrict">İlçe</label>
+              <input id="fieldDistrict" name="district" type="text" maxlength="80" placeholder="Kadıköy" />
+            </div>
+          </div>
+          <div>
+            <label for="fieldImages">Görseller</label>
+            <div class="form-upload">
+              <input id="fieldImages" name="images" type="file" accept="image/*" multiple aria-label="Görsel seç" />
+              <p class="form-upload__hint">PNG veya JPG · çoklu seçim (önizleme ve yükleme altyapısı yakında)</p>
+              <ul class="form-upload__list" id="fileList" hidden></ul>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">İlanı Yayınla</button>
+          <p id="formMsg" class="form-msg" role="status"></p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="../script.js" defer></script>
+</body>
+</html>

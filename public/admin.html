@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Jetle</title>
+  <meta name="description" content="Jetle yönetim paneli.">
+  <meta name="keywords" content="Jetle admin">
+  <meta property="og:title" content="Admin Panel - Jetle">
+  <meta property="og:description" content="Jetle yönetim paneli.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <div></div>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
+
+  <main class="container admin-page">
+    <section class="admin-login-card" id="adminLoginBox">
+      <h1>Jetle Admin</h1>
+      <p class="muted">Paneli yönetmek için admin hesabınla giriş yap.</p>
+      <form id="adminLoginForm">
+        <input name="username" type="text" placeholder="Kullanıcı adı" required>
+        <input name="password" type="password" placeholder="Şifre" required>
+        <button class="btn-primary" type="submit">Giriş Yap</button>
+      </form>
+      <p class="muted" id="adminLoginMessage"></p>
+    </section>
+
+    <section class="admin-shell" id="adminShell" hidden>
+      <div class="section-head">
+        <div>
+          <h1>Admin Panel</h1>
+          <p class="muted">İlan, kullanıcı ve istatistik yönetimi</p>
+        </div>
+        <button class="btn-primary admin-refresh" id="adminRefresh" type="button">Yenile</button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="active" data-admin-tab="listings" type="button">İlanlar</button>
+        <button data-admin-tab="users" type="button">Kullanıcılar</button>
+        <button data-admin-tab="stats" type="button">İstatistik</button>
+      </div>
+
+      <section class="admin-tab-panel active" id="adminTabListings">
+        <div class="detail-card admin-section">
+          <h2>İlanlar</h2>
+          <div class="admin-table" id="adminListingsPanel">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-tab-panel" id="adminTabUsers">
+        <div class="detail-card admin-section">
+          <h2>Kullanıcılar</h2>
+          <div class="admin-table" id="adminUsers">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-tab-panel" id="adminTabStats">
+        <div class="admin-stats">
+          <div class="detail-card">
+            <span>Toplam kullanıcı</span>
+            <strong id="statUsers">0</strong>
+          </div>
+          <div class="detail-card">
+            <span>Toplam ilan</span>
+            <strong id="statListings">0</strong>
+          </div>
+          <div class="detail-card">
+            <span>Bugünkü ilan</span>
+            <strong id="statTodayListings">0</strong>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin.js"></script>
+</body>
+</html>

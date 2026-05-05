@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Ver | Jetle</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f7fa;
+      color: #111827;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      color: #111827;
+      font-size: 21px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: #2563eb;
+    }
+
+    .page {
+      max-width: 700px;
+      margin: 34px auto;
+      padding: 0 18px;
+    }
+
+    .form-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+      padding: 26px;
+    }
+
+    .form-head {
+      margin-bottom: 22px;
+    }
+
+    .form-head h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .form-head p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 14px;
+      overflow: hidden;
+      margin: 0 0 14px;
+      border-radius: 999px;
+      background: #e8edf5;
+    }
+
+    .progress-fill {
+      width: 20%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      transition: width 0.25s ease;
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .step-title {
+      margin: 0 0 18px;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .section-title {
+      margin: 18px 0 10px;
+      color: #111827;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .step {
+      display: none;
+      border: 1px solid #e7eaf0;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: none;
+      padding: 22px;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .detail-section {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #777;
+      letter-spacing: 0;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      outline: none;
+      font: inherit;
+      font-size: 14px;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    input.field-error,
+    select.field-error,
+    textarea.field-error {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    }
+
+    .error-message {
+      min-height: 16px;
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #2d5cff;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #244bd4;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: #eef2f7;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      transform: none;
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 8px;
+      border: 2px solid rgba(255,255,255,0.45);
+      border-top-color: #fff;
+      border-radius: 50%;
+      vertical-align: -2px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .preview {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 14px 30px rgba(15,23,42,0.08);
+    }
+
+    .preview-image {
+      min-height: 150px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-weight: 800;
+    }
+
+    .preview-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .upload-zone {
+      display: grid;
+      place-items: center;
+      min-height: 170px;
+      padding: 22px;
+      border: 2px dashed #bfdbfe;
+      border-radius: 14px;
+      background: #f8fbff;
+      color: #374151;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: #2563eb;
+      background: #eef6ff;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .upload-zone strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #111827;
+      font-size: 16px;
+    }
+
+    .upload-zone span {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    .image-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    #preview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .preview-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+
+    .image-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    .image-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 26px;
+      height: 26px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.82);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .image-thumb:hover .image-remove {
+      opacity: 1;
+    }
+
+    .image-remove:hover {
+      background: #dc2626;
+      transform: scale(1.06);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .feature-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .feature-option input {
+      width: auto;
+      margin: 0;
+      box-shadow: none;
+    }
+
+    .preview h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .preview-price {
+      margin: 0 0 10px;
+      color: #2563eb;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .preview-meta {
+      margin: 0 0 12px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .preview-description {
+      margin: 0;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .status {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    .status.success {
+      display: block;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .status.error {
+      display: block;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 100;
+      min-width: 260px;
+      max-width: calc(100vw - 40px);
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #111827;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: #047857;
+    }
+
+    .toast.error {
+      background: #b91c1c;
+    }
+
+    @media (max-width: 700px) {
+      .form-card {
+        padding: 20px;
+      }
+
+      .form-grid,
+      .preview {
+        grid-template-columns: 1fr;
+      }
+
+      .image-preview-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+      }
+    }
+
+    #carMap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .part {
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid #ddd;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .part:hover {
+      transform: scale(1.05);
+    }
+
+    .part[data-status="orijinal"] {
+      background: #4caf50;
+      color: white;
+    }
+
+    .part[data-status="boyalı"] {
+      background: #ffc107;
+      color: black;
+    }
+
+    .part[data-status="degisen"] {
+      background: #f44336;
+      color: white;
+    }
+
+    #carWrapper {
+      position: relative;
+      width: 600px;
+      max-width: 100%;
+      margin: 20px auto;
+    }
+
+    #carImage {
+      width: 100%;
+      display: block;
+    }
+
+    #carWrapper .part {
+      position: absolute;
+      width: 60px;
+      height: 40px;
+      border: 2px solid #333;
+      cursor: pointer;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    #carWrapper .part[data-status="orijinal"] {
+      background: #4caf50;
+    }
+
+    #carWrapper .part[data-status="boyalı"] {
+      background: #ffc107;
+    }
+
+    #carWrapper .part[data-status="degisen"] {
+      background: #f44336;
+    }
+
+    .part {
+      border: 2px solid #ccc;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .part.orijinal,
+    .part[data-status="orijinal"] {
+      background: #22c55e;
+      color: white;
+    }
+
+    .part.boyali,
+    .part[data-status="boyali"] {
+      background: #facc15;
+      color: black;
+    }
+
+    .part.degisen,
+    .part[data-status="degisen"] {
+      background: #ef4444;
+      color: white;
+    }
+
+    #carWrapper .part {
+      fill: #ddd;
+      stroke: #333;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .part[data-status="orijinal"] { fill: green; }
+    .part[data-status="boyalı"] { fill: orange; }
+    .part[data-status="degisen"] { fill: red; }
+
+    #carWrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .part {
+      fill: #ddd;
+      stroke: #333;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .part:hover {
+      opacity: 0.7;
+    }
+
+    .part[data-status="orijinal"] { fill: #28a745; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
+    .part[data-status="degisen"] { fill: #dc3545; }
+
+    .car-svg {
+      width: 200px;
+      margin: auto;
+      display: block;
+    }
+
+    .car-body {
+      fill: #f1f3f5;
+      stroke: #222;
+      stroke-width: 2;
+    }
+
+    .glass {
+      fill: #dee2e6;
+    }
+
+    .part {
+      fill: #ced4da;
+      stroke: #333;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .part:hover {
+      opacity: 0.8;
+    }
+
+    .part[data-status="orijinal"] {
+      fill: #28a745;
+    }
+
+    .part[data-status="boyalı"] {
+      fill: #ffc107;
+    }
+
+    .part[data-status="degisen"] {
+      fill: #dc3545;
+    }
+
+    .legend {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-left: 10px;
+      margin-right: 5px;
+    }
+
+    .green { background: #28a745; }
+    .yellow { background: #ffc107; }
+    .red { background: #dc3545; }
+
+    .car-svg {
+      width: 240px;
+      margin: auto;
+      display: block;
+    }
+
+    .car-body {
+      fill: #f8f9fa;
+      stroke: #222;
+      stroke-width: 2;
+    }
+
+    .glass {
+      fill: #dee2e6;
+    }
+
+    .part {
+      fill: #ced4da;
+      stroke: #444;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .part:hover {
+      transform: scale(1.05);
+    }
+
+    .part[data-status="orijinal"] { fill: #28a745; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
+    .part[data-status="degisen"] { fill: #dc3545; }
+
+    .car-real {
+      width: 260px;
+      display: block;
+      margin: auto;
+    }
+
+    .car-outline {
+      fill: #f8f9fa;
+      stroke: #222;
+      stroke-width: 3;
+    }
+
+    .part {
+      fill: rgba(0,0,0,0.08);
+      stroke: #555;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .part:hover {
+      fill: rgba(0,0,0,0.15);
+    }
+
+    .part[data-status="orijinal"] { fill: #28a745; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
+    .part[data-status="degisen"] { fill: #dc3545; }
+
+    .car-outline {
+      fill: #f5f6f7;
+      stroke: #222;
+      stroke-width: 2.5;
+    }
+
+    .part {
+      fill: rgba(0,0,0,0.05);
+      stroke: #999;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .part:hover {
+      fill: rgba(0,0,0,0.15);
+    }
+
+    .part[data-status="orijinal"] { fill: #2ecc71; }
+    .part[data-status="boyalı"] { fill: #f1c40f; }
+    .part[data-status="degisen"] { fill: #e74c3c; }
+
+    .expertiz-wrapper {
+      text-align: center;
+    }
+
+    .car-container {
+      position: relative;
+      width: 280px;
+      margin: auto;
+    }
+
+    .car-image {
+      width: 100%;
+      display: block;
+    }
+
+    .car-container .part {
+      position: absolute;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.2s;
+      fill: initial;
+      stroke: initial;
+    }
+
+    .car-container .part:hover {
+      background: rgba(0,0,0,0.2);
+    }
+
+    .car-container .part[data-status="orijinal"] { background: #2ecc71; }
+    .car-container .part[data-status="boyalı"] { background: #f1c40f; }
+    .car-container .part[data-status="degisen"] { background: #e74c3c; }
+
+    .kaput { top: 8%; left: 35%; width: 30%; height: 10%; }
+    .tavan { top: 20%; left: 32%; width: 36%; height: 20%; }
+    .bagaj { bottom: 8%; left: 35%; width: 30%; height: 10%; }
+    .sol_on_camurluk { top: 25%; left: 5%; width: 20%; height: 12%; }
+    .sag_on_camurluk { top: 25%; right: 5%; width: 20%; height: 12%; }
+    .sol_arka_camurluk { top: 50%; left: 5%; width: 20%; height: 12%; }
+    .sag_arka_camurluk { top: 50%; right: 5%; width: 20%; height: 12%; }
+
+    .expertiz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .expertiz-item label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <div id="authArea"></div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="form-card">
+      <div class="form-head">
+        <h1>İlan Ver</h1>
+        <p>Bilgileri adım adım gir. İlan admin onayından sonra yayına alınır.</p>
+      </div>
+
+      <div class="progress" aria-label="Form ilerleme">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="step-label" id="stepLabel">Adım 1 / 5</p>
+
+      <form id="listingForm" novalidate>
+        <div class="step active" id="step-1">
+          <h2 class="step-title">Temel Bilgiler</h2>
+          <div class="form-grid">
+            <div class="field full">
+              <label for="title">Başlık</label>
+              <input id="title" name="title" type="text">
+            </div>
+            <div class="field full">
+              <label for="description">Açıklama</label>
+              <textarea id="description" name="description"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" id="step-2">
+          <h2 class="step-title">Fiyat & Kategori</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="price">Fiyat</label>
+              <input id="price" name="price" type="number" min="0">
+            </div>
+            <div class="field">
+              <label for="mainCategory">Ana kategori</label>
+              <select id="mainCategory" name="category">
+                <option value="">Ana kategori seç</option>
+                <option value="emlak">Emlak</option>
+                <option value="vasita">Vasıta</option>
+                <option value="elektronik">Elektronik</option>
+                <option value="is-makinalari">İş Makinaları</option>
+                <option value="yedek-parca">Yedek Parça</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="subCategory">Alt kategori</label>
+              <select id="subCategory" name="subCategory" disabled>
+                <option value="">Önce ana kategori seç</option>
+              </select>
+            </div>
+            <div class="field full">
+              <div id="dynamic-fields"></div>
+            </div>
+            <div class="field full">
+              <div id="features"></div>
+            </div>
+            <div class="field full" id="ekspertizSection">
+              <div class="expertiz-section">
+                <h3>Ekspertiz Durumu</h3>
+                <div class="expertiz-grid">
+                  <div class="expertiz-item">
+                    <label>Kaput</label>
+                    <select name="kaput" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Tavan</label>
+                    <select name="tavan" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Bagaj</label>
+                    <select name="bagaj" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sağ Ön Çamurluk</label>
+                    <select name="sag_on_camurluk" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sol Ön Çamurluk</label>
+                    <select name="sol_on_camurluk" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sağ Ön Kapı</label>
+                    <select name="sag_on_kapi" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sol Ön Kapı</label>
+                    <select name="sol_on_kapi" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sağ Arka Kapı</label>
+                    <select name="sag_arka_kapi" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                  <div class="expertiz-item">
+                    <label>Sol Arka Kapı</label>
+                    <select name="sol_arka_kapi" class="form-select">
+                      <option value="">Seç</option>
+                      <option value="orijinal">Orijinal</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" id="step-3">
+          <h2 class="step-title">Konum</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="city">Şehir</label>
+              <select id="city" name="city">
+                <option value="">Şehir seç</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="district">İlçe</label>
+              <select id="district" name="district" disabled>
+                <option value="">Önce şehir seç</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" id="step-4">
+          <h2 class="step-title">Fotoğraflar</h2>
+          <div class="field full">
+            <label for="images">Fotoğraf ekle (en az 3)</label>
+            <div class="upload-zone" id="uploadZone">
+              <div>
+                <strong>Fotoğraf ekle (en az 3)</strong>
+                <span>Sürükle bırak veya seçmek için tıkla. En fazla 10 fotoğraf.</span>
+              </div>
+            </div>
+            <input class="upload-input" type="file" id="images" multiple accept="image/*">
+            <div id="preview"></div>
+            <div class="image-preview-grid" id="imagePreviewGrid"></div>
+          </div>
+        </div>
+
+        <div class="step" id="step-5">
+          <h2 class="step-title">İlan önizleme</h2>
+          <div class="preview" id="previewBox">
+            <div class="preview-image" id="previewImage"><img src="" alt=""></div>
+            <div>
+              <h2 id="previewTitle"></h2>
+              <p class="preview-price" id="previewPrice"></p>
+              <p class="preview-meta" id="previewMeta"></p>
+              <p class="preview-description" id="previewDescription"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" id="prevBtn" type="button" onclick="prevStep()">Geri</button>
+          <button class="btn-primary" id="nextBtn" type="button" onclick="nextStep()">Devam Et</button>
+          <button id="submitBtn" type="submit" class="btn-primary">
+            İlan Yayınla
+          </button>
+        </div>
+
+        <div id="status" class="status"></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/auth-global.js"></script>
+  <script src="/cities.js"></script>
+  <script>
+    const form = document.getElementById("listingForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const statusBox = document.getElementById("status");
+    const progressFill = document.getElementById("progressFill");
+    const stepLabel = document.getElementById("stepLabel");
+    const totalSteps = 5;
+    let currentStep = 1;
+    const formData = {};
+
+    const fields = ["title", "description", "price", "mainCategory", "subCategory", "city", "district"];
+    let selectedFiles = [];
+    const dynamicFieldIds = {
+      vasita: ["brand", "series", "model", "year", "km", "fuel", "transmission", "bodyType", "color", "engine", "power", "damageRecord", "sellerType", "cc"],
+      emlak: ["m2", "netM2", "rooms", "floor", "buildingAge", "heating", "inSite", "zoning", "deedStatus", "blockParcelNo", "kaks", "gabari", "roadStatus"],
+      elektronik: ["brand", "model", "warranty"]
+    };
+    const subCategories = {
+      emlak: {
+        daire: "Daire",
+        residence: "Residence",
+        villa: "Villa",
+        "mustakil-ev": "Müstakil Ev",
+        arsa: "Arsa",
+        ofis: "Ofis",
+        dukkan: "Dükkan"
+      },
+      vasita: {
+        otomobil: "Otomobil",
+        suv: "SUV",
+        pickup: "Pickup",
+        motosiklet: "Motosiklet",
+        "elektrikli-arac": "Elektrikli Araç"
+      },
+      elektronik: {
+        telefon: "Telefon",
+        bilgisayar: "Bilgisayar",
+        tv: "TV",
+        kamera: "Kamera"
+      },
+      "is-makinalari": {
+        kepce: "Kepçe",
+        forklift: "Forklift",
+        traktor: "Traktör"
+      },
+      "yedek-parca": {
+        motor: "Motor",
+        kaporta: "Kaporta",
+        lastik: "Lastik"
+      }
+    };
+    const featureOptions = {
+      vasita: ["ABS", "Airbag", "Klima", "Deri koltuk", "Sunroof", "Park sensörü"],
+      emlak: ["Balkon", "Asansör", "Otopark", "Güvenlik", "Eşyalı"]
+    };
+    let carData = {};
+
+    function normalizeCarData(brands) {
+      return (brands || []).reduce((acc, brand) => {
+        if (!brand?.name) return acc;
+
+        acc[brand.name] = {};
+        (brand.series || []).forEach((series) => {
+          if (series?.name) {
+            acc[brand.name][series.name] = (series.models || []).map((item) =>
+              typeof item === "string" ? { name: item, fuel: [], transmission: [], body: [] } : item
+            );
+          }
+        });
+
+        return acc;
+      }, {});
+    }
+
+    async function loadCarData() {
+      try {
+        const res = await fetch("/api/cars");
+        if (!res.ok) throw new Error("Araç verisi yüklenemedi");
+        carData = normalizeCarData(await res.json());
+      } catch (err) {
+        console.error("CAR DATA ERROR:", err);
+        carData = {};
+      }
+    }
+    const coreCityData = {
+      "İstanbul": ["Kadıköy", "Beşiktaş", "Üsküdar", "Şişli", "Pendik", "Kartal"],
+      "Ankara": ["Çankaya", "Keçiören", "Sincan", "Mamak"],
+      "İzmir": ["Konak", "Bornova", "Karşıyaka", "Buca"]
+    };
+
+    function initCities() {
+      const citySelect = document.getElementById("city");
+      const districtSelect = document.getElementById("district");
+      window.cities = {
+        ...(window.cities || {}),
+        ...coreCityData
+      };
+      const cityData = window.cities || {};
+
+      citySelect.innerHTML = `<option value="">Şehir seç</option>`;
+      Object.keys(cityData).forEach((city) => {
+        citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+      });
+
+      districtSelect.innerHTML = `<option value="">Önce şehir seç</option>`;
+      districtSelect.disabled = true;
+    }
+
+    function fillDistricts(city) {
+      const districtSelect = document.getElementById("district");
+      const districts = (window.cities || {})[city] || [];
+
+      districtSelect.innerHTML = city
+        ? `<option value="">İlçe seç</option>`
+        : `<option value="">Önce şehir seç</option>`;
+
+      districts.forEach((district) => {
+        districtSelect.innerHTML += `<option value="${district}">${district}</option>`;
+      });
+
+      districtSelect.disabled = !city;
+    }
+
+    function loadDistricts(city) {
+      fillDistricts(city);
+    }
+
+    function fillSubCategories(mainCategory) {
+      const subSelect = document.getElementById("subCategory");
+      const items = subCategories[mainCategory] || {};
+
+      subSelect.innerHTML = mainCategory
+        ? `<option value="">Alt kategori seç</option>`
+        : `<option value="">Önce ana kategori seç</option>`;
+
+      Object.entries(items).forEach(([value, label]) => {
+        subSelect.innerHTML += `<option value="${value}">${label}</option>`;
+      });
+
+      subSelect.disabled = !mainCategory;
+    }
+
+    function getUser() {
+      try {
+        return JSON.parse(localStorage.getItem("user") || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function setStatus(type, text) {
+      statusBox.className = `status ${type}`;
+      statusBox.textContent = text;
+    }
+
+    function clearStatus() {
+      statusBox.className = "status";
+      statusBox.textContent = "";
+    }
+
+    function clearFieldErrors() {
+      document.querySelectorAll(".field-error").forEach((input) => {
+        input.classList.remove("field-error");
+      });
+      document.querySelectorAll(".error-message").forEach((message) => {
+        message.remove();
+      });
+    }
+
+    function showFieldError(id, message) {
+      const input = document.getElementById(id);
+      if (!input) return;
+
+      input.classList.add("field-error");
+
+      const field = input.closest(".field") || input.parentElement;
+      let error = field.querySelector(".error-message");
+
+      if (!error) {
+        error = document.createElement("div");
+        error.className = "error-message";
+        field.appendChild(error);
+      }
+
+      error.textContent = message;
+    }
+
+    function clearFieldError(id) {
+      const input = document.getElementById(id);
+      if (!input) return;
+
+      input.classList.remove("field-error");
+      const field = input.closest(".field") || input.parentElement;
+      field?.querySelector(".error-message")?.remove();
+    }
+
+    function showToast(text, type = "success") {
+      let toast = document.querySelector(".toast");
+
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.className = "toast";
+        document.body.appendChild(toast);
+      }
+
+      toast.textContent = text;
+      toast.className = `toast ${type} show`;
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function collectStepData() {
+      fields.forEach((id) => {
+        const input = document.getElementById(id);
+        if (input) formData[id] = input.value.trim();
+      });
+
+      Object.values(dynamicFieldIds).flat().forEach((id) => {
+        const input = document.getElementById(id);
+        if (input) formData[id] = input.value.trim();
+      });
+
+      formData.category = formData.mainCategory && formData.subCategory
+        ? `${formData.mainCategory}-${formData.subCategory}`
+        : "";
+      formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
+        .map((input) => input.value);
+    }
+
+    function handleFiles(files) {
+      const incoming = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
+      const nextFiles = [...selectedFiles, ...incoming].slice(0, 10);
+
+      if (selectedFiles.length + incoming.length > 10) {
+        showFieldError("images", "En fazla 10 fotoğraf yüklenebilir.");
+      } else {
+        clearFieldError("images");
+      }
+
+      selectedFiles = nextFiles;
+      renderImagePreview();
+      document.getElementById("images").value = "";
+      if (selectedFiles.length >= 3) {
+        const imagesInput = document.getElementById("images");
+        imagesInput.classList.remove("field-error");
+        imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
+      }
+    }
+
+    function renderImagePreview() {
+      const grid = document.getElementById("imagePreviewGrid");
+
+      grid.innerHTML = selectedFiles.map((file, index) => `
+        <div class="image-thumb">
+          <img src="${URL.createObjectURL(file)}" alt="Fotoğraf">
+          <button class="image-remove" type="button" onclick="removeImage(${index})" aria-label="Fotoğrafı sil">×</button>
+        </div>
+      `).join("");
+    }
+
+    function removeImage(index) {
+      selectedFiles.splice(index, 1);
+      renderImagePreview();
+      renderPreview();
+      collectStepData();
+
+      if (selectedFiles.length < 3) {
+        showFieldError("images", "En az 3 fotoğraf zorunlu");
+      } else {
+        const imagesInput = document.getElementById("images");
+        imagesInput.classList.remove("field-error");
+        imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
+        clearStatus();
+      }
+    }
+
+    async function uploadSelectedImages() {
+      const body = new FormData();
+      selectedFiles.forEach((file) => body.append("images", file));
+
+      const headers = {};
+      const token = localStorage.getItem("token");
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const res = await fetch("/api/listings/upload", {
+        method: "POST",
+        headers,
+        body
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || data.error || "Fotoğraflar yüklenemedi");
+
+      return data.urls || [];
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function filesToBase64(files) {
+      return Promise.all(files.map(fileToBase64));
+    }
+
+    function clearDynamicData() {
+      Object.values(dynamicFieldIds).flat().forEach((id) => {
+        delete formData[id];
+      });
+    }
+
+    function fieldHtml(id, label, control) {
+      return `
+        <div class="field">
+          <label for="${id}">${label}</label>
+          ${control}
+        </div>
+      `;
+    }
+
+    function renderArsaFields() {
+      return `
+        <div class="detail-section">
+          <h3 class="section-title">Detaylar</h3>
+          <div class="grid-2">
+            ${fieldHtml("m2", "m²", `<input id="m2" name="m2" type="number" min="0">`)}
+            ${fieldHtml("zoning", "İmar durumu", `
+              <select id="zoning" name="zoning">
+                <option value="">Seç</option>
+                <option>Var</option>
+                <option>Yok</option>
+              </select>
+            `)}
+            ${fieldHtml("deedStatus", "Tapu durumu", `
+              <select id="deedStatus" name="deedStatus">
+                <option value="">Seç</option>
+                <option>Hisseli</option>
+                <option>Müstakil</option>
+              </select>
+            `)}
+            ${fieldHtml("blockParcelNo", "Ada / parsel no", `<input id="blockParcelNo" name="blockParcelNo">`)}
+            ${fieldHtml("kaks", "KAKS / Emsal", `<input id="kaks" name="kaks">`)}
+            ${fieldHtml("gabari", "Gabari", `<input id="gabari" name="gabari">`)}
+            ${fieldHtml("roadStatus", "Yol durumu", `<input id="roadStatus" name="roadStatus">`)}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3 class="section-title">Ekspertiz Durumu</h3>
+          <div class="grid-2">
+            ${fieldHtml("expertiseHood", "Kaput", `
+              <select id="expertiseHood" name="kaput" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseRoof", "Tavan", `
+              <select id="expertiseRoof" name="tavan" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseTrunk", "Bagaj", `
+              <select id="expertiseTrunk" name="bagaj" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseFrontRightFender", "Sağ Ön Çamurluk", `
+              <select id="expertiseFrontRightFender" name="sag_on_camurluk" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseFrontLeftFender", "Sol Ön Çamurluk", `
+              <select id="expertiseFrontLeftFender" name="sol_on_camurluk" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseFrontRightDoor", "Sağ Ön Kapı", `
+              <select id="expertiseFrontRightDoor" name="sag_on_kapi" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseFrontLeftDoor", "Sol Ön Kapı", `
+              <select id="expertiseFrontLeftDoor" name="sol_on_kapi" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseRearRightDoor", "Sağ Arka Kapı", `
+              <select id="expertiseRearRightDoor" name="sag_arka_kapi" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+            ${fieldHtml("expertiseRearLeftDoor", "Sol Arka Kapı", `
+              <select id="expertiseRearLeftDoor" name="sol_arka_kapi" class="form-select">
+                <option value="">Seç</option>
+                <option>Orijinal</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
+              </select>
+            `)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDaireFields() {
+      return `
+        <div class="detail-section">
+          <h3 class="section-title">Detaylar</h3>
+          <div class="grid-2">
+            ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
+            ${fieldHtml("netM2", "Net m²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+            ${fieldHtml("rooms", "Oda sayısı", `
+              <select id="rooms" name="rooms">
+                <option value="">Seç</option>
+                <option>1+1</option>
+                <option>2+1</option>
+                <option>3+1</option>
+                <option>4+1</option>
+              </select>
+            `)}
+            ${fieldHtml("floor", "Kat", `<input id="floor" name="floor">`)}
+            ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
+            ${fieldHtml("heating", "Isıtma", `
+              <select id="heating" name="heating">
+                <option value="">Seç</option>
+                <option>Doğalgaz</option>
+                <option>Kombi</option>
+                <option>Klima</option>
+              </select>
+            `)}
+            ${fieldHtml("inSite", "Site içinde mi?", `
+              <select id="inSite" name="inSite">
+                <option value="">Seç</option>
+                <option>Evet</option>
+                <option>Hayır</option>
+              </select>
+            `)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCarFields() {
+      return `
+        <div class="detail-section">
+          <h3 class="section-title">Detaylar</h3>
+          <div class="grid-2">
+            ${fieldHtml("brand", "Marka", `
+              <select id="brand" name="brand">
+                <option value="">Seç</option>
+                ${Object.keys(carData).map((brand) => `<option value="${brand}">${brand}</option>`).join("")}
+              </select>
+            `)}
+            ${fieldHtml("series", "Seri", `
+              <select id="series" name="series" disabled>
+                <option value="">Önce marka seç</option>
+              </select>
+            `)}
+            ${fieldHtml("model", "Model", `
+              <select id="model" name="model" disabled>
+                <option value="">Önce seri seç</option>
+              </select>
+            `)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
+            ${fieldHtml("fuel", "Yakıt", `
+              <select id="fuel" name="fuel">
+                <option value="">Seç</option>
+                <option value="Benzin">Benzin</option>
+                <option value="Dizel">Dizel</option>
+                <option value="LPG">LPG</option>
+                <option value="Hibrit">Hibrit</option>
+                <option value="Elektrik">Elektrik</option>
+              </select>
+            `)}
+            ${fieldHtml("transmission", "Vites", `
+              <select id="transmission" name="transmission">
+                <option value="">Seç</option>
+                <option value="Manuel">Manuel</option>
+                <option value="Otomatik">Otomatik</option>
+                <option value="Yarı Otomatik">Yarı Otomatik</option>
+              </select>
+            `)}
+            ${fieldHtml("bodyType", "Kasa tipi", `
+              <select id="bodyType" name="bodyType">
+                <option value="">Seç</option>
+                <option>Sedan</option>
+                <option>Hatchback</option>
+                <option>SUV</option>
+                <option>Coupe</option>
+                <option>Pickup</option>
+                <option>Minivan</option>
+                <option>Station Wagon</option>
+              </select>
+            `)}
+            ${fieldHtml("color", "Renk", `<input id="color" name="color">`)}
+            ${fieldHtml("engine", "Motor hacmi", `<input id="engine" name="engine">`)}
+            ${fieldHtml("power", "Motor gücü", `<input id="power" name="power">`)}
+            ${fieldHtml("damageRecord", "Hasar kaydı", `<input id="damageRecord" name="damageRecord">`)}
+            ${fieldHtml("sellerType", "Kimden", `
+              <select id="sellerType" name="sellerType">
+                <option>Bireysel</option>
+                <option>Galeriden</option>
+              </select>
+            `)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMotorcycleFields() {
+      return `
+        <div class="detail-section">
+          <h3 class="section-title">Detaylar</h3>
+          <div class="grid-2">
+            ${fieldHtml("brand", "Marka", `<input id="brand" name="brand">`)}
+            ${fieldHtml("model", "Model", `<input id="model" name="model">`)}
+            ${fieldHtml("cc", "cc", `<input id="cc" name="cc" type="number" min="0">`)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSubCategoryFields(mainCategory, subCategory) {
+      const container = document.getElementById("dynamic-fields");
+      if (!container) return;
+      container.innerHTML = "";
+      clearDynamicData();
+
+      switch (subCategory) {
+        case "arsa":
+          container.innerHTML = renderArsaFields();
+          break;
+        case "daire":
+        case "residence":
+        case "villa":
+        case "mustakil-ev":
+          container.innerHTML = renderDaireFields();
+          break;
+        case "otomobil":
+        case "suv":
+        case "pickup":
+        case "elektrikli-arac":
+          container.innerHTML = renderCarFields();
+          document.getElementById("brand").addEventListener("change", (event) => {
+            updateSeries();
+          });
+          document.getElementById("series").addEventListener("change", () => {
+            updateModels();
+          });
+          document.getElementById("model").addEventListener("change", () => {
+            applyVehicleSpecs();
+          });
+          break;
+        case "motosiklet":
+          container.innerHTML = renderMotorcycleFields();
+          break;
+        default:
+          if (mainCategory === "elektronik") {
+            container.innerHTML = `
+          <div class="form-grid">
+            <div class="field">
+              <label for="brand">Marka</label>
+              <input id="brand" name="brand" type="text">
+            </div>
+            <div class="field">
+              <label for="model">Model</label>
+              <input id="model" name="model" type="text">
+            </div>
+            <div class="field">
+              <label for="warranty">Garanti var mı?</label>
+              <select id="warranty" name="warranty">
+                <option value="">Seç</option>
+                <option value="var">Var</option>
+                <option value="yok">Yok</option>
+              </select>
+            </div>
+          </div>
+            `;
+          }
+      }
+
+      document.querySelectorAll("select").forEach((select) => {
+        select.disabled = false;
+      });
+    }
+
+    function renderDynamicFields(category) {
+      const subCategory = document.getElementById("subCategory")?.value || "";
+      renderSubCategoryFields(category, subCategory);
+    }
+
+    function renderFeatures(category, subCategory = "") {
+      const container = document.getElementById("features");
+      const options = (subCategory === "arsa" || subCategory === "motosiklet")
+        ? []
+        : (featureOptions[category] || []);
+      formData.features = [];
+
+      if (!options.length) {
+        container.innerHTML = "";
+        return;
+      }
+
+      container.innerHTML = `
+        <h3 class="section-title">Özellikler</h3>
+        <div class="features-grid">
+          ${options.map((feature) => `
+            <label class="feature-option">
+              <input type="checkbox" value="${feature}">
+              <span>${feature}</span>
+            </label>
+          `).join("")}
+        </div>
+      `;
+
+      container.querySelectorAll("input[type='checkbox']").forEach((input) => {
+        input.addEventListener("change", collectStepData);
+      });
+    }
+
+    function updateModels() {
+      const brand = document.getElementById("brand")?.value || "";
+      const seriesSelect = document.getElementById("series");
+      const modelSelect = document.getElementById("model");
+      if (!modelSelect || !seriesSelect) return;
+      const series = seriesSelect.value || "";
+      const models = brand && series ? (carData[brand] || {})[series] || [] : [];
+
+      modelSelect.innerHTML = brand
+        ? `<option value="">Model seç</option>`
+        : `<option value="">Önce seri seç</option>`;
+
+      models.forEach((model) => {
+        modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
+      });
+
+      modelSelect.disabled = !models.length;
+      document.querySelectorAll("select").forEach((select) => {
+        select.disabled = false;
+      });
+    }
+
+    function fillSelectOptions(id, values, placeholder) {
+      const select = document.getElementById(id);
+      if (!select) return;
+      const uniqueValues = [...new Set((values || []).filter(Boolean))];
+
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      uniqueValues.forEach((value) => {
+        select.innerHTML += `<option value="${value}">${value}</option>`;
+      });
+
+      if (uniqueValues.length === 1) {
+        select.value = uniqueValues[0];
+      }
+    }
+
+    function getSelectedVehicleModel() {
+      const brand = document.getElementById("brand")?.value || "";
+      const series = document.getElementById("series")?.value || "";
+      const modelName = document.getElementById("model")?.value || "";
+      const models = brand && series ? (carData[brand] || {})[series] || [] : [];
+      return models.find((item) => item.name === modelName) || null;
+    }
+
+    function applyVehicleSpecs() {
+      const selected = getSelectedVehicleModel();
+      if (!selected) return;
+
+      const engineInput = document.getElementById("engine");
+      const powerInput = document.getElementById("power");
+      if (engineInput && selected.engine) engineInput.value = selected.engine;
+      if (powerInput && selected.hp) powerInput.value = selected.hp;
+    }
+
+    function updateSeries() {
+      const brand = document.getElementById("brand")?.value || "";
+      const seriesSelect = document.getElementById("series");
+      const modelSelect = document.getElementById("model");
+      if (!seriesSelect || !modelSelect) return;
+      const series = brand ? Object.keys(carData[brand] || {}) : [];
+
+      seriesSelect.innerHTML = brand
+        ? `<option value="">Seri seç</option>`
+        : `<option value="">Önce marka seç</option>`;
+
+      series.forEach((item) => {
+        seriesSelect.innerHTML += `<option value="${item}">${item}</option>`;
+      });
+
+      seriesSelect.disabled = !series.length;
+      modelSelect.innerHTML = `<option value="">Önce seri seç</option>`;
+      modelSelect.disabled = true;
+      document.querySelectorAll("select").forEach((select) => {
+        select.disabled = false;
+      });
+    }
+
+    function renderModels() {
+      updateModels();
+    }
+
+    function renderSeriesModels() {
+      updateSeries();
+    }
+
+    function renderLegacyVehicleModels(brand, series) {
+      const modelSelect = document.getElementById("model");
+      if (!modelSelect) return;
+      const models = (carData[brand] || {})[series] || [];
+
+      modelSelect.innerHTML = series
+        ? `<option value="">Model seç</option>`
+        : `<option value="">Önce seri seç</option>`;
+
+      models.forEach((model) => {
+        modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
+      });
+
+      modelSelect.disabled = !series;
+      document.querySelectorAll("select").forEach((select) => {
+        select.disabled = false;
+      });
+    }
+
+    function fillVehicleModels(brand) {
+      updateModels();
+    }
+
+    function validateStep(step) {
+      collectStepData();
+      clearFieldErrors();
+      const errors = [];
+
+      const rules = {
+        1: [["title", "Başlık zorunlu"]],
+        2: [["price", "Fiyat 0 olamaz"], ["mainCategory", "Ana kategori seçilmeli"], ["subCategory", "Alt kategori seçilmeli"]],
+        3: [["city", "Şehir zorunlu"]],
+        4: [],
+        5: []
+      };
+
+      rules[step].forEach(([key, message]) => {
+        if (!formData[key]) errors.push([key, message]);
+      });
+
+      if (step === 2 && Number(formData.price) <= 0) {
+        errors.push(["price", "Fiyat 0 olamaz"]);
+      }
+
+      if (step === 2 && formData.mainCategory === "vasita") {
+        if (!formData.year) {
+          errors.push(["year", "Yıl zorunlu"]);
+        }
+        if (!formData.km) {
+          errors.push(["km", "Km zorunlu"]);
+        }
+        if (!formData.fuel || !formData.transmission || !formData.bodyType) {
+          alert("Lütfen tüm araç bilgilerini seç");
+          errors.push(["fuel", "Yakıt zorunlu"]);
+          errors.push(["transmission", "Vites zorunlu"]);
+          errors.push(["bodyType", "Kasa tipi zorunlu"]);
+        }
+      }
+
+      if (step === 2 && formData.mainCategory === "emlak" && !formData.m2) {
+        errors.push(["m2", "m2 zorunlu"]);
+      }
+
+      if (step === 4 && selectedFiles.length < 3) {
+        errors.push(["images", "En az 3 fotoğraf zorunlu"]);
+      }
+
+      if (errors.length) {
+        const shown = new Set();
+        errors.forEach(([id, message]) => {
+          if (shown.has(id)) return;
+          showFieldError(id, message);
+          shown.add(id);
+        });
+        return false;
+      }
+
+      clearStatus();
+      return true;
+    }
+
+    function hasRequiredSubmitData() {
+      collectStepData();
+      clearFieldErrors();
+
+      const checks = [
+        ["title", Boolean(formData.title), "Başlık zorunlu"],
+        ["price", Number(formData.price) > 0, "Fiyat 0 olamaz"],
+        ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seçilmeli"],
+        ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
+        ["city", Boolean(formData.city), "Şehir zorunlu"],
+        ["images", selectedFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
+      ];
+
+      if (formData.mainCategory === "vasita") {
+        const year = Number(formData.year);
+        checks.push(["year", Boolean(year) && year >= 1950 && year <= new Date().getFullYear(), "Geçerli bir yıl gir"]);
+        checks.push(["km", Boolean(formData.km), "Km zorunlu"]);
+        checks.push(["fuel", Boolean(formData.fuel), "Yakıt zorunlu"]);
+        checks.push(["transmission", Boolean(formData.transmission), "Vites zorunlu"]);
+        checks.push(["bodyType", Boolean(formData.bodyType), "Kasa tipi zorunlu"]);
+      }
+
+      if (formData.mainCategory === "emlak") {
+        checks.push(["m2", Boolean(formData.m2), "m2 zorunlu"]);
+      }
+
+      const invalid = checks.filter(([, ok]) => !ok);
+      if (invalid.length) {
+        invalid.forEach(([id, , message]) => showFieldError(id, message));
+        return false;
+      }
+
+      return Boolean(
+        formData.title &&
+        Number(formData.price) > 0 &&
+        formData.mainCategory &&
+        formData.subCategory &&
+        formData.city &&
+        selectedFiles.length >= 3
+      );
+    }
+
+    function removeInactiveRequiredFields() {
+      document.querySelectorAll("input, select, textarea").forEach((input) => {
+        if (input.disabled || input.offsetParent === null) {
+          input.removeAttribute("required");
+        }
+      });
+    }
+
+    function previewVehicleTitle() {
+      return [formData.brand, formData.series, formData.model].filter(Boolean).join(" ");
+    }
+
+    function placeholderImage(title = "İlan görseli") {
+      const label = encodeURIComponent(title || "İlan görseli");
+      return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='420'%3E%3Crect width='640' height='420' fill='%23eef2f7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%236b7280' font-family='Arial' font-size='22'%3E${label}%3C/text%3E%3C/svg%3E`;
+    }
+
+    function renderPreview() {
+      collectStepData();
+
+      const vehicle = previewVehicleTitle();
+      const location = [formData.city, formData.district].filter(Boolean).join(" / ");
+      const meta = [location, vehicle].filter(Boolean).join(" - ");
+
+      document.getElementById("previewTitle").textContent = formData.title || "";
+      document.getElementById("previewPrice").textContent = formData.price ? `${Number(formData.price || 0).toLocaleString("tr-TR")} TL` : "";
+      document.getElementById("previewMeta").textContent = meta;
+      document.getElementById("previewDescription").textContent = formData.description || "";
+
+      const previewImage = document.getElementById("previewImage");
+      previewImage.innerHTML = selectedFiles[0]
+        ? `<img src="${URL.createObjectURL(selectedFiles[0])}" alt="${formData.title || "İlan görseli"}">`
+        : `<img src="${placeholderImage("Görsel yok")}" alt="Görsel yok">`;
+    }
+
+    function showStep(step) {
+      currentStep = Math.min(Math.max(step, 1), totalSteps);
+      goStep(currentStep);
+
+      document.querySelectorAll(".step").forEach((section, index) => {
+        const isActive = index + 1 === currentStep;
+        section.querySelectorAll("input, select, textarea").forEach((field) => {
+          field.disabled = !isActive;
+          if (!isActive || field.disabled) {
+            field.removeAttribute("required");
+          }
+        });
+      });
+
+      progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
+      stepLabel.textContent = `Adım ${currentStep} / ${totalSteps}`;
+      prevBtn.style.visibility = currentStep === 1 ? "hidden" : "visible";
+      nextBtn.style.display = currentStep === totalSteps ? "none" : "inline-flex";
+      submitBtn.style.display = currentStep === totalSteps ? "inline-flex" : "none";
+
+      if (currentStep === totalSteps) renderPreview();
+    }
+
+    function goStep(n) {
+      document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+      document.getElementById("step-" + n).classList.add("active");
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) return;
+      showStep(currentStep + 1);
+    }
+
+    function prevStep() {
+      clearStatus();
+      showStep(currentStep - 1);
+    }
+
+    form.addEventListener("input", (event) => {
+      if (event.target?.id) clearFieldError(event.target.id);
+    });
+
+    form.addEventListener("change", (event) => {
+      if (event.target?.id) clearFieldError(event.target.id);
+    });
+
+    document.getElementById("city").addEventListener("change", (event) => {
+      fillDistricts(event.target.value);
+      document.getElementById("district").value = "";
+    });
+
+    document.getElementById("mainCategory").addEventListener("change", (event) => {
+      fillSubCategories(event.target.value);
+      document.getElementById("subCategory").value = "";
+      renderDynamicFields(event.target.value);
+      renderFeatures(event.target.value, "");
+    });
+
+    document.getElementById("subCategory").addEventListener("change", () => {
+      const mainCategory = document.getElementById("mainCategory").value;
+      const subCategory = document.getElementById("subCategory").value;
+      renderSubCategoryFields(
+        mainCategory,
+        subCategory
+      );
+      renderFeatures(mainCategory, subCategory);
+      collectStepData();
+    });
+
+    const imagesInput = document.getElementById("images");
+    const uploadZone = document.getElementById("uploadZone");
+
+    uploadZone.addEventListener("click", () => imagesInput.click());
+    imagesInput.addEventListener("change", (event) => handleFiles(event.target.files));
+    document.getElementById("images").addEventListener("change", function() {
+      const input = document.getElementById("images");
+      const preview = document.getElementById("preview");
+      preview.innerHTML = "";
+
+      Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.style.width = "100px";
+          img.style.margin = "5px";
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      uploadZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        uploadZone.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      uploadZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        uploadZone.classList.remove("drag-over");
+      });
+    });
+
+    uploadZone.addEventListener("drop", (event) => {
+      handleFiles(event.dataTransfer.files);
+    });
+
+    async function submitListingForm(event) {
+      event.preventDefault();
+      console.log("FORM SUBMIT ÇALIŞTI");
+      removeInactiveRequiredFields();
+
+      if (!document.querySelector("[name=title]").value) {
+        alert("Başlık gir");
+        return;
+      }
+
+      if (!hasRequiredSubmitData()) {
+        return;
+      }
+
+      const user = getUser();
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="btn-spinner"></span>Gönderiliyor...`;
+
+      const value = (name) => document.querySelector(`[name=${name}]`)?.value || "";
+      const data = {
+        title: document.querySelector("[name=title]")?.value || "",
+        description: document.querySelector("[name=description]")?.value || "",
+        price: document.querySelector("[name=price]")?.value || "",
+        category: document.querySelector("[name=category]")?.value || "",
+        subCategory: document.querySelector("[name=subCategory]")?.value || "",
+        city: document.querySelector("[name=city]")?.value || "",
+        district: document.querySelector("[name=district]")?.value || "",
+        brand: value("brand"),
+        series: value("series"),
+        model: value("model"),
+        year: value("year"),
+        fuel: value("fuel"),
+        transmission: value("transmission"),
+        bodyType: value("bodyType"),
+        features: JSON.stringify(formData.features || []),
+        userEmail: user.email || ""
+      };
+
+      const uploadData = new FormData();
+      Object.entries(data).forEach(([key, val]) => {
+        uploadData.append(key, val);
+      });
+
+      const files = document.getElementById("images").files;
+      for (let i = 0; i < files.length; i++) {
+        uploadData.append("images", files[i]);
+      }
+
+      console.log("GÖNDERİLEN DATA:", data);
+
+      try {
+        const res = await fetch("/api/listings", {
+          method: "POST",
+          body: uploadData
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(result.error || "İlan gönderilemedi");
+        }
+
+        if (result.success) {
+          alert("İlan başarıyla yayınlandı");
+          window.location.href = "/";
+        } else {
+          alert("Hata oluştu");
+        }
+      } catch (err) {
+        console.error("CREATE LISTING ERROR:", err);
+        alert("Sunucu hatası");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "İlan Yayınla";
+      }
+    }
+
+    submitBtn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      console.log("SUBMIT TIKLANDI");
+      await submitListingForm(event);
+    });
+
+    form.addEventListener("submit", submitListingForm);
+
+    async function initCreateListingPage() {
+      await loadCarData();
+      initCities();
+      showStep(1);
+    }
+
+    initCreateListingPage();
+  </script>
+  <script src="/create-listing.js"></script>
+</body>
+</html>

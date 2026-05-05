@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Detay | Jetle</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f7fa;
+      color: #111827;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .brand {
+      color: #2563eb;
+      font-size: 22px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .gallery-card,
+    .content-card,
+    .side-card,
+    .similar-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .gallery-card {
+      overflow: hidden;
+    }
+
+    .main-image {
+      position: relative;
+      height: 460px;
+      background: #eef2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .no-image {
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .thumbs button {
+      height: 76px;
+      padding: 0;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #f3f4f6;
+    }
+
+    .thumbs button.active {
+      border-color: #2563eb;
+    }
+
+    .thumbs img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .content-card {
+      margin-top: 18px;
+      padding: 20px;
+    }
+
+    .content-card h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+
+    .content-card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .description {
+      margin: 0;
+      color: #374151;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .detail-item {
+      padding: 11px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+      font-size: 14px;
+    }
+
+    .detail-item span {
+      display: block;
+      margin-bottom: 4px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .expertiz-detail {
+      margin-top: 30px;
+    }
+
+    .expertiz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .exp-item {
+      padding: 10px;
+      border-radius: 6px;
+      background: #eee;
+      font-size: 13px;
+    }
+
+    .exp-item.orijinal {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .exp-item.boyalı {
+      background: #f1c40f;
+    }
+
+    .exp-item.degisen {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .legend {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .green {
+      background: #2ecc71;
+    }
+
+    .yellow {
+      background: #f1c40f;
+    }
+
+    .red {
+      background: #e74c3c;
+    }
+
+    .right-panel {
+      position: sticky;
+      top: 84px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .side-card {
+      padding: 18px;
+    }
+
+    .price {
+      margin: 0 0 10px;
+      color: #2563eb;
+      font-size: 34px;
+      line-height: 1.1;
+      font-weight: 850;
+    }
+
+    .location {
+      margin: 0 0 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .primary-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary-btn {
+      margin-top: 8px;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .secondary-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .seller-card h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .seller-card p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .seller-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .seller-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .similar-section {
+      margin-top: 28px;
+    }
+
+    .similar-section h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .similar-card {
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .similar-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    .similar-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: #eef2f7;
+    }
+
+    .similar-body {
+      padding: 11px;
+    }
+
+    .similar-body h3 {
+      margin: 0 0 7px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .similar-body p {
+      margin: 0;
+      color: #2563eb;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .empty {
+      padding: 24px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .right-panel {
+        position: static;
+      }
+
+      .similar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .main-image {
+        height: 340px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .navbar {
+        padding: 0 14px;
+      }
+
+      .details-grid,
+      .similar-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .thumbs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="/">jetle.online</a>
+    <div id="authArea"></div>
+  </header>
+
+  <main class="page" id="page">
+    <div class="empty">İlan yükleniyor...</div>
+  </main>
+
+  <script src="/auth-global.js"></script>
+  <script>
+    let listing = null;
+    let galleryImages = [];
+    let activeImageIndex = 0;
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatPrice(value) {
+      const number = Number(value || 0);
+      return number.toLocaleString("tr-TR") + " TL";
+    }
+
+    function listingImages(item) {
+      const images = Array.isArray(item.images) ? item.images.filter(Boolean) : [];
+      if (item.image) images.unshift(item.image);
+      return [...new Set(images)].slice(0, 5);
+    }
+
+    function setMainImage(index) {
+      if (!galleryImages.length) return;
+      activeImageIndex = index;
+
+      const image = document.getElementById("mainImage");
+      if (image) image.src = galleryImages[activeImageIndex];
+
+      document.querySelectorAll("[data-thumb-index]").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.thumbIndex) === activeImageIndex);
+      });
+    }
+
+    function detailRows(item) {
+      return [
+        ["Marka", item.brand],
+        ["Seri", item.series],
+        ["Model", item.model],
+        ["Yıl", item.year],
+        ["Km", item.km ? Number(item.km).toLocaleString("tr-TR") : ""],
+        ["Yakıt", item.fuel],
+        ["Vites", item.transmission || item.gear],
+        ["Kasa tipi", item.bodyType],
+        ["Renk", item.color],
+        ["Motor hacmi", item.engineSize || item.engine],
+        ["Motor gücü", item.enginePower || item.power],
+        ["Satıcı tipi", item.sellerType]
+      ].filter((row) => row[1] !== undefined && row[1] !== null && row[1] !== "");
+    }
+
+    function renderFeatures(item) {
+      const features = Array.isArray(item.features) ? item.features.filter(Boolean) : [];
+      if (!features.length) return "";
+
+      return `
+        <div class="content-card">
+          <h2>Özellikler</h2>
+          <div class="details-grid">
+            ${features.map((feature) => `
+              <div class="detail-item">${escapeHtml(feature)}</div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderExpertiz(listing) {
+      document.querySelectorAll(".exp-item").forEach((el) => {
+        const key = el.dataset.key;
+        const val = listing[key];
+
+        if (!val) return;
+
+        el.classList.remove("orijinal", "boyalı", "degisen");
+
+        if (val === "orijinal") el.classList.add("orijinal");
+        if (val === "boyalı") el.classList.add("boyalı");
+        if (val === "degisen") el.classList.add("degisen");
+      });
+    }
+
+    function renderGallery() {
+      if (!galleryImages.length) {
+        return `
+          <div class="gallery-card">
+            <div class="main-image"><span class="no-image">İlan görseli yok</span></div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="gallery-card">
+          <div class="main-image">
+            <img id="mainImage" src="${escapeHtml(galleryImages[0])}" alt="${escapeHtml(listing.title || "İlan görseli")}">
+          </div>
+          <div class="thumbs">
+            ${galleryImages.map((image, index) => `
+              <button type="button" data-thumb-index="${index}" class="${index === 0 ? "active" : ""}" onclick="setMainImage(${index})">
+                <img src="${escapeHtml(image)}" alt="${escapeHtml((listing.title || "İlan") + " görsel " + (index + 1))}">
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function sellerCard(item) {
+      const seller = item.user || {};
+      const sellerName = seller.name || seller.email || "İlan sahibi";
+      const sellerCity = seller.city || item.city || "";
+      const profileUrl = seller._id ? `/profile.html?userId=${seller._id}` : "#";
+
+      return `
+        <div class="side-card seller-card">
+          <span class="seller-label">İlan Sahibi</span>
+          <h3>${escapeHtml(sellerName)}</h3>
+          <p>${escapeHtml(sellerCity)}</p>
+          ${seller._id ? `<a class="seller-link" href="${profileUrl}">Diğer ilanları</a>` : ""}
+        </div>
+      `;
+    }
+
+    async function sendMessage() {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (!user.email && !user.id && !user._id) {
+        alert("Mesaj göndermek için giriş yapmalısınız");
+        return;
+      }
+
+      if (!listing?.user) {
+        alert("İlan sahibi bilgisi bulunamadı");
+        return;
+      }
+
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender: user.email || user.id || user._id,
+          fromEmail: user.email,
+          receiver: listing.user.email || listing.user._id,
+          toId: listing.user._id,
+          listingId: listing._id,
+          message: "İlanınız hakkında bilgi almak istiyorum."
+        })
+      });
+
+      alert("Mesaj gönderildi");
+    }
+
+    async function addFavorite() {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (!user.email && !user.id && !user._id) {
+        alert("Favoriye eklemek için giriş yapmalısınız");
+        return;
+      }
+
+      await fetch(`/api/listings/${listing._id}/favorite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          userId: user.id || user._id
+        })
+      });
+
+      alert("Favoriler güncellendi");
+    }
+
+    function similarCard(item) {
+      const image = listingImages(item)[0];
+      return `
+        <article class="similar-card" onclick="window.location.href='/ilan-detay.html?id=${item._id}'">
+          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(item.title || "Benzer ilan")}">` : ""}
+          <div class="similar-body">
+            <h3>${escapeHtml(item.title || "Başlıksız ilan")}</h3>
+            <p>${formatPrice(item.price)}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadSimilar() {
+      const container = document.getElementById("similarListings");
+      if (!container || !listing?.category) return;
+
+      try {
+        const res = await fetch(`/api/listings?category=${encodeURIComponent(listing.category)}`);
+        if (!res.ok) throw new Error("Benzer ilanlar alınamadı");
+
+        const data = await res.json();
+        const similar = (Array.isArray(data) ? data : [])
+          .filter((item) => item._id !== listing._id)
+          .slice(0, 4);
+
+        container.innerHTML = similar.length
+          ? similar.map(similarCard).join("")
+          : `<div class="empty">Benzer ilan bulunmuyor</div>`;
+      } catch (err) {
+        console.error("SIMILAR ERROR:", err);
+        container.innerHTML = `<div class="empty">Benzer ilanlar yüklenemedi</div>`;
+      }
+    }
+
+    function renderDetail(item) {
+      const rows = detailRows(item);
+      const location = [item.city, item.district].filter(Boolean).join(" / ");
+
+      document.getElementById("page").innerHTML = `
+        <div class="detail-layout">
+          <section>
+            ${renderGallery()}
+
+            <div class="content-card">
+              <h1>${escapeHtml(item.title || "Başlıksız ilan")}</h1>
+              <h2>Açıklama</h2>
+              <p class="description">${escapeHtml(item.description || item.desc || "Açıklama girilmemiş")}</p>
+            </div>
+
+            <div class="content-card">
+              <h2>İlan Detayları</h2>
+              <div class="details-grid">
+                ${rows.length ? rows.map(([label, value]) => `
+                  <div class="detail-item">
+                    <span>${escapeHtml(label)}</span>
+                    ${escapeHtml(value)}
+                  </div>
+                `).join("") : `<div class="empty">Detay bilgisi bulunmuyor</div>`}
+              </div>
+            </div>
+
+            ${renderFeatures(item)}
+
+            <div class="content-card expertiz-detail">
+              <h3>Ekspertiz Durumu</h3>
+
+              <div class="expertiz-grid">
+                <div class="exp-item" data-key="kaput">Kaput</div>
+                <div class="exp-item" data-key="tavan">Tavan</div>
+                <div class="exp-item" data-key="bagaj">Bagaj</div>
+                <div class="exp-item" data-key="sag_on_camurluk">Sağ Ön Çamurluk</div>
+                <div class="exp-item" data-key="sol_on_camurluk">Sol Ön Çamurluk</div>
+                <div class="exp-item" data-key="sag_on_kapi">Sağ Ön Kapı</div>
+                <div class="exp-item" data-key="sol_on_kapi">Sol Ön Kapı</div>
+                <div class="exp-item" data-key="sag_arka_kapi">Sağ Arka Kapı</div>
+                <div class="exp-item" data-key="sol_arka_kapi">Sol Arka Kapı</div>
+              </div>
+
+              <div class="legend">
+                <span class="dot green"></span> Orijinal
+                <span class="dot yellow"></span> Boyalı
+                <span class="dot red"></span> Değişen
+              </div>
+            </div>
+          </section>
+
+          <aside class="right-panel">
+            <div class="side-card">
+              <p class="price">${formatPrice(item.price)}</p>
+              <p class="location">${escapeHtml(location || "Konum belirtilmemiş")}</p>
+              <button class="primary-btn" onclick="sendMessage()">Mesaj Gönder</button>
+              <button class="secondary-btn" onclick="addFavorite()">Favoriye Ekle</button>
+            </div>
+            ${sellerCard(item)}
+          </aside>
+        </div>
+
+        <section class="similar-section">
+          <h2>Benzer ilanlar</h2>
+          <div id="similarListings" class="similar-grid"></div>
+        </section>
+      `;
+    }
+
+    async function loadDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const page = document.getElementById("page");
+
+      if (!id) {
+        page.innerHTML = `<div class="empty">İlan bulunamadı</div>`;
+        return;
+      }
+
+      fetch(`/api/listings/${id}/view`, { method: "POST" }).catch(() => {});
+
+      try {
+        const res = await fetch(`/api/listings/${id}`);
+        if (!res.ok) throw new Error("İlan bulunamadı");
+
+        listing = await res.json();
+        galleryImages = listingImages(listing);
+        document.title = `${listing.title || "İlan Detay"} | Jetle`;
+
+        renderDetail(listing);
+        renderExpertiz(listing);
+        loadSimilar();
+      } catch (err) {
+        console.error("DETAIL ERROR:", err);
+        page.innerHTML = `<div class="empty">İlan bulunamadı</div>`;
+      }
+    }
+
+    loadDetail();
+  </script>
+</body>
+</html>
