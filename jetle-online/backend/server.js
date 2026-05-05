@@ -50,6 +50,7 @@ app.get("/api/test-auth", (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../../")));
 app.use("/uploads", express.static("uploads"));
 
 // Test route
@@ -64,6 +65,11 @@ app.get("/ilan/:slug", (req, res) => {
 
 // Ana sayfa
 app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
+// index.html fallback
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
