@@ -49,8 +49,7 @@ app.get("/api/test-auth", (req, res) => {
   res.json({ ok: true });
 });
 
-app.use(express.static(path.join(__dirname, "../public")));
-app.use(express.static(path.join(__dirname, "../../")));
+app.use(express.static(path.join(__dirname, "..")));
 app.use("/uploads", express.static("uploads"));
 
 // Test route
@@ -70,7 +69,7 @@ app.get("/", (req, res) => {
 
 // index.html fallback
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.sendFile(path.join(__dirname, "../index.html"));
 });
 
 app.use((err, req, res, next) => {
