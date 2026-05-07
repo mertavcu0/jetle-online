@@ -1924,6 +1924,7 @@
 
       const invalid = checks.filter(([, ok]) => !ok);
       if (invalid.length) {
+        console.warn("INVALID FIELDS FULL", invalid);
         console.warn("SUBMIT VALIDATION FAILED", {
           invalid: invalid.map(([id, , message]) => ({
             field: id,
@@ -2118,6 +2119,16 @@
       }
 
       if (!hasRequiredSubmitData()) {
+        console.warn("SUBMIT SNAPSHOT", {
+          title: document.querySelector("[name=title]")?.value || "",
+          description: document.querySelector("[name=description]")?.value || "",
+          price: document.querySelector("[name=price]")?.value || "",
+          category: document.querySelector("[name=category]")?.value || "",
+          subCategory: document.querySelector("[name=subCategory]")?.value || "",
+          city: document.querySelector("[name=city]")?.value || "",
+          district: document.querySelector("[name=district]")?.value || "",
+          imageCount: (document.getElementById("images")?.files || []).length
+        });
         console.warn("SUBMIT RETURN: hasRequiredSubmitData false", {
           title: document.querySelector("[name=title]")?.value || "",
           price: document.querySelector("[name=price]")?.value || "",
