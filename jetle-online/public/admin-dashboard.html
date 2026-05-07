@@ -400,7 +400,7 @@
     }, true);
 
     if (!admin) {
-      window.location.href = "/admin.html";
+      console.warn("Admin bilgisi bulunamadı, otomatik yönlendirme kapatıldı.");
     }
 
     function logoutAdmin() {
