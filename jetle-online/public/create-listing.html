@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ä°lan Ver | Jetle</title>
+  <title>İlan Ver | Jetle</title>
   <link rel="stylesheet" href="/style.css">
   <style>
     * {
@@ -554,7 +554,7 @@
       color: white;
     }
 
-    .part[data-status="boyalÄ±"] {
+    .part[data-status="boyalı"] {
       background: #ffc107;
       color: black;
     }
@@ -590,7 +590,7 @@
       background: #4caf50;
     }
 
-    #carWrapper .part[data-status="boyalÄ±"] {
+    #carWrapper .part[data-status="boyalı"] {
       background: #ffc107;
     }
 
@@ -630,7 +630,7 @@
     }
 
     .part[data-status="orijinal"] { fill: green; }
-    .part[data-status="boyalÄ±"] { fill: orange; }
+    .part[data-status="boyalı"] { fill: orange; }
     .part[data-status="degisen"] { fill: red; }
 
     #carWrapper {
@@ -651,7 +651,7 @@
     }
 
     .part[data-status="orijinal"] { fill: #28a745; }
-    .part[data-status="boyalÄ±"] { fill: #ffc107; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
     .part[data-status="degisen"] { fill: #dc3545; }
 
     .car-svg {
@@ -685,7 +685,7 @@
       fill: #28a745;
     }
 
-    .part[data-status="boyalÄ±"] {
+    .part[data-status="boyalı"] {
       fill: #ffc107;
     }
 
@@ -739,7 +739,7 @@
     }
 
     .part[data-status="orijinal"] { fill: #28a745; }
-    .part[data-status="boyalÄ±"] { fill: #ffc107; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
     .part[data-status="degisen"] { fill: #dc3545; }
 
     .car-real {
@@ -766,7 +766,7 @@
     }
 
     .part[data-status="orijinal"] { fill: #28a745; }
-    .part[data-status="boyalÄ±"] { fill: #ffc107; }
+    .part[data-status="boyalı"] { fill: #ffc107; }
     .part[data-status="degisen"] { fill: #dc3545; }
 
     .car-outline {
@@ -787,7 +787,7 @@
     }
 
     .part[data-status="orijinal"] { fill: #2ecc71; }
-    .part[data-status="boyalÄ±"] { fill: #f1c40f; }
+    .part[data-status="boyalı"] { fill: #f1c40f; }
     .part[data-status="degisen"] { fill: #e74c3c; }
 
     .expertiz-wrapper {
@@ -820,7 +820,7 @@
     }
 
     .car-container .part[data-status="orijinal"] { background: #2ecc71; }
-    .car-container .part[data-status="boyalÄ±"] { background: #f1c40f; }
+    .car-container .part[data-status="boyalı"] { background: #f1c40f; }
     .car-container .part[data-status="degisen"] { background: #e74c3c; }
 
     .kaput { top: 8%; left: 35%; width: 30%; height: 10%; }
@@ -857,25 +857,25 @@
   <main class="page">
     <section class="form-card">
       <div class="form-head">
-        <h1>Ä°lan Ver</h1>
-        <p>Bilgileri adÄ±m adÄ±m gir. Ä°lan admin onayÄ±ndan sonra yayÄ±na alÄ±nÄ±r.</p>
+        <h1>İlan Ver</h1>
+        <p>Bilgileri adım adım gir. İlan admin onayından sonra yayına alınır.</p>
       </div>
 
       <div class="progress" aria-label="Form ilerleme">
         <div class="progress-fill" id="progressFill"></div>
       </div>
-      <p class="step-label" id="stepLabel">AdÄ±m 1 / 5</p>
+      <p class="step-label" id="stepLabel">Adım 1 / 5</p>
 
       <form id="listingForm" novalidate>
         <div class="step active" id="step-1">
           <h2 class="step-title">Temel Bilgiler</h2>
           <div class="form-grid">
             <div class="field full">
-              <label for="title">BaÅŸlÄ±k</label>
+              <label for="title">Başlık</label>
               <input id="title" name="title" type="text">
             </div>
             <div class="field full">
-              <label for="description">AÃ§Ä±klama</label>
+              <label for="description">Açıklama</label>
               <textarea id="description" name="description"></textarea>
             </div>
           </div>
@@ -891,18 +891,18 @@
             <div class="field">
               <label for="mainCategory">Ana kategori</label>
               <select id="mainCategory" name="category">
-                <option value="">Ana kategori seÃ§</option>
+                <option value="">Ana kategori seç</option>
                 <option value="emlak">Emlak</option>
-                <option value="vasita">VasÄ±ta</option>
+                <option value="vasita">Vasıta</option>
                 <option value="elektronik">Elektronik</option>
-                <option value="is-makinalari">Ä°ÅŸ MakinalarÄ±</option>
-                <option value="yedek-parca">Yedek ParÃ§a</option>
+                <option value="is-makinalari">İş Makinaları</option>
+                <option value="yedek-parca">Yedek Parça</option>
               </select>
             </div>
             <div class="field full">
               <label for="subCategory">Alt kategori</label>
               <select id="subCategory" name="subCategory" disabled>
-                <option value="">Ã–nce ana kategori seÃ§</option>
+                <option value="">Önce ana kategori seç</option>
               </select>
             </div>
             <div class="field full">
@@ -918,82 +918,82 @@
                   <div class="expertiz-item">
                     <label>Kaput</label>
                     <select name="kaput" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
                     <label>Tavan</label>
                     <select name="tavan" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
                     <label>Bagaj</label>
                     <select name="bagaj" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>SaÄŸ Ã–n Ã‡amurluk</label>
+                    <label>Sağ Ön Çamurluk</label>
                     <select name="sag_on_camurluk" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>Sol Ã–n Ã‡amurluk</label>
+                    <label>Sol Ön Çamurluk</label>
                     <select name="sol_on_camurluk" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>SaÄŸ Ã–n KapÄ±</label>
+                    <label>Sağ Ön Kapı</label>
                     <select name="sag_on_kapi" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>Sol Ã–n KapÄ±</label>
+                    <label>Sol Ön Kapı</label>
                     <select name="sol_on_kapi" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>SaÄŸ Arka KapÄ±</label>
+                    <label>Sağ Arka Kapı</label>
                     <select name="sag_arka_kapi" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                   <div class="expertiz-item">
-                    <label>Sol Arka KapÄ±</label>
+                    <label>Sol Arka Kapı</label>
                     <select name="sol_arka_kapi" class="form-select">
-                      <option value="">SeÃ§</option>
+                      <option value="">Seç</option>
                       <option value="orijinal">Orijinal</option>
-                      <option value="boyalÄ±">BoyalÄ±</option>
-                      <option value="degisen">DeÄŸiÅŸen</option>
+                      <option value="boyalı">Boyalı</option>
+                      <option value="degisen">Değişen</option>
                     </select>
                   </div>
                 </div>
@@ -1006,28 +1006,28 @@
           <h2 class="step-title">Konum</h2>
           <div class="form-grid">
             <div class="field">
-              <label for="city">Åehir</label>
+              <label for="city">Şehir</label>
               <select id="city" name="city">
-                <option value="">Åehir seÃ§</option>
+                <option value="">Şehir seç</option>
               </select>
             </div>
             <div class="field">
-              <label for="district">Ä°lÃ§e</label>
+              <label for="district">İlçe</label>
               <select id="district" name="district" disabled>
-                <option value="">Ã–nce ÅŸehir seÃ§</option>
+                <option value="">Önce şehir seç</option>
               </select>
             </div>
           </div>
         </div>
 
         <div class="step" id="step-4">
-          <h2 class="step-title">FotoÄŸraflar</h2>
+          <h2 class="step-title">Fotoğraflar</h2>
           <div class="field full">
-            <label for="images">FotoÄŸraf ekle (en az 3)</label>
+            <label for="images">Fotoğraf ekle (en az 3)</label>
             <div class="upload-zone" id="uploadZone">
               <div>
-                <strong>FotoÄŸraf ekle (en az 3)</strong>
-                <span>SÃ¼rÃ¼kle bÄ±rak veya seÃ§mek iÃ§in tÄ±kla. En fazla 10 fotoÄŸraf.</span>
+                <strong>Fotoğraf ekle (en az 3)</strong>
+                <span>Sürükle bırak veya seçmek için tıkla. En fazla 10 fotoğraf.</span>
               </div>
             </div>
             <input class="upload-input" type="file" id="images" multiple accept="image/*">
@@ -1037,7 +1037,7 @@
         </div>
 
         <div class="step" id="step-5">
-          <h2 class="step-title">Ä°lan Ã¶nizleme</h2>
+          <h2 class="step-title">İlan önizleme</h2>
           <div class="preview" id="previewBox">
             <div class="preview-image" id="previewImage"><img src="" alt=""></div>
             <div>
@@ -1053,7 +1053,7 @@
           <button class="btn-secondary" id="prevBtn" type="button" onclick="prevStep()">Geri</button>
           <button class="btn-primary" id="nextBtn" type="button" onclick="nextStep()">Devam Et</button>
           <button id="submitBtn" type="submit" class="btn-primary">
-            Ä°lan YayÄ±nla
+            İlan Yayınla
           </button>
         </div>
 
@@ -1088,17 +1088,17 @@
         daire: "Daire",
         residence: "Residence",
         villa: "Villa",
-        "mustakil-ev": "MÃ¼stakil Ev",
+        "mustakil-ev": "Müstakil Ev",
         arsa: "Arsa",
         ofis: "Ofis",
-        dukkan: "DÃ¼kkan"
+        dukkan: "Dükkan"
       },
       vasita: {
         otomobil: "Otomobil",
         suv: "SUV",
         pickup: "Pickup",
         motosiklet: "Motosiklet",
-        "elektrikli-arac": "Elektrikli AraÃ§"
+        "elektrikli-arac": "Elektrikli Araç"
       },
       elektronik: {
         telefon: "Telefon",
@@ -1107,9 +1107,9 @@
         kamera: "Kamera"
       },
       "is-makinalari": {
-        kepce: "KepÃ§e",
+        kepce: "Kepçe",
         forklift: "Forklift",
-        traktor: "TraktÃ¶r"
+        traktor: "Traktör"
       },
       "yedek-parca": {
         motor: "Motor",
@@ -1118,8 +1118,8 @@
       }
     };
     const featureOptions = {
-      vasita: ["ABS", "Airbag", "Klima", "Deri koltuk", "Sunroof", "Park sensÃ¶rÃ¼"],
-      emlak: ["Balkon", "AsansÃ¶r", "Otopark", "GÃ¼venlik", "EÅŸyalÄ±"]
+      vasita: ["ABS", "Airbag", "Klima", "Deri koltuk", "Sunroof", "Park sensörü"],
+      emlak: ["Balkon", "Asansör", "Otopark", "Güvenlik", "Eşyalı"]
     };
     let carData = {};
 
@@ -1143,7 +1143,7 @@
     async function loadCarData() {
       try {
         const res = await fetch("/api/cars");
-        if (!res.ok) throw new Error("AraÃ§ verisi yÃ¼klenemedi");
+        if (!res.ok) throw new Error("Araç verisi yüklenemedi");
         carData = normalizeCarData(await res.json());
       } catch (err) {
         console.error("CAR DATA ERROR:", err);
@@ -1151,9 +1151,9 @@
       }
     }
     const coreCityData = {
-      "Ä°stanbul": ["KadÄ±kÃ¶y", "BeÅŸiktaÅŸ", "ÃœskÃ¼dar", "ÅiÅŸli", "Pendik", "Kartal"],
-      "Ankara": ["Ã‡ankaya", "KeÃ§iÃ¶ren", "Sincan", "Mamak"],
-      "Ä°zmir": ["Konak", "Bornova", "KarÅŸÄ±yaka", "Buca"]
+      "İstanbul": ["Kadıköy", "Beşiktaş", "Üsküdar", "Şişli", "Pendik", "Kartal"],
+      "Ankara": ["Çankaya", "Keçiören", "Sincan", "Mamak"],
+      "İzmir": ["Konak", "Bornova", "Karşıyaka", "Buca"]
     };
 
     function initCities() {
@@ -1165,12 +1165,12 @@
       };
       const cityData = window.cities || {};
 
-      citySelect.innerHTML = `<option value="">Åehir seÃ§</option>`;
+      citySelect.innerHTML = `<option value="">Şehir seç</option>`;
       Object.keys(cityData).forEach((city) => {
         citySelect.innerHTML += `<option value="${city}">${city}</option>`;
       });
 
-      districtSelect.innerHTML = `<option value="">Ã–nce ÅŸehir seÃ§</option>`;
+      districtSelect.innerHTML = `<option value="">Önce şehir seç</option>`;
       districtSelect.disabled = true;
     }
 
@@ -1179,8 +1179,8 @@
       const districts = (window.cities || {})[city] || [];
 
       districtSelect.innerHTML = city
-        ? `<option value="">Ä°lÃ§e seÃ§</option>`
-        : `<option value="">Ã–nce ÅŸehir seÃ§</option>`;
+        ? `<option value="">İlçe seç</option>`
+        : `<option value="">Önce şehir seç</option>`;
 
       districts.forEach((district) => {
         districtSelect.innerHTML += `<option value="${district}">${district}</option>`;
@@ -1198,8 +1198,8 @@
       const items = subCategories[mainCategory] || {};
 
       subSelect.innerHTML = mainCategory
-        ? `<option value="">Alt kategori seÃ§</option>`
-        : `<option value="">Ã–nce ana kategori seÃ§</option>`;
+        ? `<option value="">Alt kategori seç</option>`
+        : `<option value="">Önce ana kategori seç</option>`;
 
       Object.entries(items).forEach(([value, label]) => {
         subSelect.innerHTML += `<option value="${value}">${label}</option>`;
@@ -1302,7 +1302,7 @@
       const nextFiles = [...selectedFiles, ...incoming].slice(0, 10);
 
       if (selectedFiles.length + incoming.length > 10) {
-        showFieldError("images", "En fazla 10 fotoÄŸraf yÃ¼klenebilir.");
+        showFieldError("images", "En fazla 10 fotoğraf yüklenebilir.");
       } else {
         clearFieldError("images");
       }
@@ -1322,8 +1322,8 @@
 
       grid.innerHTML = selectedFiles.map((file, index) => `
         <div class="image-thumb">
-          <img src="${URL.createObjectURL(file)}" alt="FotoÄŸraf">
-          <button class="image-remove" type="button" onclick="removeImage(${index})" aria-label="FotoÄŸrafÄ± sil">Ã—</button>
+          <img src="${URL.createObjectURL(file)}" alt="Fotoğraf">
+          <button class="image-remove" type="button" onclick="removeImage(${index})" aria-label="Fotoğrafı sil">×</button>
         </div>
       `).join("");
     }
@@ -1335,7 +1335,7 @@
       collectStepData();
 
       if (selectedFiles.length < 3) {
-        showFieldError("images", "En az 3 fotoÄŸraf zorunlu");
+        showFieldError("images", "En az 3 fotoğraf zorunlu");
       } else {
         const imagesInput = document.getElementById("images");
         imagesInput.classList.remove("field-error");
@@ -1359,7 +1359,7 @@
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.msg || data.error || "FotoÄŸraflar yÃ¼klenemedi");
+      if (!res.ok) throw new Error(data.msg || data.error || "Fotoğraflar yüklenemedi");
 
       return data.urls || [];
     }
@@ -1397,19 +1397,19 @@
         <div class="detail-section">
           <h3 class="section-title">Detaylar</h3>
           <div class="grid-2">
-            ${fieldHtml("m2", "mÂ²", `<input id="m2" name="m2" type="number" min="0">`)}
-            ${fieldHtml("zoning", "Ä°mar durumu", `
+            ${fieldHtml("m2", "m²", `<input id="m2" name="m2" type="number" min="0">`)}
+            ${fieldHtml("zoning", "İmar durumu", `
               <select id="zoning" name="zoning">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Var</option>
                 <option>Yok</option>
               </select>
             `)}
             ${fieldHtml("deedStatus", "Tapu durumu", `
               <select id="deedStatus" name="deedStatus">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Hisseli</option>
-                <option>MÃ¼stakil</option>
+                <option>Müstakil</option>
               </select>
             `)}
             ${fieldHtml("blockParcelNo", "Ada / parsel no", `<input id="blockParcelNo" name="blockParcelNo">`)}
@@ -1423,74 +1423,74 @@
           <div class="grid-2">
             ${fieldHtml("expertiseHood", "Kaput", `
               <select id="expertiseHood" name="kaput" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
             ${fieldHtml("expertiseRoof", "Tavan", `
               <select id="expertiseRoof" name="tavan" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
             ${fieldHtml("expertiseTrunk", "Bagaj", `
               <select id="expertiseTrunk" name="bagaj" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseFrontRightFender", "SaÄŸ Ã–n Ã‡amurluk", `
+            ${fieldHtml("expertiseFrontRightFender", "Sağ Ön Çamurluk", `
               <select id="expertiseFrontRightFender" name="sag_on_camurluk" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseFrontLeftFender", "Sol Ã–n Ã‡amurluk", `
+            ${fieldHtml("expertiseFrontLeftFender", "Sol Ön Çamurluk", `
               <select id="expertiseFrontLeftFender" name="sol_on_camurluk" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseFrontRightDoor", "SaÄŸ Ã–n KapÄ±", `
+            ${fieldHtml("expertiseFrontRightDoor", "Sağ Ön Kapı", `
               <select id="expertiseFrontRightDoor" name="sag_on_kapi" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseFrontLeftDoor", "Sol Ã–n KapÄ±", `
+            ${fieldHtml("expertiseFrontLeftDoor", "Sol Ön Kapı", `
               <select id="expertiseFrontLeftDoor" name="sol_on_kapi" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseRearRightDoor", "SaÄŸ Arka KapÄ±", `
+            ${fieldHtml("expertiseRearRightDoor", "Sağ Arka Kapı", `
               <select id="expertiseRearRightDoor" name="sag_arka_kapi" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
-            ${fieldHtml("expertiseRearLeftDoor", "Sol Arka KapÄ±", `
+            ${fieldHtml("expertiseRearLeftDoor", "Sol Arka Kapı", `
               <select id="expertiseRearLeftDoor" name="sol_arka_kapi" class="form-select">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Orijinal</option>
-                <option>BoyalÄ±</option>
-                <option>DeÄŸiÅŸen</option>
+                <option>Boyalı</option>
+                <option>Değişen</option>
               </select>
             `)}
           </div>
@@ -1503,11 +1503,11 @@
         <div class="detail-section">
           <h3 class="section-title">Detaylar</h3>
           <div class="grid-2">
-            ${fieldHtml("m2", "BrÃ¼t mÂ²", `<input id="m2" name="m2" type="number" min="0">`)}
-            ${fieldHtml("netM2", "Net mÂ²", `<input id="netM2" name="netM2" type="number" min="0">`)}
-            ${fieldHtml("rooms", "Oda sayÄ±sÄ±", `
+            ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
+            ${fieldHtml("netM2", "Net m²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+            ${fieldHtml("rooms", "Oda sayısı", `
               <select id="rooms" name="rooms">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>1+1</option>
                 <option>2+1</option>
                 <option>3+1</option>
@@ -1515,20 +1515,20 @@
               </select>
             `)}
             ${fieldHtml("floor", "Kat", `<input id="floor" name="floor">`)}
-            ${fieldHtml("buildingAge", "Bina yaÅŸÄ±", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
-            ${fieldHtml("heating", "IsÄ±tma", `
+            ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
+            ${fieldHtml("heating", "Isıtma", `
               <select id="heating" name="heating">
-                <option value="">SeÃ§</option>
-                <option>DoÄŸalgaz</option>
+                <option value="">Seç</option>
+                <option>Doğalgaz</option>
                 <option>Kombi</option>
                 <option>Klima</option>
               </select>
             `)}
-            ${fieldHtml("inSite", "Site iÃ§inde mi?", `
+            ${fieldHtml("inSite", "Site içinde mi?", `
               <select id="inSite" name="inSite">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Evet</option>
-                <option>HayÄ±r</option>
+                <option>Hayır</option>
               </select>
             `)}
           </div>
@@ -1543,25 +1543,25 @@
           <div class="grid-2">
             ${fieldHtml("brand", "Marka", `
               <select id="brand" name="brand">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 ${Object.keys(carData).map((brand) => `<option value="${brand}">${brand}</option>`).join("")}
               </select>
             `)}
             ${fieldHtml("series", "Seri", `
               <select id="series" name="series" disabled>
-                <option value="">Ã–nce marka seÃ§</option>
+                <option value="">Önce marka seç</option>
               </select>
             `)}
             ${fieldHtml("model", "Model", `
               <select id="model" name="model" disabled>
-                <option value="">Ã–nce seri seÃ§</option>
+                <option value="">Önce seri seç</option>
               </select>
             `)}
-            ${fieldHtml("year", "YÄ±l", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
             ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
-            ${fieldHtml("fuel", "YakÄ±t", `
+            ${fieldHtml("fuel", "Yakıt", `
               <select id="fuel" name="fuel">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option value="Benzin">Benzin</option>
                 <option value="Dizel">Dizel</option>
                 <option value="LPG">LPG</option>
@@ -1571,15 +1571,15 @@
             `)}
             ${fieldHtml("transmission", "Vites", `
               <select id="transmission" name="transmission">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option value="Manuel">Manuel</option>
                 <option value="Otomatik">Otomatik</option>
-                <option value="YarÄ± Otomatik">YarÄ± Otomatik</option>
+                <option value="Yarı Otomatik">Yarı Otomatik</option>
               </select>
             `)}
             ${fieldHtml("bodyType", "Kasa tipi", `
               <select id="bodyType" name="bodyType">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option>Sedan</option>
                 <option>Hatchback</option>
                 <option>SUV</option>
@@ -1591,8 +1591,8 @@
             `)}
             ${fieldHtml("color", "Renk", `<input id="color" name="color">`)}
             ${fieldHtml("engine", "Motor hacmi", `<input id="engine" name="engine">`)}
-            ${fieldHtml("power", "Motor gÃ¼cÃ¼", `<input id="power" name="power">`)}
-            ${fieldHtml("damageRecord", "Hasar kaydÄ±", `<input id="damageRecord" name="damageRecord">`)}
+            ${fieldHtml("power", "Motor gücü", `<input id="power" name="power">`)}
+            ${fieldHtml("damageRecord", "Hasar kaydı", `<input id="damageRecord" name="damageRecord">`)}
             ${fieldHtml("sellerType", "Kimden", `
               <select id="sellerType" name="sellerType">
                 <option>Bireysel</option>
@@ -1612,7 +1612,7 @@
             ${fieldHtml("brand", "Marka", `<input id="brand" name="brand">`)}
             ${fieldHtml("model", "Model", `<input id="model" name="model">`)}
             ${fieldHtml("cc", "cc", `<input id="cc" name="cc" type="number" min="0">`)}
-            ${fieldHtml("year", "YÄ±l", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
             ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
           </div>
         </div>
@@ -1666,9 +1666,9 @@
               <input id="model" name="model" type="text">
             </div>
             <div class="field">
-              <label for="warranty">Garanti var mÄ±?</label>
+              <label for="warranty">Garanti var mı?</label>
               <select id="warranty" name="warranty">
-                <option value="">SeÃ§</option>
+                <option value="">Seç</option>
                 <option value="var">Var</option>
                 <option value="yok">Yok</option>
               </select>
@@ -1701,7 +1701,7 @@
       }
 
       container.innerHTML = `
-        <h3 class="section-title">Ã–zellikler</h3>
+        <h3 class="section-title">Özellikler</h3>
         <div class="features-grid">
           ${options.map((feature) => `
             <label class="feature-option">
@@ -1726,8 +1726,8 @@
       const models = brand && series ? (carData[brand] || {})[series] || [] : [];
 
       modelSelect.innerHTML = brand
-        ? `<option value="">Model seÃ§</option>`
-        : `<option value="">Ã–nce seri seÃ§</option>`;
+        ? `<option value="">Model seç</option>`
+        : `<option value="">Önce seri seç</option>`;
 
       models.forEach((model) => {
         modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
@@ -1780,15 +1780,15 @@
       const series = brand ? Object.keys(carData[brand] || {}) : [];
 
       seriesSelect.innerHTML = brand
-        ? `<option value="">Seri seÃ§</option>`
-        : `<option value="">Ã–nce marka seÃ§</option>`;
+        ? `<option value="">Seri seç</option>`
+        : `<option value="">Önce marka seç</option>`;
 
       series.forEach((item) => {
         seriesSelect.innerHTML += `<option value="${item}">${item}</option>`;
       });
 
       seriesSelect.disabled = !series.length;
-      modelSelect.innerHTML = `<option value="">Ã–nce seri seÃ§</option>`;
+      modelSelect.innerHTML = `<option value="">Önce seri seç</option>`;
       modelSelect.disabled = true;
       document.querySelectorAll("select").forEach((select) => {
         select.disabled = false;
@@ -1809,8 +1809,8 @@
       const models = (carData[brand] || {})[series] || [];
 
       modelSelect.innerHTML = series
-        ? `<option value="">Model seÃ§</option>`
-        : `<option value="">Ã–nce seri seÃ§</option>`;
+        ? `<option value="">Model seç</option>`
+        : `<option value="">Önce seri seç</option>`;
 
       models.forEach((model) => {
         modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
@@ -1832,9 +1832,9 @@
       const errors = [];
 
       const rules = {
-        1: [["title", "BaÅŸlÄ±k zorunlu"]],
-        2: [["price", "Fiyat 0 olamaz"], ["mainCategory", "Ana kategori seÃ§ilmeli"], ["subCategory", "Alt kategori seÃ§ilmeli"]],
-        3: [["city", "Åehir zorunlu"]],
+        1: [["title", "Başlık zorunlu"]],
+        2: [["price", "Fiyat 0 olamaz"], ["mainCategory", "Ana kategori seçilmeli"], ["subCategory", "Alt kategori seçilmeli"]],
+        3: [["city", "Şehir zorunlu"]],
         4: [],
         5: []
       };
@@ -1849,14 +1849,14 @@
 
       if (step === 2 && formData.mainCategory === "vasita") {
         if (!formData.year) {
-          errors.push(["year", "YÄ±l zorunlu"]);
+          errors.push(["year", "Yıl zorunlu"]);
         }
         if (!formData.km) {
           errors.push(["km", "Km zorunlu"]);
         }
         if (!formData.fuel || !formData.transmission || !formData.bodyType) {
-          alert("LÃ¼tfen tÃ¼m araÃ§ bilgilerini seÃ§");
-          errors.push(["fuel", "YakÄ±t zorunlu"]);
+          alert("Lütfen tüm araç bilgilerini seç");
+          errors.push(["fuel", "Yakıt zorunlu"]);
           errors.push(["transmission", "Vites zorunlu"]);
           errors.push(["bodyType", "Kasa tipi zorunlu"]);
         }
@@ -1867,7 +1867,7 @@
       }
 
       if (step === 4 && selectedFiles.length < 3) {
-        errors.push(["images", "En az 3 fotoÄŸraf zorunlu"]);
+        errors.push(["images", "En az 3 fotoğraf zorunlu"]);
       }
 
       if (errors.length) {
@@ -1889,19 +1889,19 @@
       clearFieldErrors();
 
       const checks = [
-        ["title", Boolean(formData.title), "BaÅŸlÄ±k zorunlu"],
+        ["title", Boolean(formData.title), "Başlık zorunlu"],
         ["price", Number(formData.price) > 0, "Fiyat 0 olamaz"],
-        ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seÃ§ilmeli"],
-        ["subCategory", Boolean(formData.subCategory), "Alt kategori seÃ§ilmeli"],
-        ["city", Boolean(formData.city), "Åehir zorunlu"],
-        ["images", selectedFiles.length >= 3, "En az 3 fotoÄŸraf zorunlu"]
+        ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seçilmeli"],
+        ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
+        ["city", Boolean(formData.city), "Şehir zorunlu"],
+        ["images", selectedFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
       ];
 
       if (formData.mainCategory === "vasita") {
         const year = Number(formData.year);
-        checks.push(["year", Boolean(year) && year >= 1950 && year <= new Date().getFullYear(), "GeÃ§erli bir yÄ±l gir"]);
+        checks.push(["year", Boolean(year) && year >= 1950 && year <= new Date().getFullYear(), "Geçerli bir yıl gir"]);
         checks.push(["km", Boolean(formData.km), "Km zorunlu"]);
-        checks.push(["fuel", Boolean(formData.fuel), "YakÄ±t zorunlu"]);
+        checks.push(["fuel", Boolean(formData.fuel), "Yakıt zorunlu"]);
         checks.push(["transmission", Boolean(formData.transmission), "Vites zorunlu"]);
         checks.push(["bodyType", Boolean(formData.bodyType), "Kasa tipi zorunlu"]);
       }
@@ -1938,8 +1938,8 @@
       return [formData.brand, formData.series, formData.model].filter(Boolean).join(" ");
     }
 
-    function placeholderImage(title = "Ä°lan gÃ¶rseli") {
-      const label = encodeURIComponent(title || "Ä°lan gÃ¶rseli");
+    function placeholderImage(title = "İlan görseli") {
+      const label = encodeURIComponent(title || "İlan görseli");
       return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='420'%3E%3Crect width='640' height='420' fill='%23eef2f7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%236b7280' font-family='Arial' font-size='22'%3E${label}%3C/text%3E%3C/svg%3E`;
     }
 
@@ -1957,8 +1957,8 @@
 
       const previewImage = document.getElementById("previewImage");
       previewImage.innerHTML = selectedFiles[0]
-        ? `<img src="${URL.createObjectURL(selectedFiles[0])}" alt="${formData.title || "Ä°lan gÃ¶rseli"}">`
-        : `<img src="${placeholderImage("GÃ¶rsel yok")}" alt="GÃ¶rsel yok">`;
+        ? `<img src="${URL.createObjectURL(selectedFiles[0])}" alt="${formData.title || "İlan görseli"}">`
+        : `<img src="${placeholderImage("Görsel yok")}" alt="Görsel yok">`;
     }
 
     function showStep(step) {
@@ -1976,7 +1976,7 @@
       });
 
       progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
-      stepLabel.textContent = `AdÄ±m ${currentStep} / ${totalSteps}`;
+      stepLabel.textContent = `Adım ${currentStep} / ${totalSteps}`;
       prevBtn.style.visibility = currentStep === 1 ? "hidden" : "visible";
       nextBtn.style.display = currentStep === totalSteps ? "none" : "inline-flex";
       submitBtn.style.display = currentStep === totalSteps ? "inline-flex" : "none";
@@ -2073,11 +2073,11 @@
 
     async function submitListingForm(event) {
       event.preventDefault();
-      console.log("FORM SUBMIT Ã‡ALIÅTI");
+      console.log("FORM SUBMIT ÇALIŞTI");
       removeInactiveRequiredFields();
 
       if (!document.querySelector("[name=title]").value) {
-        alert("BaÅŸlÄ±k gir");
+        alert("Başlık gir");
         return;
       }
 
@@ -2087,7 +2087,7 @@
 
       const user = getUser();
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="btn-spinner"></span>GÃ¶nderiliyor...`;
+      submitBtn.innerHTML = `<span class="btn-spinner"></span>Gönderiliyor...`;
 
       const value = (name) => document.querySelector(`[name=${name}]`)?.value || "";
       const data = {
@@ -2119,7 +2119,7 @@
         uploadData.append("images", files[i]);
       }
 
-      console.log("GÃ–NDERÄ°LEN DATA:", data);
+      console.log("GÖNDERİLEN DATA:", data);
 
       try {
         const res = await fetch("/api/listings", {
@@ -2130,21 +2130,21 @@
         const result = await res.json();
 
         if (!res.ok) {
-          throw new Error(result.error || "Ä°lan gÃ¶nderilemedi");
+          throw new Error(result.error || "İlan gönderilemedi");
         }
 
         if (result.success) {
-          alert("Ä°lan baÅŸarÄ±yla yayÄ±nlandÄ±");
+          alert("İlan başarıyla yayınlandı");
           window.location.href = "/";
         } else {
-          alert("Hata oluÅŸtu");
+          alert("Hata oluştu");
         }
       } catch (err) {
         console.error("CREATE LISTING ERROR:", err);
-        alert("Sunucu hatasÄ±");
+        alert("Sunucu hatası");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Ä°lan YayÄ±nla";
+        submitBtn.textContent = "İlan Yayınla";
       }
     }
 
@@ -2158,7 +2158,6 @@
 
     initCreateListingPage();
   </script>
-  <script src="/create-listing.js"></script>
 </body>
 </html>
 
