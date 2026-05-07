@@ -1912,11 +1912,20 @@
 
       const invalid = checks.filter(([, ok]) => !ok);
       if (invalid.length) {
+        console.warn("SUBMIT VALIDATION FAILED", {
+          invalid: invalid.map(([id, , message]) => ({
+            field: id,
+            message,
+            value: id === "images" ? selectedFiles.length : formData[id]
+          })),
+          formData: { ...formData },
+          selectedFiles: selectedFiles.length
+        });
         invalid.forEach(([id, , message]) => showFieldError(id, message));
         return false;
       }
 
-      return Boolean(
+      const hasAllRequired = Boolean(
         formData.title &&
         Number(formData.price) > 0 &&
         formData.mainCategory &&
@@ -1924,6 +1933,17 @@
         formData.city &&
         selectedFiles.length >= 3
       );
+      if (!hasAllRequired) {
+        console.warn("SUBMIT REQUIRED CHECK FAILED", {
+          title: formData.title,
+          price: formData.price,
+          mainCategory: formData.mainCategory,
+          subCategory: formData.subCategory,
+          city: formData.city,
+          selectedFiles: selectedFiles.length
+        });
+      }
+      return hasAllRequired;
     }
 
     function removeInactiveRequiredFields() {
@@ -2077,11 +2097,23 @@
       removeInactiveRequiredFields();
 
       if (!document.querySelector("[name=title]").value) {
+        console.warn("SUBMIT RETURN: title missing", {
+          title: document.querySelector("[name=title]")?.value || ""
+        });
         alert("Başlık gir");
         return;
       }
 
       if (!hasRequiredSubmitData()) {
+        console.warn("SUBMIT RETURN: hasRequiredSubmitData false", {
+          title: document.querySelector("[name=title]")?.value || "",
+          price: document.querySelector("[name=price]")?.value || "",
+          category: document.querySelector("[name=category]")?.value || "",
+          subCategory: document.querySelector("[name=subCategory]")?.value || "",
+          city: document.querySelector("[name=city]")?.value || "",
+          km: document.querySelector("[name=km]")?.value || "",
+          imageCount: selectedFiles.length
+        });
         return;
       }
 
@@ -2121,6 +2153,7 @@
       }
 
       console.log("GÖNDERİLEN DATA:", data);
+      console.log("POST /api/listings gönderiliyor", data);
 
       try {
         const res = await fetch("/api/listings", {
