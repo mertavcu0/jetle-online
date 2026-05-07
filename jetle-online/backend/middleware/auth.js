@@ -16,13 +16,13 @@ module.exports = async function authMiddleware(req, res, next) {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("role isBanned");
+    const user = await User.findById(decoded.id).select("role banned isBanned");
 
     if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    if (user.isBanned) {
+    if (user.banned || user.isBanned) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
