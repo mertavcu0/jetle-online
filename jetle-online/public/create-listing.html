@@ -1289,9 +1289,7 @@
         if (input) formData[id] = input.value.trim();
       });
 
-      formData.category = formData.mainCategory && formData.subCategory
-        ? `${formData.mainCategory}-${formData.subCategory}`
-        : "";
+      formData.category = document.querySelector("[name=category]")?.value?.trim() || "";
       formData.images = Array.from(document.getElementById("images")?.files || []);
       formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
         .map((input) => input.value);
@@ -1903,13 +1901,13 @@
       const checks = [
         ["title", Boolean(formData.title), "Başlık zorunlu"],
         ["price", Number(formData.price) > 0, "Fiyat 0 olamaz"],
-        ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seçilmeli"],
+        ["category", Boolean(formData.category), "Ana kategori seçilmeli"],
         ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
         ["city", Boolean(formData.city), "Şehir zorunlu"],
         ["images", imageFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
       ];
 
-      if (formData.mainCategory === "vasita") {
+      if (formData.category === "vasita") {
         const year = Number(formData.year);
         checks.push(["year", Boolean(year) && year >= 1950 && year <= new Date().getFullYear(), "Geçerli bir yıl gir"]);
         checks.push(["km", Boolean(formData.km), "Km zorunlu"]);
@@ -1918,7 +1916,7 @@
         checks.push(["bodyType", Boolean(formData.bodyType), "Kasa tipi zorunlu"]);
       }
 
-      if (formData.mainCategory === "emlak") {
+      if (formData.category === "emlak") {
         checks.push(["m2", Boolean(formData.m2), "m2 zorunlu"]);
       }
 
@@ -1941,7 +1939,7 @@
       const hasAllRequired = Boolean(
         formData.title &&
         Number(formData.price) > 0 &&
-        formData.mainCategory &&
+        formData.category &&
         formData.subCategory &&
         formData.city &&
         imageFiles.length >= 3
@@ -1950,7 +1948,7 @@
         console.warn("SUBMIT REQUIRED CHECK FAILED", {
           title: formData.title,
           price: formData.price,
-          mainCategory: formData.mainCategory,
+          category: formData.category,
           subCategory: formData.subCategory,
           city: formData.city,
           selectedFiles: imageFiles.length
