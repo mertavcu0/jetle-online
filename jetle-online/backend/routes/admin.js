@@ -1,10 +1,46 @@
-const express = require("express");
+﻿const express = require("express");
 const router = express.Router();
 const Listing = require("../models/Listing");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
 const AdminLog = require("../models/AdminLog");
 const CarBrand = require("../models/CarBrand");
+const Message = require("../models/Message");
+
+function emptyList() {
+  return [];
+}
+
+function emptyStats() {
+  return {
+    total: 0,
+    active: 0,
+    featured: 0,
+    today: 0,
+    totalListings: 0,
+    activeListings: 0,
+    featuredListings: 0,
+    todayListings: 0
+  };
+}
+
+function emptyAnalytics() {
+  const today = new Date();
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - (6 - index));
+    return {
+      date: date.toISOString().slice(0, 10),
+      label: date.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" }),
+      count: 0
+    };
+  });
+
+  return {
+    dailyListings: days,
+    dailyViews: days.map((day) => ({ ...day }))
+  };
+}
 
 function normalizeCarModel(model) {
   if (typeof model === "string") {
@@ -13,6 +49,8 @@ function normalizeCarModel(model) {
       fuel: [],
       transmission: [],
       body: [],
+      engineVolume: [],
+      enginePower: [],
       engine: "",
       hp: ""
     };
@@ -23,14 +61,21 @@ function normalizeCarModel(model) {
     fuel: asArray(model.fuel),
     transmission: asArray(model.transmission),
     body: asArray(model.body),
-    engine: model.engine || "",
-    hp: model.hp || ""
+    engineVolume: asArray(model.engineVolume || model.engine),
+    enginePower: asArray(model.enginePower || model.hp),
+    engine: model.engine || firstValue(model.engineVolume),
+    hp: model.hp || firstValue(model.enginePower)
   };
 }
 
 function asArray(value) {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+function firstValue(value, fallback = "") {
+  const items = asArray(value).filter(Boolean);
+  return items[0] || fallback;
 }
 
 function normalizeCarSeries(series = []) {
@@ -40,14 +85,15 @@ function normalizeCarSeries(series = []) {
   }));
 }
 
-console.log("ADMIN.JS YÜKLENDİ");
+console.log("ADMIN.JS YÃœKLENDÄ°");
 
 router.get("/listings", async (req, res) => {
   try {
     const listings = await Listing.find({ isDeleted: false }).sort({ createdAt: -1 });
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ error: "Listings alınamadı" });
+    console.error("ADMIN LISTINGS ERROR:", err);
+    res.status(200).json(emptyList());
   }
 });
 
@@ -56,7 +102,8 @@ router.get("/users", async (req, res) => {
     const users = await User.find().sort({ createdAt: -1 });
     res.json(users);
   } catch (err) {
-    res.status(500).json({ error: "Users alınamadı" });
+    console.error("ADMIN USERS ERROR:", err);
+    res.status(200).json(emptyList());
   }
 });
 
@@ -65,7 +112,7 @@ router.get("/users/:id", async (req, res) => {
     const user = await User.findById(req.params.id).select("-password");
 
     if (!user) {
-      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+      return res.status(404).json({ error: "KullanÄ±cÄ± bulunamadÄ±" });
     }
 
     const totalListings = await Listing.countDocuments({ user: user._id, isDeleted: false });
@@ -89,7 +136,7 @@ router.get("/users/:id", async (req, res) => {
     });
   } catch (err) {
     console.error("ADMIN USER DETAIL ERROR:", err);
-    res.status(500).json({ error: "Kullanıcı bilgileri alınamadı" });
+    res.status(500).json({ error: "KullanÄ±cÄ± bilgileri alÄ±namadÄ±" });
   }
 });
 
@@ -98,7 +145,7 @@ router.get("/suspicious", async (req, res) => {
     const listings = await Listing.find({ isSuspicious: true, isDeleted: false });
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ error: "Şüpheli ilanlar alınamadı" });
+    res.status(500).json({ error: "ÅÃ¼pheli ilanlar alÄ±namadÄ±" });
   }
 });
 
@@ -117,6 +164,10 @@ router.get("/stats", async (req, res) => {
     });
 
     res.json({
+      total: totalListings,
+      active: activeListings,
+      featured: featuredListings,
+      today: todayListings,
       totalListings,
       activeListings,
       featuredListings,
@@ -124,7 +175,7 @@ router.get("/stats", async (req, res) => {
     });
   } catch (err) {
     console.error("STATS ERROR:", err);
-    res.status(500).json({ error: "Stats alınamadı" });
+    res.status(200).json(emptyStats());
   }
 });
 
@@ -178,14 +229,34 @@ router.get("/analytics", async (req, res) => {
     });
   } catch (err) {
     console.error("ANALYTICS ERROR:", err);
-    res.status(500).json({ error: "Analytics alınamadı" });
+    res.status(200).json(emptyAnalytics());
+  }
+});
+
+router.get("/messages", async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 }).limit(100);
+    res.json(messages);
+  } catch (err) {
+    console.error("ADMIN MESSAGES ERROR:", err);
+    res.status(200).json(emptyList());
+  }
+});
+
+router.get("/cars", async (req, res) => {
+  try {
+    const brands = await CarBrand.find().sort({ name: 1 });
+    res.json(brands);
+  } catch (err) {
+    console.error("ADMIN CARS ERROR:", err);
+    res.status(500).json({ error: "AraÃƒÂ§ verisi alÃ„Â±namadÃ„Â±" });
   }
 });
 
 router.post("/car-brand", async (req, res) => {
   try {
     const { name, series } = req.body;
-    if (!name) return res.status(400).json({ error: "Marka adı zorunlu" });
+    if (!name) return res.status(400).json({ error: "Marka adÄ± zorunlu" });
 
     const brand = await CarBrand.findOneAndUpdate(
       { name },
@@ -229,34 +300,50 @@ router.post("/car-series", async (req, res) => {
 
 router.post("/car-model", async (req, res) => {
   try {
-    const brandName = req.body.brandName || req.body.brand;
-    const seriesName = req.body.seriesName || req.body.series;
-    const modelName = req.body.modelName || req.body.model || req.body.name;
-    if (!brandName || !seriesName || !modelName) {
-      return res.status(400).json({ error: "Marka, seri ve model zorunlu" });
+    console.log("CAR MODEL BODY:", req.body);
+
+    const brandId = req.body.brandId || req.body.brandID || "";
+    const seriesId = req.body.seriesId || req.body.seriesID || "";
+    const brandName = req.body.brandName || req.body.brand || "";
+    const seriesName = req.body.seriesName || req.body.series || "";
+    const modelName = req.body.modelName || req.body.model || req.body.name || "Model";
+
+    console.log("CAR MODEL CHECK:", { brandId, seriesId, brandName, seriesName, modelName });
+
+    let brand = brandId
+      ? await CarBrand.findById(brandId)
+      : await CarBrand.findOne({ name: brandName });
+
+    if (!brand) {
+      brand = await CarBrand.create({
+        name: brandName || "Marka",
+        series: []
+      });
     }
 
-    const brand = await CarBrand.findOneAndUpdate(
-      { name: brandName },
-      { $setOnInsert: { name: brandName, series: [] } },
-      { new: true, upsert: true }
-    );
+    let series = seriesId
+      ? brand.series.id?.(seriesId)
+      : brand.series.find((item) => item.name === seriesName);
 
-    let series = brand.series.find((item) => item.name === seriesName);
     if (!series) {
-      brand.series.push({ name: seriesName, models: [] });
+      brand.series.push({ name: seriesName || "Seri", models: [] });
       series = brand.series[brand.series.length - 1];
     }
 
     const exists = series.models.some((model) => model.name === modelName);
     if (!exists) {
+      const engineVolume = asArray(req.body.engineVolume || req.body.engine);
+      const enginePower = asArray(req.body.enginePower || req.body.hp);
+
       series.models.push({
         name: modelName,
         fuel: asArray(req.body.fuel),
         transmission: asArray(req.body.transmission),
         body: asArray(req.body.body),
-        engine: req.body.engine || "",
-        hp: req.body.hp || ""
+        engineVolume,
+        enginePower,
+        engine: req.body.engine || firstValue(engineVolume),
+        hp: req.body.hp || firstValue(enginePower)
       });
       await brand.save();
     }
@@ -264,7 +351,91 @@ router.post("/car-model", async (req, res) => {
     res.json({ success: true, brand });
   } catch (err) {
     console.error("CAR MODEL ERROR:", err);
+    console.log("CAR MODEL ERROR MESSAGE:", err.message);
     res.status(500).json({ error: "Model eklenemedi" });
+  }
+});
+
+router.patch("/car-brand", async (req, res) => {
+  try {
+    const oldName = req.body.oldName || req.body.brandName || req.body.brand;
+    const name = req.body.name;
+    if (!oldName || !name) return res.status(400).json({ error: "Marka adÃ„Â± zorunlu" });
+
+    const brand = await CarBrand.findOneAndUpdate(
+      { name: oldName },
+      { name },
+      { new: true }
+    );
+
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+
+    res.json({ success: true, brand });
+  } catch (err) {
+    console.error("CAR BRAND UPDATE ERROR:", err);
+    res.status(500).json({ error: "Marka gÃƒÂ¼ncellenemedi" });
+  }
+});
+
+router.patch("/car-series", async (req, res) => {
+  try {
+    const brandName = req.body.brandName || req.body.brand;
+    const oldName = req.body.oldName || req.body.seriesName || req.body.series;
+    const name = req.body.name;
+    if (!brandName || !oldName || !name) {
+      return res.status(400).json({ error: "Marka ve seri zorunlu" });
+    }
+
+    const brand = await CarBrand.findOne({ name: brandName });
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+
+    const series = brand.series.find((item) => item.name === oldName);
+    if (!series) return res.status(404).json({ error: "Seri bulunamadÃ„Â±" });
+
+    series.name = name;
+    await brand.save();
+
+    res.json({ success: true, brand });
+  } catch (err) {
+    console.error("CAR SERIES UPDATE ERROR:", err);
+    res.status(500).json({ error: "Seri gÃƒÂ¼ncellenemedi" });
+  }
+});
+
+router.patch("/car-model", async (req, res) => {
+  try {
+    const brandName = req.body.brandName || req.body.brand;
+    const seriesName = req.body.seriesName || req.body.series;
+    const oldName = req.body.oldName || req.body.modelName || req.body.model;
+    const name = req.body.name;
+    if (!brandName || !seriesName || !oldName || !name) {
+      return res.status(400).json({ error: "Marka, seri ve model zorunlu" });
+    }
+
+    const brand = await CarBrand.findOne({ name: brandName });
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+
+    const series = brand.series.find((item) => item.name === seriesName);
+    if (!series) return res.status(404).json({ error: "Seri bulunamadÃ„Â±" });
+
+    const model = series.models.find((item) => item.name === oldName);
+    if (!model) return res.status(404).json({ error: "Model bulunamadÃ„Â±" });
+
+    model.name = name;
+    model.fuel = asArray(req.body.fuel);
+    model.transmission = asArray(req.body.transmission);
+    model.body = asArray(req.body.body);
+    model.engineVolume = asArray(req.body.engineVolume || req.body.engine);
+    model.enginePower = asArray(req.body.enginePower || req.body.hp);
+    model.engine = req.body.engine || firstValue(model.engineVolume);
+    model.hp = req.body.hp || firstValue(model.enginePower);
+
+    await brand.save();
+
+    res.json({ success: true, brand });
+  } catch (err) {
+    console.error("CAR MODEL UPDATE ERROR:", err);
+    res.status(500).json({ error: "Model gÃƒÂ¼ncellenemedi" });
   }
 });
 
@@ -273,7 +444,7 @@ router.patch("/listings/:id/feature", async (req, res) => {
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
+      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
     }
 
     listing.isFeatured = !listing.isFeatured;
@@ -284,7 +455,7 @@ router.patch("/listings/:id/feature", async (req, res) => {
     await listing.save();
 
     await Notification.create({
-      message: "İlan vitrine alındı",
+      message: "Ä°lan vitrine alÄ±ndÄ±",
       type: "feature"
     });
 
@@ -297,14 +468,14 @@ router.patch("/listings/:id/feature", async (req, res) => {
 
   } catch (err) {
     console.error("FEATURE ERROR:", err);
-    res.status(500).json({ error: "Feature başarısız" });
+    res.status(500).json({ error: "Feature baÅŸarÄ±sÄ±z" });
   }
 });
 
 router.patch("/listings/:id/boost", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ error: "İlan yok" });
+    if (!listing) return res.status(404).json({ error: "Ä°lan yok" });
 
     listing.isBoosted = true;
     listing.boostUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
@@ -312,7 +483,7 @@ router.patch("/listings/:id/boost", async (req, res) => {
     await listing.save();
 
     await Notification.create({
-      message: "İlan boost yapıldı",
+      message: "Ä°lan boost yapÄ±ldÄ±",
       type: "boost"
     });
 
@@ -331,7 +502,7 @@ router.patch("/listings/:id/toggle", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
     if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
+      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
     }
 
     listing.isActive = !listing.isActive;
@@ -344,7 +515,7 @@ router.patch("/listings/:id/toggle", async (req, res) => {
     });
   } catch (err) {
     console.error("TOGGLE ERROR:", err);
-    res.status(500).json({ error: "Toggle başarısız" });
+    res.status(500).json({ error: "Toggle baÅŸarÄ±sÄ±z" });
   }
 });
 
@@ -356,7 +527,7 @@ router.patch("/listings/:id/approve", async (req, res) => {
   );
 
   await Notification.create({
-    message: "İlan onaylandı",
+    message: "Ä°lan onaylandÄ±",
     type: "admin"
   });
 
@@ -376,7 +547,7 @@ router.patch("/listings/:id/reject", async (req, res) => {
   );
 
   await Notification.create({
-    message: "İlan reddedildi",
+    message: "Ä°lan reddedildi",
     type: "admin"
   });
 
@@ -426,7 +597,7 @@ router.patch("/listings/:id/edit", async (req, res) => {
     );
 
     if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
+      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
     }
 
     await AdminLog.create({
@@ -437,14 +608,14 @@ router.patch("/listings/:id/edit", async (req, res) => {
     res.json({ success: true, listing });
   } catch (err) {
     console.error("ADMIN LISTING EDIT ERROR:", err);
-    res.status(500).json({ error: "İlan güncellenemedi" });
+    res.status(500).json({ error: "Ä°lan gÃ¼ncellenemedi" });
   }
 });
 
 router.patch("/users/:id/ban", async (req, res) => {
   await User.findByIdAndUpdate(req.params.id, { banned: true });
   await Notification.create({
-    message: "Kullanıcı banlandı",
+    message: "KullanÄ±cÄ± banlandÄ±",
     type: "user"
   });
 
@@ -487,7 +658,7 @@ router.get("/notifications", async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("NOTIFICATION ERROR:", err);
-    res.status(500).json({ error: "notification error" });
+    res.status(200).json(emptyList());
   }
 });
 
@@ -502,8 +673,9 @@ router.get("/logs", async (req, res) => {
     res.json(logs);
   } catch (err) {
     console.error("ADMIN LOG ERROR:", err);
-    res.status(500).json({ error: "Loglar alınamadı" });
+    res.status(500).json({ error: "Loglar alÄ±namadÄ±" });
   }
 });
 
 module.exports = router;
+
