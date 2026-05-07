@@ -1300,6 +1300,12 @@
         .map((input) => input.value);
     }
 
+    function getSubmitImages() {
+      return selectedFiles.length
+        ? [...selectedFiles]
+        : Array.from(document.getElementById("images")?.files || []);
+    }
+
     function handleFiles(files) {
       const incoming = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
       const nextFiles = [...selectedFiles, ...incoming].slice(0, 10);
@@ -1313,7 +1319,7 @@
       selectedFiles = nextFiles;
       renderImagePreview();
       document.getElementById("images").value = "";
-      if (submitImages.length >= 3) {
+      if (getSubmitImages().length >= 3) {
         const imagesInput = document.getElementById("images");
         imagesInput.classList.remove("field-error");
         imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
@@ -1890,7 +1896,7 @@
     function hasRequiredSubmitData() {
       collectStepData();
       clearFieldErrors();
-      const submitImages = Array.isArray(formData.images) ? formData.images : [];
+      const submitImages = getSubmitImages();
 
       const checks = [
         ["title", Boolean(formData.title), "Başlık zorunlu"],
@@ -2198,4 +2204,3 @@
   </script>
 </body>
 </html>
-
