@@ -1293,6 +1293,9 @@
       formData.category = formData.mainCategory && formData.subCategory
         ? `${formData.mainCategory}-${formData.subCategory}`
         : "";
+      formData.images = selectedFiles.length
+        ? [...selectedFiles]
+        : Array.from(document.getElementById("images")?.files || []);
       formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
         .map((input) => input.value);
     }
@@ -1310,7 +1313,7 @@
       selectedFiles = nextFiles;
       renderImagePreview();
       document.getElementById("images").value = "";
-      if (selectedFiles.length >= 3) {
+      if (submitImages.length >= 3) {
         const imagesInput = document.getElementById("images");
         imagesInput.classList.remove("field-error");
         imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
@@ -1887,6 +1890,7 @@
     function hasRequiredSubmitData() {
       collectStepData();
       clearFieldErrors();
+      const submitImages = Array.isArray(formData.images) ? formData.images : [];
 
       const checks = [
         ["title", Boolean(formData.title), "Başlık zorunlu"],
@@ -1894,7 +1898,7 @@
         ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seçilmeli"],
         ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
         ["city", Boolean(formData.city), "Şehir zorunlu"],
-        ["images", selectedFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
+        ["images", submitImages.length >= 3, "En az 3 foto?raf zorunlu"]
       ];
 
       if (formData.mainCategory === "vasita") {
@@ -1916,10 +1920,10 @@
           invalid: invalid.map(([id, , message]) => ({
             field: id,
             message,
-            value: id === "images" ? selectedFiles.length : formData[id]
+            value: id === "images" ? submitImages.length : formData[id]
           })),
           formData: { ...formData },
-          selectedFiles: selectedFiles.length
+          selectedFiles: submitImages.length
         });
         invalid.forEach(([id, , message]) => showFieldError(id, message));
         return false;
@@ -1931,7 +1935,7 @@
         formData.mainCategory &&
         formData.subCategory &&
         formData.city &&
-        selectedFiles.length >= 3
+        submitImages.length >= 3
       );
       if (!hasAllRequired) {
         console.warn("SUBMIT REQUIRED CHECK FAILED", {
@@ -1940,7 +1944,7 @@
           mainCategory: formData.mainCategory,
           subCategory: formData.subCategory,
           city: formData.city,
-          selectedFiles: selectedFiles.length
+          selectedFiles: submitImages.length
         });
       }
       return hasAllRequired;
