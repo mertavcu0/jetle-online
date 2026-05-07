@@ -392,6 +392,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const admin = localStorage.getItem("admin");
+    const STATS_URL = "/api/admin/stats";
+    const ANALYTICS_URL = "/api/admin/analytics";
 
     document.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -467,7 +469,8 @@
 
     async function loadStats() {
       try {
-        const res = await fetch("/api/admin/stats");
+        console.log("STATS FETCH URL", STATS_URL);
+        const res = await fetch(STATS_URL);
         if (!res.ok) throw new Error("Stats API HATA");
         const data = await res.json();
         const box = document.getElementById("stats-box");
@@ -492,7 +495,8 @@
 
     async function loadAnalytics() {
       try {
-        const res = await fetch("/api/admin/analytics");
+        console.log("ANALYTICS FETCH URL", ANALYTICS_URL);
+        const res = await fetch(ANALYTICS_URL);
         if (!res.ok) throw new Error("Analytics API HATA");
         const data = await res.json();
         const labels = (data.dailyListings || []).map((item) => item.label || "");
@@ -854,7 +858,9 @@
       }
     }
 
-    safeInit();
+    document.addEventListener("DOMContentLoaded", () => {
+      safeInit();
+    }, { once: true });
   </script>
 </body>
 </html>
