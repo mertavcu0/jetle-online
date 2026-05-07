@@ -82,7 +82,11 @@ app.get("*", (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error("SERVER ERROR:", err);
-  res.status(500).json({ error: "Server error" });
+  if (!res.headersSent) {
+    res.status(500).json({ error: "server_error" });
+    return;
+  }
+  next(err);
 });
 
 mongoose.connect(process.env.MONGO_URI)

@@ -6,6 +6,7 @@ const Notification = require("../models/Notification");
 const AdminLog = require("../models/AdminLog");
 const CarBrand = require("../models/CarBrand");
 const Message = require("../models/Message");
+const QUERY_TIMEOUT_MS = Number(process.env.ADMIN_QUERY_TIMEOUT_MS || 4000);
 
 function emptyList() {
   return [];
@@ -85,25 +86,56 @@ function normalizeCarSeries(series = []) {
   }));
 }
 
+function logAdminStart(path) {
+  console.log(`ADMIN ENDPOINT START: ${path}`);
+}
+
+function logAdminEnd(path) {
+  console.log(`ADMIN ENDPOINT END: ${path}`);
+}
+
+function withTimeout(promise, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timeout`)), QUERY_TIMEOUT_MS)
+    )
+  ]);
+}
+
 console.log("ADMIN.JS YÃœKLENDÄ°");
 
 router.get("/listings", async (req, res) => {
+  const path = "/api/admin/listings";
+  logAdminStart(path);
   try {
-    const listings = await Listing.find({ isDeleted: false }).sort({ createdAt: -1 });
+    const listings = await withTimeout(
+      Listing.find({ isDeleted: false }).sort({ createdAt: -1 }).maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
     res.json(listings);
   } catch (err) {
     console.error("ADMIN LISTINGS ERROR:", err);
     res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
 router.get("/users", async (req, res) => {
+  const path = "/api/admin/users";
+  logAdminStart(path);
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await withTimeout(
+      User.find().sort({ createdAt: -1 }).maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
     res.json(users);
   } catch (err) {
     console.error("ADMIN USERS ERROR:", err);
     res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
@@ -150,18 +182,29 @@ router.get("/suspicious", async (req, res) => {
 });
 
 router.get("/stats", async (req, res) => {
+  const path = "/api/admin/stats";
+  logAdminStart(path);
   try {
-    const totalListings = await Listing.countDocuments({ isDeleted: false });
-    const activeListings = await Listing.countDocuments({ isActive: true, isDeleted: false });
-    const featuredListings = await Listing.countDocuments({ isFeatured: true, isDeleted: false });
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayListings = await Listing.countDocuments({
-      isDeleted: false,
-      createdAt: { $gte: today }
-    });
+    const [
+      totalListings,
+      activeListings,
+      featuredListings,
+      todayListings
+    ] = await withTimeout(
+      Promise.all([
+        Listing.countDocuments({ isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.countDocuments({ isActive: true, isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.countDocuments({ isFeatured: true, isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.countDocuments({
+          isDeleted: false,
+          createdAt: { $gte: today }
+        }).maxTimeMS(QUERY_TIMEOUT_MS)
+      ]),
+      path
+    );
 
     res.json({
       total: totalListings,
@@ -176,19 +219,26 @@ router.get("/stats", async (req, res) => {
   } catch (err) {
     console.error("STATS ERROR:", err);
     res.status(200).json(emptyStats());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
 router.get("/analytics", async (req, res) => {
+  const path = "/api/admin/analytics";
+  logAdminStart(path);
   try {
     const start = new Date();
     start.setDate(start.getDate() - 6);
     start.setHours(0, 0, 0, 0);
 
-    const listings = await Listing.find({
-      isDeleted: false,
-      createdAt: { $gte: start }
-    }).select("createdAt views");
+    const listings = await withTimeout(
+      Listing.find({
+        isDeleted: false,
+        createdAt: { $gte: start }
+      }).select("createdAt views").maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
 
     const days = Array.from({ length: 7 }, (_, index) => {
       const date = new Date(start);
@@ -230,26 +280,42 @@ router.get("/analytics", async (req, res) => {
   } catch (err) {
     console.error("ANALYTICS ERROR:", err);
     res.status(200).json(emptyAnalytics());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
 router.get("/messages", async (req, res) => {
+  const path = "/api/admin/messages";
+  logAdminStart(path);
   try {
-    const messages = await Message.find().sort({ createdAt: -1 }).limit(100);
+    const messages = await withTimeout(
+      Message.find().sort({ createdAt: -1 }).limit(100).maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
     res.json(messages);
   } catch (err) {
     console.error("ADMIN MESSAGES ERROR:", err);
     res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
 router.get("/cars", async (req, res) => {
+  const path = "/api/admin/cars";
+  logAdminStart(path);
   try {
-    const brands = await CarBrand.find().sort({ name: 1 });
+    const brands = await withTimeout(
+      CarBrand.find().sort({ name: 1 }).maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
     res.json(brands);
   } catch (err) {
     console.error("ADMIN CARS ERROR:", err);
-    res.status(500).json({ error: "AraÃƒÂ§ verisi alÃ„Â±namadÃ„Â±" });
+    res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
@@ -650,15 +716,23 @@ router.patch("/listings/:id", async (req, res) => {
 
 // ADMIN NOTIFICATIONS
 router.get("/notifications", async (req, res) => {
+  const path = "/api/admin/notifications";
+  logAdminStart(path);
   try {
-    const data = await Notification.find()
-      .sort({ createdAt: -1 })
-      .limit(20);
+    const data = await withTimeout(
+      Notification.find()
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .maxTimeMS(QUERY_TIMEOUT_MS),
+      path
+    );
 
     res.json(data);
   } catch (err) {
     console.error("NOTIFICATION ERROR:", err);
     res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
   }
 });
 
