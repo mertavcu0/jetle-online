@@ -391,7 +391,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const admin = localStorage.getItem("admin");
+    const adminRaw = localStorage.getItem("admin");
+    const token = localStorage.getItem("token");
+    let admin = null;
+    try {
+      admin = adminRaw ? JSON.parse(adminRaw) : null;
+    } catch (err) {
+      admin = null;
+    }
     const STATS_URL = "/api/admin/stats";
     const ANALYTICS_URL = "/api/admin/analytics";
 
@@ -399,8 +406,8 @@
       event.preventDefault();
     }, true);
 
-    if (!admin) {
-      console.warn("Admin bilgisi bulunamadı, otomatik yönlendirme kapatıldı.");
+    if (!admin || !token) {
+      window.location.href = "/admin.html";
     }
 
     function logoutAdmin() {
@@ -417,9 +424,30 @@
       return document.querySelector(".dashboard-content");
     }
 
+    function redirectToAdminLogin() {
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      window.location.href = "/admin.html";
+    }
+
+    function authHeaders(extra = {}) {
+      const headers = { ...extra };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      return headers;
+    }
+
+    function authFetch(url, options = {}) {
+      const nextOptions = { ...options };
+      nextOptions.headers = authHeaders(options.headers || {});
+      return fetch(url, nextOptions);
+    }
+
     function ensureAdminResponse(res, message = "API HATA") {
       if (res.status === 401) {
         console.warn("Admin yetkisi yok");
+        redirectToAdminLogin();
         throw new Error("Unauthorized");
       }
 
@@ -483,7 +511,7 @@
     async function loadStats() {
       try {
         console.log("STATS FETCH URL", STATS_URL);
-        const res = await fetch(STATS_URL);
+        const res = await authFetch(STATS_URL);
         ensureAdminResponse(res, "Stats API HATA");
         const data = await res.json();
         const box = document.getElementById("stats-box");
@@ -509,7 +537,7 @@
     async function loadAnalytics() {
       try {
         console.log("ANALYTICS FETCH URL", ANALYTICS_URL);
-        const res = await fetch(ANALYTICS_URL);
+        const res = await authFetch(ANALYTICS_URL);
         ensureAdminResponse(res, "Analytics API HATA");
         const data = await res.json();
         const labels = (data.dailyListings || []).map((item) => item.label || "");
@@ -670,7 +698,7 @@
 
     async function loadNotifications() {
       try {
-        const res = await fetch("/api/admin/notifications");
+        const res = await authFetch("/api/admin/notifications");
         ensureAdminResponse(res, "Notification fetch error");
         const data = await res.json();
         const notifications = Array.isArray(data) ? data.reverse() : [];
@@ -716,7 +744,7 @@
       if (!container) return;
 
       if (type === "listings") {
-        fetch("/api/admin/listings")
+        authFetch("/api/admin/listings")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
           })
@@ -728,7 +756,7 @@
       }
 
       if (type === "users") {
-        fetch("/api/admin/users")
+        authFetch("/api/admin/users")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
           })
@@ -747,7 +775,7 @@
       }
 
       if (type === "reports") {
-        fetch("/api/admin/suspicious")
+        authFetch("/api/admin/suspicious")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
           })
@@ -765,7 +793,8 @@
 
     async function deleteListing(id) {
       try {
-        await fetch("/api/admin/listings/" + id, { method: "DELETE" });
+        const res = await authFetch("/api/admin/listings/" + id, { method: "DELETE" });
+        ensureAdminResponse(res, "Delete failed");
       } catch (err) {
         console.error("DELETE ERROR:", err);
       }
@@ -774,7 +803,7 @@
 
     async function toggleListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/toggle`, { method: "PATCH" });
+        const res = await authFetch(`/api/admin/listings/${id}/toggle`, { method: "PATCH" });
         ensureAdminResponse(res, "Toggle failed");
         loadPage("listings");
         await loadNotifications();
@@ -786,11 +815,12 @@
 
     async function markSuspicious(id) {
       try {
-        await fetch("/api/admin/listings/" + id, {
+        const res = await authFetch("/api/admin/listings/" + id, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ isSuspicious: true })
         });
+        ensureAdminResponse(res, "Suspicious failed");
       } catch (err) {
         console.error("SUSPICIOUS ERROR:", err);
       }
@@ -799,7 +829,7 @@
 
     async function boostListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/boost`, { method: "PATCH" });
+        const res = await authFetch(`/api/admin/listings/${id}/boost`, { method: "PATCH" });
         ensureAdminResponse(res, "Boost failed");
         loadPage("listings");
         await loadNotifications();
@@ -811,7 +841,7 @@
 
     async function featureListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
+        const res = await authFetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
         ensureAdminResponse(res, "Feature failed");
         loadPage("listings");
         await loadNotifications();
@@ -823,7 +853,7 @@
 
     async function approveListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
+        const res = await authFetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
         ensureAdminResponse(res, "Approve failed");
         loadPage("listings");
         await loadNotifications();
@@ -834,8 +864,11 @@
     }
 
     function rejectListing(id) {
-      fetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
-        .then(() => loadPage("listings"))
+      authFetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
+        .then((res) => {
+          ensureAdminResponse(res, "Reject failed");
+          loadPage("listings");
+        })
         .catch((err) => {
           console.error("REJECT ERROR:", err);
           loadPage("listings");
@@ -844,7 +877,8 @@
 
     async function banUser(id) {
       try {
-        await fetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
+        const res = await authFetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
+        ensureAdminResponse(res, "Ban failed");
       } catch (err) {
         console.error("BAN ERROR:", err);
       }

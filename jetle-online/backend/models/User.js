@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   city: String,
+  role: {
+    type: String,
+    enum: ["user", "admin", "moderator"],
+    default: "user"
+  },
   banned: {
     type: Boolean,
     default: false

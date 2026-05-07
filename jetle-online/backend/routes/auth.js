@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password, city } = req.body;
@@ -19,12 +19,11 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashed,
-      city
+      city,
+      role: "user"
     });
 
     await user.save();
-
-    console.log("REGISTER OK");
 
     res.json({
       success: true,
@@ -33,7 +32,8 @@ router.post("/register", async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        city: user.city
+        city: user.city,
+        role: user.role
       }
     });
   } catch (err) {
@@ -42,36 +42,43 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("LOGIN:", email);
-
     const user = await User.findOne({ email });
-
     if (!user) {
-      console.log("USER NOT FOUND");
       return res.status(400).json({ message: "Kullanıcı yok" });
     }
-
-    console.log("USER FOUND:", user.email);
 
     if (user.banned) {
       return res.status(403).json({ message: "Hesabınız askıya alındı" });
     }
 
     const ok = await bcrypt.compare(password, user.password);
-
     if (!ok) {
-      console.log("WRONG PASSWORD");
       return res.status(400).json({ message: "Şifre yanlış" });
     }
 
-    console.log("LOGIN SUCCESS");
+    const token = jwt.sign(
+      {
+        id: String(user._id),
+        role: user.role || "user"
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role || "user"
+      }
+    });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
