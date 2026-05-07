@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -354,8 +354,8 @@
       <h2 class="brand">Jetle<span>Admin</span></h2>
       <nav class="menu">
         <ul>
-          <li class="active" onclick="loadPage('listings')">İlanlar</li>
-          <li onclick="loadPage('users')">Kullanıcılar</li>
+          <li class="active" onclick="loadPage('listings')">Ä°lanlar</li>
+          <li onclick="loadPage('users')">KullanÄ±cÄ±lar</li>
           <li onclick="loadPage('messages')">Mesajlar</li>
           <li onclick="loadPage('reports')">Raporlar</li>
           <li onclick="loadPage('notifications')">Bildirimler</li>
@@ -368,7 +368,7 @@
         <h1>Admin Moderasyon</h1>
         <div class="admin-top-actions">
           <span>Admin</span>
-          <button class="logout-btn" onclick="logoutAdmin()">Çıkış</button>
+          <button class="logout-btn" onclick="logoutAdmin()">Ã‡Ä±kÄ±ÅŸ</button>
         </div>
       </header>
 
@@ -376,11 +376,11 @@
 
       <section class="charts-grid">
         <div class="chart-card">
-          <h2>Günlük İlan</h2>
+          <h2>GÃ¼nlÃ¼k Ä°lan</h2>
           <canvas id="dailyListingsChart" height="140"></canvas>
         </div>
         <div class="chart-card">
-          <h2>Görüntülenme</h2>
+          <h2>GÃ¶rÃ¼ntÃ¼lenme</h2>
           <canvas id="dailyViewsChart" height="140"></canvas>
         </div>
       </section>
@@ -389,7 +389,7 @@
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const admin = localStorage.getItem("admin");
 
@@ -407,6 +407,10 @@
       return new Intl.NumberFormat("tr-TR").format(Number(value || 0));
     }
 
+    function contentContainer() {
+      return document.querySelector(".dashboard-content");
+    }
+
     function setActiveMenu(type) {
       const pages = ["listings", "users", "messages", "reports", "notifications"];
       document.querySelectorAll(".menu li").forEach((item) => item.classList.remove("active"));
@@ -414,115 +418,145 @@
       if (target) target.classList.add("active");
     }
 
-    async function loadStats() {
-      const res = await fetch("/api/admin/stats");
-      const data = await res.json();
-
-      document.getElementById("stats-box").innerHTML = `
+    function renderDefaultStats() {
+      const box = document.getElementById("stats-box");
+      if (!box) return;
+      box.innerHTML = `
         <div class="stats-grid">
-          <div class="stat-card">Toplam: ${data.totalListings}</div>
-          <div class="stat-card">Aktif: ${data.activeListings}</div>
-          <div class="stat-card">Vitrin: ${data.featuredListings}</div>
-          <div class="stat-card">Bugün: ${data.todayListings}</div>
+          <div class="stat-card">Toplam: 0</div>
+          <div class="stat-card">Aktif: 0</div>
+          <div class="stat-card">Vitrin: 0</div>
+          <div class="stat-card">Bugün: 0</div>
         </div>
       `;
+    }
+
+    function renderDefaultListings() {
+      const container = contentContainer();
+      if (!container) return;
+      container.innerHTML = `
+        <h2>İlanlar</h2>
+        <div class="admin-card">
+          <div>İlan bulunamadı.</div>
+        </div>
+      `;
+    }
+
+    function renderChartFallback() {
+      const listingCard = document.getElementById("dailyListingsChart")?.closest(".chart-card");
+      const viewsCard = document.getElementById("dailyViewsChart")?.closest(".chart-card");
+
+      if (listingCard) {
+        listingCard.innerHTML = `
+          <h2>Günlük İlan</h2>
+          <div class="empty">Veri yok</div>
+        `;
+      }
+
+      if (viewsCard) {
+        viewsCard.innerHTML = `
+          <h2>Görüntülenme</h2>
+          <div class="empty">Veri yok</div>
+        `;
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch("/api/admin/stats");
+        if (!res.ok) throw new Error("Stats API HATA");
+        const data = await res.json();
+        const box = document.getElementById("stats-box");
+        if (!box) return;
+
+        box.innerHTML = `
+          <div class="stats-grid">
+            <div class="stat-card">Toplam: ${data.totalListings || data.total || 0}</div>
+            <div class="stat-card">Aktif: ${data.activeListings || data.active || 0}</div>
+            <div class="stat-card">Vitrin: ${data.featuredListings || data.featured || 0}</div>
+            <div class="stat-card">Bugün: ${data.todayListings || data.today || 0}</div>
+          </div>
+        `;
+      } catch (err) {
+        console.error("STATS ERROR:", err);
+        renderDefaultStats();
+      }
     }
 
     let dailyListingsChart = null;
     let dailyViewsChart = null;
 
     async function loadAnalytics() {
-      const res = await fetch("/api/admin/analytics");
-      const data = await res.json();
-      const labels = (data.dailyListings || []).map((item) => item.label);
-      const listingCounts = (data.dailyListings || []).map((item) => item.count);
-      const viewCounts = (data.dailyViews || []).map((item) => item.count);
-      const listingsCanvas = document.getElementById("dailyListingsChart");
-      const viewsCanvas = document.getElementById("dailyViewsChart");
+      try {
+        const res = await fetch("/api/admin/analytics");
+        if (!res.ok) throw new Error("Analytics API HATA");
+        const data = await res.json();
+        const labels = (data.dailyListings || []).map((item) => item.label || "");
+        const listingCounts = (data.dailyListings || []).map((item) => item.count || 0);
+        const viewCounts = (data.dailyViews || []).map((item) => item.count || 0);
+        const listingsCanvas = document.getElementById("dailyListingsChart");
+        const viewsCanvas = document.getElementById("dailyViewsChart");
 
-      if (!listingsCanvas || !viewsCanvas || typeof Chart === "undefined") return;
-
-      if (dailyListingsChart) {
-        dailyListingsChart.destroy();
-      }
-
-      if (dailyViewsChart) {
-        dailyViewsChart.destroy();
-      }
-
-      dailyListingsChart = new Chart(listingsCanvas, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Günlük ilan sayısı",
-              data: listingCounts,
-              borderColor: "#2563eb",
-              backgroundColor: "rgba(37,99,235,0.12)",
-              tension: 0.35,
-              fill: true
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
-              }
-            }
-          }
+        if (!listingsCanvas || !viewsCanvas || typeof Chart === "undefined") {
+          renderChartFallback();
+          return;
         }
-      });
 
-      dailyViewsChart = new Chart(viewsCanvas, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Günlük görüntülenme",
-              data: viewCounts,
-              backgroundColor: "rgba(249,115,22,0.72)",
-              borderColor: "#f97316",
-              borderWidth: 1,
-              borderRadius: 8
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
+        if (dailyListingsChart) dailyListingsChart.destroy();
+        if (dailyViewsChart) dailyViewsChart.destroy();
+
+        dailyListingsChart = new Chart(listingsCanvas, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Günlük ilan sayısı",
+                data: listingCounts,
+                borderColor: "#2563eb",
+                backgroundColor: "rgba(37,99,235,0.12)",
+                tension: 0.35,
+                fill: true
               }
-            }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
           }
-        }
-      });
+        });
+
+        dailyViewsChart = new Chart(viewsCanvas, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Günlük görüntülenme",
+                data: viewCounts,
+                backgroundColor: "rgba(249,115,22,0.72)",
+                borderColor: "#f97316",
+                borderWidth: 1,
+                borderRadius: 8
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+          }
+        });
+      } catch (err) {
+        console.error("ANALYTICS ERROR:", err);
+        renderChartFallback();
+      }
     }
 
     function renderListings(data) {
-      const container = document.querySelector(".dashboard-content");
-
-      data.forEach(item => {
-        console.log("ID:", item._id);
-      });
+      const container = contentContainer();
+      if (!container) return;
 
       function renderListingBadges(item) {
         return `
@@ -544,46 +578,28 @@
 
         if (item.status === "approved") {
           return `
-            <button onclick="toggleListing('${item._id}')">
-              ${item.isActive ? "Pasif Yap" : "Aktif Yap"}
-            </button>
-
-            <button onclick="markSuspicious('${item._id}')">
-              Şüpheli
-            </button>
-
-            <button onclick="boostListing('${item._id}')">
-              ${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}
-            </button>
-
-            <button onclick="featureListing('${item._id}')">
-              ${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}
-            </button>
-
-            <button class="danger" onclick="deleteListing('${item._id}')">
-              Sil
-            </button>
+            <button onclick="toggleListing('${item._id}')">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
+            <button onclick="markSuspicious('${item._id}')">Şüpheli</button>
+            <button onclick="boostListing('${item._id}')">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
+            <button onclick="featureListing('${item._id}')">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
+            <button class="danger" onclick="deleteListing('${item._id}')">Sil</button>
           `;
         }
 
-        return `
-          <button class="danger" onclick="deleteListing('${item._id}')">
-            Sil
-          </button>
-        `;
+        return `<button class="danger" onclick="deleteListing('${item._id}')">Sil</button>`;
       }
 
+      const items = Array.isArray(data) ? data : [];
       container.innerHTML = `
         <h2>İlanlar</h2>
-        ${data.map(item => `
+        ${items.map(item => `
           <div class="admin-card">
             <div>
               ${renderListingBadges(item)}
-              <strong>${item.title}</strong>
+              <strong>${item.title || "İlan"}</strong>
               <div>${item.city || "Şehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
               <p>Görüntülenme: ${item.views || 0}</p>
             </div>
-
             <div class="admin-actions">
               ${renderListingActions(item)}
             </div>
@@ -593,41 +609,39 @@
     }
 
     function renderUsers(data) {
-      const container = document.querySelector(".dashboard-content");
+      const container = contentContainer();
+      if (!container) return;
 
+      const users = Array.isArray(data) ? data : [];
       container.innerHTML = `
         <h2>Kullanıcılar</h2>
-        ${data.map(user => `
+        ${users.map(user => `
           <div class="admin-card">
             <div>
               <strong>${user.name || "Kullanıcı"}</strong>
               <div>${user.email || ""}</div>
             </div>
-
-            <button onclick="banUser('${user._id}')">
-              ${user.banned ? "Banlandı" : "Banla"}
-            </button>
+            <button onclick="banUser('${user._id}')">${user.banned ? "Banlandı" : "Banla"}</button>
           </div>
         `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
       `;
     }
 
     function renderReports(data) {
-      const container = document.querySelector(".dashboard-content");
+      const container = contentContainer();
+      if (!container) return;
 
+      const items = Array.isArray(data) ? data : [];
       container.innerHTML = `
         <h2>Şüpheli İlanlar</h2>
-        ${data.map(item => `
+        ${items.map(item => `
           <div class="admin-card danger">
             <div>
               <strong>⚠️ ŞÜPHELİ İLAN</strong>
-              <strong>${item.title}</strong>
+              <strong>${item.title || "İlan"}</strong>
               <div>${item.city || ""}</div>
             </div>
-
-            <button onclick="toggleListing('${item._id}')">
-              Onayla
-            </button>
+            <button onclick="toggleListing('${item._id}')">Onayla</button>
           </div>
         `).join("") || `<div class="empty">Şüpheli ilan bulunmuyor.</div>`}
       `;
@@ -636,11 +650,8 @@
     async function loadNotifications() {
       try {
         const res = await fetch("/api/admin/notifications");
-
         if (!res.ok) throw new Error("Notification fetch error");
-
         const data = await res.json();
-        console.log("NOTIFICATIONS DATA:", data);
         const notifications = Array.isArray(data) ? data.reverse() : [];
         const notificationIcons = {
           feature: "⭐",
@@ -650,7 +661,8 @@
           ban: "⛔"
         };
 
-        const container = document.querySelector(".dashboard-content");
+        const container = contentContainer();
+        if (!container) return;
 
         container.innerHTML = `
           <h2>Bildirimler</h2>
@@ -668,30 +680,44 @@
         `;
       } catch (err) {
         console.error("NOTIFICATION ERROR:", err);
-        alert("Bildirimler yüklenemedi");
+        const container = contentContainer();
+        if (!container) return;
+        container.innerHTML = `
+          <h2>Bildirimler</h2>
+          <div class="empty">Veri alınamadı</div>
+        `;
       }
     }
 
     function loadPage(type) {
       setActiveMenu(type);
-      const container = document.querySelector(".dashboard-content");
+      const container = contentContainer();
+      if (!container) return;
 
       if (type === "listings") {
         fetch("/api/admin/listings")
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw new Error("API HATA");
             return res.json();
           })
-          .then(data => renderListings(data));
+          .then((data) => renderListings(data))
+          .catch((err) => {
+            console.error("LISTINGS ERROR:", err);
+            renderDefaultListings();
+          });
       }
 
       if (type === "users") {
         fetch("/api/admin/users")
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw new Error("API HATA");
             return res.json();
           })
-          .then(data => renderUsers(data));
+          .then((data) => renderUsers(data))
+          .catch((err) => {
+            console.error("USERS ERROR:", err);
+            container.innerHTML = `<h2>Kullanıcılar</h2><div class="empty">Veri alınamadı</div>`;
+          });
       }
 
       if (type === "messages") {
@@ -703,11 +729,15 @@
 
       if (type === "reports") {
         fetch("/api/admin/suspicious")
-          .then(res => {
+          .then((res) => {
             if (!res.ok) throw new Error("API HATA");
             return res.json();
           })
-          .then(data => renderReports(data));
+          .then((data) => renderReports(data))
+          .catch((err) => {
+            console.error("REPORTS ERROR:", err);
+            container.innerHTML = `<h2>Raporlar</h2><div class="empty">Veri alınamadı</div>`;
+          });
       }
 
       if (type === "notifications") {
@@ -716,24 +746,18 @@
     }
 
     async function deleteListing(id) {
-      await fetch("/api/admin/listings/" + id, { method: "DELETE" })
-        .then(res => {
-          if (!res.ok) throw new Error("API HATA");
-          return res.json();
-        });
+      try {
+        await fetch("/api/admin/listings/" + id, { method: "DELETE" });
+      } catch (err) {
+        console.error("DELETE ERROR:", err);
+      }
       loadPage("listings");
     }
 
     async function toggleListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/toggle`, {
-          method: "PATCH"
-        });
-
-        if (!res.ok) {
-          throw new Error("Toggle failed");
-        }
-
+        const res = await fetch(`/api/admin/listings/${id}/toggle`, { method: "PATCH" });
+        if (!res.ok) throw new Error("Toggle failed");
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
@@ -743,26 +767,22 @@
     }
 
     async function markSuspicious(id) {
-      await fetch("/api/admin/listings/" + id, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isSuspicious: true })
-      })
-        .then(res => {
-          if (!res.ok) throw new Error("API HATA");
-          return res.json();
+      try {
+        await fetch("/api/admin/listings/" + id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isSuspicious: true })
         });
+      } catch (err) {
+        console.error("SUSPICIOUS ERROR:", err);
+      }
       loadPage("listings");
     }
 
     async function boostListing(id) {
       try {
-        const res = await fetch(`/api/admin/listings/${id}/boost`, {
-          method: "PATCH"
-        });
-
+        const res = await fetch(`/api/admin/listings/${id}/boost`, { method: "PATCH" });
         if (!res.ok) throw new Error("Boost failed");
-
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
@@ -772,37 +792,67 @@
     }
 
     async function featureListing(id) {
-      const res = await fetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
-      if (!res.ok) throw new Error("Feature failed");
-      loadPage("listings");
-      await loadNotifications();
+      try {
+        const res = await fetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
+        if (!res.ok) throw new Error("Feature failed");
+        loadPage("listings");
+        await loadNotifications();
+      } catch (err) {
+        console.error("FEATURE ERROR:", err);
+        loadPage("listings");
+      }
     }
 
     async function approveListing(id) {
-      const res = await fetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
-      if (!res.ok) throw new Error("Approve failed");
-      loadPage("listings");
-      await loadNotifications();
+      try {
+        const res = await fetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
+        if (!res.ok) throw new Error("Approve failed");
+        loadPage("listings");
+        await loadNotifications();
+      } catch (err) {
+        console.error("APPROVE ERROR:", err);
+        loadPage("listings");
+      }
     }
 
     function rejectListing(id) {
       fetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
-        .then(() => loadPage("listings"));
+        .then(() => loadPage("listings"))
+        .catch((err) => {
+          console.error("REJECT ERROR:", err);
+          loadPage("listings");
+        });
     }
 
     async function banUser(id) {
-      await fetch("/api/admin/users/" + id + "/ban", { method: "PATCH" })
-        .then(res => {
-          if (!res.ok) throw new Error("API HATA");
-          return res.json();
-        });
+      try {
+        await fetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
+      } catch (err) {
+        console.error("BAN ERROR:", err);
+      }
       loadPage("users");
     }
 
-    loadStats();
-    loadAnalytics();
-    loadPage("listings");
+    async function safeInit() {
+      renderDefaultStats();
+      renderDefaultListings();
+
+      await Promise.allSettled([
+        Promise.resolve(loadStats()),
+        Promise.resolve(loadAnalytics())
+      ]);
+
+      try {
+        loadPage("listings");
+      } catch (err) {
+        console.error("SAFE INIT ERROR:", err);
+        renderDefaultListings();
+      }
+    }
+
+    safeInit();
   </script>
 </body>
 </html>
+
 
