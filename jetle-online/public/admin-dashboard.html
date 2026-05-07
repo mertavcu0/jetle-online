@@ -354,8 +354,8 @@
       <h2 class="brand">Jetle<span>Admin</span></h2>
       <nav class="menu">
         <ul>
-          <li class="active" onclick="loadPage('listings')">Ä°lanlar</li>
-          <li onclick="loadPage('users')">KullanÄ±cÄ±lar</li>
+          <li class="active" onclick="loadPage('listings')">İlanlar</li>
+          <li onclick="loadPage('users')">Kullanıcılar</li>
           <li onclick="loadPage('messages')">Mesajlar</li>
           <li onclick="loadPage('reports')">Raporlar</li>
           <li onclick="loadPage('notifications')">Bildirimler</li>
@@ -368,7 +368,7 @@
         <h1>Admin Moderasyon</h1>
         <div class="admin-top-actions">
           <span>Admin</span>
-          <button class="logout-btn" onclick="logoutAdmin()">Ã‡Ä±kÄ±ÅŸ</button>
+          <button type="button" class="logout-btn" onclick="logoutAdmin()">Çıkış</button>
         </div>
       </header>
 
@@ -376,11 +376,11 @@
 
       <section class="charts-grid">
         <div class="chart-card">
-          <h2>GÃ¼nlÃ¼k Ä°lan</h2>
+          <h2>Günlük İlan</h2>
           <canvas id="dailyListingsChart" height="140"></canvas>
         </div>
         <div class="chart-card">
-          <h2>GÃ¶rÃ¼ntÃ¼lenme</h2>
+          <h2>Görüntülenme</h2>
           <canvas id="dailyViewsChart" height="140"></canvas>
         </div>
       </section>
@@ -392,6 +392,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const admin = localStorage.getItem("admin");
+
+    document.addEventListener("submit", (event) => {
+      event.preventDefault();
+    }, true);
 
     if (!admin) {
       window.location.href = "/admin.html";
@@ -549,7 +553,7 @@
           }
         });
       } catch (err) {
-        console.error("ANALYTICS ERROR:", err);
+        console.warn("ANALYTICS ERROR:", err);
         renderChartFallback();
       }
     }
@@ -571,22 +575,22 @@
       function renderListingActions(item) {
         if (item.status === "pending") {
           return `
-            <button onclick="approveListing('${item._id}')">Onayla</button>
-            <button class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
+            <button type="button" onclick="approveListing('${item._id}')">Onayla</button>
+            <button type="button" class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
           `;
         }
 
         if (item.status === "approved") {
           return `
-            <button onclick="toggleListing('${item._id}')">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
-            <button onclick="markSuspicious('${item._id}')">Şüpheli</button>
-            <button onclick="boostListing('${item._id}')">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
-            <button onclick="featureListing('${item._id}')">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
-            <button class="danger" onclick="deleteListing('${item._id}')">Sil</button>
+            <button type="button" onclick="toggleListing('${item._id}')">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
+            <button type="button" onclick="markSuspicious('${item._id}')">Şüpheli</button>
+            <button type="button" onclick="boostListing('${item._id}')">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
+            <button type="button" onclick="featureListing('${item._id}')">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
+            <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
           `;
         }
 
-        return `<button class="danger" onclick="deleteListing('${item._id}')">Sil</button>`;
+        return `<button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>`;
       }
 
       const items = Array.isArray(data) ? data : [];
@@ -621,7 +625,7 @@
               <strong>${user.name || "Kullanıcı"}</strong>
               <div>${user.email || ""}</div>
             </div>
-            <button onclick="banUser('${user._id}')">${user.banned ? "Banlandı" : "Banla"}</button>
+            <button type="button" onclick="banUser('${user._id}')">${user.banned ? "Banlandı" : "Banla"}</button>
           </div>
         `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
       `;
@@ -641,7 +645,7 @@
               <strong>${item.title || "İlan"}</strong>
               <div>${item.city || ""}</div>
             </div>
-            <button onclick="toggleListing('${item._id}')">Onayla</button>
+            <button type="button" onclick="toggleListing('${item._id}')">Onayla</button>
           </div>
         `).join("") || `<div class="empty">Şüpheli ilan bulunmuyor.</div>`}
       `;
@@ -854,5 +858,6 @@
   </script>
 </body>
 </html>
+
 
 
