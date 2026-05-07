@@ -1,5 +1,7 @@
 ﻿const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/auth");
+const authAdmin = require("../middleware/authAdmin");
 const Listing = require("../models/Listing");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
@@ -7,6 +9,7 @@ const AdminLog = require("../models/AdminLog");
 const CarBrand = require("../models/CarBrand");
 const Message = require("../models/Message");
 const QUERY_TIMEOUT_MS = Number(process.env.ADMIN_QUERY_TIMEOUT_MS || 4000);
+router.use(authMiddleware, authAdmin);
 
 function emptyList() {
   return [];

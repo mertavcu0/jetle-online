@@ -417,6 +417,19 @@
       return document.querySelector(".dashboard-content");
     }
 
+    function ensureAdminResponse(res, message = "API HATA") {
+      if (res.status === 401) {
+        console.warn("Admin yetkisi yok");
+        throw new Error("Unauthorized");
+      }
+
+      if (!res.ok) {
+        throw new Error(message);
+      }
+
+      return res;
+    }
+
     function setActiveMenu(type) {
       const pages = ["listings", "users", "messages", "reports", "notifications"];
       document.querySelectorAll(".menu li").forEach((item) => item.classList.remove("active"));
@@ -471,7 +484,7 @@
       try {
         console.log("STATS FETCH URL", STATS_URL);
         const res = await fetch(STATS_URL);
-        if (!res.ok) throw new Error("Stats API HATA");
+        ensureAdminResponse(res, "Stats API HATA");
         const data = await res.json();
         const box = document.getElementById("stats-box");
         if (!box) return;
@@ -497,7 +510,7 @@
       try {
         console.log("ANALYTICS FETCH URL", ANALYTICS_URL);
         const res = await fetch(ANALYTICS_URL);
-        if (!res.ok) throw new Error("Analytics API HATA");
+        ensureAdminResponse(res, "Analytics API HATA");
         const data = await res.json();
         const labels = (data.dailyListings || []).map((item) => item.label || "");
         const listingCounts = (data.dailyListings || []).map((item) => item.count || 0);
@@ -658,7 +671,7 @@
     async function loadNotifications() {
       try {
         const res = await fetch("/api/admin/notifications");
-        if (!res.ok) throw new Error("Notification fetch error");
+        ensureAdminResponse(res, "Notification fetch error");
         const data = await res.json();
         const notifications = Array.isArray(data) ? data.reverse() : [];
         const notificationIcons = {
@@ -705,8 +718,7 @@
       if (type === "listings") {
         fetch("/api/admin/listings")
           .then((res) => {
-            if (!res.ok) throw new Error("API HATA");
-            return res.json();
+            return ensureAdminResponse(res, "API HATA").json();
           })
           .then((data) => renderListings(data))
           .catch((err) => {
@@ -718,8 +730,7 @@
       if (type === "users") {
         fetch("/api/admin/users")
           .then((res) => {
-            if (!res.ok) throw new Error("API HATA");
-            return res.json();
+            return ensureAdminResponse(res, "API HATA").json();
           })
           .then((data) => renderUsers(data))
           .catch((err) => {
@@ -738,8 +749,7 @@
       if (type === "reports") {
         fetch("/api/admin/suspicious")
           .then((res) => {
-            if (!res.ok) throw new Error("API HATA");
-            return res.json();
+            return ensureAdminResponse(res, "API HATA").json();
           })
           .then((data) => renderReports(data))
           .catch((err) => {
@@ -765,7 +775,7 @@
     async function toggleListing(id) {
       try {
         const res = await fetch(`/api/admin/listings/${id}/toggle`, { method: "PATCH" });
-        if (!res.ok) throw new Error("Toggle failed");
+        ensureAdminResponse(res, "Toggle failed");
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
@@ -790,7 +800,7 @@
     async function boostListing(id) {
       try {
         const res = await fetch(`/api/admin/listings/${id}/boost`, { method: "PATCH" });
-        if (!res.ok) throw new Error("Boost failed");
+        ensureAdminResponse(res, "Boost failed");
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
@@ -802,7 +812,7 @@
     async function featureListing(id) {
       try {
         const res = await fetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
-        if (!res.ok) throw new Error("Feature failed");
+        ensureAdminResponse(res, "Feature failed");
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
@@ -814,7 +824,7 @@
     async function approveListing(id) {
       try {
         const res = await fetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
-        if (!res.ok) throw new Error("Approve failed");
+        ensureAdminResponse(res, "Approve failed");
         loadPage("listings");
         await loadNotifications();
       } catch (err) {
