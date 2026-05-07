@@ -1077,7 +1077,6 @@
     const formData = {};
 
     const fields = ["title", "description", "price", "mainCategory", "subCategory", "city", "district"];
-    let selectedFiles = [];
     const dynamicFieldIds = {
       vasita: ["brand", "series", "model", "year", "km", "fuel", "transmission", "bodyType", "color", "engine", "power", "damageRecord", "sellerType", "cc"],
       emlak: ["m2", "netM2", "rooms", "floor", "buildingAge", "heating", "inSite", "zoning", "deedStatus", "blockParcelNo", "kaks", "gabari", "roadStatus"],
@@ -1293,34 +1292,30 @@
       formData.category = formData.mainCategory && formData.subCategory
         ? `${formData.mainCategory}-${formData.subCategory}`
         : "";
-      formData.images = selectedFiles.length
-        ? [...selectedFiles]
-        : Array.from(document.getElementById("images")?.files || []);
+      formData.images = Array.from(document.getElementById("images")?.files || []);
       formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
         .map((input) => input.value);
     }
 
-    function getSubmitImages() {
-      return selectedFiles.length
-        ? [...selectedFiles]
-        : Array.from(document.getElementById("images")?.files || []);
-    }
-
     function handleFiles(files) {
+      const imagesInput = document.getElementById("images");
+      const currentFiles = Array.from(imagesInput?.files || []);
       const incoming = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
-      const nextFiles = [...selectedFiles, ...incoming].slice(0, 10);
+      const nextFiles = files === imagesInput?.files
+        ? incoming.slice(0, 10)
+        : [...currentFiles, ...incoming].slice(0, 10);
+      const dataTransfer = new DataTransfer();
+      nextFiles.forEach((file) => dataTransfer.items.add(file));
 
-      if (selectedFiles.length + incoming.length > 10) {
+      if (currentFiles.length + incoming.length > 10) {
         showFieldError("images", "En fazla 10 fotoğraf yüklenebilir.");
       } else {
         clearFieldError("images");
       }
 
-      selectedFiles = nextFiles;
+      imagesInput.files = dataTransfer.files;
       renderImagePreview();
-      document.getElementById("images").value = "";
-      if (getSubmitImages().length >= 3) {
-        const imagesInput = document.getElementById("images");
+      if ((imagesInput.files || []).length >= 3) {
         imagesInput.classList.remove("field-error");
         imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
       }
@@ -1328,8 +1323,9 @@
 
     function renderImagePreview() {
       const grid = document.getElementById("imagePreviewGrid");
+      const imageFiles = Array.from(document.getElementById("images")?.files || []);
 
-      grid.innerHTML = selectedFiles.map((file, index) => `
+      grid.innerHTML = imageFiles.map((file, index) => `
         <div class="image-thumb">
           <img src="${URL.createObjectURL(file)}" alt="Fotoğraf">
           <button class="image-remove" type="button" onclick="removeImage(${index})" aria-label="Fotoğrafı sil">×</button>
@@ -1338,15 +1334,20 @@
     }
 
     function removeImage(index) {
-      selectedFiles.splice(index, 1);
+      const imagesInput = document.getElementById("images");
+      const currentFiles = Array.from(imagesInput?.files || []);
+      const dataTransfer = new DataTransfer();
+      currentFiles
+        .filter((_, fileIndex) => fileIndex !== index)
+        .forEach((file) => dataTransfer.items.add(file));
+      imagesInput.files = dataTransfer.files;
       renderImagePreview();
       renderPreview();
       collectStepData();
 
-      if (selectedFiles.length < 3) {
+      if ((imagesInput.files || []).length < 3) {
         showFieldError("images", "En az 3 fotoğraf zorunlu");
       } else {
-        const imagesInput = document.getElementById("images");
         imagesInput.classList.remove("field-error");
         imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
         clearStatus();
@@ -1355,7 +1356,7 @@
 
     async function uploadSelectedImages() {
       const body = new FormData();
-      selectedFiles.forEach((file) => body.append("images", file));
+      Array.from(document.getElementById("images")?.files || []).forEach((file) => body.append("images", file));
 
       const headers = {};
       const token = localStorage.getItem("token");
@@ -1875,7 +1876,7 @@
         errors.push(["m2", "m2 zorunlu"]);
       }
 
-      if (step === 4 && selectedFiles.length < 3) {
+      if (step === 4 && (document.getElementById("images")?.files || []).length < 3) {
         errors.push(["images", "En az 3 fotoğraf zorunlu"]);
       }
 
@@ -1896,7 +1897,8 @@
     function hasRequiredSubmitData() {
       collectStepData();
       clearFieldErrors();
-      const submitImages = getSubmitImages();
+      const imageFiles = document.getElementById("images")?.files || [];
+      console.log("LIVE IMAGE COUNT", imageFiles.length);
 
       const checks = [
         ["title", Boolean(formData.title), "Başlık zorunlu"],
@@ -1904,7 +1906,7 @@
         ["mainCategory", Boolean(formData.mainCategory), "Ana kategori seçilmeli"],
         ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
         ["city", Boolean(formData.city), "Şehir zorunlu"],
-        ["images", submitImages.length >= 3, "En az 3 foto?raf zorunlu"]
+        ["images", imageFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
       ];
 
       if (formData.mainCategory === "vasita") {
@@ -1926,10 +1928,10 @@
           invalid: invalid.map(([id, , message]) => ({
             field: id,
             message,
-            value: id === "images" ? submitImages.length : formData[id]
+            value: id === "images" ? imageFiles.length : formData[id]
           })),
           formData: { ...formData },
-          selectedFiles: submitImages.length
+          selectedFiles: imageFiles.length
         });
         invalid.forEach(([id, , message]) => showFieldError(id, message));
         return false;
@@ -1941,7 +1943,7 @@
         formData.mainCategory &&
         formData.subCategory &&
         formData.city &&
-        submitImages.length >= 3
+        imageFiles.length >= 3
       );
       if (!hasAllRequired) {
         console.warn("SUBMIT REQUIRED CHECK FAILED", {
@@ -1950,7 +1952,7 @@
           mainCategory: formData.mainCategory,
           subCategory: formData.subCategory,
           city: formData.city,
-          selectedFiles: submitImages.length
+          selectedFiles: imageFiles.length
         });
       }
       return hasAllRequired;
@@ -1986,8 +1988,9 @@
       document.getElementById("previewDescription").textContent = formData.description || "";
 
       const previewImage = document.getElementById("previewImage");
-      previewImage.innerHTML = selectedFiles[0]
-        ? `<img src="${URL.createObjectURL(selectedFiles[0])}" alt="${formData.title || "İlan görseli"}">`
+      const imageFiles = Array.from(document.getElementById("images")?.files || []);
+      previewImage.innerHTML = imageFiles[0]
+        ? `<img src="${URL.createObjectURL(imageFiles[0])}" alt="${formData.title || "İlan görseli"}">`
         : `<img src="${placeholderImage("Görsel yok")}" alt="Görsel yok">`;
     }
 
@@ -2122,7 +2125,7 @@
           subCategory: document.querySelector("[name=subCategory]")?.value || "",
           city: document.querySelector("[name=city]")?.value || "",
           km: document.querySelector("[name=km]")?.value || "",
-          imageCount: selectedFiles.length
+          imageCount: (document.getElementById("images")?.files || []).length
         });
         return;
       }
