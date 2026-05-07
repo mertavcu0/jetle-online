@@ -1,4 +1,4 @@
-require("dotenv").config({ path: __dirname + "/.env" });
+﻿require("dotenv").config({ path: __dirname + "/.env" });
 
 const express = require("express");
 const http = require("http");
@@ -37,7 +37,7 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-console.log("SERVER BAŞLADI");
+console.log("SERVER BAÅLADI");
 console.log("SERVER DOSYASI:", __filename);
 
 // Middleware
@@ -51,7 +51,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/listings", listingsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin", authMiddleware, adminRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cars", carsRoute);
 
@@ -73,10 +73,10 @@ app.use("/uploads", express.static("uploads"));
 
 // Test route
 app.get("/api/test", (req, res) => {
-  res.json({ message: "API çalışıyor" });
+  res.json({ message: "API Ã§alÄ±ÅŸÄ±yor" });
 });
 
-// İlan detay sayfası
+// Ä°lan detay sayfasÄ±
 app.get("/ilan/:slug", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/ilan-detay.html"));
 });
@@ -109,7 +109,7 @@ app.use((err, req, res, next) => {
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("Mongo bağlandı");
+    console.log("Mongo baÄŸlandÄ±");
     app.listen(process.env.PORT || 3000, () => {
       console.log("Server running on http://localhost:" + (process.env.PORT || 3000));
     });

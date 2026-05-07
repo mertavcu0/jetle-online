@@ -1,29 +1,29 @@
-const jwt = require("jsonwebtoken");
+﻿const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 module.exports = async function authMiddleware(req, res, next) {
   const authHeader = req.header("Authorization");
 
   if (!authHeader) {
-    return res.status(401).json({ msg: "No token" });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   // "Bearer TOKEN" -> TOKEN ayir
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ msg: "Invalid token format" });
+    return res.status(401).json({ error: "Unauthorized" });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id).select("role isBanned");
 
     if (!user) {
-      return res.status(401).json({ msg: "Kullanıcı bulunamadı" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     if (user.isBanned) {
-      return res.status(403).json({ error: "Hesap banlandı" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     req.user = {
@@ -32,6 +32,6 @@ module.exports = async function authMiddleware(req, res, next) {
     };
     next();
   } catch (e) {
-    return res.status(401).json({ msg: "invalid token" });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 };
