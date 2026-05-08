@@ -1565,7 +1565,7 @@
                 <option value="">Önce seri seç</option>
               </select>
             `)}
-            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900" max="${new Date().getFullYear()}" placeholder="2020">`)}
             ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
             ${fieldHtml("fuel", "Yakıt", `
               <select id="fuel" name="fuel">
@@ -1620,7 +1620,7 @@
             ${fieldHtml("brand", "Marka", `<input id="brand" name="brand">`)}
             ${fieldHtml("model", "Model", `<input id="model" name="model">`)}
             ${fieldHtml("cc", "cc", `<input id="cc" name="cc" type="number" min="0">`)}
-            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900">`)}
+            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900" max="${new Date().getFullYear()}" placeholder="2020">`)}
             ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
           </div>
         </div>
@@ -1909,7 +1909,7 @@
 
       if (formData.category === "vasita") {
         const year = Number(formData.year);
-        checks.push(["year", Boolean(year) && year >= 1950 && year <= new Date().getFullYear(), "Geçerli bir yıl gir"]);
+        checks.push(["year", Boolean(year) && year >= 1900 && year <= new Date().getFullYear(), "Yıl 1900 ile günümüz yılı arasında 4 haneli olmalı."]);
         checks.push(["km", Boolean(formData.km), "Km zorunlu"]);
         checks.push(["fuel", Boolean(formData.fuel), "Yakıt zorunlu"]);
         checks.push(["transmission", Boolean(formData.transmission), "Vites zorunlu"]);
@@ -2191,6 +2191,29 @@
 
         if (result.success) {
           alert("İlan başarıyla yayınlandı");
+          try {
+            const pendingKey = "jetleLocalPendingListings";
+            const existing = JSON.parse(localStorage.getItem(pendingKey) || "[]");
+            const createdListing = result.listing || {};
+            const baseId = createdListing._id || createdListing.id || `local-${Date.now()}`;
+            const mergedListing = {
+              ...createdListing,
+              ...data,
+              _id: baseId,
+              id: baseId,
+              images: Array.isArray(createdListing.images) && createdListing.images.length
+                ? createdListing.images
+                : Array.from(files).map((file) => URL.createObjectURL(file)),
+              status: createdListing.status || "pending",
+              createdAt: createdListing.createdAt || new Date().toISOString(),
+              isDeleted: false
+            };
+            const deduped = existing.filter((item) => String(item._id || item.id) !== String(baseId));
+            deduped.unshift(mergedListing);
+            localStorage.setItem(pendingKey, JSON.stringify(deduped.slice(0, 20)));
+          } catch (storageErr) {
+            console.warn("LOCAL PENDING SAVE FAILED", storageErr);
+          }
           window.location.href = "/";
         } else {
           alert("Hata oluştu");
