@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>İlan Detayı | jetle.online</title>
+  <title>Ä°lan DetayÄ± | jetle.online</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     * {
@@ -72,6 +72,17 @@
 
     .detail-container {
       background: transparent;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-shell .detail-container {
+      flex: 1;
+      width: 100%;
     }
 
     .listing-header {
@@ -248,15 +259,35 @@
 
     .right-panel {
       width: 100%;
+      align-self: start;
     }
 
     .info-card,
     .seller-card {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 16px;
       margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .seller-box,
+    .listing-info-box {
+      width: 100%;
+    }
+
+    .listing-info-box {
+      margin-top: 0;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .listing-info-box h4 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #111827;
     }
 
     .info-card p,
@@ -388,21 +419,11 @@
       margin-top: 12px;
     }
 
-    .seller-message-form label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #374151;
-    }
-
-    .seller-message-form input {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
-      font: inherit;
+    .seller-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
     }
 
     .full {
@@ -521,6 +542,62 @@
       display: block;
     }
 
+    .spec-section + .spec-section {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #eef0f3;
+    }
+
+    .spec-section h4 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .spec-item {
+      background: #f9fafb;
+      border: 1px solid #eef0f3;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .spec-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .spec-item span {
+      color: #111827;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .details-box {
       margin-top: 20px;
       background: #fff;
@@ -566,9 +643,73 @@
       background: #f9fafb;
       border: 1px solid #eef0f3;
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       font-size: 13px;
       color: #444;
+    }
+
+    .details-grid strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .details-grid span,
+    .details-grid div {
+      line-height: 1.4;
+    }
+
+    .footer {
+      background: #fff;
+      margin-top: 24px;
+      padding: 28px 0 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .footer-container {
+      max-width: 1180px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      padding: 0 14px;
+    }
+
+    .footer-col h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-col li {
+      margin-bottom: 7px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .footer a {
+      display: block;
+      margin-bottom: 6px;
+      color: #444;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #2563eb;
+    }
+
+    .footer-bottom {
+      margin-top: 26px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
     }
 
     button:focus,
@@ -618,6 +759,10 @@
         grid-template-columns: 1fr;
       }
 
+      .spec-grid {
+        grid-template-columns: 1fr;
+      }
+
       .price {
         font-size: 24px;
       }
@@ -634,10 +779,15 @@
         width: 100%;
         justify-content: flex-end;
       }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="page-shell">
   <header class="navbar">
     <div class="navbar-inner">
       <a class="logo" href="index.html">jetle<span>.online</span></a>
@@ -661,11 +811,11 @@
     <div class="detail-grid">
       <div class="left left-panel">
         <div class="slider image-container">
-          <button id="prev" type="button">◀</button>
-          <img id="mainImage" class="main-img main-image" src="" alt="İlan fotoğrafı">
-          <button id="next" type="button">▶</button>
+          <button id="prev" type="button">â—€</button>
+          <img id="mainImage" class="main-img main-image" src="" alt="Ä°lan fotoÄŸrafÄ±">
+          <button id="next" type="button">â–¶</button>
           <button class="fav-btn" onclick="toggleFavorite(window.listingData?._id)">
-            ♡
+            â™¡
           </button>
           <div class="no-image-text">Fotoğraf yok</div>
         </div>
@@ -707,6 +857,46 @@
     </div>
   </div>
 
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
+  </footer>
+
   <script src="listing-detail.js"></script>
   <script>
     function formatDate(dateStr) {
@@ -736,6 +926,20 @@
 
         const listing = data || {};
         const user = listing.user || {};
+        let currentUser = {};
+        try {
+          currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        } catch (err) {
+          currentUser = {};
+        }
+        const currentUserId = String(currentUser._id || currentUser.id || "");
+        const currentUserEmail = String(currentUser.email || "");
+        const listingUserId = String(user._id || listing.userId || listing.user || "");
+        const listingUserEmail = String(user.email || "");
+        const isOwner = Boolean(
+          (currentUserId && listingUserId && currentUserId === listingUserId) ||
+          (currentUserEmail && listingUserEmail && currentUserEmail === listingUserEmail)
+        );
         const listingNo = document.getElementById("listingNo");
         if (listingNo) listingNo.textContent = listing.listingNo || String(listing._id || listing.id || "");
         const listingDate = document.getElementById("listingDate");
@@ -751,17 +955,15 @@
             </div>
 
             <div class="seller-meta">
-              <span>📍 ${user.city || listing.city || ""}</span>
-              <span>🕒 ${user.createdAt ? formatDate(user.createdAt) : "Yeni"} üye</span>
+              <span>${user.city || listing.city || ""}</span>
+              <span>Üye: ${user.createdAt ? formatDate(user.createdAt) : "Yeni"}</span>
             </div>
 
-            <div class="seller-message-form">
-              <label for="sellerMessage">Satıcıya Mesaj Gönder</label>
-              <input id="sellerMessage" placeholder="Mesajınızı yazın">
-              <button class="btn-primary" onclick="sendMsg('${user.email || user._id || ""}')">Gönder</button>
+            <div class="seller-actions">
+              <button class="btn-primary" onclick="openMessagesForListing()">Satıcıya Mesaj Gönder</button>
+              <button class="btn-secondary" onclick="showPhoneInfo()">Telefonu Göster</button>
             </div>
-            <button class="btn-secondary">Telefonu Göster</button>
-            <button class="btn-boost" onclick="buyBoost()">Boost al</button>
+            ${isOwner ? '<button class="btn-boost" onclick="buyBoost()">İlanı Öne Çıkar</button>' : ''}
 
             <div class="trust-box">
               ✓ Doğrulanmış kullanıcı<br>
@@ -774,11 +976,11 @@
         const detailsBox = document.getElementById("detailsBox");
         if (detailsBox) {
           detailsBox.innerHTML = `
-            <h4>İlan Detayları</h4>
+            <h4>Ä°lan DetaylarÄ±</h4>
             <ul>
-              <li>Şehir: ${listing.city || ""}</li>
+              <li>Åehir: ${listing.city || ""}</li>
               <li>Kategori: ${listing.category || ""}</li>
-              <li>Durum: İkinci El</li>
+              <li>Durum: Ä°kinci El</li>
             </ul>
           `;
         }
@@ -796,12 +998,12 @@
       const text = input?.value?.trim();
 
       if (!user.email && !user.id && !user._id) {
-        alert("Mesaj göndermek için giriş yapmalısınız.");
+        alert("Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapmalÄ±sÄ±nÄ±z.");
         return;
       }
 
       if (!text) {
-        alert("Mesaj yazın.");
+        alert("Mesaj yazÄ±n.");
         return;
       }
 
@@ -816,7 +1018,7 @@
         })
       }).then(() => {
         input.value = "";
-        alert("Gönderildi");
+        alert("GÃ¶nderildi");
       });
     }
 
@@ -824,7 +1026,7 @@
       const listing = window.listingData || {};
 
       if (!listing._id) {
-        alert("İlan bilgisi bulunamadı");
+        alert("Ä°lan bilgisi bulunamadÄ±");
         return;
       }
 
@@ -841,13 +1043,13 @@
         const data = await res.json();
 
         if (!res.ok || !data.success) {
-          throw new Error(data.error || "Boost işlemi başarısız");
+          throw new Error(data.error || "Boost iÅŸlemi baÅŸarÄ±sÄ±z");
         }
 
-        alert(`Boost aktif edildi. Ücret: ${data.price} TL`);
+        alert(`Boost aktif edildi. Ãœcret: ${data.price} TL`);
       } catch (err) {
         console.error("BOOST ERROR:", err);
-        alert("Boost işlemi tamamlanamadı");
+        alert("Boost iÅŸlemi tamamlanamadÄ±");
       }
     }
 
@@ -865,5 +1067,6 @@
     }
   </script>
   <script src="/auth-global.js"></script>
+</div>
 </body>
 </html>
