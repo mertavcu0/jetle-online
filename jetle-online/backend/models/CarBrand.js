@@ -19,6 +19,14 @@ const ModelSchema = new mongoose.Schema(
       type: [String],
       default: []
     },
+    engineVolume: {
+      type: [String],
+      default: []
+    },
+    enginePower: {
+      type: [String],
+      default: []
+    },
     engine: String,
     hp: String
   },

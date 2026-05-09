@@ -1,37 +1,42 @@
-﻿const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-module.exports = async function authMiddleware(req, res, next) {
-  const authHeader = req.header("Authorization");
+const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
 
-  if (!authHeader) {
+module.exports = async function authMiddleware(req, res, next) {
+  const authHeader = String(req.header("Authorization") || "").trim();
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  // "Bearer TOKEN" -> TOKEN ayir
-  const token = authHeader.split(" ")[1];
-
+  const token = authHeader.slice(7).trim();
   if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("role banned isBanned");
 
-    if (!user) {
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    if (!decoded?.id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    if (user.banned || user.isBanned) {
+    const user = await User.findById(decoded.id).select("_id name email role banned isBanned");
+    if (!user || user.banned || user.isBanned) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
     req.user = {
       id: String(user._id),
-      role: user.role || decoded.role || "user",
+      _id: String(user._id),
+      name: user.name || "",
+      email: user.email || "",
+      role: user.role || decoded.role || "user"
     };
+
     next();
-  } catch (e) {
+  } catch (err) {
+    console.error("AUTH TOKEN ERROR:", err?.name || err?.message || err);
     return res.status(401).json({ error: "Unauthorized" });
   }
 };

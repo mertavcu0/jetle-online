@@ -346,6 +346,201 @@
       display: inline-flex;
       margin-bottom: 8px;
     }
+
+    .badge-pending {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fdba74;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      display: inline-flex;
+      margin-bottom: 8px;
+    }
+
+    .badge-approved {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #6ee7b7;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      display: inline-flex;
+      margin-bottom: 8px;
+    }
+
+    .badge-suspicious {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      display: inline-flex;
+      margin-bottom: 8px;
+    }
+
+    .toolbar-card,
+    .skeleton-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.08);
+      margin-bottom: 12px;
+    }
+
+    .toolbar-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-row .admin-actions {
+      flex-wrap: wrap;
+    }
+
+    .skeleton-line {
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%);
+      background-size: 400% 100%;
+      animation: shimmer 1.25s infinite;
+      margin-top: 10px;
+    }
+
+    .skeleton-line.short { width: 28%; }
+    .skeleton-line.medium { width: 52%; }
+    .skeleton-line.long { width: 78%; }
+
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: 0 0; }
+    }
+
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .admin-modal.open {
+      display: flex;
+    }
+
+    .admin-modal-card {
+      width: min(760px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 24px 60px rgba(15,23,42,0.18);
+      padding: 20px;
+    }
+
+    .admin-modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .admin-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .admin-modal-grid img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+    }
+
+    .toast-stack {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 120;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 32px));
+    }
+
+    .toast {
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .toast.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .toast.success {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.58);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 110;
+    }
+
+    .loading-overlay.open {
+      display: flex;
+    }
+
+    .loading-spinner {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 620px) {
+      .admin-modal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -358,6 +553,7 @@
           <li onclick="loadPage('users')">Kullanıcılar</li>
           <li onclick="loadPage('messages')">Mesajlar</li>
           <li onclick="loadPage('reports')">Raporlar</li>
+          <li onclick="loadPage('cars')">Araç Yönetimi</li>
           <li onclick="loadPage('notifications')">Bildirimler</li>
         </ul>
       </nav>
@@ -389,6 +585,14 @@
     </main>
   </div>
 
+  <div class="admin-modal" id="admin-modal" onclick="closeAdminModal(event)">
+    <div class="admin-modal-card" id="admin-modal-card"></div>
+  </div>
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner" aria-hidden="true"></div>
+  </div>
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const adminRaw = localStorage.getItem("admin");
@@ -401,12 +605,18 @@
     }
     const STATS_URL = "/api/admin/stats";
     const ANALYTICS_URL = "/api/admin/analytics";
+    let currentAdminPage = "listings";
+    let userSearchQuery = "";
+    let listingStatusFilter = "all";
+    let listingSelection = new Set();
+    let adminUsersCache = [];
+    let adminListingsCache = [];
 
     document.addEventListener("submit", (event) => {
       event.preventDefault();
     }, true);
 
-    if (!admin || !token) {
+    if (!admin || !token || admin.role !== "admin") {
       window.location.href = "/admin.html";
     }
 
@@ -445,8 +655,7 @@
     }
 
     function ensureAdminResponse(res, message = "API HATA") {
-      if (res.status === 401) {
-        console.warn("Admin yetkisi yok");
+      if (res.status === 401 || res.status === 403) {
         redirectToAdminLogin();
         throw new Error("Unauthorized");
       }
@@ -459,10 +668,107 @@
     }
 
     function setActiveMenu(type) {
-      const pages = ["listings", "users", "messages", "reports", "notifications"];
+      const pages = ["listings", "users", "messages", "reports", "cars", "notifications"];
       document.querySelectorAll(".menu li").forEach((item) => item.classList.remove("active"));
       const target = document.querySelectorAll(".menu li")[pages.indexOf(type)];
       if (target) target.classList.add("active");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function matchesListingFilter(item) {
+      if (listingStatusFilter === "pending") return item.status === "pending";
+      if (listingStatusFilter === "approved") return item.status === "approved";
+      if (listingStatusFilter === "suspicious") return Boolean(item.isSuspicious);
+      if (listingStatusFilter === "inactive") return item.isActive === false;
+      return true;
+    }
+
+    function setUserSearch(value) {
+      userSearchQuery = String(value || "");
+      if (currentAdminPage === "users") {
+        loadPage("users");
+      }
+    }
+
+    function setListingStatusFilter(value) {
+      listingStatusFilter = String(value || "all");
+      listingSelection = new Set();
+      if (currentAdminPage === "listings") {
+        loadPage("listings");
+      }
+    }
+
+    function renderListingBadgesMarkup(item) {
+      return `
+        ${item.status === "pending" ? '<span class="badge-pending">⏳ Onay Bekliyor</span>' : ''}
+        ${item.status === "approved" ? '<span class="badge-approved">Onaylı</span>' : ''}
+        ${item.status === "rejected" ? '<span class="badge-passive">Reddedildi</span>' : ''}
+        ${item.isSuspicious ? '<span class="badge-suspicious">Şüpheli</span>' : ''}
+        ${item.isFeatured ? '<span class="badge-boost">Vitrin</span>' : ''}
+        ${!item.isFeatured && item.isBoosted ? '<span class="badge-boost">Boost</span>' : ''}
+        ${item.isActive === false ? '<span class="badge-passive">Pasif</span>' : ''}
+      `;
+    }
+
+    function openAdminModal(html) {
+      const modal = document.getElementById("admin-modal");
+      const card = document.getElementById("admin-modal-card");
+      if (!modal || !card) return;
+      card.innerHTML = html;
+      modal.classList.add("open");
+    }
+
+    function closeAdminModal(event) {
+      const modal = document.getElementById("admin-modal");
+      const card = document.getElementById("admin-modal-card");
+      if (!modal || !card) return;
+      if (event && event.target && event.target !== modal) return;
+      modal.classList.remove("open");
+      card.innerHTML = "";
+    }
+
+    function setLoading(open) {
+      const overlay = document.getElementById("loading-overlay");
+      if (!overlay) return;
+      overlay.classList.toggle("open", Boolean(open));
+    }
+
+    function showToast(message, type = "success") {
+      const stack = document.getElementById("toast-stack");
+      if (!stack || !message) return;
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.textContent = String(message);
+      stack.appendChild(toast);
+      window.setTimeout(() => {
+        toast.remove();
+      }, 3200);
+    }
+
+    function renderLoadingSkeleton(title = "Yükleniyor") {
+      const container = contentContainer();
+      if (!container) return;
+      container.innerHTML = `
+        <h2>${title}</h2>
+        <div class="skeleton-card">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line long"></div>
+          <div class="skeleton-line medium"></div>
+        </div>
+      `;
     }
 
     function renderDefaultStats() {
@@ -470,10 +776,14 @@
       if (!box) return;
       box.innerHTML = `
         <div class="stats-grid">
-          <div class="stat-card">Toplam: 0</div>
-          <div class="stat-card">Aktif: 0</div>
-          <div class="stat-card">Vitrin: 0</div>
-          <div class="stat-card">Bugün: 0</div>
+          <div class="stat-card">Toplam Kullanıcı: 0</div>
+          <div class="stat-card">Toplam İlan: 0</div>
+          <div class="stat-card">Aktif İlan: 0</div>
+          <div class="stat-card">Şüpheli İlan: 0</div>
+          <div class="stat-card">Bugün Eklenen: 0</div>
+          <div class="stat-card">Toplam Mesaj: 0</div>
+          <div class="stat-card">Online Kullanıcı: 0</div>
+          <div class="stat-card">Aktif Socket: 0</div>
         </div>
       `;
     }
@@ -510,7 +820,6 @@
 
     async function loadStats() {
       try {
-        console.log("STATS FETCH URL", STATS_URL);
         const res = await authFetch(STATS_URL);
         ensureAdminResponse(res, "Stats API HATA");
         const data = await res.json();
@@ -519,10 +828,14 @@
 
         box.innerHTML = `
           <div class="stats-grid">
-            <div class="stat-card">Toplam: ${data.totalListings || data.total || 0}</div>
-            <div class="stat-card">Aktif: ${data.activeListings || data.active || 0}</div>
-            <div class="stat-card">Vitrin: ${data.featuredListings || data.featured || 0}</div>
-            <div class="stat-card">Bugün: ${data.todayListings || data.today || 0}</div>
+            <div class="stat-card">Toplam Kullanıcı: ${data.totalUsers || 0}</div>
+            <div class="stat-card">Toplam İlan: ${data.totalListings || data.total || 0}</div>
+            <div class="stat-card">Aktif İlan: ${data.activeListings || data.active || 0}</div>
+            <div class="stat-card">Şüpheli İlan: ${data.suspiciousListings || 0}</div>
+            <div class="stat-card">Bugün Eklenen: ${data.todayListings || data.today || 0}</div>
+            <div class="stat-card">Toplam Mesaj: ${data.totalMessages || 0}</div>
+            <div class="stat-card">Online Kullanıcı: ${data.onlineUsers || 0}</div>
+            <div class="stat-card">Aktif Socket: ${data.activeSockets || 0}</div>
           </div>
         `;
       } catch (err) {
@@ -536,7 +849,6 @@
 
     async function loadAnalytics() {
       try {
-        console.log("ANALYTICS FETCH URL", ANALYTICS_URL);
         const res = await authFetch(ANALYTICS_URL);
         ensureAdminResponse(res, "Analytics API HATA");
         const data = await res.json();
@@ -607,49 +919,75 @@
       const container = contentContainer();
       if (!container) return;
 
-      function renderListingBadges(item) {
-        return `
-          ${item.status === "pending" ? '<span class="badge-passive">⏳ Onay Bekliyor</span>' : ''}
-          ${item.status === "rejected" ? '<span class="badge-passive">Reddedildi</span>' : ''}
-          ${item.isFeatured ? '<span class="badge-boost">Vitrin</span>' : ''}
-          ${!item.isFeatured && item.isBoosted ? '<span class="badge-boost">Boost</span>' : ''}
-          ${item.isActive === false ? '<span class="badge-passive">Pasif</span>' : ''}
-        `;
-      }
-
       function renderListingActions(item) {
         if (item.status === "pending") {
           return `
+            <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
             <button type="button" onclick="approveListing('${item._id}')">Onayla</button>
             <button type="button" class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
+            <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
           `;
         }
 
         if (item.status === "approved") {
           return `
+            <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
             <button type="button" onclick="toggleListing('${item._id}')">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
             <button type="button" onclick="markSuspicious('${item._id}')">Şüpheli</button>
             <button type="button" onclick="boostListing('${item._id}')">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
             <button type="button" onclick="featureListing('${item._id}')">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
+            <button type="button" onclick="rejectListing('${item._id}')">Reddet</button>
             <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
           `;
         }
 
-        return `<button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>`;
+        return `
+          <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
+          <button type="button" onclick="approveListing('${item._id}')">Onayla</button>
+          <button type="button" class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
+          <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
+        `;
       }
 
-      const items = Array.isArray(data) ? data : [];
+      const items = (Array.isArray(data) ? data : []).filter(matchesListingFilter);
+      adminListingsCache = items;
       container.innerHTML = `
         <h2>İlanlar</h2>
+        <div class="toolbar-card">
+          <div class="toolbar-row">
+            <div>
+              <strong>Durum Filtresi</strong>
+              <div>İlan listesini duruma göre daraltın.</div>
+            </div>
+            <div class="admin-actions">
+              <button type="button" onclick="bulkApproveSelected()">Toplu Onayla</button>
+              <button type="button" class="danger" onclick="bulkRejectSelected()">Toplu Reddet</button>
+            </div>
+            <div class="admin-actions">
+            <select onchange="setListingStatusFilter(this.value)" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;">
+              <option value="all" ${listingStatusFilter === "all" ? "selected" : ""}>Tümü</option>
+              <option value="pending" ${listingStatusFilter === "pending" ? "selected" : ""}>Pending</option>
+              <option value="approved" ${listingStatusFilter === "approved" ? "selected" : ""}>Approved</option>
+              <option value="suspicious" ${listingStatusFilter === "suspicious" ? "selected" : ""}>Suspicious</option>
+              <option value="inactive" ${listingStatusFilter === "inactive" ? "selected" : ""}>Inactive</option>
+            </select>
+          </div>
+          </div>
+        </div>
         ${items.map(item => `
           <div class="admin-card">
             <div>
-              ${renderListingBadges(item)}
+              <label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <input type="checkbox" ${listingSelection.has(String(item._id)) ? "checked" : ""} onchange="toggleListingSelection('${item._id}', this.checked)" />
+                <span style="font-size:12px;color:#6b7280;">Seç</span>
+              </label>
+              ${renderListingBadgesMarkup(item)}
               <strong>${item.title || "İlan"}</strong>
               <div>${item.city || "Şehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
               <p>Görüntülenme: ${item.views || 0}</p>
             </div>
             <div class="admin-actions">
+              <button type="button" onclick="showListingDetail('${item._id}')">Önizle</button>
               ${renderListingActions(item)}
             </div>
           </div>
@@ -661,18 +999,91 @@
       const container = contentContainer();
       if (!container) return;
 
-      const users = Array.isArray(data) ? data : [];
+      const search = userSearchQuery.trim().toLocaleLowerCase("tr");
+      const users = (Array.isArray(data) ? data : []).filter((user) => {
+        if (!search) return true;
+        return [user.name, user.email, user.city]
+          .filter(Boolean)
+          .some((value) => String(value).toLocaleLowerCase("tr").includes(search));
+      });
+      adminUsersCache = Array.isArray(data) ? data : [];
       container.innerHTML = `
         <h2>Kullanıcılar</h2>
+        <div class="toolbar-card">
+          <div>
+            <strong>Kullanıcı Ara</strong>
+            <div>İsim, e-posta veya şehir ile filtreleyin.</div>
+          </div>
+          <div class="admin-actions" style="width:min(320px,100%);">
+            <input
+              type="search"
+              value="${escapeHtml(userSearchQuery)}"
+              oninput="setUserSearch(this.value)"
+              placeholder="Kullanıcı ara"
+              style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;"
+            />
+          </div>
+        </div>
         ${users.map(user => `
           <div class="admin-card">
             <div>
               <strong>${user.name || "Kullanıcı"}</strong>
               <div>${user.email || ""}</div>
             </div>
-            <button type="button" onclick="banUser('${user._id}')">${user.banned ? "Banlandı" : "Banla"}</button>
+            <div class="admin-actions">
+              <button type="button" onclick="showUserDetail('${user._id}')">Detay</button>
+              ${user.role === "admin"
+                ? '<button type="button" disabled style="opacity:.6;cursor:not-allowed;">Admin Korumalı</button>'
+                : `<button type="button" onclick="banUser('${user._id}')">${user.banned ? "Banı Kaldır" : "Banla"}</button>`}
+            </div>
           </div>
         `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
+      `;
+    }
+
+    function renderCars(data) {
+      const container = contentContainer();
+      if (!container) return;
+
+      const brands = Array.isArray(data) ? data : [];
+      container.innerHTML = `
+        <h2>Araç Yönetimi</h2>
+        <div class="admin-card">
+          <div>
+            <strong>Marka Listesi</strong>
+            <div>${brands.length ? brands.map((brand) => brand.name).join(", ") : "Kayıtlı marka yok."}</div>
+          </div>
+          <div class="admin-actions">
+            <button type="button">Marka Ekle</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div>
+            <strong>Seri Listesi</strong>
+            <div>${brands.length
+              ? brands.flatMap((brand) => (brand.series || []).map((series) => `${brand.name} / ${series.name}`)).slice(0, 12).join(", ") || "Kayıtlı seri yok."
+              : "Kayıtlı seri yok."}</div>
+          </div>
+          <div class="admin-actions">
+            <button type="button">Seri Ekle</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div>
+            <strong>Model Listesi</strong>
+            <div>${brands.length
+              ? brands.flatMap((brand) =>
+                  (brand.series || []).flatMap((series) =>
+                    (series.models || []).map((model) => `${brand.name} / ${series.name} / ${model.name}`)
+                  )
+                ).slice(0, 16).join(", ") || "Kayıtlı model yok."
+              : "Kayıtlı model yok."}</div>
+          </div>
+          <div class="admin-actions">
+            <button type="button">Model Ekle</button>
+          </div>
+        </div>
+        ${brands.length === 0 ? '<div class="empty">Araç verisi bulunamadı.</div>' : ""}
       `;
     }
 
@@ -739,11 +1150,13 @@
     }
 
     function loadPage(type) {
+      currentAdminPage = type;
       setActiveMenu(type);
       const container = contentContainer();
       if (!container) return;
 
       if (type === "listings") {
+        renderLoadingSkeleton("İlanlar");
         authFetch("/api/admin/listings")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
@@ -756,6 +1169,7 @@
       }
 
       if (type === "users") {
+        renderLoadingSkeleton("Kullanıcılar");
         authFetch("/api/admin/users")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
@@ -786,101 +1200,263 @@
           });
       }
 
+      if (type === "cars") {
+        authFetch("/api/admin/cars")
+          .then((res) => {
+            return ensureAdminResponse(res, "API HATA").json();
+          })
+          .then((data) => renderCars(data))
+          .catch((err) => {
+            console.error("CARS ERROR:", err);
+            container.innerHTML = `<h2>Araç Yönetimi</h2><div class="empty">Araç verisi bulunamadı.</div>`;
+          });
+      }
+
       if (type === "notifications") {
         loadNotifications();
       }
     }
 
     async function deleteListing(id) {
+      if (!window.confirm("Bu ilanı silmek istediğinize emin misiniz?")) {
+        return;
+      }
       try {
+        setLoading(true);
         const res = await authFetch("/api/admin/listings/" + id, { method: "DELETE" });
         ensureAdminResponse(res, "Delete failed");
+        showToast("İlan silindi.", "success");
       } catch (err) {
         console.error("DELETE ERROR:", err);
+        showToast("İlan silinemedi.", "error");
+      } finally {
+        setLoading(false);
       }
       loadPage("listings");
     }
 
+    function toggleListingSelection(id, checked) {
+      const key = String(id || "");
+      if (!key) return;
+      if (checked) {
+        listingSelection.add(key);
+      } else {
+        listingSelection.delete(key);
+      }
+    }
+
+    async function bulkApproveSelected() {
+      const ids = Array.from(listingSelection);
+      if (!ids.length) return;
+      setLoading(true);
+      for (const id of ids) {
+        try {
+          const res = await authFetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
+          ensureAdminResponse(res, "Approve failed");
+        } catch (err) {
+          console.error("BULK APPROVE ERROR:", err);
+        }
+      }
+      listingSelection = new Set();
+      setLoading(false);
+      showToast("Seçili ilanlar onaylandı.", "success");
+      loadPage("listings");
+      await loadNotifications();
+    }
+
+    async function bulkRejectSelected() {
+      const ids = Array.from(listingSelection);
+      if (!ids.length || !window.confirm("Seçili ilanları reddetmek istediğinize emin misiniz?")) return;
+      setLoading(true);
+      for (const id of ids) {
+        try {
+          const res = await authFetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" });
+          ensureAdminResponse(res, "Reject failed");
+        } catch (err) {
+          console.error("BULK REJECT ERROR:", err);
+        }
+      }
+      listingSelection = new Set();
+      setLoading(false);
+      showToast("Seçili ilanlar reddedildi.", "success");
+      loadPage("listings");
+      await loadNotifications();
+    }
+
+    function showListingDetail(id) {
+      const item = adminListingsCache.find((listing) => String(listing._id) === String(id));
+      if (!item) return;
+      const images = Array.isArray(item.images) ? item.images : [];
+      openAdminModal(`
+        <div class="admin-modal-head">
+          <div>
+            <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "İlan")}</h2>
+            <div style="color:#6b7280;">${escapeHtml(item.city || "")} ${item.price ? "- " + escapeHtml(number(item.price) + " TL") : ""}</div>
+          </div>
+          <button type="button" class="logout-btn" onclick="closeAdminModal()">Kapat</button>
+        </div>
+        <div style="margin-bottom:14px;">${renderListingBadgesMarkup(item)}</div>
+        <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "Açıklama yok")}</p>
+        <div class="admin-modal-grid">
+          ${(images.length ? images : [item.image]).filter(Boolean).map((src) => `
+            <img src="${escapeHtml(src)}" alt="İlan görseli" />
+          `).join("")}
+        </div>
+      `);
+    }
+
+    async function showUserDetail(id) {
+      try {
+        setLoading(true);
+        const res = await authFetch(`/api/admin/users/${id}`);
+        const data = await ensureAdminResponse(res, "User detail failed").json();
+        openAdminModal(`
+          <div class="admin-modal-head">
+            <div>
+              <h2 style="margin:0 0 6px;">${escapeHtml(data.user?.name || "Kullanıcı")}</h2>
+              <div style="color:#6b7280;">${escapeHtml(data.user?.email || "")}</div>
+            </div>
+            <button type="button" class="logout-btn" onclick="closeAdminModal()">Kapat</button>
+          </div>
+          <div class="admin-modal-grid">
+            <div class="toolbar-card"><strong>Rol</strong><div>${escapeHtml(data.user?.role || "user")}</div></div>
+            <div class="toolbar-card"><strong>Durum</strong><div>${data.banned ? "Banlı" : "Aktif"}</div></div>
+            <div class="toolbar-card"><strong>Toplam İlan</strong><div>${number(data.totalListings || 0)}</div></div>
+            <div class="toolbar-card"><strong>Aktif İlan</strong><div>${number(data.activeListings || 0)}</div></div>
+            <div class="toolbar-card"><strong>Favori Sayısı</strong><div>${number(data.favoriteCount || 0)}</div></div>
+            <div class="toolbar-card"><strong>Kayıt Tarihi</strong><div>${data.createdAt ? new Date(data.createdAt).toLocaleString("tr-TR") : "-"}</div></div>
+          </div>
+        `);
+      } catch (err) {
+        console.error("USER DETAIL ERROR:", err);
+        showToast("Kullanıcı detayı alınamadı.", "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function viewListingDetail(id) {
+      if (!id) return;
+      window.open(`/ilan-detay.html?id=${id}`, "_blank", "noopener");
+    }
+
     async function toggleListing(id) {
       try {
+        setLoading(true);
         const res = await authFetch(`/api/admin/listings/${id}/toggle`, { method: "PATCH" });
         ensureAdminResponse(res, "Toggle failed");
         loadPage("listings");
         await loadNotifications();
+        showToast("İlan durumu güncellendi.", "success");
       } catch (err) {
         console.error(err);
-        alert("İşlem başarısız");
+        showToast("İşlem başarısız.", "error");
+      } finally {
+        setLoading(false);
       }
     }
 
     async function markSuspicious(id) {
       try {
+        setLoading(true);
         const res = await authFetch("/api/admin/listings/" + id, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ isSuspicious: true })
         });
         ensureAdminResponse(res, "Suspicious failed");
+        showToast("İlan şüpheli olarak işaretlendi.", "success");
       } catch (err) {
         console.error("SUSPICIOUS ERROR:", err);
+        showToast("İşlem başarısız.", "error");
+      } finally {
+        setLoading(false);
       }
       loadPage("listings");
     }
 
     async function boostListing(id) {
       try {
+        setLoading(true);
         const res = await authFetch(`/api/admin/listings/${id}/boost`, { method: "PATCH" });
         ensureAdminResponse(res, "Boost failed");
         loadPage("listings");
         await loadNotifications();
+        showToast("İlan öne çıkarıldı.", "success");
       } catch (err) {
         console.error(err);
-        alert("Boost hatası");
+        showToast("Boost işlemi başarısız.", "error");
+      } finally {
+        setLoading(false);
       }
     }
 
     async function featureListing(id) {
       try {
+        setLoading(true);
         const res = await authFetch(`/api/admin/listings/${id}/feature`, { method: "PATCH" });
         ensureAdminResponse(res, "Feature failed");
         loadPage("listings");
         await loadNotifications();
+        showToast("İlan vitrine alındı.", "success");
       } catch (err) {
         console.error("FEATURE ERROR:", err);
+        showToast("Vitrin işlemi başarısız.", "error");
         loadPage("listings");
+      } finally {
+        setLoading(false);
       }
     }
 
     async function approveListing(id) {
       try {
+        setLoading(true);
         const res = await authFetch(`/api/admin/listings/${id}/approve`, { method: "PATCH" });
         ensureAdminResponse(res, "Approve failed");
         loadPage("listings");
         await loadNotifications();
+        showToast("İlan onaylandı.", "success");
       } catch (err) {
         console.error("APPROVE ERROR:", err);
+        showToast("İlan onaylanamadı.", "error");
         loadPage("listings");
+      } finally {
+        setLoading(false);
       }
     }
 
     function rejectListing(id) {
+      if (!window.confirm("Bu ilanı reddetmek istediğinize emin misiniz?")) {
+        return;
+      }
+      setLoading(true);
       authFetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
         .then((res) => {
           ensureAdminResponse(res, "Reject failed");
+          showToast("İlan reddedildi.", "success");
           loadPage("listings");
         })
         .catch((err) => {
           console.error("REJECT ERROR:", err);
+          showToast("İlan reddedilemedi.", "error");
           loadPage("listings");
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
 
     async function banUser(id) {
       try {
+        setLoading(true);
         const res = await authFetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
-        ensureAdminResponse(res, "Ban failed");
+        const data = await ensureAdminResponse(res, "Ban failed").json();
+        showToast(data.banned ? "Kullanıcı banlandı." : "Kullanıcı banı kaldırıldı.", "success");
       } catch (err) {
         console.error("BAN ERROR:", err);
+        showToast("Kullanıcı işlemi başarısız.", "error");
+      } finally {
+        setLoading(false);
       }
       loadPage("users");
     }

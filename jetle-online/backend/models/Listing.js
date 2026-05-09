@@ -111,4 +111,7 @@ const ListingSchema = new mongoose.Schema({
   },
 });
 
+ListingSchema.index({ status: 1, isDeleted: 1 });
+ListingSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Listing", ListingSchema);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -419,6 +419,17 @@
       background: #fff;
     }
 
+    .composer-status {
+      margin-top: 10px;
+      display: none;
+      font-size: 13px;
+      color: #b91c1c;
+    }
+
+    .composer-status.show {
+      display: block;
+    }
+
     .composer-form {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -728,7 +739,7 @@
           </div>
 
           <div class="chat-feed" id="chatFeed">
-            <div class="chat-empty">Sağlıklı bir pazarlık için konuşmanızı bu alandan sürdürebilirsiniz.</div>
+            <div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>
           </div>
 
           <div class="chat-composer">
@@ -737,6 +748,7 @@
               <button class="composer-cancel" type="button" id="cancelEditBtn">İptal</button>
               <button class="composer-send" type="submit" id="sendMessageBtn">Gönder</button>
             </form>
+            <div class="composer-status" id="composerStatus"></div>
           </div>
         </section>
 
@@ -752,16 +764,24 @@
   </div>
 
   <script src="/auth-global.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    const STORAGE_KEY = "jetleMarketplaceChats";
     const params = new URLSearchParams(window.location.search);
-    const listingIdFromUrl = params.get("listingId") || "";
+    const listingIdFromUrl = params.get("listingId") || params.get("id") || "";
     const state = {
       user: null,
       conversations: [],
       activeConversationId: null,
       activeListing: null,
-      editingMessageId: null
+      editingMessageId: null,
+      socket: null,
+      joinedConversationId: "",
+      onlineUserIds: new Set(),
+      typingUsers: new Map(),
+      typingStopTimer: null,
+      typingActiveConversationId: "",
+      loadingOlderMessages: false,
+      lastRenderedFeedKey: ""
     };
 
     function escapeHtml(value) {
@@ -776,9 +796,25 @@
     function getCurrentUser() {
       try {
         return JSON.parse(localStorage.getItem("user") || "{}");
-      } catch (err) {
+      } catch (_) {
         return {};
       }
+    }
+
+    function getCurrentUserId() {
+      return String(state.user?._id || state.user?.id || "");
+    }
+
+    function getCurrentUserEmail() {
+      return String(state.user?.email || "");
+    }
+
+    function getCurrentToken() {
+      return String(localStorage.getItem("token") || "");
+    }
+
+    function hasAuthenticatedSession() {
+      return Boolean(getCurrentToken() && getCurrentUserId() && getCurrentUserEmail());
     }
 
     function getUserKey(user) {
@@ -811,28 +847,62 @@
       return `/${String(src).replace(/^\/+/, "")}`;
     }
 
-    function loadChatStore() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (err) {
-        console.warn("CHAT STORAGE READ FAILED", err);
-        return [];
-      }
-    }
-
-    function saveChatStore(conversations) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
-    }
-
     function getPendingListingById(id) {
       try {
         const stored = JSON.parse(localStorage.getItem("jetleLocalPendingListings") || "[]");
         if (!Array.isArray(stored)) return null;
         return stored.find((item) => String(item?._id || item?.id || "") === String(id)) || null;
-      } catch (err) {
+      } catch (_) {
         return null;
       }
+    }
+
+    function setComposerStatus(message, isError = true) {
+      const statusEl = document.getElementById("composerStatus");
+      if (!statusEl) return;
+      statusEl.textContent = message || "";
+      statusEl.style.color = isError ? "#b91c1c" : "#166534";
+      statusEl.classList.toggle("show", Boolean(message));
+    }
+
+    function normalizeListingOwner(listing) {
+      const owner = listing?.user || {};
+      return {
+        receiverId: String(
+          owner?._id ||
+          owner?.id ||
+          listing?.sellerId ||
+          listing?.userId ||
+          listing?.ownerId ||
+          ""
+        ),
+        receiverEmail: String(
+          owner?.email ||
+          listing?.userEmail ||
+          listing?.email ||
+          listing?.ownerEmail ||
+          listing?.sellerEmail ||
+          ""
+        ),
+        receiverName: owner?.name || owner?.email || "Satıcı"
+      };
+    }
+
+    function getResolvedReceiverEmail() {
+      return String(
+        state.activeListing?.user?.email ||
+        state.activeListing?.userEmail ||
+        state.activeListing?.email ||
+        ""
+      ).trim().toLowerCase();
+    }
+
+    function getConversationReceiver(conversation) {
+      const listingOwner = normalizeListingOwner(state.activeListing || {});
+      return {
+        receiverId: String(conversation?.otherUserId || listingOwner.receiverId || ""),
+        receiverEmail: String(conversation?.otherUserEmail || listingOwner.receiverEmail || "")
+      };
     }
 
     async function fetchListingById(id) {
@@ -848,33 +918,476 @@
       return getPendingListingById(id);
     }
 
-    function buildConversationId(listingId, otherKey) {
-      return `listing:${listingId || "unknown"}:user:${otherKey || "unknown"}`;
+    function buildConversationId(listingId, firstUserId, secondUserId) {
+      const sorted = [String(firstUserId || ""), String(secondUserId || "")].sort();
+      return `listing:${String(listingId || "")}:users:${sorted.join("__")}`;
     }
 
-    function normalizeConversation(conv) {
+    function extractListingIdFromConversationId(value) {
+      const raw = String(value || "");
+      const match = raw.match(/^listing:([a-fA-F0-9]{24})(?::|$)/);
+      return match ? match[1] : "";
+    }
+
+    function isBackendConversationId(value) {
+      const raw = String(value || "");
+      return /^listing:[a-fA-F0-9]{24}:users:[a-fA-F0-9]{24}__[a-fA-F0-9]{24}$/.test(raw);
+    }
+
+    function getConversationRequestPath(conversation) {
+      if (!conversation) return "";
+
+      const currentUserId = getCurrentUserId();
+      const listingId = String(
+        conversation.listingId ||
+        extractListingIdFromConversationId(conversation.id) ||
+        ""
+      ).trim();
+
+      if (!listingId) return "";
+
+      if (isBackendConversationId(conversation.id)) {
+        return withCurrentUserParams(`/api/messages/${encodeURIComponent(conversation.id)}`);
+      }
+
+      const otherUserId = String(conversation.otherUserId || "").trim();
+      if (
+        /^[a-fA-F0-9]{24}$/.test(listingId) &&
+        /^[a-fA-F0-9]{24}$/.test(currentUserId) &&
+        /^[a-fA-F0-9]{24}$/.test(otherUserId)
+      ) {
+        const normalizedId = buildConversationId(listingId, currentUserId, otherUserId);
+        return withCurrentUserParams(`/api/messages/${encodeURIComponent(normalizedId)}`);
+      }
+
+      return "";
+    }
+
+    function buildListingUrl(listingId) {
+      return listingId ? `/listing-detail.html?id=${encodeURIComponent(listingId)}` : "/index.html";
+    }
+
+    function getApiHeaders(includeJson = false) {
+      const headers = {};
+      const token = getCurrentToken();
+      if (token) headers.Authorization = `Bearer ${token}`;
+      if (includeJson) headers["Content-Type"] = "application/json";
+      return headers;
+    }
+
+    function withCurrentUserParams(path, extraParams = {}) {
+      const url = new URL(path, window.location.origin);
+      Object.entries(extraParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          url.searchParams.set(key, value);
+        }
+      });
+      return url.pathname + url.search;
+    }
+
+    async function apiFetch(path, options = {}) {
+      const requestOptions = {
+        ...options,
+        headers: {
+          ...getApiHeaders(Boolean(options.body)),
+          ...(options.headers || {})
+        }
+      };
+
+      const res = await fetch(path, requestOptions);
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = null;
+      }
+
+      if (!res.ok) {
+        const error = new Error(data?.error || "request_failed");
+        error.status = res.status;
+        error.payload = data;
+        throw error;
+      }
+
+      return data;
+    }
+
+    function normalizeMessage(message) {
       return {
-        id: conv.id,
-        listingId: conv.listingId || "",
-        otherUserKey: conv.otherUserKey || "",
-        otherUserName: conv.otherUserName || "Satıcı",
-        listingTitle: conv.listingTitle || "İlan",
-        listingImage: conv.listingImage || "",
-        listingPrice: conv.listingPrice || "",
-        listingUrl: conv.listingUrl || (conv.listingId ? `/listing.html?id=${encodeURIComponent(conv.listingId)}` : "/index.html"),
-        listingCity: conv.listingCity || "",
-        unreadCount: Number(conv.unreadCount || 0),
-        messages: Array.isArray(conv.messages) ? conv.messages : [],
-        updatedAt: conv.updatedAt || conv.createdAt || new Date().toISOString()
+        id: String(message?.id || message?._id || ""),
+        senderKey: String(
+          message?.senderId ||
+          message?.sender?._id ||
+          message?.sender?.id ||
+          message?.senderEmail ||
+          ""
+        ),
+        senderEmail: String(
+          message?.sender?.email ||
+          message?.senderEmail ||
+          ""
+        ).trim().toLowerCase(),
+        receiverEmail: String(
+          message?.receiver?.email ||
+          message?.receiverEmail ||
+          ""
+        ).trim().toLowerCase(),
+        senderName: message?.sender?.name || message?.senderName || message?.senderEmail || "Kullanıcı",
+        text: message?.text || "",
+        createdAt: message?.createdAt || new Date().toISOString(),
+        updatedAt: message?.updatedAt || message?.createdAt || new Date().toISOString(),
+        edited: Boolean(message?.edited)
       };
     }
 
+    function normalizeConversation(conv) {
+      const listingId = String(conv?.listingId || conv?.listing?.id || conv?.listing?._id || "");
+      const otherUserId = String(conv?.otherUserId || conv?.otherUser?.id || conv?.otherUser?._id || "");
+      const otherUserEmail = String(conv?.otherUserEmail || conv?.otherUser?.email || "");
+
+      return {
+        id: conv?.id || buildConversationId(listingId, getCurrentUserId(), otherUserId || otherUserEmail),
+        _id: conv?._id || "",
+        conversationId: conv?.conversationId || conv?.id || conv?._id || "",
+        listingId,
+        otherUserId,
+        otherUserEmail,
+        otherUserName: conv?.otherUserName || conv?.otherUser?.name || conv?.otherUser?.email || "Satıcı",
+        listingTitle: conv?.listingTitle || conv?.listing?.title || "İlan",
+        listingImage: conv?.listingImage || conv?.listing?.image || "",
+        listingPrice: conv?.listingPrice || conv?.listing?.price || "",
+        listingCity: conv?.listingCity || conv?.listing?.city || "",
+        listingUrl: conv?.listingUrl || buildListingUrl(listingId),
+        unreadCount: Number(conv?.unreadCount || 0),
+        messages: Array.isArray(conv?.messages) ? conv.messages.map(normalizeMessage) : [],
+        lastMessage: conv?.lastMessage ? normalizeMessage(conv.lastMessage) : null,
+        updatedAt: conv?.updatedAt || conv?.lastMessage?.updatedAt || conv?.lastMessage?.createdAt || new Date().toISOString(),
+        isPlaceholder: Boolean(conv?.isPlaceholder),
+        hasMoreMessages: Boolean(conv?.hasMoreMessages),
+        nextBefore: conv?.nextBefore || null
+      };
+    }
+
+    function getConversationStableKey(conversation) {
+      if (!conversation) return "";
+      return [
+        String(conversation.listingId || ""),
+        String(conversation.otherUserId || ""),
+        String(conversation.otherUserEmail || "")
+      ].join("|");
+    }
+
+    function getRealtimeConversationId(conversation) {
+      if (!conversation) return "";
+      if (conversation.conversationId && isBackendConversationId(conversation.conversationId)) {
+        return conversation.conversationId;
+      }
+      if (conversation.id && isBackendConversationId(conversation.id)) {
+        return conversation.id;
+      }
+
+      const listingId = String(conversation.listingId || "").trim();
+      const otherUserId = String(conversation.otherUserId || "").trim();
+      const currentUserId = String(getCurrentUserId() || "").trim();
+
+      if (
+        /^[a-fA-F0-9]{24}$/.test(listingId) &&
+        /^[a-fA-F0-9]{24}$/.test(otherUserId) &&
+        /^[a-fA-F0-9]{24}$/.test(currentUserId)
+      ) {
+        return buildConversationId(listingId, currentUserId, otherUserId);
+      }
+
+      return "";
+    }
+
+    function isOtherUserOnline(conversation) {
+      const otherUserId = String(conversation?.otherUserId || "").trim();
+      return Boolean(otherUserId && state.onlineUserIds.has(otherUserId));
+    }
+
+    function getTypingIndicator(conversation) {
+      const roomId = getRealtimeConversationId(conversation);
+      if (!roomId) return "";
+      const typingUser = state.typingUsers.get(roomId);
+      if (!typingUser) return "";
+      return `${typingUser.userName || "Kullanıcı"} yazıyor...`;
+    }
+
+    function stopTyping(roomId = state.typingActiveConversationId) {
+      if (state.typingStopTimer) {
+        clearTimeout(state.typingStopTimer);
+        state.typingStopTimer = null;
+      }
+
+      if (!state.socket || !roomId || state.typingActiveConversationId !== roomId) {
+        return;
+      }
+
+      state.socket.emit("typing_stop", { conversationId: roomId });
+      state.typingActiveConversationId = "";
+    }
+
+    function handleTypingInput() {
+      if (!state.socket?.connected) return;
+      const activeConversation = getActiveConversation();
+      const roomId = getRealtimeConversationId(activeConversation);
+      if (!roomId) return;
+
+      const input = document.getElementById("messageInput");
+      const text = String(input?.value || "").trim();
+
+      if (!text) {
+        stopTyping(roomId);
+        return;
+      }
+
+      if (state.typingActiveConversationId !== roomId) {
+        state.socket.emit("typing_start", { conversationId: roomId });
+        state.typingActiveConversationId = roomId;
+      }
+
+      if (state.typingStopTimer) {
+        clearTimeout(state.typingStopTimer);
+      }
+
+      state.typingStopTimer = setTimeout(() => {
+        stopTyping(roomId);
+      }, 1200);
+    }
+
+    function updateSocketConversationSubscription() {
+      const socket = state.socket;
+      if (!socket?.connected) return;
+
+      const nextConversationId = getRealtimeConversationId(getActiveConversation());
+      const currentConversationId = state.joinedConversationId;
+
+      if (currentConversationId && currentConversationId !== nextConversationId) {
+        socket.emit("leave_conversation", currentConversationId);
+        state.typingUsers.delete(currentConversationId);
+        if (state.typingActiveConversationId === currentConversationId) {
+          stopTyping(currentConversationId);
+        }
+        state.joinedConversationId = "";
+      }
+
+      if (!nextConversationId || nextConversationId === currentConversationId) {
+        return;
+      }
+
+      socket.emit("join_conversation", nextConversationId, (response) => {
+        if (response?.success) {
+          state.joinedConversationId = nextConversationId;
+        }
+      });
+    }
+
+    async function handleIncomingMessage(payload) {
+      const rawMessage = payload?.message || payload;
+      const incomingMessage = normalizeMessage(rawMessage);
+      const roomId = String(payload?.conversationId || rawMessage?.conversationId || "").trim();
+      let conversation = state.conversations.find((item) =>
+        item.id === roomId ||
+        item.conversationId === roomId ||
+        getRealtimeConversationId(item) === roomId
+      );
+
+      if (!conversation) {
+        await loadConversations();
+        conversation = state.conversations.find((item) =>
+          item.id === roomId ||
+          item.conversationId === roomId ||
+          getRealtimeConversationId(item) === roomId
+        );
+      }
+
+      if (!conversation) return;
+
+      conversation.messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+      if (!conversation.messages.some((item) => item.id === incomingMessage.id)) {
+        conversation.messages.push(incomingMessage);
+      }
+
+      conversation.lastMessage = incomingMessage;
+      conversation.updatedAt = incomingMessage.updatedAt || incomingMessage.createdAt;
+
+      const currentUserEmail = String(getCurrentUserEmail() || "").trim().toLowerCase();
+      const currentUserId = String(getCurrentUserId() || "").trim();
+      const isMine =
+        String(incomingMessage.senderKey || "") === currentUserId ||
+        String(incomingMessage.senderEmail || "") === currentUserEmail;
+
+      if (conversation.id !== state.activeConversationId && !isMine) {
+        conversation.unreadCount = Number(conversation.unreadCount || 0) + 1;
+      } else if (conversation.id === state.activeConversationId) {
+        conversation.unreadCount = 0;
+        if (!isMine && state.socket?.connected) {
+          state.socket.emit("seen", { conversationId: roomId });
+        }
+      }
+
+      syncConversations(state.conversations);
+      renderAll();
+    }
+
+    function connectSocket() {
+      if (!hasAuthenticatedSession() || state.socket || typeof io !== "function") {
+        return;
+      }
+
+      const socket = io({
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        auth: {
+          token: getCurrentToken()
+        }
+      });
+
+      state.socket = socket;
+
+      socket.on("connect", () => {
+        updateSocketConversationSubscription();
+      });
+
+      socket.on("presence_snapshot", ({ userIds = [] } = {}) => {
+        state.onlineUserIds = new Set(userIds.map((id) => String(id)));
+        renderAll();
+      });
+
+      socket.on("user_online", ({ userId } = {}) => {
+        if (!userId) return;
+        state.onlineUserIds.add(String(userId));
+        renderAll();
+      });
+
+      socket.on("user_offline", ({ userId } = {}) => {
+        if (!userId) return;
+        state.onlineUserIds.delete(String(userId));
+        renderAll();
+      });
+
+      socket.on("typing_start", ({ conversationId, userId, userName } = {}) => {
+        const roomId = String(conversationId || "").trim();
+        if (!roomId || String(userId || "") === String(getCurrentUserId() || "")) return;
+        state.typingUsers.set(roomId, {
+          userId: String(userId || ""),
+          userName: String(userName || "Kullanıcı")
+        });
+        renderAll();
+      });
+
+      socket.on("typing_stop", ({ conversationId, userId } = {}) => {
+        const roomId = String(conversationId || "").trim();
+        if (!roomId || String(userId || "") === String(getCurrentUserId() || "")) return;
+        state.typingUsers.delete(roomId);
+        renderAll();
+      });
+
+      socket.on("new_message", (message) => {
+        handleIncomingMessage(message).catch((err) => {
+          console.error("SOCKET MESSAGE HANDLE ERROR", err);
+        });
+      });
+
+      socket.on("messages_seen", ({ conversationId, seenByUserId } = {}) => {
+        const roomId = String(conversationId || "").trim();
+        if (!roomId) return;
+
+        const conversation = state.conversations.find((item) =>
+          item.id === roomId ||
+          item.conversationId === roomId ||
+          getRealtimeConversationId(item) === roomId
+        );
+        if (!conversation?.messages?.length) return;
+
+        const currentUserId = String(getCurrentUserId() || "").trim();
+        if (String(seenByUserId || "") === currentUserId) return;
+
+        conversation.messages = conversation.messages.map((message) => {
+          const mine = String(message.senderKey || "") === currentUserId;
+          return mine ? { ...message, isRead: true } : message;
+        });
+        renderMessages();
+      });
+
+      socket.on("disconnect", () => {
+        state.joinedConversationId = "";
+        state.typingUsers.clear();
+        state.onlineUserIds = new Set();
+        renderAll();
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("SOCKET CONNECT ERROR", err);
+      });
+    }
+
     function syncConversations(conversations) {
-      state.conversations = conversations.map(normalizeConversation).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-      saveChatStore(state.conversations);
+      const previousActiveConversation = getActiveConversation();
+      const previousActiveKey = getConversationStableKey(previousActiveConversation);
+      const previousById = new Map(state.conversations.map((item) => [item.id, item]));
+      const previousByStableKey = new Map(
+        state.conversations.map((item) => [getConversationStableKey(item), item])
+      );
+
+      state.conversations = conversations
+        .map(normalizeConversation)
+        .map((item) => {
+          const previous =
+            previousById.get(item.id) ||
+            previousByStableKey.get(getConversationStableKey(item));
+
+          if (!previous) return item;
+
+          return {
+            ...previous,
+            ...item,
+            messages: item.messages.length ? item.messages : previous.messages,
+            lastMessage: item.lastMessage || previous.lastMessage
+          };
+        })
+        .filter((item, index, arr) => arr.findIndex((candidate) => candidate.id === item.id) === index)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+      if (state.activeConversationId && !state.conversations.some((item) => item.id === state.activeConversationId) && previousActiveKey) {
+        const fallbackActive = state.conversations.find((item) => getConversationStableKey(item) === previousActiveKey);
+        if (fallbackActive) {
+          state.activeConversationId = fallbackActive.id;
+        }
+      }
+
       if (!state.activeConversationId && state.conversations.length) {
         state.activeConversationId = state.conversations[0].id;
       }
+    }
+
+    function upsertConversation(conversation) {
+      const normalized = normalizeConversation(conversation);
+      const index = state.conversations.findIndex((item) => item.id === normalized.id);
+
+      if (index === -1) {
+        state.conversations.unshift(normalized);
+      } else {
+        state.conversations[index] = {
+          ...state.conversations[index],
+          ...normalized,
+          messages: normalized.messages.length ? normalized.messages : state.conversations[index].messages
+        };
+      }
+
+      syncConversations(state.conversations);
+    }
+
+    async function loadConversations() {
+      const data = await apiFetch(withCurrentUserParams("/api/messages/conversations"));
+      const conversations = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.conversations)
+          ? data.conversations
+          : [];
+      syncConversations(conversations);
     }
 
     async function ensureConversationFromListing() {
@@ -884,45 +1397,123 @@
       if (!listing) return;
 
       state.activeListing = listing;
+      const owner = normalizeListingOwner(listing);
+      if (!owner.receiverId && !owner.receiverEmail) return;
 
-      const owner = listing.user || {};
-      const otherUserKey = String(owner._id || owner.id || owner.email || `seller-${listingIdFromUrl}`);
-      const conversationId = buildConversationId(listingIdFromUrl, otherUserKey);
-      const existing = loadChatStore();
-      const found = existing.find((item) => item.id === conversationId);
+      const receiverIdentity = owner.receiverId || owner.receiverEmail || `seller-${listingIdFromUrl}`;
+      const conversationId = buildConversationId(listingIdFromUrl, getCurrentUserId(), receiverIdentity);
+      const existing = state.conversations.find((item) => item.id === conversationId);
 
-      if (!found) {
-        existing.unshift({
+      if (!existing) {
+        upsertConversation({
           id: conversationId,
           listingId: listingIdFromUrl,
-          otherUserKey,
-          otherUserName: owner.name || owner.email || "Satıcı",
+          otherUserId: owner.receiverId,
+          otherUserEmail: owner.receiverEmail,
+          otherUserName: owner.receiverName,
           listingTitle: listing.title || "İlan",
           listingImage: relativeImage(listing),
           listingPrice: listing.price || "",
-          listingUrl: `/listing.html?id=${encodeURIComponent(listingIdFromUrl)}`,
           listingCity: listing.city || "",
+          listingUrl: buildListingUrl(listingIdFromUrl),
           unreadCount: 0,
           messages: [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
+          isPlaceholder: true
         });
-      } else {
-        found.listingTitle = listing.title || found.listingTitle;
-        found.listingImage = relativeImage(listing);
-        found.listingPrice = listing.price || found.listingPrice;
-        found.listingCity = listing.city || found.listingCity;
-        found.listingUrl = `/listing.html?id=${encodeURIComponent(listingIdFromUrl)}`;
-        found.otherUserName = owner.name || owner.email || found.otherUserName;
-        found.otherUserKey = otherUserKey || found.otherUserKey;
       }
 
-      syncConversations(existing);
       state.activeConversationId = conversationId;
+      await loadConversationMessages(conversationId);
     }
 
     function getActiveConversation() {
       return state.conversations.find((item) => item.id === state.activeConversationId) || null;
+    }
+
+    async function loadConversationMessages(conversationId, options = {}) {
+      const conversation = state.conversations.find((item) =>
+        item.id === conversationId ||
+        item._id === conversationId ||
+        item.conversationId === conversationId
+      );
+      if (!conversation) return;
+      const appendOlder = Boolean(options.appendOlder);
+      const before = options.before || conversation.nextBefore || null;
+
+      try {
+        const requestPath = getConversationRequestPath(conversation);
+        if (!requestPath) {
+          const activeConversation = getActiveConversation();
+          if (activeConversation && !activeConversation.messages?.length && activeConversation.lastMessage) {
+            activeConversation.messages = [activeConversation.lastMessage];
+            renderMessages();
+            return;
+          }
+          setComposerStatus("Konuşma bilgisi okunamadı.");
+          return;
+        }
+
+        const requestUrl = new URL(requestPath, window.location.origin);
+        requestUrl.searchParams.set("limit", String(options.limit || 30));
+        if (before) {
+          requestUrl.searchParams.set("before", before);
+        }
+
+        const feed = document.getElementById("chatFeed");
+        const previousHeight = appendOlder && feed ? feed.scrollHeight : 0;
+        const previousTop = appendOlder && feed ? feed.scrollTop : 0;
+        const data = await apiFetch(requestUrl.pathname + requestUrl.search);
+        const normalizedMessages = Array.isArray(data?.messages)
+          ? data.messages.map(normalizeMessage)
+          : [];
+        const mergedMessages = appendOlder
+          ? [...normalizedMessages, ...(Array.isArray(conversation.messages) ? conversation.messages : [])]
+          : normalizedMessages;
+        const uniqueMessages = mergedMessages.filter((item, index, arr) =>
+          arr.findIndex((candidate) => candidate.id === item.id) === index
+        );
+        upsertConversation({
+          ...conversation,
+          id: data?.id || conversation.id,
+          listingId: data?.listing?.id || conversation.listingId,
+          listingTitle: data?.listing?.title || conversation.listingTitle,
+          listingImage: data?.listing?.image || conversation.listingImage,
+          listingPrice: data?.listing?.price || conversation.listingPrice,
+          listingCity: data?.listing?.city || conversation.listingCity,
+          otherUserId: data?.otherUser?.id || conversation.otherUserId,
+          otherUserEmail: data?.otherUser?.email || conversation.otherUserEmail,
+          otherUserName: data?.otherUser?.name || conversation.otherUserName,
+          unreadCount: 0,
+          messages: uniqueMessages,
+          updatedAt: normalizedMessages.length
+            ? normalizedMessages[normalizedMessages.length - 1].updatedAt || normalizedMessages[normalizedMessages.length - 1].createdAt
+            : conversation.updatedAt,
+          isPlaceholder: false,
+          hasMoreMessages: Boolean(data?.pageInfo?.hasMore),
+          nextBefore: data?.pageInfo?.nextBefore || null
+        });
+        const activeConversation = getActiveConversation();
+        if (activeConversation) {
+          activeConversation.messages = uniqueMessages;
+          activeConversation.hasMoreMessages = Boolean(data?.pageInfo?.hasMore);
+          activeConversation.nextBefore = data?.pageInfo?.nextBefore || null;
+          renderMessages();
+          if (appendOlder && feed) {
+            const nextHeight = feed.scrollHeight;
+            feed.scrollTop = Math.max(0, nextHeight - previousHeight + previousTop);
+          }
+          if (state.socket?.connected) {
+            state.socket.emit("seen", {
+              conversationId: getRealtimeConversationId(activeConversation)
+            });
+          }
+        }
+      } catch (err) {
+        if (err.status !== 404) {
+          console.warn("CONVERSATION LOAD FAILED", err);
+        }
+      }
     }
 
     function renderConversationList() {
@@ -930,12 +1521,13 @@
       if (!list) return;
 
       if (!state.conversations.length) {
-        list.innerHTML = `<div class="empty-panel">Henüz konuşmanız yok. Bir ilandan mesaj başlattığınızda burada görünecek.</div>`;
+        list.innerHTML = `<div class="empty-panel">Henüz mesaj yok. Konuşmayı başlatın.</div>`;
         return;
       }
 
       list.innerHTML = state.conversations.map((conv) => {
-        const lastMessage = conv.messages[conv.messages.length - 1];
+        const lastMessage = conv.lastMessage || conv.messages[conv.messages.length - 1];
+        const isOnline = isOtherUserOnline(conv);
         return `
           <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" onclick="selectConversation('${escapeHtml(conv.id)}')">
             <div class="conversation-top">
@@ -945,7 +1537,7 @@
             <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
             <div class="conversation-bottom">
               <span class="conversation-listing">${escapeHtml(conv.listingTitle)}</span>
-              <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : ""}</span>
+              <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">•</span>` : ""}</span>
             </div>
           </button>
         `;
@@ -966,12 +1558,14 @@
         return;
       }
 
+      const typingIndicator = getTypingIndicator(conversation);
+      const presenceLabel = typingIndicator || (isOtherUserOnline(conversation) ? "Çevrimiçi" : "Çevrimdışı");
       header.innerHTML = `
         <div class="chat-header-main">
           <img class="chat-listing-thumb" src="${escapeHtml(conversation.listingImage || "https://picsum.photos/120/120")}" alt="${escapeHtml(conversation.listingTitle)}">
           <div class="chat-header-copy">
             <h2>${escapeHtml(conversation.otherUserName)}</h2>
-            <p>${escapeHtml(conversation.listingTitle)}</p>
+            <p>${escapeHtml(conversation.listingTitle)}${presenceLabel ? ` • ${escapeHtml(presenceLabel)}` : ""}</p>
           </div>
         </div>
         <div class="chat-header-actions">
@@ -984,26 +1578,43 @@
       const feed = document.getElementById("chatFeed");
       if (!feed) return;
 
+      const messages = conversation?.messages || [];
+      const feedKey = [
+        String(conversation?.id || ""),
+        messages.map((msg) => `${msg.id}:${msg.updatedAt}:${msg.isRead}:${msg.edited}`).join("|")
+      ].join("::");
+
       if (!conversation) {
-        feed.innerHTML = `<div class="chat-empty">Bir konuşma seçin ya da ilan sayfasından yeni bir mesaj başlatın.</div>`;
+        state.lastRenderedFeedKey = "empty";
+        feed.innerHTML = `<div class="chat-empty">Henüz mesaj yok. Konuşmayı başlatın.</div>`;
         return;
       }
 
-      if (!conversation.messages.length) {
+      if (!messages.length) {
+        state.lastRenderedFeedKey = `${conversation.id || ""}::empty`;
         feed.innerHTML = `<div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>`;
         return;
       }
 
-      const userKey = getUserKey(state.user);
-      feed.innerHTML = conversation.messages.map((msg) => {
-        const mine = String(msg.senderKey) === String(userKey);
+      if (state.lastRenderedFeedKey === feedKey) {
+        return;
+      }
+      state.lastRenderedFeedKey = feedKey;
+
+      const userKey = getCurrentUserId();
+      const userEmail = String(getCurrentUserEmail() || "").trim().toLowerCase();
+      feed.innerHTML = messages.map((msg) => {
+        const mine =
+          String(msg.senderKey) === String(userKey) ||
+          (msg.senderEmail && msg.senderEmail === userEmail) ||
+          (!msg.senderEmail && String(msg.senderKey).toLowerCase() === userEmail);
         return `
           <div class="message-row ${mine ? "mine" : "theirs"}">
             <div class="message-bubble">${escapeHtml(msg.text)}</div>
-            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}</div>
+            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}${mine && msg.isRead ? " • Görüldü" : ""}</div>
             ${mine ? `
               <div class="message-tools">
-                ${msg.editedAt ? `<span class="edited-badge">düzenlendi</span>` : ""}
+                ${msg.edited ? `<span class="edited-badge">düzenlendi</span>` : ""}
                 <button class="message-tool" type="button" onclick="startEditMessage('${escapeHtml(msg.id)}')">Düzenle</button>
                 <button class="message-tool" type="button" onclick="deleteMessage('${escapeHtml(msg.id)}')">Sil</button>
               </div>
@@ -1013,6 +1624,29 @@
       }).join("");
 
       feed.scrollTop = feed.scrollHeight;
+    }
+
+    function renderMessages() {
+      renderChatFeed(getActiveConversation());
+    }
+
+    async function handleChatFeedScroll() {
+      const feed = document.getElementById("chatFeed");
+      const activeConversation = getActiveConversation();
+      if (!feed || !activeConversation || state.loadingOlderMessages) return;
+      if (feed.scrollTop > 80) return;
+      if (!activeConversation.hasMoreMessages || !activeConversation.nextBefore) return;
+
+      state.loadingOlderMessages = true;
+      try {
+        await loadConversationMessages(activeConversation.id, {
+          appendOlder: true,
+          before: activeConversation.nextBefore,
+          limit: 30
+        });
+      } finally {
+        state.loadingOlderMessages = false;
+      }
     }
 
     function renderListingSummary(conversation) {
@@ -1043,7 +1677,7 @@
           <div class="listing-summary-price">${escapeHtml(formatPrice(conversation.listingPrice))}</div>
           <div class="listing-summary-meta">
             ${conversation.listingCity ? `<span>${escapeHtml(conversation.listingCity)}</span>` : ""}
-            <span>Konuşma sahibi: ${escapeHtml(conversation.otherUserName)}</span>
+            <span>İlan sahibi: ${escapeHtml(conversation.otherUserName)}</span>
           </div>
           <a class="listing-summary-link" href="${escapeHtml(conversation.listingUrl)}">İlana Git</a>
         </div>
@@ -1057,6 +1691,7 @@
       renderChatFeed(activeConversation);
       renderListingSummary(activeConversation);
       syncComposerState(activeConversation);
+      updateSocketConversationSubscription();
     }
 
     function syncComposerState(conversation) {
@@ -1065,10 +1700,21 @@
       const cancelBtn = document.getElementById("cancelEditBtn");
 
       if (!input || !sendBtn || !cancelBtn) return;
+      const isAuthenticated = hasAuthenticatedSession();
+      const currentUserEmail = String(getCurrentUserEmail() || "").trim().toLowerCase();
+
+      sendBtn.disabled = !isAuthenticated;
+      input.disabled = !isAuthenticated;
+
+      if (!isAuthenticated) {
+        setComposerStatus("Mesaj göndermek için giriş yapın.");
+      } else if (document.getElementById("composerStatus")?.textContent === "Mesaj göndermek için giriş yapın.") {
+        setComposerStatus("");
+      }
 
       if (!conversation || !state.editingMessageId) {
-        if (!document.activeElement || document.activeElement !== input) {
-          input.value = input.value && state.editingMessageId ? input.value : "";
+        if (!state.editingMessageId) {
+          input.value = "";
         }
         input.placeholder = "Mesajınızı yazın";
         sendBtn.textContent = "Gönder";
@@ -1104,46 +1750,168 @@
       document.getElementById("mobileOverlay")?.classList.add("open");
     }
 
-    function selectConversation(id) {
+    async function selectConversation(id) {
       state.activeConversationId = id;
-      const conv = getActiveConversation();
-      if (conv) conv.unreadCount = 0;
-      saveChatStore(state.conversations);
+      state.editingMessageId = null;
+      setComposerStatus("");
+      renderAll();
+      const conversation = getActiveConversation();
+      if (!conversation?.messages || !conversation.messages.length) {
+        await loadConversationMessages(conversation?.conversationId || conversation?._id || id);
+      }
+      const roomId = getRealtimeConversationId(getActiveConversation());
+      if (roomId) {
+        state.typingUsers.delete(roomId);
+      }
       renderAll();
       closeMobileSidebar();
     }
 
-    function sendMessage(event) {
+    async function sendMessage(event) {
       event.preventDefault();
       const input = document.getElementById("messageInput");
       const text = input?.value.trim();
-      const conversation = getActiveConversation();
+      const activeConversation = getActiveConversation();
+      const activeListing = state.activeListing;
+      const finalListingId =
+        listingIdFromUrl ||
+        activeConversation?.listingId ||
+        activeListing?._id ||
+        activeListing?.id;
 
-      if (!conversation || !text) return;
+      if (!text) return;
 
-      if (state.editingMessageId) {
-        const editingMessage = conversation.messages.find((item) => item.id === state.editingMessageId);
-        if (editingMessage) {
-          editingMessage.text = text;
-          editingMessage.editedAt = new Date().toISOString();
-        }
-      } else {
-        conversation.messages.push({
-          id: `msg-${Date.now()}`,
-          senderKey: getUserKey(state.user),
-          senderName: state.user.name || state.user.email || "Siz",
-          text,
-          createdAt: new Date().toISOString()
-        });
+      if (!hasAuthenticatedSession()) {
+        setComposerStatus("Mesaj göndermek için giriş yapın.");
+        return;
       }
-      conversation.updatedAt = new Date().toISOString();
-      conversation.unreadCount = 0;
 
-      syncConversations(state.conversations);
-      state.activeConversationId = conversation.id;
-      state.editingMessageId = null;
-      renderAll();
-      input.value = "";
+      if (!finalListingId) {
+        setComposerStatus("İlan bilgisi bulunamadı.");
+        return;
+      }
+
+      const receiverEmail = getResolvedReceiverEmail();
+
+      if (!receiverEmail) {
+        console.error("RECEIVER EMAIL NOT FOUND");
+        setComposerStatus("Satıcı bilgisi bulunamadı.");
+        return;
+      }
+
+      try {
+        setComposerStatus("");
+        const previousActiveId = state.activeConversationId;
+        const previousActiveKey = getConversationStableKey(activeConversation);
+        stopTyping(getRealtimeConversationId(activeConversation));
+
+        if (state.editingMessageId) {
+          const response = await apiFetch(`/api/messages/${encodeURIComponent(state.editingMessageId)}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+              text,
+              currentUserId: getCurrentUserId(),
+              currentUserEmail: getCurrentUserEmail()
+            })
+          });
+
+          if (!response?.success) {
+            setComposerStatus("Mesaj gönderilemedi.");
+            return;
+          }
+
+          activeConversation.messages = activeConversation.messages.map((item) => (
+            item.id === response.message.id ? normalizeMessage(response.message) : item
+          ));
+        } else {
+          const payload = {
+            listingId: finalListingId,
+            text
+          };
+
+          const data = await apiFetch("/api/messages", {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+
+          if (!data?.success) {
+            setComposerStatus("Mesaj gönderilemedi.");
+            return;
+          }
+
+          let conversation = activeConversation;
+          if (!conversation) {
+            const listingOwner = normalizeListingOwner(state.activeListing || {});
+            const conversationId =
+              activeConversation?.id ||
+              data.conversationId ||
+              buildConversationId(finalListingId, getCurrentUserId(), listingOwner.receiverId || receiverEmail);
+            conversation = normalizeConversation({
+              id: conversationId,
+              listingId: finalListingId,
+              otherUserId: listingOwner.receiverId || "",
+              otherUserEmail: receiverEmail,
+              otherUserName: receiverEmail,
+              listingTitle: state.activeListing?.title || "İlan",
+              listingImage: relativeImage(state.activeListing),
+              listingPrice: state.activeListing?.price || "",
+              listingCity: state.activeListing?.city || "",
+              listingUrl: buildListingUrl(finalListingId),
+              messages: [],
+              updatedAt: new Date().toISOString()
+            });
+            state.conversations.unshift(conversation);
+          } else {
+            conversation = state.conversations.find((item) => item.id === conversation.id) || conversation;
+          }
+
+          const renderedMessage = normalizeMessage(
+            data.message || {
+              text,
+              senderId: getCurrentUserId(),
+              senderEmail: getCurrentUserEmail(),
+              receiverEmail,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          );
+
+          conversation.messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+          conversation.messages.push(renderedMessage);
+          conversation.lastMessage = renderedMessage;
+          conversation.updatedAt = renderedMessage.updatedAt || renderedMessage.createdAt;
+          state.activeConversationId = conversation.id || state.activeConversationId;
+          renderMessages();
+        }
+
+        state.editingMessageId = null;
+        input.value = "";
+        renderAll();
+        await loadConversations();
+        if (!getActiveConversation() && previousActiveKey) {
+          const restoredConversation = state.conversations.find((item) => getConversationStableKey(item) === previousActiveKey);
+          if (restoredConversation) {
+            state.activeConversationId = restoredConversation.id;
+          } else if (previousActiveId) {
+            state.activeConversationId = previousActiveId;
+          }
+        }
+        const selectedConversation = getActiveConversation();
+        if (selectedConversation && (!Array.isArray(selectedConversation.messages) || !selectedConversation.messages.length)) {
+          await loadConversationMessages(state.activeConversationId);
+        }
+        renderAll();
+      } catch (err) {
+        console.error("MESSAGE SEND ERROR", {
+          error: err,
+          status: err?.status,
+          payload: err?.payload
+        });
+        const missingInfo = Array.isArray(err?.payload?.missing)
+          ? ` Eksik alanlar: ${err.payload.missing.join(", ")}`
+          : "";
+        setComposerStatus(`Mesaj gönderilemedi.${missingInfo}`);
+      }
     }
 
     function handleComposerKeydown(event) {
@@ -1171,34 +1939,58 @@
       renderAll();
     }
 
-    function deleteMessage(messageId) {
+    async function deleteMessage(messageId) {
       const conversation = getActiveConversation();
       if (!conversation) return;
 
-      conversation.messages = conversation.messages.filter((item) => item.id !== messageId);
-      conversation.updatedAt = new Date().toISOString();
-      if (state.editingMessageId === messageId) {
-        state.editingMessageId = null;
+      try {
+        await apiFetch(withCurrentUserParams(`/api/messages/${encodeURIComponent(messageId)}`), {
+          method: "DELETE"
+        });
+
+        if (state.editingMessageId === messageId) {
+          state.editingMessageId = null;
+        }
+
+        await loadConversations();
+        await loadConversationMessages(conversation.id);
+        renderAll();
+      } catch (err) {
+        console.error("MESSAGE DELETE ERROR", err);
+        setComposerStatus("Mesaj silinemedi.");
       }
-      syncConversations(state.conversations);
-      renderAll();
     }
 
-    function deleteConversation() {
+    async function deleteConversation() {
       const conversation = getActiveConversation();
       if (!conversation) return;
 
       const ok = window.confirm("Bu sohbeti silmek istediğinize emin misiniz?");
       if (!ok) return;
 
-      state.conversations = state.conversations.filter((item) => item.id !== conversation.id);
-      state.activeConversationId = state.conversations[0]?.id || null;
-      state.editingMessageId = null;
-      saveChatStore(state.conversations);
-      renderAll();
+      try {
+        await apiFetch(withCurrentUserParams(`/api/messages/${encodeURIComponent(conversation.id)}`, {
+          scope: "conversation"
+        }), {
+          method: "DELETE"
+        });
+
+        state.conversations = state.conversations.filter((item) => item.id !== conversation.id);
+        state.activeConversationId = state.conversations[0]?.id || null;
+        state.editingMessageId = null;
+        renderAll();
+      } catch (err) {
+        console.error("CONVERSATION DELETE ERROR", err);
+        setComposerStatus("Sohbet silinemedi.");
+      }
     }
 
     function logout() {
+      stopTyping();
+      if (state.socket) {
+        state.socket.disconnect();
+        state.socket = null;
+      }
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       window.location.href = "/login.html";
@@ -1207,21 +1999,36 @@
     async function initMessagesPage() {
       state.user = getCurrentUser();
 
-      if (!getUserKey(state.user)) {
-        window.location.href = "/login.html";
-        return;
+      try {
+        if (hasAuthenticatedSession()) {
+          await loadConversations();
+          await ensureConversationFromListing();
+
+          if (!state.activeConversationId && state.conversations.length) {
+            state.activeConversationId = state.conversations[0].id;
+            await loadConversationMessages(state.activeConversationId);
+          }
+        } else {
+          setComposerStatus("Mesaj göndermek için giriş yapın.");
+        }
+      } catch (err) {
+        console.error("MESSAGES INIT ERROR", err);
       }
 
-      syncConversations(loadChatStore());
-      await ensureConversationFromListing();
       renderAll();
 
       document.getElementById("composerForm")?.addEventListener("submit", sendMessage);
       document.getElementById("cancelEditBtn")?.addEventListener("click", cancelEditMessage);
       document.getElementById("messageInput")?.addEventListener("keydown", handleComposerKeydown);
+      document.getElementById("messageInput")?.addEventListener("input", handleTypingInput);
+      document.getElementById("chatFeed")?.addEventListener("scroll", handleChatFeedScroll, { passive: true });
       document.getElementById("mobileConversationToggle")?.addEventListener("click", openMobileSidebar);
       document.getElementById("mobileOverlay")?.addEventListener("click", closeMobileSidebar);
       document.getElementById("logoutBtn")?.addEventListener("click", logout);
+
+      if (hasAuthenticatedSession()) {
+        connectSocket();
+      }
     }
 
     window.selectConversation = selectConversation;
@@ -1232,3 +2039,6 @@
   </script>
 </body>
 </html>
+
+
+
