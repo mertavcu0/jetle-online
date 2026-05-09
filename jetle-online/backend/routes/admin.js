@@ -21,6 +21,11 @@ function emptyStats() {
     active: 0,
     featured: 0,
     today: 0,
+    totalUsers: 0,
+    totalMessages: 0,
+    onlineUsers: 0,
+    activeSockets: 0,
+    suspiciousListings: 0,
     totalListings: 0,
     activeListings: 0,
     featuredListings: 0,
@@ -90,11 +95,11 @@ function normalizeCarSeries(series = []) {
 }
 
 function logAdminStart(path) {
-  console.log(`ADMIN ENDPOINT START: ${path}`);
+  return path;
 }
 
 function logAdminEnd(path) {
-  console.log(`ADMIN ENDPOINT END: ${path}`);
+  return path;
 }
 
 function withTimeout(promise, label) {
@@ -106,7 +111,18 @@ function withTimeout(promise, label) {
   ]);
 }
 
-console.log("ADMIN.JS YÃœKLENDÄ°");
+async function logAdminAction(req, action, targetId, extra = {}) {
+  try {
+    await AdminLog.create({
+      adminId: req.user?._id,
+      action,
+      targetId: String(targetId || ""),
+      ...extra
+    });
+  } catch (err) {
+    console.error("ADMIN ACTION LOG ERROR:", err);
+  }
+}
 
 router.get("/listings", async (req, res) => {
   const path = "/api/admin/listings";
@@ -190,17 +206,26 @@ router.get("/stats", async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const runtimeMetrics = typeof req.app.get("runtimeMetrics") === "function"
+      ? req.app.get("runtimeMetrics")()
+      : { onlineUsers: 0, activeSockets: 0 };
 
     const [
+      totalUsers,
       totalListings,
       activeListings,
       featuredListings,
+      totalMessages,
+      suspiciousListings,
       todayListings
     ] = await withTimeout(
       Promise.all([
+        User.countDocuments({ banned: { $ne: true } }).maxTimeMS(QUERY_TIMEOUT_MS),
         Listing.countDocuments({ isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
         Listing.countDocuments({ isActive: true, isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
         Listing.countDocuments({ isFeatured: true, isDeleted: false }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Message.countDocuments({ isDeleted: { $ne: true } }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.countDocuments({ isDeleted: false, isSuspicious: true }).maxTimeMS(QUERY_TIMEOUT_MS),
         Listing.countDocuments({
           isDeleted: false,
           createdAt: { $gte: today }
@@ -214,6 +239,11 @@ router.get("/stats", async (req, res) => {
       active: activeListings,
       featured: featuredListings,
       today: todayListings,
+      totalUsers,
+      totalMessages,
+      onlineUsers: runtimeMetrics.onlineUsers || 0,
+      activeSockets: runtimeMetrics.activeSockets || 0,
+      suspiciousListings,
       totalListings,
       activeListings,
       featuredListings,
@@ -369,15 +399,11 @@ router.post("/car-series", async (req, res) => {
 
 router.post("/car-model", async (req, res) => {
   try {
-    console.log("CAR MODEL BODY:", req.body);
-
     const brandId = req.body.brandId || req.body.brandID || "";
     const seriesId = req.body.seriesId || req.body.seriesID || "";
     const brandName = req.body.brandName || req.body.brand || "";
     const seriesName = req.body.seriesName || req.body.series || "";
     const modelName = req.body.modelName || req.body.model || req.body.name || "Model";
-
-    console.log("CAR MODEL CHECK:", { brandId, seriesId, brandName, seriesName, modelName });
 
     let brand = brandId
       ? await CarBrand.findById(brandId)
@@ -420,7 +446,6 @@ router.post("/car-model", async (req, res) => {
     res.json({ success: true, brand });
   } catch (err) {
     console.error("CAR MODEL ERROR:", err);
-    console.log("CAR MODEL ERROR MESSAGE:", err.message);
     res.status(500).json({ error: "Model eklenemedi" });
   }
 });
@@ -528,10 +553,7 @@ router.patch("/listings/:id/feature", async (req, res) => {
       type: "feature"
     });
 
-    await AdminLog.create({
-      action: "feature",
-      listingId: listing._id
-    });
+    await logAdminAction(req, "feature", listing._id, { listingId: listing._id });
 
     res.json({ success: true, listing });
 
@@ -556,10 +578,7 @@ router.patch("/listings/:id/boost", async (req, res) => {
       type: "boost"
     });
 
-    await AdminLog.create({
-      action: "boost",
-      listingId: listing._id
-    });
+    await logAdminAction(req, "boost", listing._id, { listingId: listing._id });
 
     res.json({ success: true, listing });
   } catch (err) {
@@ -578,6 +597,10 @@ router.patch("/listings/:id/toggle", async (req, res) => {
 
     await listing.save();
 
+    await logAdminAction(req, listing.isActive ? "activate" : "deactivate", listing._id, {
+      listingId: listing._id
+    });
+
     res.json({
       success: true,
       isActive: listing.isActive
@@ -589,43 +612,55 @@ router.patch("/listings/:id/toggle", async (req, res) => {
 });
 
 router.patch("/listings/:id/approve", async (req, res) => {
-  const listing = await Listing.findByIdAndUpdate(
-    req.params.id,
-    { status: "approved" },
-    { new: true }
-  );
+  try {
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { status: "approved" },
+      { new: true }
+    );
 
-  await Notification.create({
-    message: "Ä°lan onaylandÄ±",
-    type: "admin"
-  });
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
 
-  await AdminLog.create({
-    action: "approve",
-    listingId: listing?._id || req.params.id
-  });
+    await Notification.create({
+      message: "Ä°lan onaylandÄ±",
+      type: "admin"
+    });
 
-  res.json({ success: true, listing });
+    await logAdminAction(req, "approve", listing._id, { listingId: listing._id });
+
+    res.json({ success: true, listing });
+  } catch (err) {
+    console.error("APPROVE ERROR:", err);
+    res.status(500).json({ error: "İlan onaylanamadı" });
+  }
 });
 
 router.patch("/listings/:id/reject", async (req, res) => {
-  const listing = await Listing.findByIdAndUpdate(
-    req.params.id,
-    { status: "rejected" },
-    { new: true }
-  );
+  try {
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { status: "rejected" },
+      { new: true }
+    );
 
-  await Notification.create({
-    message: "Ä°lan reddedildi",
-    type: "admin"
-  });
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
 
-  await AdminLog.create({
-    action: "reject",
-    listingId: listing?._id || req.params.id
-  });
+    await Notification.create({
+      message: "Ä°lan reddedildi",
+      type: "admin"
+    });
 
-  res.json({ success: true, listing });
+    await logAdminAction(req, "reject", listing._id, { listingId: listing._id });
+
+    res.json({ success: true, listing });
+  } catch (err) {
+    console.error("REJECT ERROR:", err);
+    res.status(500).json({ error: "İlan reddedilemedi" });
+  }
 });
 
 router.patch("/listings/:id/edit", async (req, res) => {
@@ -669,10 +704,7 @@ router.patch("/listings/:id/edit", async (req, res) => {
       return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
     }
 
-    await AdminLog.create({
-      action: "edit",
-      listingId: listing._id
-    });
+    await logAdminAction(req, "edit", listing._id, { listingId: listing._id });
 
     res.json({ success: true, listing });
   } catch (err) {
@@ -682,23 +714,52 @@ router.patch("/listings/:id/edit", async (req, res) => {
 });
 
 router.patch("/users/:id/ban", async (req, res) => {
-  await User.findByIdAndUpdate(req.params.id, { banned: true });
-  await Notification.create({
-    message: "KullanÄ±cÄ± banlandÄ±",
-    type: "user"
-  });
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+    }
 
-  await AdminLog.create({
-    action: "ban",
-    userId: req.params.id
-  });
+    if (user.role === "admin") {
+      return res.status(400).json({ error: "admin_user_protected" });
+    }
 
-  res.json({ success: true });
+    user.banned = !Boolean(user.banned);
+    await user.save();
+
+    await Notification.create({
+      message: user.banned ? "Kullanıcı banlandı" : "Kullanıcı banı kaldırıldı",
+      type: "user"
+    });
+
+    await logAdminAction(req, user.banned ? "ban" : "unban", user._id, { userId: user._id });
+
+    res.json({ success: true, banned: user.banned });
+  } catch (err) {
+    console.error("BAN USER ERROR:", err);
+    res.status(500).json({ error: "Kullanıcı işlemi başarısız" });
+  }
 });
 
 router.delete("/listings/:id", async (req, res) => {
-  await Listing.findByIdAndUpdate(req.params.id, { isDeleted: true });
-  res.json({ success: true });
+  try {
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
+
+    await logAdminAction(req, "delete", listing._id, { listingId: listing._id });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("DELETE LISTING ERROR:", err);
+    res.status(500).json({ error: "İlan silinemedi" });
+  }
 });
 
 router.patch("/listings/:id", async (req, res) => {
@@ -714,6 +775,9 @@ router.patch("/listings/:id", async (req, res) => {
   }
 
   await listing.save();
+  await logAdminAction(req, listing.isSuspicious ? "mark_suspicious" : "toggle_listing", listing._id, {
+    listingId: listing._id
+  });
   res.json({ success: true, isActive: listing.isActive, isSuspicious: listing.isSuspicious });
 });
 
@@ -744,6 +808,7 @@ router.get("/logs", async (req, res) => {
     const logs = await AdminLog.find()
       .sort({ createdAt: -1 })
       .limit(100)
+      .populate("adminId", "name email role")
       .populate("listingId", "title")
       .populate("userId", "name email");
 
