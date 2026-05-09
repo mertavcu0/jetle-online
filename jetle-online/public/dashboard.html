@@ -450,8 +450,96 @@
   <script src="/dashboard.js"></script>
   <script>
     (function () {
+      const originalLoadSection = typeof window.loadSection === "function"
+        ? window.loadSection
+        : null;
       const grid = document.getElementById("myListingsGrid");
       if (!grid) return;
+
+      function getDashboardToken() {
+        return String(localStorage.getItem("token") || "").trim();
+      }
+
+      function getDashboardUser() {
+        try {
+          return JSON.parse(localStorage.getItem("user") || "{}");
+        } catch (_) {
+          return {};
+        }
+      }
+
+      window.loadSection = function loadSectionWithAuth(type) {
+        if (type !== "messages") {
+          if (originalLoadSection) {
+            return originalLoadSection(type);
+          }
+          return;
+        }
+
+        const content = typeof window.dashboardContent === "function"
+          ? window.dashboardContent()
+          : document.getElementById("listingsPanel");
+
+        if (!content) return;
+
+        const token = getDashboardToken();
+        if (!token) {
+          content.innerHTML = `
+            <h2>Mesajlarım</h2>
+            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
+          `;
+          return;
+        }
+
+        const user = getDashboardUser();
+        const userKey = user.id || user._id || user.email;
+        if (!userKey) {
+          content.innerHTML = `
+            <h2>Mesajlarım</h2>
+            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
+          `;
+          return;
+        }
+
+        content.innerHTML = `
+          <h2>Mesajlarım</h2>
+          <div class="chat-list">Mesajlar yükleniyor...</div>
+        `;
+
+        fetch(`/api/messages/${encodeURIComponent(userKey)}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+          .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+          .then(({ ok, data }) => {
+            const list = document.querySelector(".chat-list");
+            if (!list) return;
+
+            if (!ok) {
+              list.innerHTML = `<div class="empty-state">Mesajlar yüklenemedi.</div>`;
+              return;
+            }
+
+            list.innerHTML = Array.isArray(data) && data.length
+              ? data.map((m) => `
+                <div class="msg-card ${m.sender === userKey ? "mine" : "theirs"}">
+                  <div>
+                    <b>${window.escapeMessageHtml ? window.escapeMessageHtml(m.sender === userKey ? m.receiver : m.sender) : ""}</b>
+                    <small>${m.listingId?.title ? (window.escapeMessageHtml ? window.escapeMessageHtml(m.listingId.title) : "İlan mesajı") : "İlan mesajı"}</small>
+                  </div>
+                  <p>${window.escapeMessageHtml ? window.escapeMessageHtml(m.message || "") : ""}</p>
+                  <span>${new Date(m.createdAt).toLocaleString("tr-TR")}</span>
+                </div>
+              `).join("")
+              : `<div class="empty-state">Henüz mesajınız yok.</div>`;
+          })
+          .catch(() => {
+            const list = document.querySelector(".chat-list");
+            if (!list) return;
+            list.innerHTML = `<div class="empty-state">Mesajlar yüklenemedi.</div>`;
+          });
+      };
 
       function upgradeListingCards() {
         grid.querySelectorAll(".card").forEach((card) => {
