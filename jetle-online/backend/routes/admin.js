@@ -1,4 +1,5 @@
 ﻿const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
@@ -10,6 +11,13 @@ const CarBrand = require("../models/CarBrand");
 const Message = require("../models/Message");
 const QUERY_TIMEOUT_MS = Number(process.env.ADMIN_QUERY_TIMEOUT_MS || 4000);
 router.use(authMiddleware, authAdmin);
+
+router.param("id", (req, res, next, value) => {
+  if (!mongoose.Types.ObjectId.isValid(String(value || ""))) {
+    return res.status(400).json({ error: "invalid_id" });
+  }
+  next();
+});
 
 function emptyList() {
   return [];

@@ -29,19 +29,30 @@
 
   window.logout = function () {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     location.reload();
   };
 
   window.addFavorite = function (id) {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = String(localStorage.getItem("token") || "").trim();
+    if (!token) {
+      window.location.href = "/login.html";
+      return;
+    }
 
     fetch(`/api/listings/${id}/favorite`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: user.email,
-        userId: user.id || user._id
-      })
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      }
+      return res;
     })
     .then(() => alert("Favori işlemi tamamlandı"));
   };

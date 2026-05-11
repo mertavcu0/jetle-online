@@ -295,6 +295,39 @@ router.get("/:conversationId", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    const legacyUserId = String(req.params.conversationId || "").trim();
+    if (isValidObjectId(legacyUserId) && legacyUserId === String(currentUser._id)) {
+      const legacyMessages = await Message.find({
+        isDeleted: false,
+        $or: [
+          { senderId: asObjectId(legacyUserId) },
+          { receiverId: asObjectId(legacyUserId) }
+        ]
+      })
+        .sort({ createdAt: -1 })
+        .limit(100)
+        .populate("listingId", "title")
+        .populate("senderId", "email name")
+        .populate("receiverId", "email name")
+        .lean();
+
+      return res.json(
+        legacyMessages.map((message) => ({
+          _id: String(message._id),
+          sender: String(message.senderId?.email || message.senderId?._id || ""),
+          receiver: String(message.receiverId?.email || message.receiverId?._id || ""),
+          message: message.text || "",
+          createdAt: message.createdAt,
+          listingId: message.listingId
+            ? {
+                _id: String(message.listingId._id),
+                title: message.listingId.title || "Ilan"
+              }
+            : null
+        }))
+      );
+    }
+
     const parsed = parseConversationId(req.params.conversationId);
     if (!parsed || !isValidObjectId(parsed.listingId) || parsed.userIds.some((id) => !isValidObjectId(id))) {
       return res.status(400).json({ error: "invalid_conversation" });

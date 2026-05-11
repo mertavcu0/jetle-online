@@ -1,10 +1,15 @@
-const express = require("express");
+﻿const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/auth");
 
 const isProduction = process.env.NODE_ENV === "production";
+
+function isBcryptHash(value) {
+  return /^\$2[aby]\$\d{2}\$/.test(String(value || ""));
+}
 
 function sanitizeText(value, maxLength = 120) {
   return String(value || "")
@@ -105,16 +110,21 @@ router.post("/login", async (req, res) => {
     }
 
     let ok = false;
+    const storedPassword = String(user.password || "");
     try {
-      ok = await bcrypt.compare(password, user.password);
+      ok = await bcrypt.compare(password, storedPassword);
     } catch (compareErr) {
-      if (isProduction) {
+      if (isProduction || isBcryptHash(storedPassword)) {
         throw compareErr;
       }
     }
 
-    if (!ok && !isProduction && password === user.password) {
+    const isLegacyPlaintext = !isBcryptHash(storedPassword) && password === storedPassword;
+
+    if (!ok && isLegacyPlaintext) {
       ok = true;
+      user.password = await bcrypt.hash(password, 10);
+      await user.save();
     }
 
     if (!ok) {
@@ -156,22 +166,47 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/update", async (req, res) => {
-  const email = String(req.body?.email || "").trim().toLowerCase();
-  const name = sanitizeText(req.body?.name, 80);
-  const city = sanitizeText(req.body?.city, 80);
+router.post("/update", authMiddleware, async (req, res) => {
+  try {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const name = sanitizeText(req.body?.name, 80);
+    const city = sanitizeText(req.body?.city, 80);
 
-  if (!isValidEmail(email) || !name) {
-    return res.status(400).json({ success: false, message: "Geçersiz bilgi" });
+    if (!isValidEmail(email) || !name) {
+      return res.status(400).json({ success: false, message: "Geçersiz bilgi" });
+    }
+
+    const requesterEmail = String(req.user?.email || "").trim().toLowerCase();
+    if (req.user?.role !== "admin" && requesterEmail !== email) {
+      return res.status(403).json({ success: false, message: "Yetkisiz işlem" });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { name, city },
+      { new: true }
+    ).select("_id name email city role");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Kullanıcı bulunamadı" });
+    }
+
+    res.json({
+      id: user._id,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      city: user.city,
+      role: user.role || "user"
+    });
+  } catch (err) {
+    console.error("AUTH UPDATE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
+    });
   }
-
-  const user = await User.findOneAndUpdate(
-    { email },
-    { name, city },
-    { new: true }
-  );
-
-  res.json(user);
 });
 
 module.exports = router;

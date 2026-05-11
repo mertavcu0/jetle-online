@@ -48,7 +48,7 @@
     }
 
     .page {
-      max-width: 700px;
+      max-width: 980px;
       margin: 34px auto;
       padding: 0 18px;
     }
@@ -57,7 +57,7 @@
       background: #fff;
       border: 1px solid #e5e7eb;
       border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
       padding: 26px;
     }
 
@@ -100,10 +100,70 @@
       margin: 0 0 18px;
       padding: 7px 10px;
       border-radius: 999px;
-      background: #eff6ff;
-      color: #2563eb;
+      background: #fff;
+      color: #374151;
+      border: 1px solid #e5e7eb;
       font-size: 13px;
       font-weight: 900;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 22px;
+    }
+
+    .stepper-item {
+      display: grid;
+      gap: 6px;
+      padding: 12px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stepper-item.active {
+      border-color: #cbd5e1;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .stepper-item.done {
+      border-color: #e5e7eb;
+      background: #fff;
+    }
+
+    .stepper-index {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .stepper-item.active .stepper-index,
+    .stepper-item.done .stepper-index {
+      background: #111827;
+      color: #fff;
+    }
+
+    .stepper-title {
+      color: #111827;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .stepper-subtitle {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.35;
     }
 
     .step-title {
@@ -123,11 +183,11 @@
 
     .step {
       display: none;
-      border: 1px solid #e7eaf0;
-      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
       background: #fff;
-      box-shadow: none;
-      padding: 22px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+      padding: 26px;
     }
 
     .step.active {
@@ -143,12 +203,32 @@
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }
 
     .detail-section {
       display: grid;
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .section-card {
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .section-intro {
+      margin: -2px 0 14px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .field {
@@ -300,21 +380,20 @@
       place-items: center;
       min-height: 170px;
       padding: 22px;
-      border: 2px dashed #bfdbfe;
+      border: 1px dashed #cbd5e1;
       border-radius: 14px;
-      background: #f8fbff;
+      background: #f8fafc;
       color: #374151;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
     }
 
     .upload-zone:hover,
     .upload-zone.drag-over {
-      border-color: #2563eb;
-      background: #eef6ff;
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.14);
-      transform: translateY(-2px);
+      border-color: #94a3b8;
+      background: #f1f5f9;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
 
     .upload-zone strong {
@@ -404,6 +483,40 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
+    }
+
+    .feature-group + .feature-group {
+      margin-top: 18px;
+    }
+
+    .feature-group-title {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .expertiz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .expertiz-item {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .expertiz-item label {
+      margin: 0;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     .feature-option {
@@ -509,7 +622,11 @@
       }
 
       .form-grid,
-      .preview {
+      .grid-2,
+      .preview,
+      .stepper,
+      .grid-3,
+      .expertiz-grid {
         grid-template-columns: 1fr;
       }
 
@@ -525,6 +642,10 @@
       .btn-primary,
       .btn-secondary {
         width: 100%;
+      }
+
+      .step {
+        padding: 20px;
       }
     }
 
@@ -886,16 +1007,15 @@
           <div class="form-grid">
             <div class="field">
               <label for="price">Fiyat</label>
-              <input id="price" name="price" type="number" min="0">
+              <input id="price" name="price" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
             </div>
             <div class="field">
               <label for="mainCategory">Ana kategori</label>
               <select id="mainCategory" name="category">
-                <option value="">Ana kategori seç</option>
+                <option value="">Önce ana kategori seç</option>
                 <option value="emlak">Emlak</option>
                 <option value="vasita">Vasıta</option>
-                <option value="elektronik">Elektronik</option>
-                <option value="is-makinalari">İş Makinaları</option>
+                <option value="is-makinalari">İş Makineleri</option>
                 <option value="yedek-parca">Yedek Parça</option>
               </select>
             </div>
@@ -1072,14 +1192,31 @@
     const statusBox = document.getElementById("status");
     const progressFill = document.getElementById("progressFill");
     const stepLabel = document.getElementById("stepLabel");
-    const totalSteps = 5;
+    let totalSteps = 5;
     let currentStep = 1;
     const formData = {};
+    const previewGridObjectUrls = new Set();
+    const previewHeroObjectUrls = new Set();
 
-    const fields = ["title", "description", "price", "mainCategory", "subCategory", "city", "district"];
+    const fields = ["title", "description", "price", "mainCategory", "subCategory", "city", "district", "sellerProfileType"];
+    const expertiseFieldNames = [
+      "kaput",
+      "tavan",
+      "bagaj",
+      "sag_on_camurluk",
+      "sol_on_camurluk",
+      "sag_on_kapi",
+      "sol_on_kapi",
+      "sag_arka_kapi",
+      "sol_arka_kapi",
+      "sag_arka_camurluk",
+      "sol_arka_camurluk",
+      "on_tampon",
+      "arka_tampon"
+    ];
     const dynamicFieldIds = {
       vasita: ["brand", "series", "model", "year", "km", "fuel", "transmission", "bodyType", "color", "engine", "power", "damageRecord", "sellerType", "cc"],
-      emlak: ["m2", "netM2", "rooms", "floor", "buildingAge", "heating", "inSite", "zoning", "deedStatus", "blockParcelNo", "kaks", "gabari", "roadStatus"],
+      emlak: ["listingType", "propertyType", "m2", "netM2", "rooms", "floor", "totalFloors", "buildingAge", "heating", "bathrooms", "balcony", "furnished", "inSite", "dues", "deedStatus", "sellerType", "zoning", "blockParcelNo", "kaks", "gabari", "roadStatus"],
       elektronik: ["brand", "model", "warranty"]
     };
     const subCategories = {
@@ -1117,49 +1254,399 @@
       }
     };
     const featureOptions = {
-      vasita: ["ABS", "Airbag", "Klima", "Deri koltuk", "Sunroof", "Park sensörü"],
-      emlak: ["Balkon", "Asansör", "Otopark", "Güvenlik", "Eşyalı"]
+      vasita: {
+        "Güvenlik": [
+          "ABS",
+          "AEB",
+          "BAS",
+          "ESP",
+          "ASR",
+          "Airbag",
+          "Immobilizer",
+          "Isofix",
+          "Merkezi kilit",
+          "Çocuk kilidi",
+          "Şerit takip sistemi",
+          "Yokuş kalkış desteği",
+          "Gece görüş sistemi",
+          "Kör nokta uyarı sistemi",
+          "Yorgunluk tespit sistemi",
+          "Hava yastığı sürücü",
+          "Hava yastığı yolcu"
+        ],
+        "İç donanım / Konfor": [
+          "Klima",
+          "Dijital klima",
+          "Deri koltuk",
+          "Kumaş koltuk",
+          "Isıtmalı koltuk",
+          "Soğutmalı koltuk",
+          "Elektrikli koltuk",
+          "Hafızalı koltuk",
+          "Elektrikli cam",
+          "Hız sabitleyici",
+          "Adaptive Cruise Control",
+          "Anahtarsız giriş ve çalıştırma",
+          "Start/Stop",
+          "Hidrolik direksiyon",
+          "Fonksiyonel direksiyon",
+          "Isıtmalı direksiyon",
+          "Yol bilgisayarı",
+          "Head-up Display",
+          "Geri görüş kamerası",
+          "Ön görüş kamerası"
+        ],
+        "Dış donanım": [
+          "Park sensörü ön",
+          "Park sensörü arka",
+          "Park asistanı",
+          "LED far",
+          "Xenon far",
+          "Adaptif far",
+          "Sis farı",
+          "Sunroof",
+          "Panoramik cam tavan",
+          "Alaşım jant",
+          "Aynalar elektrikli",
+          "Aynalar ısıtmalı",
+          "Aynalar hafızalı",
+          "Akıllı bagaj kapağı",
+          "Römork çeki demiri"
+        ],
+        "Multimedya": [
+          "Navigasyon",
+          "Bluetooth",
+          "USB / AUX",
+          "Apple CarPlay",
+          "Android Auto"
+        ]
+      },
+      emlak: {
+        daire: {
+          "Daire özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Balkon",
+            "Eşyalı",
+            "Site içinde",
+            "Görüntülü diafon",
+            "Ankastre mutfak",
+            "Isı yalıtımı",
+            "Yangın alarmı"
+          ]
+        },
+        arsa: {
+          "Arsa özellikleri": [
+            "Elektrik",
+            "Su",
+            "Doğalgaz",
+            "Kanalizasyon",
+            "Yolu açılmış",
+            "Hisseli tapu değil",
+            "Köşe parsel",
+            "Manzaralı",
+            "İfrazlı",
+            "Projeli"
+          ]
+        },
+        residence: {
+          "Daire özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Balkon",
+            "Eşyalı",
+            "Site içinde",
+            "Görüntülü diafon",
+            "Ankastre mutfak",
+            "Isı yalıtımı",
+            "Yangın alarmı"
+          ]
+        },
+        villa: {
+          "Daire özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Balkon",
+            "Eşyalı",
+            "Site içinde",
+            "Görüntülü diafon",
+            "Ankastre mutfak",
+            "Isı yalıtımı",
+            "Yangın alarmı"
+          ]
+        },
+        "mustakil-ev": {
+          "Daire özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Balkon",
+            "Eşyalı",
+            "Site içinde",
+            "Görüntülü diafon",
+            "Ankastre mutfak",
+            "Isı yalıtımı",
+            "Yangın alarmı"
+          ]
+        },
+        ofis: {
+          "İş yeri özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Jeneratör",
+            "Klima",
+            "Yangın alarmı",
+            "Mutfak",
+            "WC",
+            "Depo alanı",
+            "İnternet altyapısı"
+          ]
+        },
+        dukkan: {
+          "İş yeri özellikleri": [
+            "Asansör",
+            "Otopark",
+            "Güvenlik",
+            "Jeneratör",
+            "Klima",
+            "Yangın alarmı",
+            "Mutfak",
+            "WC",
+            "Depo alanı",
+            "İnternet altyapısı"
+          ]
+        }
+      }
     };
     let carData = {};
 
-    function normalizeCarData(brands) {
-      return (brands || []).reduce((acc, brand) => {
-        if (!brand?.name) return acc;
+    const embeddedCarData = {
+      "Audi": {
+        "A3": [{ name: "1.0 TFSI" }, { name: "1.5 TFSI" }, { name: "Sportback" }],
+        "A4": [{ name: "1.4 TFSI" }, { name: "2.0 TDI" }],
+        "Q3": [{ name: "35 TFSI" }, { name: "40 TDI" }]
+      },
+      "BMW": {
+        "1 Serisi": [{ name: "116d" }, { name: "116i" }, { name: "118d" }, { name: "118i" }, { name: "120i" }],
+        "3 Serisi": [{ name: "316i" }, { name: "320d" }, { name: "320i" }, { name: "330i" }],
+        "5 Serisi": [{ name: "520d" }, { name: "520i" }, { name: "530i" }],
+        "X1": [{ name: "sDrive 16d" }, { name: "sDrive 18i" }]
+      },
+      "Fiat": {
+        "Egea": [{ name: "1.3 Multijet" }, { name: "1.4 Fire" }, { name: "1.6 Multijet" }, { name: "Cross" }],
+        "Linea": [{ name: "1.3 Multijet" }, { name: "1.4 Fire" }],
+        "Doblo": [{ name: "1.3 Multijet" }, { name: "1.6 Multijet" }]
+      },
+      "Ford": {
+        "Fiesta": [{ name: "1.0 EcoBoost" }, { name: "1.1 Ti-VCT" }],
+        "Focus": [{ name: "1.0 EcoBoost" }, { name: "1.5 TDCi" }, { name: "1.6 TDCi" }],
+        "Puma": [{ name: "1.0 EcoBoost" }]
+      },
+      "Honda": {
+        "Civic": [{ name: "1.5 VTEC Turbo" }, { name: "1.6 i-DTEC" }, { name: "1.6 ECO" }],
+        "City": [{ name: "1.5 VTEC" }],
+        "CR-V": [{ name: "1.5 VTEC Turbo" }, { name: "2.0 Hybrid" }]
+      },
+      "Hyundai": {
+        "i20": [{ name: "1.2 MPI" }, { name: "1.4 MPI" }, { name: "1.0 T-GDI" }],
+        "i30": [{ name: "1.0 T-GDI" }, { name: "1.5 T-GDI Mild-Hybrid" }],
+        "Tucson": [{ name: "1.6 T-GDI" }, { name: "Hybrid" }]
+      },
+      "Kia": {
+        "Picanto": [{ name: "1.0" }, { name: "1.2" }],
+        "Ceed": [{ name: "1.0 TGDI" }, { name: "1.5 TGDI" }],
+        "Sportage": [{ name: "1.6L Benzinli" }, { name: "Hybrid" }]
+      },
+      "Mercedes-Benz": {
+        "A-Serisi": [{ name: "A 180" }, { name: "A 200" }, { name: "A 200 d" }],
+        "C-Serisi": [{ name: "C 200" }, { name: "C 300" }, { name: "C 300 e" }],
+        "E-Serisi": [{ name: "E 200" }, { name: "E 220 d" }, { name: "E 300 e" }]
+      },
+      "Opel": {
+        "Corsa": [{ name: "1.2" }, { name: "1.2 Turbo" }, { name: "Electric" }],
+        "Astra": [{ name: "1.2 Turbo" }, { name: "1.5 Dizel" }],
+        "Mokka": [{ name: "1.2 Turbo" }, { name: "Electric" }]
+      },
+      "Renault": {
+        "Clio": [{ name: "1.0 Sce" }, { name: "1.0 TCe" }, { name: "e-Tech Full Hybrid 145" }],
+        "Megane": [{ name: "1.3 TCe" }, { name: "1.5 BlueHDi" }],
+        "Taliant": [{ name: "Joy" }, { name: "Touch" }]
+      },
+      "Toyota": {
+        "Corolla": [{ name: "1.5 Dynamic Force" }, { name: "1.8 Hibrit" }],
+        "C-HR": [{ name: "Hibrit" }, { name: "BEV" }],
+        "RAV4": [{ name: "Hybrid" }, { name: "Plug-in Hybrid" }]
+      },
+      "Volkswagen": {
+        "Golf": [{ name: "1.0 eTSI" }, { name: "1.5 eTSI" }, { name: "2.0 TDI" }],
+        "Polo": [{ name: "1.0" }, { name: "1.0 TSI" }, { name: "1.6 TDI" }],
+        "Passat": [{ name: "1.5 TSI" }, { name: "2.0 TDI" }]
+      }
+    };
 
-        acc[brand.name] = {};
-        (brand.series || []).forEach((series) => {
-          if (series?.name) {
-            acc[brand.name][series.name] = (series.models || []).map((item) =>
-              typeof item === "string" ? { name: item, fuel: [], transmission: [], body: [] } : item
-            );
-          }
+    function mergeCarData(baseData = {}, apiData = {}) {
+      const merged = JSON.parse(JSON.stringify(baseData || {}));
+      Object.entries(apiData || {}).forEach(([brand, seriesMap]) => {
+        merged[brand] = merged[brand] || {};
+        Object.entries(seriesMap || {}).forEach(([series, models]) => {
+          const existing = Array.isArray(merged[brand][series]) ? merged[brand][series] : [];
+          const incoming = Array.isArray(models) ? models : [];
+          const modelMap = new Map();
+          [...existing, ...incoming].forEach((item) => {
+            const normalized = typeof item === 'string'
+              ? { name: item, fuel: [], transmission: [], body: [] }
+              : {
+                  name: item?.name || '',
+                  fuel: Array.isArray(item?.fuel) ? item.fuel : [],
+                  transmission: Array.isArray(item?.transmission) ? item.transmission : [],
+                  body: Array.isArray(item?.body) ? item.body : [],
+                  engine: item?.engine || '',
+                  hp: item?.hp || ''
+                };
+            if (normalized.name) modelMap.set(normalized.name, normalized);
+          });
+          merged[brand][series] = [...modelMap.values()];
         });
+      });
+      return merged;
+    }
 
-        return acc;
-      }, {});
+    function normalizeCarData(brands) {
+      const normalizeModel = (item) => {
+        if (typeof item === "string") {
+          return { name: item, fuel: [], transmission: [], body: [], engine: "", hp: "" };
+        }
+        if (item && typeof item === "object") {
+          return {
+            name: item.name || item.model || item.title || item.label || "",
+            fuel: Array.isArray(item.fuel) ? item.fuel : [],
+            transmission: Array.isArray(item.transmission) ? item.transmission : [],
+            body: Array.isArray(item.body) ? item.body : [],
+            engine: item.engine || "",
+            hp: item.hp || item.power || ""
+          };
+        }
+        return null;
+      };
+
+      const normalizeSeriesModels = (models) => {
+        if (Array.isArray(models)) {
+          return models.map(normalizeModel).filter((item) => item && item.name);
+        }
+        if (models && typeof models === "object") {
+          return Object.entries(models).map(([key, value]) => {
+            if (typeof value === "string") return normalizeModel(value || key);
+            return normalizeModel({ name: key, ...(value || {}) });
+          }).filter((item) => item && item.name);
+        }
+        return [];
+      };
+
+      if (brands && typeof brands === "object" && !Array.isArray(brands)) {
+        if (Array.isArray(brands.brands)) return normalizeCarData(brands.brands);
+        if (Array.isArray(brands.data)) return normalizeCarData(brands.data);
+        if (Array.isArray(brands.items)) return normalizeCarData(brands.items);
+        if (brands.results && typeof brands.results === "object") return normalizeCarData(brands.results);
+      }
+
+      if (Array.isArray(brands)) {
+        return brands.reduce((acc, brand) => {
+          const brandName = brand?.name || brand?.brand || brand?.title;
+          if (!brandName) return acc;
+          acc[brandName] = {};
+          const rawSeries = Array.isArray(brand.series)
+            ? brand.series
+            : brand.series && typeof brand.series === "object"
+              ? Object.entries(brand.series).map(([seriesName, seriesModels]) => ({
+                  name: seriesName,
+                  models: seriesModels
+                }))
+              : [];
+          const seriesList = rawSeries.length
+            ? rawSeries
+            : Array.isArray(brand.models)
+              ? [{ name: brandName, models: brand.models }]
+              : [];
+          seriesList.forEach((series) => {
+            const seriesName = series?.name || series?.series || series?.title;
+            if (!seriesName) return;
+            acc[brandName][seriesName] = normalizeSeriesModels(series.models || series.items || series.variants || []);
+          });
+          return acc;
+        }, {});
+      }
+
+      if (brands && typeof brands === "object") {
+        return Object.entries(brands).reduce((acc, [brandName, seriesMap]) => {
+          if (!brandName || !seriesMap) return acc;
+          acc[brandName] = {};
+          if (Array.isArray(seriesMap)) {
+            acc[brandName][brandName] = normalizeSeriesModels(seriesMap);
+            return acc;
+          }
+          if (typeof seriesMap === "object") {
+            Object.entries(seriesMap).forEach(([seriesName, models]) => {
+              if (!seriesName) return;
+              acc[brandName][seriesName] = normalizeSeriesModels(models);
+            });
+          }
+          return acc;
+        }, {});
+      }
+
+      return {};
+    }
+
+    function hasMeaningfulCarData(data) {
+      const brands = Object.keys(data || {});
+      if (!brands.length) return false;
+      const totalSeries = brands.reduce((sum, brand) => sum + Object.keys(data[brand] || {}).length, 0);
+      return brands.length >= 10 || totalSeries >= 20;
     }
 
     async function loadCarData() {
       try {
         const res = await fetch("/api/cars");
-        if (!res.ok) throw new Error("Araç verisi yüklenemedi");
-        carData = normalizeCarData(await res.json());
+        if (!res.ok) throw new Error(`cars_fetch_failed_${res.status}`);
+        const payload = await res.json();
+        const normalizedApiData = normalizeCarData(payload);
+        carData = hasMeaningfulCarData(normalizedApiData)
+          ? mergeCarData(embeddedCarData, normalizedApiData)
+          : JSON.parse(JSON.stringify(embeddedCarData));
+        if (!Object.keys(carData || {}).length) {
+          carData = JSON.parse(JSON.stringify(embeddedCarData));
+        }
       } catch (err) {
-        console.error("CAR DATA ERROR:", err);
-        carData = {};
+        carData = JSON.parse(JSON.stringify(embeddedCarData));
+        
       }
     }
+
     const coreCityData = {
       "İstanbul": ["Kadıköy", "Beşiktaş", "Üsküdar", "Şişli", "Pendik", "Kartal"],
       "Ankara": ["Çankaya", "Keçiören", "Sincan", "Mamak"],
       "İzmir": ["Konak", "Bornova", "Karşıyaka", "Buca"]
     };
 
+    window.correctData = window.correctData || {};
+
     function initCities() {
       const citySelect = document.getElementById("city");
       const districtSelect = document.getElementById("district");
+      if (!citySelect || !districtSelect) return;
+
+      const externalCities =
+        window.correctData && typeof window.correctData === "object" && !Array.isArray(window.correctData)
+          ? window.correctData
+          : {};
+
       window.cities = {
         ...(window.cities || {}),
+        ...externalCities,
         ...coreCityData
       };
       const cityData = window.cities || {};
@@ -1278,10 +1765,32 @@
       }, 3000);
     }
 
+    function sanitizePriceValue(value) {
+      return String(value || "").replace(/\D+/g, "");
+    }
+
+    function formatPriceValue(value) {
+      const digits = sanitizePriceValue(value);
+      if (!digits) return "";
+      return Number(digits).toLocaleString("tr-TR");
+    }
+
+    function getNumericPriceValue() {
+      return sanitizePriceValue(document.getElementById("price")?.value || formData.price || "");
+    }
+
+    function handlePriceInput(event) {
+      if (!event?.target) return;
+      const formatted = formatPriceValue(event.target.value);
+      event.target.value = formatted;
+      formData.price = sanitizePriceValue(formatted);
+    }
+
     function collectStepData() {
       fields.forEach((id) => {
         const input = document.getElementById(id);
-        if (input) formData[id] = input.value.trim();
+        if (!input) return;
+        formData[id] = id === "price" ? sanitizePriceValue(input.value) : input.value.trim();
       });
 
       Object.values(dynamicFieldIds).flat().forEach((id) => {
@@ -1293,6 +1802,60 @@
       formData.images = Array.from(document.getElementById("images")?.files || []);
       formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
         .map((input) => input.value);
+      expertiseFieldNames.forEach((name) => {
+        const input = document.querySelector(`[name=${name}]`);
+        if (input) formData[name] = input.value.trim();
+      });
+    }
+
+    function clearFields(fieldIds = []) {
+      fieldIds.forEach((id) => {
+        delete formData[id];
+        const input = document.getElementById(id);
+        if (!input) return;
+        if (input.type === "checkbox") {
+          input.checked = false;
+        } else {
+          input.value = "";
+        }
+      });
+    }
+
+    function removeIrrelevantCategoryData(category = getActiveCategory()) {
+      if (category === "vasita") {
+        clearFields(dynamicFieldIds.emlak);
+        expertiseFieldNames.forEach((name) => {
+          if (!document.querySelector(`[name=${name}]`)) delete formData[name];
+        });
+      } else if (category === "emlak") {
+        clearFields([...dynamicFieldIds.vasita, ...expertiseFieldNames]);
+      }
+    }
+
+    function clearPreviewObjectUrls(target = "all") {
+      const collections = target === "grid"
+        ? [previewGridObjectUrls]
+        : target === "hero"
+          ? [previewHeroObjectUrls]
+          : [previewGridObjectUrls, previewHeroObjectUrls];
+      collections.forEach((collection) => {
+        collection.forEach((url) => URL.revokeObjectURL(url));
+        collection.clear();
+      });
+    }
+
+    function getSelectedImageFiles() {
+      return Array.from(document.getElementById("images")?.files || []).filter((file) => file instanceof File);
+    }
+
+    function createPreviewObjectUrl(file, target = "grid") {
+      const url = URL.createObjectURL(file);
+      if (target === "hero") {
+        previewHeroObjectUrls.add(url);
+      } else {
+        previewGridObjectUrls.add(url);
+      }
+      return url;
     }
 
     function handleFiles(files) {
@@ -1321,11 +1884,23 @@
 
     function renderImagePreview() {
       const grid = document.getElementById("imagePreviewGrid");
-      const imageFiles = Array.from(document.getElementById("images")?.files || []);
+      if (!grid) return;
+
+      clearPreviewObjectUrls("grid");
+      const imageFiles = getSelectedImageFiles();
+
+      if (!imageFiles.length) {
+        grid.innerHTML = `
+          <div class="image-thumb image-thumb-placeholder">
+            <img src="${placeholderImage("Görsel yok")}" alt="Görsel yok">
+          </div>
+        `;
+        return;
+      }
 
       grid.innerHTML = imageFiles.map((file, index) => `
         <div class="image-thumb">
-          <img src="${URL.createObjectURL(file)}" alt="Fotoğraf">
+          <img src="${createPreviewObjectUrl(file, "grid")}" alt="Fotoğraf">
           <button class="image-remove" type="button" onclick="removeImage(${index})" aria-label="Fotoğrafı sil">×</button>
         </div>
       `).join("");
@@ -1353,12 +1928,18 @@
     }
 
     async function uploadSelectedImages() {
+      const token = String(localStorage.getItem("token") || "").trim();
+      if (!token) {
+        window.location.href = "/login.html";
+        return [];
+      }
+
       const body = new FormData();
       Array.from(document.getElementById("images")?.files || []).forEach((file) => body.append("images", file));
 
-      const headers = {};
-      const token = localStorage.getItem("token");
-      if (token) headers.Authorization = `Bearer ${token}`;
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
 
       const res = await fetch("/api/listings/upload", {
         method: "POST",
@@ -1400,213 +1981,521 @@
       `;
     }
 
-    function renderArsaFields() {
-      return `
-        <div class="detail-section">
-          <h3 class="section-title">Detaylar</h3>
-          <div class="grid-2">
-            ${fieldHtml("m2", "m²", `<input id="m2" name="m2" type="number" min="0">`)}
-            ${fieldHtml("zoning", "İmar durumu", `
-              <select id="zoning" name="zoning">
-                <option value="">Seç</option>
-                <option>Var</option>
-                <option>Yok</option>
-              </select>
-            `)}
-            ${fieldHtml("deedStatus", "Tapu durumu", `
-              <select id="deedStatus" name="deedStatus">
-                <option value="">Seç</option>
-                <option>Hisseli</option>
-                <option>Müstakil</option>
-              </select>
-            `)}
-            ${fieldHtml("blockParcelNo", "Ada / parsel no", `<input id="blockParcelNo" name="blockParcelNo">`)}
-            ${fieldHtml("kaks", "KAKS / Emsal", `<input id="kaks" name="kaks">`)}
-            ${fieldHtml("gabari", "Gabari", `<input id="gabari" name="gabari">`)}
-            ${fieldHtml("roadStatus", "Yol durumu", `<input id="roadStatus" name="roadStatus">`)}
-          </div>
+    function getStepTitles() {
+      return [
+        ["Temel Bilgiler", "Başlık, açıklama, konum ve satıcı tipi"],
+        ["Kategori ve Araç Bilgileri", "Kategori, fiyat ve araç detayları"],
+        ["Ekspertiz Durumu", "Parça durumlarını ayrı ayrı belirtin"],
+        ["Özellikler", "Donanım ve konfor ögeleri"],
+        ["Fotoğraflar ve Önizleme", "Son kontrol ve yayına gönderim"]
+      ];
+    }
+
+    function getActiveCategory() {
+      return document.getElementById("mainCategory")?.value || formData.category || "";
+    }
+
+    function getVisibleStepIds(category = getActiveCategory()) {
+      return category === "emlak" ? [1, 2, 4, 5] : [1, 2, 3, 4, 5];
+    }
+
+    function getCurrentActualStep() {
+      const visibleSteps = getVisibleStepIds();
+      return visibleSteps[Math.max(0, currentStep - 1)] || 1;
+    }
+
+    function syncWizardByCategory(category = getActiveCategory()) {
+      const visibleSteps = getVisibleStepIds(category);
+      totalSteps = visibleSteps.length;
+      currentStep = Math.min(currentStep, totalSteps);
+
+      const expertizStep = document.getElementById("step-3");
+      if (expertizStep) {
+        expertizStep.style.display = category === "emlak" ? "none" : "";
+      }
+
+      const stepTitles = {
+        1: "Temel Bilgiler",
+        2: category === "emlak" ? "Emlak Bilgileri" : "Kategori ve Araç Bilgileri",
+        3: "Ekspertiz Durumu",
+        4: "Özellikler",
+        5: "Fotoğraflar ve Önizleme"
+      };
+
+      const stepIntros = {
+        1: "İlanın vitrinde öne çıkacak temel bilgilerini eksiksiz girin.",
+        2: category === "emlak"
+          ? "İlan tipi, emlak tipi ve taşınmaza ait temel bilgileri eksiksiz tamamlayın."
+          : "Kategori seçimini yapın, ardından aracın teknik ve ticari detaylarını tamamlayın.",
+        3: "Kaporta parçalarını ayrı ayrı işaretleyin. Emin olmadığınız alanlar belirtilmemiş kalabilir.",
+        4: category === "emlak"
+          ? "Taşınmazın öne çıkan özelliklerini seçin."
+          : "ABS, airbag, klima ve benzeri donanımları seçin.",
+        5: "Fotoğrafları yükleyin, ilan özetini kontrol edin ve hazır olduğunda yayına gönderin."
+      };
+
+      Object.entries(stepTitles).forEach(([id, title]) => {
+        const step = document.getElementById(`step-${id}`);
+        if (!step) return;
+        const titleEl = step.querySelector(".step-title");
+        if (titleEl) titleEl.textContent = title;
+        ensureStepIntro(step, stepIntros[id]);
+      });
+
+      document.querySelectorAll(".stepper-item").forEach((item, index) => {
+        const actualStep = index + 1;
+        item.style.display = visibleSteps.includes(actualStep) ? "" : "none";
+        const title = item.querySelector(".stepper-title");
+        const subtitle = item.querySelector(".stepper-subtitle");
+        if (title) title.textContent = stepTitles[actualStep] || title.textContent;
+        if (subtitle) subtitle.textContent = stepIntros[actualStep] || subtitle.textContent;
+      });
+    }
+
+    function ensureStepIntro(step, text) {
+      if (!step) return;
+      let intro = step.querySelector(".section-intro");
+      if (!intro) {
+        intro = document.createElement("p");
+        intro.className = "section-intro";
+        const title = step.querySelector(".step-title");
+        title?.insertAdjacentElement("afterend", intro);
+      }
+      intro.textContent = text;
+    }
+
+    function buildStepper() {
+      const label = document.getElementById("stepLabel");
+      if (!label || document.getElementById("stepper")) return;
+      const wrapper = document.createElement("div");
+      wrapper.className = "stepper";
+      wrapper.id = "stepper";
+      wrapper.innerHTML = getStepTitles().map(([title, subtitle], index) => `
+        <div class="stepper-item ${index === 0 ? "active" : ""}" data-step="${index + 1}">
+          <span class="stepper-index">${index + 1}</span>
+          <span class="stepper-title">${title}</span>
+          <span class="stepper-subtitle">${subtitle}</span>
         </div>
-        <div class="detail-section">
-          <h3 class="section-title">Ekspertiz Durumu</h3>
-          <div class="grid-2">
-            ${fieldHtml("expertiseHood", "Kaput", `
-              <select id="expertiseHood" name="kaput" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseRoof", "Tavan", `
-              <select id="expertiseRoof" name="tavan" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseTrunk", "Bagaj", `
-              <select id="expertiseTrunk" name="bagaj" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseFrontRightFender", "Sağ Ön Çamurluk", `
-              <select id="expertiseFrontRightFender" name="sag_on_camurluk" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseFrontLeftFender", "Sol Ön Çamurluk", `
-              <select id="expertiseFrontLeftFender" name="sol_on_camurluk" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseFrontRightDoor", "Sağ Ön Kapı", `
-              <select id="expertiseFrontRightDoor" name="sag_on_kapi" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseFrontLeftDoor", "Sol Ön Kapı", `
-              <select id="expertiseFrontLeftDoor" name="sol_on_kapi" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseRearRightDoor", "Sağ Arka Kapı", `
-              <select id="expertiseRearRightDoor" name="sag_arka_kapi" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
-            ${fieldHtml("expertiseRearLeftDoor", "Sol Arka Kapı", `
-              <select id="expertiseRearLeftDoor" name="sol_arka_kapi" class="form-select">
-                <option value="">Seç</option>
-                <option>Orijinal</option>
-                <option>Boyalı</option>
-                <option>Değişen</option>
-              </select>
-            `)}
+      `).join("");
+      label.insertAdjacentElement("afterend", wrapper);
+    }
+
+    function renderExpertizStep(container) {
+      if (!container) return;
+      const options = [
+        ["belirtilmemis", "Belirtilmemiş"],
+        ["orijinal", "Orijinal"],
+        ["boyali", "Boyalı"],
+        ["degisen", "Değişen"],
+        ["lokal_boyali", "Lokal Boyalı"]
+      ];
+      const labels = {
+        kaput: "Kaput",
+        tavan: "Tavan",
+        bagaj: "Bagaj",
+        sag_on_camurluk: "Sağ Ön Çamurluk",
+        sol_on_camurluk: "Sol Ön Çamurluk",
+        sag_on_kapi: "Sağ Ön Kapı",
+        sol_on_kapi: "Sol Ön Kapı",
+        sag_arka_kapi: "Sağ Arka Kapı",
+        sol_arka_kapi: "Sol Arka Kapı",
+        sag_arka_camurluk: "Sağ Arka Çamurluk",
+        sol_arka_camurluk: "Sol Arka Çamurluk",
+        on_tampon: "Ön Tampon",
+        arka_tampon: "Arka Tampon"
+      };
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="expertiz-grid">
+            ${expertiseFieldNames.map((name) => `
+              <div class="expertiz-item">
+                <label for="${name}">${labels[name]}</label>
+                <select id="${name}" name="${name}">
+                  ${options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("")}
+                </select>
+              </div>
+            `).join("")}
           </div>
         </div>
       `;
     }
 
-    function renderDaireFields() {
+    function setupWizardLayout() {
+      document.title = "İlan Ver | Jetle";
+      const headTitle = document.querySelector(".form-head h1");
+      const headText = document.querySelector(".form-head p");
+      if (headTitle) headTitle.textContent = "İlan Ver";
+      if (headText) headText.textContent = "İlanınızı adım adım, daha profesyonel bir akışla hazırlayın. Admin onayından sonra yayına alınır.";
+
+      const step1 = document.getElementById("step-1");
+      const step2 = document.getElementById("step-2");
+      const step3 = document.getElementById("step-3");
+      const step4 = document.getElementById("step-4");
+      const step5 = document.getElementById("step-5");
+      const step1Grid = step1?.querySelector(".form-grid");
+      const step3Grid = step3?.querySelector(".form-grid");
+      const step4Field = step4?.querySelector(".field.full");
+      const features = document.getElementById("features");
+      const ekspertizSection = document.getElementById("ekspertizSection");
+      const previewBox = document.getElementById("previewBox");
+
+      buildStepper();
+      document.getElementById("stepLabel").textContent = "Adım 1 / 5";
+
+      if (step1) step1.querySelector(".step-title").textContent = "Temel Bilgiler";
+      if (step2) step2.querySelector(".step-title").textContent = "Kategori ve Araç Bilgileri";
+      if (step3) step3.querySelector(".step-title").textContent = "Ekspertiz Durumu";
+      if (step4) step4.querySelector(".step-title").textContent = "Özellikler";
+      if (step5) step5.querySelector(".step-title").textContent = "Fotoğraflar ve Önizleme";
+
+      ensureStepIntro(step1, "İlanın vitrinde öne çıkacak temel bilgilerini eksiksiz girin.");
+      ensureStepIntro(step2, "Kategori seçimini yapın, ardından aracın teknik ve ticari detaylarını tamamlayın.");
+      ensureStepIntro(step3, "Kaporta parçalarını ayrı ayrı işaretleyin. Emin olmadığınız alanlar belirtilmemiş kalabilir.");
+      ensureStepIntro(step4, "ABS, airbag, klima ve benzeri donanımları seçin.");
+      ensureStepIntro(step5, "Fotoğrafları yükleyin, ilan özetini kontrol edin ve hazır olduğunda yayına gönderin.");
+
+      if (step3Grid && step1Grid) {
+        const cityField = step3Grid.querySelector(".field:nth-child(1)");
+        const districtField = step3Grid.querySelector(".field:nth-child(2)");
+        if (cityField) step1Grid.appendChild(cityField);
+        if (districtField) step1Grid.appendChild(districtField);
+      }
+
+      if (step1Grid && !document.getElementById("sellerProfileType")) {
+        const sellerField = document.createElement("div");
+        sellerField.className = "field full";
+        sellerField.innerHTML = `
+          <label for="sellerProfileType">Satıcı tipi</label>
+          <select id="sellerProfileType" name="sellerProfileType">
+            <option value="">Satıcı tipi seç</option>
+            <option value="Bireysel">Bireysel</option>
+            <option value="Galeri">Galeri</option>
+            <option value="Kurumsal">Kurumsal</option>
+          </select>
+        `;
+        step1Grid.appendChild(sellerField);
+      }
+
+      if (features && step4) {
+        step4.innerHTML = `<h2 class="step-title">Özellikler</h2>`;
+        ensureStepIntro(step4, "ABS, airbag, klima ve benzeri donanımları seçin.");
+        step4.appendChild(features);
+      }
+
+      if (step3) {
+        step3.innerHTML = `<h2 class="step-title">Ekspertiz Durumu</h2>`;
+        ensureStepIntro(step3, "Kaporta parçalarını ayrı ayrı işaretleyin. Emin olmadığınız alanlar belirtilmemiş kalabilir.");
+        const host = document.createElement("div");
+        host.id = "ekspertizHost";
+        step3.appendChild(host);
+        renderExpertizStep(host);
+      }
+
+      if (step5 && step4Field) {
+        step5.innerHTML = `<h2 class="step-title">Fotoğraflar ve Önizleme</h2>`;
+        ensureStepIntro(step5, "Fotoğrafları yükleyin, ilan özetini kontrol edin ve hazır olduğunda yayına gönderin.");
+        step5.appendChild(step4Field);
+        step5.querySelector("label[for='images']")?.replaceChildren("Fotoğraf ekle (en az 3)");
+        const zoneStrong = step5.querySelector(".upload-zone strong");
+        const zoneText = step5.querySelector(".upload-zone span");
+        if (zoneStrong) zoneStrong.textContent = "Fotoğraf ekle (en az 3)";
+        if (zoneText) zoneText.textContent = "Sürükle bırak veya seçmek için tıkla. En fazla 10 fotoğraf.";
+        if (previewBox) step5.appendChild(previewBox);
+      }
+
+      ekspertizSection?.remove();
+      step3Grid?.remove();
+      submitBtn.textContent = "Yayına Gönder";
+      syncWizardByCategory();
+    }
+
+    function renderEmlakFields(subCategory = "") {
+      if (subCategory === "arsa") {
+        return `
+          <div class="detail-section">
+            <div class="section-card">
+              <h3 class="section-title">Emlak Bilgileri</h3>
+              <div class="grid-2">
+                ${fieldHtml("listingType", "İlan tipi", `
+                  <select id="listingType" name="listingType">
+                    <option value="">İlan tipi seç</option>
+                    <option value="Satılık">Satılık</option>
+                    <option value="Kiralık">Kiralık</option>
+                  </select>
+                `)}
+                ${fieldHtml("m2", "mÂ²", `<input id="m2" name="m2" type="number" min="0">`)}
+                ${fieldHtml("m2Price", "m² fiyatı", `<input id="m2Price" name="m2Price" type="number" min="0">`)}
+                ${fieldHtml("zoning", "İmar durumu", `<input id="zoning" name="zoning">`)}
+                ${fieldHtml("blockParcelNo", "Ada no", `<input id="blockParcelNo" name="blockParcelNo">`)}
+                ${fieldHtml("parcelNo", "Parsel no", `<input id="parcelNo" name="parcelNo">`)}
+                ${fieldHtml("sheetNo", "Pafta no", `<input id="sheetNo" name="sheetNo">`)}
+                ${fieldHtml("kaks", "KAKS / Emsal", `<input id="kaks" name="kaks">`)}
+                ${fieldHtml("gabari", "Gabari", `<input id="gabari" name="gabari">`)}
+                ${fieldHtml("deedStatus", "Tapu durumu", `<input id="deedStatus" name="deedStatus">`)}
+                ${fieldHtml("flatForLand", "Kat karşılığı", `
+                  <select id="flatForLand" name="flatForLand">
+                    <option value="">Seç</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                `)}
+                ${fieldHtml("creditEligible", "Krediye uygun", `
+                  <select id="creditEligible" name="creditEligible">
+                    <option value="">Seç</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                `)}
+                ${fieldHtml("trade", "Takas", `
+                  <select id="trade" name="trade">
+                    <option value="">Seç</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                `)}
+                ${fieldHtml("sellerType", "Kimden", `
+                  <select id="sellerType" name="sellerType">
+                    <option value="">Kimden seç</option>
+                    <option value="Sahibinden">Sahibinden</option>
+                    <option value="Emlak Ofisinden">Emlak Ofisinden</option>
+                  </select>
+                `)}
+                ${fieldHtml("roadStatus", "Yol durumu", `<input id="roadStatus" name="roadStatus">`)}
+                ${fieldHtml("infrastructure", "Altyapı", `<input id="infrastructure" name="infrastructure" placeholder="Elektrik, Su, Doğalgaz...">`)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (subCategory === "ofis" || subCategory === "dukkan") {
+        return `
+          <div class="detail-section">
+            <div class="section-card">
+              <h3 class="section-title">Emlak Bilgileri</h3>
+              <div class="grid-2">
+                ${fieldHtml("listingType", "İlan tipi", `
+                  <select id="listingType" name="listingType">
+                    <option value="">İlan tipi seç</option>
+                    <option value="Satılık">Satılık</option>
+                    <option value="Kiralık">Kiralık</option>
+                  </select>
+                `)}
+                ${fieldHtml("propertyType", "İş yeri tipi", `
+                  <select id="propertyType" name="propertyType">
+                    <option value="">İş yeri tipi seç</option>
+                    <option value="Ofis">Ofis</option>
+                    <option value="Dükkan">Dükkan</option>
+                    <option value="Mağaza">Mağaza</option>
+                    <option value="Depo">Depo</option>
+                    <option value="Plaza Katı">Plaza Katı</option>
+                    <option value="Atölye">Atölye</option>
+                  </select>
+                `)}
+                ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
+                ${fieldHtml("netM2", "Net mÂ²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+                ${fieldHtml("rooms", "Oda / Bölüm sayısı", `<input id="rooms" name="rooms">`)}
+                ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
+                ${fieldHtml("floor", "Bulunduğu kat", `<input id="floor" name="floor">`)}
+                ${fieldHtml("totalFloors", "Kat sayısı", `<input id="totalFloors" name="totalFloors" type="number" min="0">`)}
+                ${fieldHtml("heating", "Isıtma", `<input id="heating" name="heating">`)}
+                ${fieldHtml("dues", "Aidat", `<input id="dues" name="dues" type="number" min="0">`)}
+                ${fieldHtml("usageStatus", "Kullanım durumu", `<input id="usageStatus" name="usageStatus">`)}
+                ${fieldHtml("deedStatus", "Tapu durumu", `<input id="deedStatus" name="deedStatus">`)}
+                ${fieldHtml("sellerType", "Kimden", `
+                  <select id="sellerType" name="sellerType">
+                    <option value="">Kimden seç</option>
+                    <option value="Sahibinden">Sahibinden</option>
+                    <option value="Emlak Ofisinden">Emlak Ofisinden</option>
+                    <option value="İnşaat Firmasından">İnşaat Firmasından</option>
+                  </select>
+                `)}
+                ${fieldHtml("creditEligible", "Krediye uygun", `
+                  <select id="creditEligible" name="creditEligible">
+                    <option value="">Seç</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                `)}
+                ${fieldHtml("trade", "Takas", `
+                  <select id="trade" name="trade">
+                    <option value="">Seç</option>
+                    <option value="Evet">Evet</option>
+                    <option value="Hayır">Hayır</option>
+                  </select>
+                `)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       return `
         <div class="detail-section">
-          <h3 class="section-title">Detaylar</h3>
-          <div class="grid-2">
-            ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
-            ${fieldHtml("netM2", "Net m²", `<input id="netM2" name="netM2" type="number" min="0">`)}
-            ${fieldHtml("rooms", "Oda sayısı", `
-              <select id="rooms" name="rooms">
-                <option value="">Seç</option>
-                <option>1+1</option>
-                <option>2+1</option>
-                <option>3+1</option>
-                <option>4+1</option>
-              </select>
-            `)}
-            ${fieldHtml("floor", "Kat", `<input id="floor" name="floor">`)}
-            ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
-            ${fieldHtml("heating", "Isıtma", `
-              <select id="heating" name="heating">
-                <option value="">Seç</option>
-                <option>Doğalgaz</option>
-                <option>Kombi</option>
-                <option>Klima</option>
-              </select>
-            `)}
-            ${fieldHtml("inSite", "Site içinde mi?", `
-              <select id="inSite" name="inSite">
-                <option value="">Seç</option>
-                <option>Evet</option>
-                <option>Hayır</option>
-              </select>
-            `)}
+          <div class="section-card">
+            <h3 class="section-title">Emlak Bilgileri</h3>
+            <div class="grid-2">
+              ${fieldHtml("listingType", "İlan tipi", `
+                <select id="listingType" name="listingType">
+                  <option value="">İlan tipi seç</option>
+                  <option value="Satılık">Satılık</option>
+                  <option value="Kiralık">Kiralık</option>
+                </select>
+              `)}
+              ${fieldHtml("propertyType", "Emlak tipi", `
+                <select id="propertyType" name="propertyType">
+                  <option value="">Emlak tipi seç</option>
+                  <option value="Daire">Daire</option>
+                  <option value="Residence">Residence</option>
+                  <option value="Daire">Daire</option>
+                  <option value="Villa">Villa</option>
+                  <option value="Müstakil Ev">Müstakil Ev</option>
+                </select>
+              `)}
+              ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
+              ${fieldHtml("netM2", "Net mÂ²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+              ${fieldHtml("rooms", "Oda sayısı", `<input id="rooms" name="rooms" placeholder="3+1">`)}
+              ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
+              ${fieldHtml("floor", "Bulunduğu kat", `<input id="floor" name="floor">`)}
+              ${fieldHtml("totalFloors", "Kat sayısı", `<input id="totalFloors" name="totalFloors" type="number" min="0">`)}
+              ${fieldHtml("heating", "Isıtma", `
+                <select id="heating" name="heating">
+                  <option value="">Isıtma seç</option>
+                  <option value="Doğalgaz">Doğalgaz</option>
+                  <option value="Kombi">Kombi</option>
+                  <option value="Merkezi">Merkezi</option>
+                  <option value="Klima">Klima</option>
+                  <option value="Yerden Isıtma">Yerden Isıtma</option>
+                </select>
+              `)}
+              ${fieldHtml("bathrooms", "Banyo sayısı", `<input id="bathrooms" name="bathrooms" type="number" min="0">`)}
+              ${fieldHtml("balcony", "Balkon", `
+                <select id="balcony" name="balcony">
+                  <option value="">Seç</option>
+                  <option value="Var">Var</option>
+                  <option value="Yok">Yok</option>
+                </select>
+              `)}
+              ${fieldHtml("furnished", "Eşyalı", `
+                <select id="furnished" name="furnished">
+                  <option value="">Seç</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              `)}
+              ${fieldHtml("inSite", "Site içerisinde", `
+                <select id="inSite" name="inSite">
+                  <option value="">Seç</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              `)}
+              ${fieldHtml("dues", "Aidat", `<input id="dues" name="dues" type="number" min="0">`)}
+              ${fieldHtml("deedStatus", "Tapu durumu", `
+                <select id="deedStatus" name="deedStatus">
+                  <option value="">Tapu durumu seç</option>
+                  <option value="Kat Mülkiyetli">Kat Mülkiyetli</option>
+                  <option value="Kat İrtifaklı">Kat İrtifaklı</option>
+                  <option value="Hisseli">Hisseli</option>
+                  <option value="Müstakil">Müstakil</option>
+                </select>
+              `)}
+              ${fieldHtml("sellerType", "Kimden", `
+                <select id="sellerType" name="sellerType">
+                  <option value="">Kimden seç</option>
+                  <option value="Sahibinden">Sahibinden</option>
+                  <option value="Emlak Ofisinden">Emlak Ofisinden</option>
+                  <option value="İnşaat Firmasından">İnşaat Firmasından</option>
+                </select>
+              `)}
+              ${fieldHtml("usageStatus", "Kullanım durumu", `<input id="usageStatus" name="usageStatus">`)}
+              ${fieldHtml("creditEligible", "Krediye uygun", `
+                <select id="creditEligible" name="creditEligible">
+                  <option value="">Seç</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              `)}
+              ${fieldHtml("trade", "Takas", `
+                <select id="trade" name="trade">
+                  <option value="">Seç</option>
+                  <option value="Evet">Evet</option>
+                  <option value="Hayır">Hayır</option>
+                </select>
+              `)}
+            </div>
           </div>
         </div>
       `;
     }
-
     function renderCarFields() {
       return `
         <div class="detail-section">
-          <h3 class="section-title">Detaylar</h3>
-          <div class="grid-2">
-            ${fieldHtml("brand", "Marka", `
-              <select id="brand" name="brand">
-                <option value="">Seç</option>
-                ${Object.keys(carData).map((brand) => `<option value="${brand}">${brand}</option>`).join("")}
-              </select>
-            `)}
-            ${fieldHtml("series", "Seri", `
-              <select id="series" name="series" disabled>
-                <option value="">Önce marka seç</option>
-              </select>
-            `)}
-            ${fieldHtml("model", "Model", `
-              <select id="model" name="model" disabled>
-                <option value="">Önce seri seç</option>
-              </select>
-            `)}
-            ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900" max="${new Date().getFullYear()}" placeholder="2020">`)}
-            ${fieldHtml("km", "Km", `<input id="km" name="km" type="number" min="0">`)}
-            ${fieldHtml("fuel", "Yakıt", `
-              <select id="fuel" name="fuel">
-                <option value="">Seç</option>
-                <option value="Benzin">Benzin</option>
-                <option value="Dizel">Dizel</option>
-                <option value="LPG">LPG</option>
-                <option value="Hibrit">Hibrit</option>
-                <option value="Elektrik">Elektrik</option>
-              </select>
-            `)}
-            ${fieldHtml("transmission", "Vites", `
-              <select id="transmission" name="transmission">
-                <option value="">Seç</option>
-                <option value="Manuel">Manuel</option>
-                <option value="Otomatik">Otomatik</option>
-                <option value="Yarı Otomatik">Yarı Otomatik</option>
-              </select>
-            `)}
-            ${fieldHtml("bodyType", "Kasa tipi", `
-              <select id="bodyType" name="bodyType">
-                <option value="">Seç</option>
-                <option>Sedan</option>
-                <option>Hatchback</option>
-                <option>SUV</option>
-                <option>Coupe</option>
-                <option>Pickup</option>
-                <option>Minivan</option>
-                <option>Station Wagon</option>
-              </select>
-            `)}
-            ${fieldHtml("color", "Renk", `<input id="color" name="color">`)}
-            ${fieldHtml("engine", "Motor hacmi", `<input id="engine" name="engine">`)}
-            ${fieldHtml("power", "Motor gücü", `<input id="power" name="power">`)}
-            ${fieldHtml("damageRecord", "Hasar kaydı", `<input id="damageRecord" name="damageRecord">`)}
-            ${fieldHtml("sellerType", "Kimden", `
-              <select id="sellerType" name="sellerType">
-                <option>Bireysel</option>
-                <option>Galeriden</option>
-              </select>
-            `)}
+          <div class="section-card">
+            <h3 class="section-title">Araç Bilgileri</h3>
+            <div class="grid-2">
+              ${fieldHtml("brand", "Marka", `
+                <select id="brand" name="brand">
+                  <option value="">Marka seç</option>
+                  ${Object.keys(carData).map((brand) => `<option value="${brand}">${brand}</option>`).join("")}
+                </select>
+              `)}
+              ${fieldHtml("series", "Seri", `
+                <select id="series" name="series" disabled>
+                  <option value="">Seri seç</option>
+                </select>
+              `)}
+              ${fieldHtml("model", "Model", `
+                <select id="model" name="model" disabled>
+                  <option value="">Model seç</option>
+                </select>
+              `)}
+              ${fieldHtml("year", "Yıl", `<input id="year" name="year" type="number" min="1900" max="${new Date().getFullYear()}" placeholder="2020">`)}
+              ${fieldHtml("km", "KM", `<input id="km" name="km" type="number" min="0">`)}
+              ${fieldHtml("fuel", "Yakıt", `
+                <select id="fuel" name="fuel">
+                  <option value="">Yakıt seç</option>
+                  <option value="Benzin">Benzin</option>
+                  <option value="Dizel">Dizel</option>
+                  <option value="LPG">LPG</option>
+                  <option value="Hibrit">Hibrit</option>
+                  <option value="Elektrik">Elektrik</option>
+                </select>
+              `)}
+              ${fieldHtml("transmission", "Vites", `
+                <select id="transmission" name="transmission">
+                  <option value="">Vites seç</option>
+                  <option value="Manuel">Manuel</option>
+                  <option value="Otomatik">Otomatik</option>
+                  <option value="Yarı Otomatik">Yarı Otomatik</option>
+                </select>
+              `)}
+              ${fieldHtml("bodyType", "Kasa tipi", `
+                <select id="bodyType" name="bodyType">
+                  <option value="">Kasa tipi seç</option>
+                  <option>Sedan</option>
+                  <option>Hatchback</option>
+                  <option>SUV</option>
+                  <option>Coupe</option>
+                  <option>Pickup</option>
+                  <option>Minivan</option>
+                  <option>Station Wagon</option>
+                </select>
+              `)}
+              ${fieldHtml("color", "Renk", `<input id="color" name="color">`)}
+              ${fieldHtml("engine", "Motor hacmi", `<input id="engine" name="engine">`)}
+              ${fieldHtml("power", "Motor gücü", `<input id="power" name="power">`)}
+              ${fieldHtml("damageRecord", "Hasar kaydı", `<input id="damageRecord" name="damageRecord">`)}
+              ${fieldHtml("sellerType", "Kimden", `
+                <select id="sellerType" name="sellerType">
+                  <option value="">Kimden seç</option>
+                  <option>Bireysel</option>
+                  <option>Galeri</option>
+                  <option>Kurumsal</option>
+                </select>
+              `)}
+            </div>
           </div>
         </div>
       `;
@@ -1635,13 +2524,29 @@
 
       switch (subCategory) {
         case "arsa":
-          container.innerHTML = renderArsaFields();
-          break;
         case "daire":
         case "residence":
         case "villa":
         case "mustakil-ev":
-          container.innerHTML = renderDaireFields();
+        case "ofis":
+        case "dukkan":
+          container.innerHTML = renderEmlakFields(subCategory);
+          requestAnimationFrame(() => {
+            const propertyType = document.getElementById("propertyType");
+            const propertyTypeMap = {
+              daire: "Daire",
+              residence: "Residence",
+              villa: "Villa",
+              "mustakil-ev": "Müstakil Ev",
+              arsa: "Arsa",
+              ofis: "Ofis",
+              dukkan: "Dükkan"
+            };
+            if (propertyType && propertyTypeMap[subCategory]) {
+              propertyType.value = propertyTypeMap[subCategory];
+              formData.propertyType = propertyType.value;
+            }
+          });
           break;
         case "otomobil":
         case "suv":
@@ -1698,25 +2603,49 @@
 
     function renderFeatures(category, subCategory = "") {
       const container = document.getElementById("features");
-      const options = (subCategory === "arsa" || subCategory === "motosiklet")
+      const options = subCategory === "motosiklet"
         ? []
-        : (featureOptions[category] || []);
-      formData.features = [];
+        : category === "emlak"
+          ? (featureOptions.emlak[subCategory] || {})
+          : (featureOptions[category] || []);
+      const selectedFeatures = new Set(formData.features || []);
 
-      if (!options.length) {
-        container.innerHTML = "";
+      if (!container) return;
+
+      const isGrouped = options && !Array.isArray(options) && typeof options === "object";
+      const hasOptions = isGrouped
+        ? Object.values(options).some((group) => Array.isArray(group) && group.length)
+        : Array.isArray(options) && options.length;
+
+      if (!hasOptions) {
+        container.innerHTML = `<div class="section-card"><p class="section-intro">Bu kategori için seçilebilir özellik bulunmuyor.</p></div>`;
         return;
       }
 
       container.innerHTML = `
-        <h3 class="section-title">Özellikler</h3>
-        <div class="features-grid">
-          ${options.map((feature) => `
-            <label class="feature-option">
-              <input type="checkbox" value="${feature}">
-              <span>${feature}</span>
-            </label>
-          `).join("")}
+        <div class="section-card">
+          ${isGrouped ? Object.entries(options).map(([groupTitle, groupOptions]) => `
+            <div class="feature-group">
+              <h4 class="feature-group-title">${groupTitle}</h4>
+              <div class="features-grid">
+                ${(groupOptions || []).map((feature) => `
+                  <label class="feature-option">
+                    <input type="checkbox" value="${feature}" ${selectedFeatures.has(feature) ? "checked" : ""}>
+                    <span>${feature}</span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+          `).join("") : `
+            <div class="features-grid">
+              ${(options || []).map((feature) => `
+                <label class="feature-option">
+                  <input type="checkbox" value="${feature}" ${selectedFeatures.has(feature) ? "checked" : ""}>
+                  <span>${feature}</span>
+                </label>
+              `).join("")}
+            </div>
+          `}
         </div>
       `;
 
@@ -1731,19 +2660,16 @@
       const modelSelect = document.getElementById("model");
       if (!modelSelect || !seriesSelect) return;
       const series = seriesSelect.value || "";
-      const models = brand && series ? (carData[brand] || {})[series] || [] : [];
+      const models = brand && series ? ((carData[brand] || {})[series] || []).filter((model) => model && String(model.name || "").trim()) : [];
 
-      modelSelect.innerHTML = brand
-        ? `<option value="">Model seç</option>`
-        : `<option value="">Önce seri seç</option>`;
-
+      modelSelect.innerHTML = `<option value="">Model seç</option>`;
       models.forEach((model) => {
         modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
       });
 
       modelSelect.disabled = !models.length;
       document.querySelectorAll("select").forEach((select) => {
-        select.disabled = false;
+        if (select.id !== "district") select.disabled = false;
       });
     }
 
@@ -1785,21 +2711,18 @@
       const seriesSelect = document.getElementById("series");
       const modelSelect = document.getElementById("model");
       if (!seriesSelect || !modelSelect) return;
-      const series = brand ? Object.keys(carData[brand] || {}) : [];
+      const series = brand ? Object.keys(carData[brand] || {}).filter((item) => String(item || "").trim()) : [];
 
-      seriesSelect.innerHTML = brand
-        ? `<option value="">Seri seç</option>`
-        : `<option value="">Önce marka seç</option>`;
-
+      seriesSelect.innerHTML = `<option value="">Seri seç</option>`;
       series.forEach((item) => {
         seriesSelect.innerHTML += `<option value="${item}">${item}</option>`;
       });
 
       seriesSelect.disabled = !series.length;
-      modelSelect.innerHTML = `<option value="">Önce seri seç</option>`;
+      modelSelect.innerHTML = `<option value="">Model seç</option>`;
       modelSelect.disabled = true;
       document.querySelectorAll("select").forEach((select) => {
-        select.disabled = false;
+        if (select.id !== "district") select.disabled = false;
       });
     }
 
@@ -1814,19 +2737,16 @@
     function renderLegacyVehicleModels(brand, series) {
       const modelSelect = document.getElementById("model");
       if (!modelSelect) return;
-      const models = (carData[brand] || {})[series] || [];
+      const models = ((carData[brand] || {})[series] || []).filter((model) => model && model.name);
 
-      modelSelect.innerHTML = series
-        ? `<option value="">Model seç</option>`
-        : `<option value="">Önce seri seç</option>`;
-
+      modelSelect.innerHTML = `<option value="">Model seç</option>`;
       models.forEach((model) => {
         modelSelect.innerHTML += `<option value="${model.name}">${model.name}</option>`;
       });
 
       modelSelect.disabled = !series;
       document.querySelectorAll("select").forEach((select) => {
-        select.disabled = false;
+        if (select.id !== "district") select.disabled = false;
       });
     }
 
@@ -1838,11 +2758,13 @@
       collectStepData();
       clearFieldErrors();
       const errors = [];
+      const titleValue = String(formData.title || "").trim();
+      const descriptionValue = String(formData.description || "").trim();
 
       const rules = {
-        1: [["title", "Başlık zorunlu"]],
+        1: [["title", "Başlık zorunlu"], ["description", "Açıklama zorunlu"], ["city", "İl zorunlu"], ["district", "İlçe zorunlu"], ["sellerProfileType", "Satıcı tipi seçilmeli"]],
         2: [["price", "Fiyat 0 olamaz"], ["mainCategory", "Ana kategori seçilmeli"], ["subCategory", "Alt kategori seçilmeli"]],
-        3: [["city", "Şehir zorunlu"]],
+        3: [],
         4: [],
         5: []
       };
@@ -1851,22 +2773,48 @@
         if (!formData[key]) errors.push([key, message]);
       });
 
+      if (step === 1) {
+        if (!titleValue) {
+          errors.push(["title", "Başlık zorunlu"]);
+        } else if (titleValue.length < 3) {
+          errors.push(["title", "Başlık en az 3 karakter olmalı."]);
+        }
+
+        if (!descriptionValue) {
+          errors.push(["description", "Açıklama zorunlu"]);
+        } else if (descriptionValue.length < 20) {
+          errors.push(["description", "Açıklama en az 20 karakter olmalı"]);
+        }
+      }
+
       if (step === 2 && Number(formData.price) <= 0) {
         errors.push(["price", "Fiyat 0 olamaz"]);
       }
 
       if (step === 2 && formData.mainCategory === "vasita") {
-        if (!formData.year) {
-          errors.push(["year", "Yıl zorunlu"]);
-        }
-        if (!formData.km) {
-          errors.push(["km", "Km zorunlu"]);
-        }
-        if (!formData.fuel || !formData.transmission || !formData.bodyType) {
-          alert("Lütfen tüm araç bilgilerini seç");
-          errors.push(["fuel", "Yakıt zorunlu"]);
-          errors.push(["transmission", "Vites zorunlu"]);
-          errors.push(["bodyType", "Kasa tipi zorunlu"]);
+        if (!formData.brand) errors.push(["brand", "Marka zorunlu"]);
+        if (!formData.series) errors.push(["series", "Seri zorunlu"]);
+        if (!formData.model) errors.push(["model", "Model seç"]);
+        if (!formData.year) errors.push(["year", "Yıl zorunlu"]);
+        if (!formData.km) errors.push(["km", "KM zorunlu"]);
+        if (!formData.fuel) errors.push(["fuel", "Yakıt zorunlu"]);
+        if (!formData.transmission) errors.push(["transmission", "Vites zorunlu"]);
+        if (!formData.bodyType) errors.push(["bodyType", "Kasa tipi zorunlu"]);
+        if (!formData.sellerType) errors.push(["sellerType", "Kimden bilgisi zorunlu"]);
+      }
+
+      if (step === 2 && formData.mainCategory === "emlak") {
+        if (!formData.listingType) errors.push(["listingType", "İlan tipi zorunlu"]);
+        if (!formData.propertyType) errors.push(["propertyType", "Emlak tipi zorunlu"]);
+        if (!formData.m2) errors.push(["m2", "Brüt m² zorunlu"]);
+        if (!formData.netM2) errors.push(["netM2", "Net mÂ² zorunlu"]);
+        if (!formData.sellerType) errors.push(["sellerType", "Kimden bilgisi zorunlu"]);
+      }
+
+      if (step === 3 && formData.mainCategory === "vasita") {
+        const emptyExpertise = expertiseFieldNames.every((name) => !formData[name]);
+        if (emptyExpertise) {
+          errors.push(["kaput", "Ekspertiz durumu seçilmeli"]);
         }
       }
 
@@ -1874,7 +2822,7 @@
         errors.push(["m2", "m2 zorunlu"]);
       }
 
-      if (step === 4 && (document.getElementById("images")?.files || []).length < 3) {
+      if (step === 5 && (document.getElementById("images")?.files || []).length < 3) {
         errors.push(["images", "En az 3 fotoğraf zorunlu"]);
       }
 
@@ -1896,65 +2844,54 @@
       collectStepData();
       clearFieldErrors();
       const imageFiles = document.getElementById("images")?.files || [];
-      console.log("LIVE IMAGE COUNT", imageFiles.length);
+      const titleValue = String(formData.title || "").trim();
+      const descriptionValue = String(formData.description || "").trim();
 
       const checks = [
-        ["title", Boolean(formData.title), "Başlık zorunlu"],
+        ["title", Boolean(titleValue), "Başlık zorunlu"],
+        ["description", Boolean(descriptionValue), "Açıklama zorunlu"],
         ["price", Number(formData.price) > 0, "Fiyat 0 olamaz"],
         ["category", Boolean(formData.category), "Ana kategori seçilmeli"],
         ["subCategory", Boolean(formData.subCategory), "Alt kategori seçilmeli"],
-        ["city", Boolean(formData.city), "Şehir zorunlu"],
+        ["city", Boolean(formData.city), "İl zorunlu"],
+        ["district", Boolean(formData.district), "İlçe zorunlu"],
+        ["sellerProfileType", Boolean(formData.sellerProfileType), "Satıcı tipi seçilmeli"],
         ["images", imageFiles.length >= 3, "En az 3 fotoğraf zorunlu"]
       ];
 
       if (formData.category === "vasita") {
         const year = Number(formData.year);
-        checks.push(["year", Boolean(year) && year >= 1900 && year <= new Date().getFullYear(), "Yıl 1900 ile günümüz yılı arasında 4 haneli olmalı."]);
-        checks.push(["km", Boolean(formData.km), "Km zorunlu"]);
+        checks.push(["brand", Boolean(formData.brand), "Marka zorunlu"]);
+        checks.push(["series", Boolean(formData.series), "Seri zorunlu"]);
+        checks.push(["model", Boolean(formData.model), "Model seç"]);
+        checks.push(["year", Boolean(year) && year >= 1900 && year <= new Date().getFullYear(), "Yıl geçerli olmalı."]);
+        checks.push(["km", Boolean(formData.km), "KM zorunlu"]);
         checks.push(["fuel", Boolean(formData.fuel), "Yakıt zorunlu"]);
         checks.push(["transmission", Boolean(formData.transmission), "Vites zorunlu"]);
         checks.push(["bodyType", Boolean(formData.bodyType), "Kasa tipi zorunlu"]);
       }
 
       if (formData.category === "emlak") {
-        checks.push(["m2", Boolean(formData.m2), "m2 zorunlu"]);
+        checks.push(["listingType", Boolean(formData.listingType), "İlan tipi zorunlu"]);
+        checks.push(["propertyType", Boolean(formData.propertyType), "Emlak tipi zorunlu"]);
+        checks.push(["m2", Boolean(formData.m2), "Brüt m² zorunlu"]);
+        checks.push(["netM2", Boolean(formData.netM2), "Net mÂ² zorunlu"]);
+        checks.push(["sellerType", Boolean(formData.sellerType), "Kimden bilgisi zorunlu"]);
       }
 
       const invalid = checks.filter(([, ok]) => !ok);
+      if (titleValue && titleValue.length < 3) {
+        invalid.push(["title", false, "Başlık en az 3 karakter olmalı."]);
+      }
+      if (descriptionValue && descriptionValue.length < 20) {
+        invalid.push(["description", false, "Açıklama en az 20 karakter olmalı"]);
+      }
       if (invalid.length) {
-        console.warn("INVALID FIELDS FULL", invalid);
-        console.warn("SUBMIT VALIDATION FAILED", {
-          invalid: invalid.map(([id, , message]) => ({
-            field: id,
-            message,
-            value: id === "images" ? imageFiles.length : formData[id]
-          })),
-          formData: { ...formData },
-          selectedFiles: imageFiles.length
-        });
         invalid.forEach(([id, , message]) => showFieldError(id, message));
         return false;
       }
 
-      const hasAllRequired = Boolean(
-        formData.title &&
-        Number(formData.price) > 0 &&
-        formData.category &&
-        formData.subCategory &&
-        formData.city &&
-        imageFiles.length >= 3
-      );
-      if (!hasAllRequired) {
-        console.warn("SUBMIT REQUIRED CHECK FAILED", {
-          title: formData.title,
-          price: formData.price,
-          category: formData.category,
-          subCategory: formData.subCategory,
-          city: formData.city,
-          selectedFiles: imageFiles.length
-        });
-      }
-      return hasAllRequired;
+      return true;
     }
 
     function removeInactiveRequiredFields() {
@@ -1987,24 +2924,36 @@
       document.getElementById("previewDescription").textContent = formData.description || "";
 
       const previewImage = document.getElementById("previewImage");
-      const imageFiles = Array.from(document.getElementById("images")?.files || []);
+      clearPreviewObjectUrls("hero");
+      const imageFiles = getSelectedImageFiles();
       previewImage.innerHTML = imageFiles[0]
-        ? `<img src="${URL.createObjectURL(imageFiles[0])}" alt="${formData.title || "İlan görseli"}">`
+        ? `<img src="${createPreviewObjectUrl(imageFiles[0], "hero")}" alt="${formData.title || "İlan görseli"}">`
         : `<img src="${placeholderImage("Görsel yok")}" alt="Görsel yok">`;
     }
 
     function showStep(step) {
+      const visibleSteps = getVisibleStepIds();
+      totalSteps = visibleSteps.length;
       currentStep = Math.min(Math.max(step, 1), totalSteps);
       goStep(currentStep);
 
       document.querySelectorAll(".step").forEach((section, index) => {
-        const isActive = index + 1 === currentStep;
+        const actualStep = index + 1;
+        const isActive = visibleSteps[currentStep - 1] === actualStep;
         section.querySelectorAll("input, select, textarea").forEach((field) => {
           field.disabled = !isActive;
           if (!isActive || field.disabled) {
             field.removeAttribute("required");
           }
         });
+      });
+
+      document.querySelectorAll(".stepper-item").forEach((item, index) => {
+        const actualStep = index + 1;
+        const logicalIndex = visibleSteps.indexOf(actualStep);
+        const isVisible = logicalIndex !== -1;
+        item.classList.toggle("active", isVisible && logicalIndex + 1 === currentStep);
+        item.classList.toggle("done", isVisible && logicalIndex + 1 < currentStep);
       });
 
       progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
@@ -2018,11 +2967,12 @@
 
     function goStep(n) {
       document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-      document.getElementById("step-" + n).classList.add("active");
+      const actualStep = getVisibleStepIds()[n - 1] || 1;
+      document.getElementById("step-" + actualStep).classList.add("active");
     }
 
     function nextStep() {
-      if (!validateStep(currentStep)) return;
+      if (!validateStep(getCurrentActualStep())) return;
       showStep(currentStep + 1);
     }
 
@@ -2039,16 +2989,23 @@
       if (event.target?.id) clearFieldError(event.target.id);
     });
 
+    document.getElementById("price")?.addEventListener("input", handlePriceInput);
+    document.getElementById("price")?.addEventListener("blur", handlePriceInput);
+
     document.getElementById("city").addEventListener("change", (event) => {
       fillDistricts(event.target.value);
       document.getElementById("district").value = "";
     });
 
     document.getElementById("mainCategory").addEventListener("change", (event) => {
-      fillSubCategories(event.target.value);
+      const category = event.target.value;
+      fillSubCategories(category);
       document.getElementById("subCategory").value = "";
-      renderDynamicFields(event.target.value);
-      renderFeatures(event.target.value, "");
+      renderDynamicFields(category);
+      renderFeatures(category, "");
+      removeIrrelevantCategoryData(category);
+      syncWizardByCategory(category);
+      showStep(1);
     });
 
     document.getElementById("subCategory").addEventListener("change", () => {
@@ -2059,6 +3016,7 @@
         subCategory
       );
       renderFeatures(mainCategory, subCategory);
+      removeIrrelevantCategoryData(mainCategory);
       collectStepData();
     });
 
@@ -2105,37 +3063,36 @@
 
     async function submitListingForm(event) {
       event.preventDefault();
-      console.log("FORM SUBMIT ÇALIŞTI");
       removeInactiveRequiredFields();
+      collectStepData();
 
-      if (!document.querySelector("[name=title]").value) {
-        console.warn("SUBMIT RETURN: title missing", {
-          title: document.querySelector("[name=title]")?.value || ""
-        });
-        alert("Başlık gir");
+      const titleValue = String(document.querySelector("[name=title]")?.value || formData.title || "").trim();
+      const descriptionValue = String(document.querySelector("[name=description]")?.value || formData.description || "").trim();
+
+      formData.title = titleValue;
+      formData.description = descriptionValue;
+
+      if (!titleValue) {
+        showFieldError("title", "Başlık zorunlu");
+        return;
+      }
+
+      if (titleValue.length < 3) {
+        showFieldError("title", "Başlık en az 3 karakter olmalı.");
+        return;
+      }
+
+      if (!descriptionValue) {
+        showFieldError("description", "Açıklama zorunlu");
+        return;
+      }
+
+      if (descriptionValue.length < 20) {
+        showFieldError("description", "Açıklama en az 20 karakter olmalı");
         return;
       }
 
       if (!hasRequiredSubmitData()) {
-        console.warn("SUBMIT SNAPSHOT", {
-          title: document.querySelector("[name=title]")?.value || "",
-          description: document.querySelector("[name=description]")?.value || "",
-          price: document.querySelector("[name=price]")?.value || "",
-          category: document.querySelector("[name=category]")?.value || "",
-          subCategory: document.querySelector("[name=subCategory]")?.value || "",
-          city: document.querySelector("[name=city]")?.value || "",
-          district: document.querySelector("[name=district]")?.value || "",
-          imageCount: (document.getElementById("images")?.files || []).length
-        });
-        console.warn("SUBMIT RETURN: hasRequiredSubmitData false", {
-          title: document.querySelector("[name=title]")?.value || "",
-          price: document.querySelector("[name=price]")?.value || "",
-          category: document.querySelector("[name=category]")?.value || "",
-          subCategory: document.querySelector("[name=subCategory]")?.value || "",
-          city: document.querySelector("[name=city]")?.value || "",
-          km: document.querySelector("[name=km]")?.value || "",
-          imageCount: (document.getElementById("images")?.files || []).length
-        });
         return;
       }
 
@@ -2145,14 +3102,15 @@
 
       const value = (name) => document.querySelector(`[name=${name}]`)?.value || "";
       const data = {
-        title: document.querySelector("[name=title]")?.value || "",
-        description: document.querySelector("[name=description]")?.value || "",
-        price: document.querySelector("[name=price]")?.value || "",
+        title: titleValue,
+        description: descriptionValue,
+        price: getNumericPriceValue(),
         category: document.querySelector("[name=category]")?.value || "",
         subCategory: document.querySelector("[name=subCategory]")?.value || "",
         city: document.querySelector("[name=city]")?.value || "",
         district: document.querySelector("[name=district]")?.value || "",
         brand: value("brand"),
+        sellerProfileType: value("sellerProfileType"),
         series: value("series"),
         model: value("model"),
         year: value("year"),
@@ -2160,13 +3118,85 @@
         fuel: value("fuel"),
         transmission: value("transmission"),
         bodyType: value("bodyType"),
+        color: value("color"),
+        engine: value("engine"),
+        power: value("power"),
+        damageRecord: value("damageRecord"),
+        sellerType: value("sellerType"),
         features: JSON.stringify(formData.features || []),
+        kaput: value("kaput"),
+        tavan: value("tavan"),
+        bagaj: value("bagaj"),
+        sag_on_camurluk: value("sag_on_camurluk"),
+        sol_on_camurluk: value("sol_on_camurluk"),
+        sag_on_kapi: value("sag_on_kapi"),
+        sol_on_kapi: value("sol_on_kapi"),
+        sag_arka_kapi: value("sag_arka_kapi"),
+        sol_arka_kapi: value("sol_arka_kapi"),
+        sag_arka_camurluk: value("sag_arka_camurluk"),
+        sol_arka_camurluk: value("sol_arka_camurluk"),
+        on_tampon: value("on_tampon"),
+        arka_tampon: value("arka_tampon"),
         userEmail: user.email || ""
       };
 
+      if (data.category === "emlak") {
+        Object.assign(data, {
+          listingType: value("listingType"),
+          propertyType: value("propertyType"),
+          m2: value("m2"),
+          m2Price: value("m2Price"),
+          netM2: value("netM2"),
+          rooms: value("rooms"),
+          floor: value("floor"),
+          totalFloors: value("totalFloors"),
+          buildingAge: value("buildingAge"),
+          heating: value("heating"),
+          bathrooms: value("bathrooms"),
+          balcony: value("balcony"),
+          furnished: value("furnished"),
+          inSite: value("inSite"),
+          dues: value("dues"),
+          deedStatus: value("deedStatus"),
+          sellerType: value("sellerType"),
+          usageStatus: value("usageStatus"),
+          creditEligible: value("creditEligible"),
+          trade: value("trade"),
+          zoning: value("zoning"),
+          blockParcelNo: value("blockParcelNo"),
+          parcelNo: value("parcelNo"),
+          sheetNo: value("sheetNo"),
+          kaks: value("kaks"),
+          gabari: value("gabari"),
+          roadStatus: value("roadStatus"),
+          flatForLand: value("flatForLand"),
+          infrastructure: value("infrastructure")
+        });
+
+        [
+          "brand", "series", "model", "year", "km", "fuel", "transmission",
+          "bodyType", "color", "engine", "power", "damageRecord",
+          "kaput", "tavan", "bagaj", "sag_on_camurluk", "sol_on_camurluk",
+          "sag_on_kapi", "sol_on_kapi", "sag_arka_kapi", "sol_arka_kapi",
+          "sag_arka_camurluk", "sol_arka_camurluk", "on_tampon", "arka_tampon"
+        ].forEach((key) => delete data[key]);
+      }
+
+      if (data.category === "vasita") {
+        [
+          "listingType", "propertyType", "m2", "m2Price", "netM2", "rooms", "floor",
+          "totalFloors", "buildingAge", "heating", "bathrooms", "balcony",
+          "furnished", "inSite", "dues", "deedStatus", "usageStatus",
+          "creditEligible", "trade", "zoning", "blockParcelNo", "parcelNo",
+          "sheetNo", "kaks", "gabari", "roadStatus", "flatForLand", "infrastructure"
+        ].forEach((key) => delete data[key]);
+      }
+
       const uploadData = new FormData();
       Object.entries(data).forEach(([key, val]) => {
-        uploadData.append(key, val);
+        if (val !== undefined && val !== null && val !== "") {
+          uploadData.append(key, val);
+        }
       });
 
       const files = document.getElementById("images").files;
@@ -2174,18 +3204,35 @@
         uploadData.append("images", files[i]);
       }
 
-      console.log("GÖNDERİLEN DATA:", data);
-      console.log("POST /api/listings gönderiliyor", data);
-
       try {
+        const token = String(localStorage.getItem("token") || "").trim();
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+
         const res = await fetch("/api/listings", {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
           body: uploadData
         });
 
         const result = await res.json();
 
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+          return;
+        }
+
         if (!res.ok) {
+          if (result?.error === "invalid_description") {
+            showFieldError("description", "Açıklama en az 20 karakter olmalı");
+            return;
+          }
           throw new Error(result.error || "İlan gönderilemedi");
         }
 
@@ -2211,9 +3258,7 @@
             const deduped = existing.filter((item) => String(item._id || item.id) !== String(baseId));
             deduped.unshift(mergedListing);
             localStorage.setItem(pendingKey, JSON.stringify(deduped.slice(0, 20)));
-          } catch (storageErr) {
-            console.warn("LOCAL PENDING SAVE FAILED", storageErr);
-          }
+          } catch {}
           window.location.href = "/";
         } else {
           alert("Hata oluştu");
@@ -2232,6 +3277,11 @@
     async function initCreateListingPage() {
       await loadCarData();
       initCities();
+      setupWizardLayout();
+      const priceInput = document.getElementById("price");
+      if (priceInput && priceInput.value) {
+        priceInput.value = formatPriceValue(priceInput.value);
+      }
       showStep(1);
     }
 

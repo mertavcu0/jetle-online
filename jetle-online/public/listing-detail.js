@@ -10,6 +10,10 @@
 let phoneShown = false;
 let currentIndex = 0;
 let images = [];
+let galleryImages = [];
+let galleryShowImage = null;
+let galleryModalOpen = false;
+let galleryModalBound = false;
 
 function getLocalPendingListingById(id) {
   if (!id) return null;
@@ -26,10 +30,26 @@ function getLocalPendingListingById(id) {
 }
 
 function resolveImage(src) {
-  if (!src || String(src).trim() === "") {
-    return "https://picsum.photos/600/400";
+  const value = String(src || "").trim();
+  if (!value) return "";
+  const lowered = value.toLowerCase();
+  if (
+    lowered.includes("picsum.photos") ||
+    lowered.includes("images.unsplash.com") ||
+    lowered.includes("source.unsplash.com")
+  ) {
+    return "";
   }
-  return src;
+  return value;
+}
+
+function getListingImages(listing) {
+  const values = [];
+  if (Array.isArray(listing?.images)) values.push(...listing.images);
+  if (Array.isArray(listing?.photos)) values.push(...listing.photos);
+  if (listing?.image) values.push(listing.image);
+
+  return [...new Set(values.map((item) => resolveImage(item)).filter(Boolean))];
 }
 
 function asArray(value) {
@@ -137,29 +157,168 @@ function renderTechSpecs(listing) {
     : `<p id="techText">Bu ilan için teknik özellik bilgisi bulunmuyor.</p>`;
 }
 
+function getGalleryModalElements() {
+  return {
+    modal: document.getElementById("galleryModal"),
+    image: document.getElementById("galleryModalImage"),
+    counter: document.getElementById("galleryModalCounter"),
+    thumbs: document.getElementById("galleryModalThumbs"),
+    prev: document.getElementById("galleryModalPrev"),
+    next: document.getElementById("galleryModalNext"),
+    close: document.getElementById("galleryModalClose")
+  };
+}
+
+function normalizeGalleryIndex(index) {
+  if (!galleryImages.length) return 0;
+  const length = galleryImages.length;
+  return ((index % length) + length) % length;
+}
+
+function renderGalleryModal() {
+  const { image, counter, thumbs } = getGalleryModalElements();
+  if (!image || !counter || !thumbs || !galleryImages.length) return;
+
+  image.src = galleryImages[currentIndex];
+  image.onerror = () => {
+    image.removeAttribute("src");
+  };
+  counter.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+
+  thumbs.innerHTML = "";
+  galleryImages.forEach((src, index) => {
+    const thumb = document.createElement("img");
+    thumb.src = src;
+    thumb.alt = `Büyük fotoğraf küçük görsel ${index + 1}`;
+    thumb.className = index === currentIndex ? "active" : "";
+    thumb.onerror = () => {
+      thumb.remove();
+    };
+    thumb.onclick = () => setGalleryImage(index);
+    thumbs.appendChild(thumb);
+  });
+}
+
+function setGalleryImage(index) {
+  if (!galleryImages.length) return;
+  currentIndex = normalizeGalleryIndex(index);
+
+  if (typeof galleryShowImage === "function") {
+    galleryShowImage(currentIndex);
+  }
+
+  if (galleryModalOpen) {
+    renderGalleryModal();
+  }
+}
+
+function openGalleryModal(index = currentIndex) {
+  const { modal } = getGalleryModalElements();
+  if (!modal || !galleryImages.length) return;
+
+  bindGalleryModalEvents();
+  galleryModalOpen = true;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  setGalleryImage(index);
+}
+
+function closeGalleryModal() {
+  const { modal } = getGalleryModalElements();
+  if (!modal) return;
+
+  galleryModalOpen = false;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function bindGalleryModalEvents() {
+  if (galleryModalBound) return;
+  galleryModalBound = true;
+
+  const { modal, prev, next, close } = getGalleryModalElements();
+  if (!modal) return;
+
+  prev?.addEventListener("click", () => setGalleryImage(currentIndex - 1));
+  next?.addEventListener("click", () => setGalleryImage(currentIndex + 1));
+  close?.addEventListener("click", closeGalleryModal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      closeGalleryModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!galleryModalOpen) return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeGalleryModal();
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      setGalleryImage(currentIndex - 1);
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      setGalleryImage(currentIndex + 1);
+    }
+  });
+}
+
 function renderGallery(listing) {
   const main = document.getElementById("mainImage");
   const thumbs = document.getElementById("thumbnails");
   const prev = document.getElementById("prev");
   const next = document.getElementById("next");
+  const imageCount = document.getElementById("imageCount");
+  const noImageText = main?.parentElement?.querySelector(".no-image-text");
 
-  images = Array.isArray(listing.images) && listing.images.length
-    ? listing.images
-    : listing.image && String(listing.image).trim() !== ""
-      ? [listing.image]
-      : ["https://picsum.photos/600/400"];
-
-  const normalizedImages = images.map((img) => resolveImage(img));
+  images = getListingImages(listing);
+  galleryImages = images.slice();
   currentIndex = 0;
+
+  if (imageCount) {
+    imageCount.textContent = images.length ? `${images.length} Fotoğraf` : "Görsel yok";
+  }
+
+  if (!images.length) {
+    if (main) {
+      main.removeAttribute("src");
+      main.style.display = "none";
+      main.onclick = null;
+      main.style.cursor = "default";
+    }
+    if (noImageText) noImageText.style.display = "flex";
+    if (thumbs) thumbs.innerHTML = "";
+    if (prev) prev.style.display = "none";
+    if (next) next.style.display = "none";
+    closeGalleryModal();
+    return;
+  }
+
+  const normalizedImages = images;
 
   function showImage(index) {
     if (!main) return;
+    if (noImageText) noImageText.style.display = "none";
+    main.style.display = "block";
+    if (prev) prev.style.display = "";
+    if (next) next.style.display = "";
 
     main.onload = () => {
-      main.parentElement.querySelector(".no-image-text")?.remove();
+      if (noImageText) noImageText.style.display = "none";
     };
     main.onerror = () => {
-      main.src = "https://picsum.photos/600/400";
+      main.removeAttribute("src");
+      if (noImageText) noImageText.style.display = "flex";
     };
     main.src = normalizedImages[index];
 
@@ -168,7 +327,14 @@ function renderGallery(listing) {
     });
   }
 
+  galleryShowImage = showImage;
+
   showImage(currentIndex);
+
+  if (main) {
+    main.style.cursor = "zoom-in";
+    main.onclick = () => openGalleryModal(currentIndex);
+  }
 
   if (!thumbs) return;
   thumbs.innerHTML = "";
@@ -179,26 +345,23 @@ function renderGallery(listing) {
     el.className = index === 0 ? "active" : "";
     el.alt = `Küçük görsel ${index + 1}`;
     el.onerror = () => {
-      el.src = "https://picsum.photos/120/90";
+      el.remove();
     };
     el.onclick = () => {
-      currentIndex = index;
-      showImage(currentIndex);
+      setGalleryImage(index);
     };
     thumbs.appendChild(el);
   });
 
   if (next) {
     next.onclick = () => {
-      currentIndex = (currentIndex + 1) % normalizedImages.length;
-      showImage(currentIndex);
+      setGalleryImage(currentIndex + 1);
     };
   }
 
   if (prev) {
     prev.onclick = () => {
-      currentIndex = (currentIndex - 1 + normalizedImages.length) % normalizedImages.length;
-      showImage(currentIndex);
+      setGalleryImage(currentIndex - 1);
     };
   }
 }

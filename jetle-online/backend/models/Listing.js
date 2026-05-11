@@ -44,9 +44,13 @@ const ListingSchema = new mongoose.Schema({
   sellerType: String,
   image: {
     type: String,
-    default: "https://picsum.photos/300/200",
+    default: "",
   },
   images: {
+    type: [String],
+    default: [],
+  },
+  photos: {
     type: [String],
     default: [],
   },

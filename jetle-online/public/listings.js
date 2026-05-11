@@ -16,11 +16,30 @@ function getParams() {
 const categoryLabels = {
   emlak: "Emlak",
   vasita: "Vasıta",
-  elektronik: "Elektronik"
+  "is-makineleri": "İş Makineleri",
+  "yedek-parca": "Yedek Parça"
 };
 
+function normalizeCategorySlug(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw) return "";
+
+  const normalized = raw
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (normalized === "emlak") return "emlak";
+  if (["vasita", "otomobil", "arac", "araba"].includes(normalized)) return "vasita";
+  if (["is-makineleri", "is-makinalari", "is-makinasi", "is-makinesi"].includes(normalized)) return "is-makineleri";
+  if (["yedek-parca", "yedek-parca-ve-aksesuar", "yedek-parca-aksesuar"].includes(normalized)) return "yedek-parca";
+  return normalized;
+}
+
 function getCategoryFromUrl() {
-  return (getParams().get("category") || "").trim();
+  return normalizeCategorySlug(getParams().get("category") || "");
 }
 
 function setPageTitle() {
@@ -43,7 +62,7 @@ function setFormFromUrl() {
   const max = document.getElementById("maxPrice");
 
   if (searchInput) searchInput.value = params.get("q") || params.get("search") || "";
-  if (category) category.value = params.get("category") || "";
+  if (category) category.value = normalizeCategorySlug(params.get("category") || "");
   if (city) city.value = params.get("city") || "";
   if (min) min.value = params.get("min") || "";
   if (max) max.value = params.get("max") || "";
@@ -58,7 +77,7 @@ function buildQueryFromForm() {
   const max = document.getElementById("maxPrice")?.value;
 
   if (search) params.set("q", search);
-  if (category) params.set("category", category);
+  if (category) params.set("category", normalizeCategorySlug(category));
   if (city) params.set("city", city);
   if (min) params.set("min", min);
   if (max) params.set("max", max);
@@ -79,8 +98,8 @@ function getListingBadges(listing) {
 
 function renderBadges(listing) {
   const labels = {
-    verified: "✓ Onaylı",
-    premium: "★ Premium",
+    verified: "Onaylı",
+    premium: "Premium",
     corporate: "Kurumsal"
   };
   const badges = getListingBadges(listing);
@@ -94,10 +113,23 @@ function renderBadges(listing) {
   `;
 }
 
+function isPlaceholderImage(src) {
+  const value = String(src || "").trim().toLowerCase();
+  if (!value) return true;
+  return value.includes("picsum.photos") || value.includes("images.unsplash.com") || value.includes("source.unsplash.com");
+}
+
+function getListingImages(listing) {
+  const values = [];
+  if (Array.isArray(listing?.images)) values.push(...listing.images);
+  if (Array.isArray(listing?.photos)) values.push(...listing.photos);
+  if (listing?.image) values.push(listing.image);
+
+  return [...new Set(values.map((item) => String(item || "").trim()).filter((item) => item && !isPlaceholderImage(item)))];
+}
+
 function listingImage(listing) {
-  if (listing.image && String(listing.image).trim()) return listing.image;
-  if (Array.isArray(listing.images) && listing.images[0]) return listing.images[0];
-  return "https://picsum.photos/300/200";
+  return getListingImages(listing)[0] || "";
 }
 
 function getLocalPendingListings() {
@@ -170,10 +202,11 @@ function renderListings(listings) {
   if (!container) return;
 
   if (!Array.isArray(listings) || !listings.length) {
+    const activeCategory = getCategoryFromUrl();
     container.innerHTML = `
       <div class="empty-state">
         <h3>İlan bulunamadı</h3>
-        <p>Filtreleri değiştirerek tekrar arama yapabilirsiniz.</p>
+        <p>${activeCategory ? "Bu kategoride henüz ilan yok." : "Filtreleri değiştirerek tekrar arama yapabilirsiniz."}</p>
       </div>
     `;
     return;
@@ -186,7 +219,9 @@ function renderListings(listings) {
 
     return `
       <div class="listing-card" onclick="goDetail('${listing._id || listing.id || ""}')">
-        <img class="card-img" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
+        ${src
+          ? `<img class="card-img" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
+          : `<div class="card-img-placeholder">Görsel yok</div>`}
         ${favoriteButton(listing, user)}
         <div class="card-body">
           <h3>${escapeHtml(listing.title || "")}</h3>
@@ -215,14 +250,20 @@ async function loadListings() {
   const params = getParams();
   const res = await fetch(`${API}/api/listings${params.toString() ? `?${params.toString()}` : ""}`);
   const data = await res.json();
+  const activeCategory = getCategoryFromUrl();
+  const mergedListings = mergeListingsWithLocalPending(data);
+  const filteredListings = activeCategory
+    ? mergedListings.filter((listing) => normalizeCategorySlug(listing?.category) === activeCategory)
+    : mergedListings;
 
-  renderListings(mergeListingsWithLocalPending(data));
+  renderListings(filteredListings);
 }
 
 async function toggleFavorite(id) {
   const user = currentUser();
+  const token = String(localStorage.getItem("token") || "").trim();
 
-  if (!user.email && !user.id && !user._id) {
+  if ((!user.email && !user.id && !user._id) || !token) {
     alert("Favorilere eklemek için giriş yapmalısınız");
     window.location.href = "/login.html";
     return;
@@ -230,12 +271,17 @@ async function toggleFavorite(id) {
 
   const res = await fetch(`/api/listings/${id}/favorite`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: user.email,
-      userId: user.id || user._id
-    })
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   });
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+    return;
+  }
 
   if (!res.ok) {
     alert("Favori işlemi tamamlanamadı");

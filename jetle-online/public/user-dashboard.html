@@ -219,6 +219,7 @@
   <script>
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     let userId = user.id || user._id;
+    const token = String(localStorage.getItem("token") || "").trim();
 
     function escapeHtml(value) {
       return String(value || "")
@@ -281,7 +282,15 @@
       const target = document.getElementById(targetId);
 
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+          return;
+        }
         if (!res.ok) throw new Error("API hata");
 
         const data = await res.json();
@@ -294,23 +303,29 @@
     }
 
     async function loadFavorites() {
-      const url = userId
-        ? `/api/users/${userId}/favorites`
-        : `/api/listings/favorites?email=${encodeURIComponent(user.email || "")}`;
-
-      await loadSection(url, "myFavorites", favoriteCard, "Favori ilanınız yok.");
+      await loadSection("/api/listings/favorites", "myFavorites", favoriteCard, "Favori ilanınız yok.");
     }
 
     async function toggleFavorite(id) {
       try {
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+
         const res = await fetch(`/api/listings/${id}/favorite`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: user.email,
-            userId
-          })
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+          return;
+        }
 
         if (!res.ok) throw new Error("Favori işlemi başarısız");
         await loadFavorites();
@@ -320,7 +335,7 @@
     }
 
     async function initDashboard() {
-      if (!userId && !user.email) {
+      if (!token || (!userId && !user.email)) {
         document.querySelector(".dashboard-grid").innerHTML = `
           <div class="empty">Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.</div>
         `;
@@ -328,9 +343,7 @@
       }
 
       await Promise.all([
-        userId
-          ? loadSection(`/api/users/${userId}/listings`, "myListings", listingCard, "İlanınız yok.")
-          : Promise.resolve(document.getElementById("myListings").innerHTML = `<div class="empty">İlanlar için tekrar giriş yapın.</div>`),
+        loadSection(`/api/listings/my-listings`, "myListings", listingCard, "İlanınız yok."),
         loadFavorites(),
         userId
           ? loadSection(`/api/messages/${userId}`, "myMessages", messageCard, "Mesajınız yok.")
@@ -343,3 +356,6 @@
   <script src="/auth-global.js"></script>
 </body>
 </html>
+
+
+

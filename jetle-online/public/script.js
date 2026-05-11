@@ -98,8 +98,8 @@ function renderListings(data = lastListings) {
         <h3 class="title">${item.title}</h3>
         <p class="price">${item.price} TL</p>
         <div class="meta">
-          <span>📍 ${item.city || item.location || ""}</span>
-          <span>🚗 ${item.category || ""}</span>
+          <span>${item.city || item.location || ""}</span>
+          <span>${item.category || ""}</span>
         </div>
         <div class="card-footer">
           <span class="date">${formatDate(item.createdAt)}</span>
@@ -213,8 +213,8 @@ async function loadListings() {
       <h3 class="title">${item.title}</h3>
       <p class="price">${item.price} TL</p>
       <div class="meta">
-        <span>📍 ${item.city || item.location || ""}</span>
-        <span>🚗 ${item.category || ""}</span>
+        <span>${item.city || item.location || ""}</span>
+        <span>${item.category || ""}</span>
       </div>
       <div class="card-footer">
         <span class="date">${formatDate(item.createdAt)}</span>
@@ -330,8 +330,9 @@ function goCategory(category) {
 
 async function toggleFavorite(id) {
   const user = getCurrentUser();
+  const token = String(localStorage.getItem("token") || "").trim();
 
-  if (!user.email && !getUserId(user)) {
+  if ((!user.email && !getUserId(user)) || !token) {
     alert("Favorilere eklemek için giriş yapmalısınız");
     window.location.href = "/login.html";
     return;
@@ -340,12 +341,17 @@ async function toggleFavorite(id) {
   try {
     const res = await fetch(`/api/listings/${id}/favorite`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: user.email,
-        userId: getUserId(user)
-      })
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
+
+    if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+      return;
+    }
 
     if (!res.ok) {
       throw new Error("Favori işlemi başarısız");
@@ -392,5 +398,4 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAll();
   loadFeatured();
 });
-
 
