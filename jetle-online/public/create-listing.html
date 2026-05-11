@@ -15,6 +15,7 @@
       background: #f5f7fa;
       color: #111827;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
     }
 
     .header {
@@ -646,6 +647,62 @@
 
       .step {
         padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .page {
+        margin: 22px auto;
+        padding: 0 12px;
+      }
+
+      .form-card {
+        padding: 18px;
+      }
+
+      .stepper {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .preview-grid,
+      .preview-specs,
+      .image-preview-grid,
+      .feature-grid,
+      .estate-grid,
+      .expertiz-grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      #carWrapper {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stepper {
+        grid-template-columns: 1fr;
+      }
+
+      .image-preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step-label {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .toast {
+        left: 12px;
+        right: 12px;
+        width: auto;
       }
     }
 

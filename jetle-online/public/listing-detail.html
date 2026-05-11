@@ -15,6 +15,7 @@
       font-family: Arial, sans-serif;
       background: #f3f4f6;
       color: #111827;
+      overflow-x: hidden;
     }
 
     .nav-right {
@@ -1043,6 +1044,45 @@
       .gallery-modal-thumbs img {
         width: 74px;
         height: 56px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-right,
+      #authArea {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .post-btn,
+      .register-btn {
+        margin-left: 0;
+      }
+
+      .seller-actions {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search {
+        flex-direction: column;
+      }
+
+      .search input,
+      .search button {
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      .search input {
+        border-right: 1px solid #d1d5db;
+      }
+
+      .gallery-modal-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>

@@ -13,6 +13,7 @@
       background: #f4f6f8;
       color: #111827;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
     }
 
     .navbar {
@@ -183,6 +184,33 @@
       .admin-card {
         align-items: flex-start;
         flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        height: auto;
+        padding: 12px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      #authArea {
+        width: 100%;
+      }
+
+      #myMessages .admin-card {
+        max-width: 100%;
+      }
+
+      .admin-actions {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .admin-actions a {
+        width: 100%;
+        text-align: center;
       }
     }
   </style>
