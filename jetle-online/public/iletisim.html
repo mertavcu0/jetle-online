@@ -9,12 +9,14 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f2f3f5;
+      overflow-x: hidden;
     }
 
     .page {
       display: flex;
       max-width: 1200px;
       margin: 30px auto;
+      padding: 0 16px;
     }
 
     .sidebar {
@@ -99,8 +101,14 @@
       color: #111;
     }
 
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
     .menu a {
-      margin-left: 20px;
       text-decoration: none;
       color: #333;
       font-size: 14px;
@@ -113,7 +121,7 @@
     @media (max-width: 768px) {
       .page {
         flex-direction: column;
-        margin: 20px 16px;
+        margin: 20px auto;
       }
 
       .sidebar {
@@ -139,15 +147,20 @@
         flex-wrap: wrap;
         gap: 12px;
       }
+    }
 
-      .menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+    @media (max-width: 480px) {
+      .page {
+        padding: 0 12px;
       }
 
-      .menu a {
-        margin-left: 0;
+      .content {
+        padding: 20px 16px;
+      }
+
+      .menu {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
   </style>

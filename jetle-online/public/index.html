@@ -16,6 +16,7 @@
       background: #f3f4f6;
       color: #111827;
       font-family: Arial, sans-serif;
+      overflow-x: hidden;
     }
 
     a {
@@ -876,6 +877,68 @@
 
       .post-btn {
         grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-inner {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .search {
+        order: 2;
+        width: 100%;
+      }
+
+      .nav-right,
+      #authArea {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        white-space: normal;
+      }
+
+      .post-btn {
+        width: 100%;
+      }
+
+      .page {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search {
+        flex-direction: column;
+      }
+
+      .search input,
+      .search button,
+      .primary-btn {
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      .search input {
+        border-right: 1px solid #d1d5db;
+      }
+
+      .post-btn,
+      .register-btn,
+      .login-btn,
+      #authArea button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
       }
     }
 

@@ -15,6 +15,7 @@
       font-family: Inter, Arial, sans-serif;
       background: #f3f4f6;
       color: #111827;
+      overflow-x: hidden;
     }
 
     .topbar {
@@ -708,6 +709,50 @@
       .jl-footer-bottom {
         flex-direction: column;
         align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 14px;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page {
+        padding: 0 12px 24px;
+      }
+
+      .content-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .results-tabs {
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 10px 12px;
+      }
+
+      .price-row {
+        grid-template-columns: 1fr;
+      }
+
+      .results-tab {
+        flex: 1 1 calc(50% - 6px);
+        text-align: center;
       }
     }
   </style>
