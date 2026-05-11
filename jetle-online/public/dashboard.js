@@ -82,8 +82,24 @@
     `;
 
     try {
-      const res = await fetch(`/api/listings/my-listings?email=${encodeURIComponent(user.email)}`);
+      const token = String(localStorage.getItem("token") || "").trim();
+      if (!token) {
+        window.location.href = "/login.html";
+        return;
+      }
+      const res = await fetch(`/api/listings/my-listings`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
+
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+        return;
+      }
 
       if (!res.ok) {
         throw new Error(data.error || "İlanlar alınamadı");
@@ -151,14 +167,36 @@ function loadSection(type) {
   if (type === "messages") {
     const user = JSON.parse(localStorage.getItem("user"));
     const userKey = user.id || user._id || user.email;
+    const token = String(localStorage.getItem("token") || "").trim();
 
     content.innerHTML = `
       <h2>Mesajlarım</h2>
       <div class="chat-list">Mesajlar yükleniyor...</div>
     `;
 
-    fetch(`/api/messages/${encodeURIComponent(userKey)}`)
-      .then(res => res.json())
+    if (!token) {
+      content.innerHTML = `
+        <h2>Mesajlarım</h2>
+        <div class="empty-state">Mesajları görmek için giriş yapın.</div>
+      `;
+      return;
+    }
+
+    fetch(`/api/messages/${encodeURIComponent(userKey)}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+          return [];
+        }
+        return data;
+      })
       .then(data => {
         const list = document.querySelector(".chat-list");
 
@@ -183,10 +221,30 @@ function loadSection(type) {
       <div id="favList"></div>
     `;
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = String(localStorage.getItem("token") || "").trim();
+    if (!token) {
+      content.innerHTML = `
+        <h2>Favorilerim</h2>
+        <div class="empty-state">Favorileri görmek için giriş yapın.</div>
+      `;
+      return;
+    }
 
-    fetch(`/api/listings/favorites?email=${user.email}`)
-      .then(res => res.json())
+    fetch(`/api/listings/favorites`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+          return [];
+        }
+        return data;
+      })
       .then(data => {
         document.getElementById("favList").innerHTML =
           data.map(l => `

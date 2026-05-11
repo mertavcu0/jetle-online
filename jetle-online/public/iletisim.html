@@ -67,11 +67,13 @@
       width: 260px;
       color: #666;
       font-size: 14px;
+      flex-shrink: 0;
     }
 
     .row b {
       color: #111;
       font-size: 14px;
+      line-height: 1.6;
     }
 
     .topbar {
@@ -106,6 +108,47 @@
 
     .menu a:hover {
       color: #007bff;
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        flex-direction: column;
+        margin: 20px 16px;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .content {
+        margin-left: 0;
+        margin-top: 16px;
+      }
+
+      .row {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .row span {
+        width: 100%;
+      }
+
+      .topbar {
+        padding: 15px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .menu a {
+        margin-left: 0;
+      }
     }
   </style>
 </head>
@@ -163,18 +206,33 @@
         </div>
 
         <div class="row">
+          <span>Vergi Dairesi</span>
+          <b>İstiklal Vergi Dairesi</b>
+        </div>
+
+        <div class="row">
+          <span>Esnaf Sicil Numarası</span>
+          <b>209907</b>
+        </div>
+
+        <div class="row">
+          <span>Kayıtlı Olduğu Oda</span>
+          <b>Mersin Elektronikçiler Esnaf ve Sanatkarlar Odası Başkanlığı</b>
+        </div>
+
+        <div class="row">
           <span>Merkez Ofis</span>
-          <b>MERKEZMAH 52038 SK. YİĞİT S T. (MIZRAK 12 ) MIZRAK 12 APA. C BLOK NO 5 C İÇ KAPI NO : 2 MEZİTLİ/MERSİN</b>
+          <b>Merkez Mahallesi 52038 Sokak No: 5C<br>Mızrak 12 Apa C Blok<br>Yiğit Sitesi (Mızrak 12)<br>Mezitli / Mersin</b>
         </div>
 
         <div class="row">
           <span>Çağrı Merkezi</span>
-          <b></b>
+          <b>0531 956 30 80</b>
         </div>
 
         <div class="row">
           <span>Destek Merkezi</span>
-          <b></b>
+          <b>onlinejetle@gmail.com</b>
         </div>
       </div>
     </div>

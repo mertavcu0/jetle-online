@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const email = document.querySelector("input[type=email]").value;
+  const email = document.querySelector("input[type=email]").value.trim();
   const password = document.querySelector("input[type=password]").value;
 
   fetch("/api/auth/login", {
@@ -12,19 +12,21 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
       password
     })
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       if (data.success) {
-        localStorage.setItem("user", JSON.stringify(data.user || {
-          email: email
-        }));
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
 
+        localStorage.setItem("user", JSON.stringify(data.user || { email }));
         window.location.href = "/";
-      } else {
-        alert("Hatalı giriş");
+        return;
       }
+
+      alert("Hatalı giriş");
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       alert("Sunucu hatası");
     });

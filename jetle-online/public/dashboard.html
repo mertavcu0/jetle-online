@@ -7,9 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -190,127 +188,161 @@
     .listing-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .listing-card,
-    .card {
-      position: relative;
-      display: flex;
-      gap: 15px;
+    .listing-card {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
       background: #fff;
-      border: 1px solid #eee;
-      border-radius: 10px;
-      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .listing-card:hover,
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.07);
-    }
-
-    .listing-card img,
-    .card img {
-      width: 140px;
-      height: 100px;
-      object-fit: cover;
-      flex: 0 0 140px;
-      border-radius: 8px;
-      background: #e5e7eb;
-    }
-
-    .listing-info,
-    .card-body {
-      flex: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       min-width: 0;
     }
 
-    .listing-info h4,
-    .card h3 {
-      margin: 0 0 7px;
-      font-size: 15px;
-      line-height: 1.25;
+    .listing-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.08);
+      border-color: #dbe2ea;
     }
 
-    .listing-price,
-    .price {
-      margin-top: 5px;
-      color: #1c7ed6;
-      font-size: 16px;
+    .listing-card img {
+      width: 160px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #e5e7eb;
+      display: block;
+    }
+
+    .listing-info {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+      align-content: center;
+    }
+
+    .listing-info h4 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.35;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .listing-price {
+      margin: 0;
+      color: #1d4ed8;
+      font-size: 20px;
       font-weight: 900;
     }
 
     .listing-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin: 0;
-      color: #666;
-      font-size: 12px;
+      gap: 8px 14px;
+      color: #6b7280;
+      font-size: 13px;
     }
 
     .listing-meta span {
-      padding: 0;
-      border-radius: 0;
-      background: transparent;
-      color: inherit;
-      font-size: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
       font-weight: 600;
     }
 
-    .actions,
-    .listing-actions {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .listing-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+      width: fit-content;
     }
 
-    .actions a,
-    .actions button,
+    .listing-status.pending {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .listing-status.approved,
+    .listing-status.active {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .listing-status.inactive {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .listing-status.suspicious {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .listing-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+      justify-self: end;
+      min-width: 120px;
+    }
+
     .listing-actions a,
     .listing-actions button {
-      padding: 6px 10px;
+      min-width: 120px;
+      padding: 9px 12px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       text-align: center;
       font: inherit;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
-    .btn-view,
-    .actions a,
-    .listing-actions a {
+    .btn-view {
       background: #f1f3f5;
       color: #374151;
     }
 
-    .btn-edit,
-    .actions button:first-of-type,
-    .listing-actions button:first-of-type {
+    .btn-edit {
       background: #e7f5ff;
       color: #1c7ed6;
     }
 
-    .btn-delete,
-    .actions button:last-of-type,
-    .listing-actions button:last-of-type {
+    .btn-delete {
       background: #fff5f5;
       color: #e03131;
     }
 
     .listing-actions a:hover,
-    .listing-actions button:hover,
-    .actions a:hover,
-    .actions button:hover {
+    .listing-actions button:hover {
       transform: translateY(-1px);
       filter: brightness(0.98);
+    }
+
+    .empty-state {
+      padding: 42px 16px;
+      border: 1px dashed #d1d5db;
+      border-radius: 10px;
+      background: #f9fafb;
+      color: #6b7280;
+      text-align: center;
     }
 
     .empty-state h4 {
@@ -333,15 +365,6 @@
       cursor: pointer;
     }
 
-    .empty-state {
-      padding: 42px 16px;
-      border: 1px dashed #d1d5db;
-      border-radius: 10px;
-      background: #f9fafb;
-      color: #6b7280;
-      text-align: center;
-    }
-
     .placeholder {
       display: none;
       padding: 42px 16px;
@@ -358,23 +381,28 @@
       .sidebar {
         position: static;
       }
-
-      .listing-grid {
-        grid-template-columns: 1fr;
-      }
     }
 
-    @media (max-width: 560px) {
-      .listing-card,
-      .card {
-        display: block;
+    @media (max-width: 640px) {
+      .listing-card {
+        grid-template-columns: 1fr;
+        padding: 12px;
       }
 
-      .listing-card img,
-      .card img {
+      .listing-card img {
         width: 100%;
-        height: 170px;
-        margin-bottom: 10px;
+        height: 190px;
+      }
+
+      .listing-actions {
+        justify-self: stretch;
+        min-width: 0;
+      }
+
+      .listing-actions a,
+      .listing-actions button {
+        width: 100%;
+        min-width: 0;
       }
 
       .nav-right {
@@ -401,8 +429,8 @@
   <main class="dashboard-shell">
     <aside class="sidebar">
       <h3>Hesabım</h3>
-      <a href="/dashboard.html" class="menu-item active">📋 Benim İlanlarım</a>
-      <a href="/create-listing.html" class="menu-item">➕ Yeni İlan Ver</a>
+      <a href="/dashboard.html" class="menu-item active">Benim İlanlarım</a>
+      <a href="/create-listing.html" class="menu-item">Yeni İlan Ver</a>
       <a href="/messages.html" class="menu-item"><i class="ri-chat-1-line"></i> Mesajlar</a>
       <a href="/favorites.html" class="menu-item"><i class="ri-heart-line"></i> Favoriler</a>
       <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarları</a>
@@ -416,28 +444,6 @@
         </div>
       </div>
       <div id="myListingsGrid" class="listing-grid"></div>
-      <template id="dashboardListingCardTemplate">
-        <div class="listing-card">
-          <img src="${listing.image}" />
-
-          <div class="listing-info">
-            <h4>${listing.title}</h4>
-
-            <div class="listing-meta">
-              <span>📍 ${listing.city}</span>
-              <span>📂 ${listing.category}</span>
-            </div>
-
-            <div class="listing-price">${listing.price} TL</div>
-
-            <div class="listing-actions">
-              <a class="btn-view" href="/listing-detail.html?id=${listing._id}">Görüntüle</a>
-              <button class="btn-edit" onclick="editListing('${listing._id}')">Düzenle</button>
-              <button class="btn-delete" onclick="deleteListing('${listing._id}')">Sil</button>
-            </div>
-          </div>
-        </div>
-      </template>
     </section>
 
     <section class="content-card placeholder" id="messagesPanel">
@@ -450,11 +456,12 @@
   <script src="/dashboard.js"></script>
   <script>
     (function () {
+      const grid = document.getElementById("myListingsGrid");
+      if (!grid) return;
+
       const originalLoadSection = typeof window.loadSection === "function"
         ? window.loadSection
         : null;
-      const grid = document.getElementById("myListingsGrid");
-      if (!grid) return;
 
       function getDashboardToken() {
         return String(localStorage.getItem("token") || "").trim();
@@ -468,11 +475,119 @@
         }
       }
 
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function listingImage(listing) {
+        if (listing.image && String(listing.image).trim()) return listing.image;
+        if (Array.isArray(listing.images) && listing.images[0]) return listing.images[0];
+        return "https://picsum.photos/400/300";
+      }
+
+      function formatPrice(price) {
+        return new Intl.NumberFormat("tr-TR").format(Number(price || 0)) + " TL";
+      }
+
+      function formatStatus(status) {
+        const safe = String(status || "inactive").toLowerCase();
+        const map = {
+          pending: "Beklemede",
+          approved: "Onaylı",
+          suspicious: "Şüpheli",
+          inactive: "Pasif",
+          active: "Aktif"
+        };
+        return { key: safe, label: map[safe] || "Pasif" };
+      }
+
+      async function renderManagedListings() {
+        const user = getDashboardUser();
+        if (!user?.email) return;
+
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">İlanlar yükleniyor...</div>
+        `;
+
+        try {
+          const token = String(localStorage.getItem("token") || "").trim();
+          if (!token) {
+            window.location.href = "/login.html";
+            return;
+          }
+
+          const res = await fetch("/api/listings/my-listings", {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          const listings = await res.json();
+
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "/login.html";
+            return;
+          }
+
+          if (!res.ok || !Array.isArray(listings)) {
+            throw new Error("listings_failed");
+          }
+
+          if (!listings.length) {
+            grid.innerHTML = `
+              <div class="empty-state" style="grid-column: 1 / -1;">
+                <h4>Henüz ilanınız yok</h4>
+                <p>Hemen ilan vererek satışa başlayın</p>
+                <button onclick="location.href='/create-listing.html'">İlan Ver</button>
+              </div>
+            `;
+            return;
+          }
+
+          grid.innerHTML = listings.map((listing) => {
+            const status = formatStatus(listing.status);
+            const id = String(listing._id || listing.id || "");
+            const locationBits = [listing.city, listing.district].filter(Boolean).join(" / ");
+            const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
+
+            return `
+              <article class="listing-card" onclick="viewListing('${escapeHtml(id)}')">
+                <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
+                <div class="listing-info">
+                  <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
+                  <div class="listing-price">${formatPrice(listing.price)}</div>
+                  <div class="listing-meta">
+                    <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
+                    <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
+                  </div>
+                  <span class="listing-status ${status.key}">${status.label}</span>
+                </div>
+                <div class="listing-actions" onclick="event.stopPropagation()">
+                  <a class="btn-view" href="/listing-detail.html?id=${encodeURIComponent(id)}">Detay Gör</a>
+                  <button class="btn-edit" onclick="editListing('${escapeHtml(id)}')">Düzenle</button>
+                  <button class="btn-delete" onclick="deleteListing('${escapeHtml(id)}')">Sil</button>
+                </div>
+              </article>
+            `;
+          }).join("");
+        } catch (_) {
+          grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              İlanlar yüklenemedi. Lütfen tekrar deneyin.
+            </div>
+          `;
+        }
+      }
+
       window.loadSection = function loadSectionWithAuth(type) {
         if (type !== "messages") {
-          if (originalLoadSection) {
-            return originalLoadSection(type);
-          }
+          if (originalLoadSection) return originalLoadSection(type);
           return;
         }
 
@@ -541,47 +656,7 @@
           });
       };
 
-      function upgradeListingCards() {
-        grid.querySelectorAll(".card").forEach((card) => {
-          card.classList.add("listing-card");
-          card.querySelector(".card-body")?.classList.add("listing-info");
-          card.querySelector(".price")?.classList.add("listing-price");
-
-          const muted = card.querySelector(".muted");
-          if (muted && !muted.classList.contains("listing-meta")) {
-            const parts = muted.textContent.split("/").map((item) => item.trim()).filter(Boolean);
-            muted.className = "listing-meta";
-            muted.innerHTML = `
-              <span>📍 ${parts[0] || ""}</span>
-              <span>📂 ${parts[1] || ""}</span>
-            `;
-          }
-
-          const actions = card.querySelector(".actions");
-          if (actions) {
-            actions.classList.add("listing-actions");
-            actions.querySelector("a")?.classList.add("btn-view");
-            const buttons = actions.querySelectorAll("button");
-            buttons[0]?.classList.add("btn-edit");
-            buttons[1]?.classList.add("btn-delete");
-          }
-        });
-
-        grid.querySelectorAll(".empty-state").forEach((empty) => {
-          if (empty.dataset.enhanced) return;
-          const text = empty.textContent.toLowerCase();
-          if (text.includes("yüklen") || text.includes("yüklen")) return;
-          empty.dataset.enhanced = "true";
-          empty.innerHTML = `
-            <h4>Henüz ilanınız yok</h4>
-            <p>Hemen ilan vererek satışa başlayın</p>
-            <button onclick="location.href='/create-listing.html'">İlan Ver</button>
-          `;
-        });
-      }
-
-      new MutationObserver(upgradeListingCards).observe(grid, { childList: true, subtree: true });
-      upgradeListingCards();
+      renderManagedListings();
     })();
   </script>
 </body>

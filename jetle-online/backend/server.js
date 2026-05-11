@@ -24,6 +24,7 @@ const helmet = require("helmet");
 
 const isProduction = process.env.NODE_ENV === "production";
 const hasJwtSecret = Boolean(String(process.env.JWT_SECRET || "").trim());
+const hasMongoUri = Boolean(String(process.env.MONGO_URI || "").trim());
 const devOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
@@ -40,13 +41,38 @@ const allowedOrigins = isProduction
 const MAX_QUERY_KEYS = 30;
 const MAX_QUERY_VALUE_LENGTH = 500;
 const REQUEST_BODY_LIMIT = "10mb";
+const ALLOWED_LISTING_QUERY_KEYS = new Set([
+  "q",
+  "search",
+  "city",
+  "location",
+  "category",
+  "min",
+  "minPrice",
+  "max",
+  "maxPrice",
+  "page",
+  "limit",
+  "sort"
+]);
+
+mongoose.set("strictQuery", true);
+mongoose.set("sanitizeFilter", true);
 
 if (!hasJwtSecret && isProduction) {
   throw new Error("JWT_SECRET is required in production");
 }
 
+if (!hasMongoUri && isProduction) {
+  throw new Error("MONGO_URI is required in production");
+}
+
 if (!hasJwtSecret && !isProduction) {
-  console.warn("JWT_SECRET is missing. Using development fallback secret.");
+  console.warn("WARN JWT_SECRET missing; using development fallback.");
+}
+
+if (!hasMongoUri && !isProduction) {
+  console.warn("WARN MONGO_URI missing.");
 }
 
 const app = express();
@@ -84,31 +110,48 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
+const helmetOptions = {
+  contentSecurityPolicy: isProduction
+    ? {
+        useDefaults: true,
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          imgSrc: ["'self'", "data:", "blob:", "https:"],
+          connectSrc: ["'self'", "https://jetle.online", "https://www.jetle.online", "wss://jetle.online", "wss://www.jetle.online"],
+          fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
+          objectSrc: ["'none'"],
+          frameAncestors: ["'self'"]
+        }
+      }
+    : false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: isProduction ? "same-site" : "cross-origin" },
+  referrerPolicy: { policy: "no-referrer" },
+  xContentTypeOptions: true,
+  frameguard: { action: "sameorigin" },
+  hsts: isProduction ? undefined : false
+};
+
 function buildLimiter(windowMs, max) {
   return rateLimit({
     windowMs,
     max,
     standardHeaders: true,
     legacyHeaders: false,
-    message: {
-      success: false,
-      message: "Çok fazla istek gönderildi. Lütfen biraz sonra tekrar deneyin."
-    }
+    message: { error: "too_many_requests" }
   });
 }
 
 const generalApiLimiter = buildLimiter(15 * 60 * 1000, 300);
-const authLimiter = buildLimiter(15 * 60 * 1000, 20);
-const loginLimiter = buildLimiter(15 * 60 * 1000, 10);
-const registerLimiter = buildLimiter(15 * 60 * 1000, 10);
-const listingCreateLimiter = buildLimiter(10 * 60 * 1000, 10);
-const messageSendLimiter = buildLimiter(60 * 1000, 20);
+const authLimiter = buildLimiter(10 * 60 * 1000, 20);
+const listingWriteLimiter = buildLimiter(5 * 60 * 1000, 25);
+const messageRouteLimiter = buildLimiter(60 * 1000, 40);
 const adminApiLimiter = buildLimiter(15 * 60 * 1000, 180);
-const uploadLimiter = buildLimiter(15 * 60 * 1000, 25);
 
 if (!isProduction) {
-  console.log("SERVER BAÅLADI");
-  console.log("SERVER DOSYASI:", __filename);
+  console.log("START DEV SERVER");
 }
 
 if (isProduction && missingProductionEnv.length) {
@@ -175,7 +218,7 @@ function getRuntimeMetrics() {
 async function gracefulShutdown(signal) {
   try {
     if (!isProduction) {
-      console.log(`Graceful shutdown: ${signal}`);
+      console.warn(`WARN SHUTDOWN ${signal}`);
     }
     io.close();
     server.close(() => {});
@@ -517,13 +560,7 @@ io.on("connection", (socket) => {
 });
 
 // Middleware
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: { policy: isProduction ? "same-site" : "cross-origin" },
-  referrerPolicy: { policy: "no-referrer" },
-  hsts: isProduction ? undefined : false
-}));
+app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 app.use("/api", generalApiLimiter);
@@ -534,7 +571,7 @@ app.use((req, res, next) => {
   if (!isProduction) {
     res.on("finish", () => {
       const duration = Date.now() - startedAt;
-      console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`);
+      console.log(`REQ ${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`);
     });
   }
   next();
@@ -548,6 +585,11 @@ app.use((req, res, next) => {
   }
 
   req.query = sanitizePayload(req.query || {});
+  if (req.path.startsWith("/api/listings")) {
+    req.query = Object.fromEntries(
+      Object.entries(req.query).filter(([key]) => ALLOWED_LISTING_QUERY_KEYS.has(String(key || "")))
+    );
+  }
   req.body = sanitizePayload(req.body || {});
   req.params = sanitizePayload(req.params || {});
   next();
@@ -555,11 +597,9 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use("/api/auth", authLimiter);
-app.post("/api/auth/login", loginLimiter);
-app.post("/api/auth/register", registerLimiter);
-app.post("/api/listings/upload", uploadLimiter);
-app.post("/api/listings", listingCreateLimiter);
-app.post("/api/messages", messageSendLimiter);
+app.use("/api/messages", messageRouteLimiter);
+app.post("/api/listings/upload", listingWriteLimiter);
+app.post("/api/listings", listingWriteLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/listings", listingsRoutes);
 app.use("/api/messages", messagesRoutes);
@@ -573,7 +613,7 @@ app.get("/api/my-listings", authMiddleware, async (req, res) => {
     const listings = await Listing.find({ user: req.user.id, isDeleted: false });
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "server_error" });
   }
 });
 
@@ -682,14 +722,14 @@ process.on("SIGTERM", () => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     if (!isProduction) {
-      console.log("Mongo baÄŸlandÄ±");
+      console.log("DB CONNECT OK");
     }
     server.listen(process.env.PORT || 3000, () => {
       if (!isProduction) {
-        console.log("Server running on http://localhost:" + (process.env.PORT || 3000));
+        console.log("START HTTP " + (process.env.PORT || 3000));
       }
     });
   })
   .catch((err) => {
-    console.error("Mongo hata:", err);
+    console.error("DB CONNECT ERROR:", err);
   });

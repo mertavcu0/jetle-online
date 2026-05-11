@@ -538,8 +538,10 @@
 
     async function sendMessage() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (!user.email && !user.id && !user._id) {
+      const token = String(localStorage.getItem("token") || "").trim();
+      if ((!user.email && !user.id && !user._id) || !token) {
         alert("Mesaj göndermek için giriş yapmalısınız");
+        window.location.href = "/login.html";
         return;
       }
 
@@ -550,14 +552,10 @@
 
       await fetch("/api/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          sender: user.email || user.id || user._id,
-          fromEmail: user.email,
-          receiver: listing.user.email || listing.user._id,
-          toId: listing.user._id,
           listingId: listing._id,
-          message: "İlanınız hakkında bilgi almak istiyorum."
+          text: "İlanınız hakkında bilgi almak istiyorum."
         })
       });
 
@@ -566,23 +564,20 @@
 
     async function addFavorite() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (!user.email && !user.id && !user._id) {
+      const token = String(localStorage.getItem("token") || "").trim();
+      if ((!user.email && !user.id && !user._id) || !token) {
         alert("Favoriye eklemek için giriş yapmalısınız");
+        window.location.href = "/login.html";
         return;
       }
 
       await fetch(`/api/listings/${listing._id}/favorite`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.email,
-          userId: user.id || user._id
-        })
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       alert("Favoriler güncellendi");
     }
-
     function similarCard(item) {
       const image = listingImages(item)[0];
       return `
@@ -721,3 +716,5 @@
   </script>
 </body>
 </html>
+
+

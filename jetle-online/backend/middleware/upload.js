@@ -1,7 +1,12 @@
 const multer = require("multer");
 const path = require("path");
+const fsSync = require("fs");
 const fs = require("fs/promises");
 const allowedMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+const allowedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+const blockedExtensions = new Set([".exe", ".dll", ".bat", ".cmd", ".com", ".msi", ".sh", ".ps1", ".php", ".js", ".jar", ".scr", ".vbs"]);
+const MAX_IMAGE_FILE_SIZE = 8 * 1024 * 1024;
+const MAX_VIDEO_FILE_SIZE = 80 * 1024 * 1024;
 let sharp = null;
 
 try {
@@ -10,21 +15,42 @@ try {
   sharp = null;
 }
 
+const uploadRoot = path.resolve(process.cwd(), "uploads");
+fsSync.mkdirSync(uploadRoot, { recursive: true });
+
+function getSafeExtension(file) {
+  const ext = String(path.extname(file?.originalname || "") || "").toLowerCase();
+  return allowedExtensions.has(ext) ? ext : "";
+}
+
+function hasBlockedExtension(file) {
+  const ext = String(path.extname(file?.originalname || "") || "").toLowerCase();
+  return blockedExtensions.has(ext);
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, uploadRoot);
   },
   filename: (req, file, cb) => {
     const unique = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, unique + path.extname(file.originalname));
+    cb(null, unique + getSafeExtension(file));
   },
 });
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: MAX_IMAGE_FILE_SIZE },
   fileFilter: (req, file, cb) => {
-    if (allowedMimeTypes.has(String(file.mimetype || "").toLowerCase())) {
+    const mime = String(file.mimetype || "").toLowerCase();
+    const ext = getSafeExtension(file);
+    if (hasBlockedExtension(file)) {
+      return cb(new Error("Bu dosya tipi kabul edilmiyor"));
+    }
+    if (mime.startsWith("video/")) {
+      return cb(new Error(`Video dosyalari icin maksimum boyut ${Math.floor(MAX_VIDEO_FILE_SIZE / (1024 * 1024))}MB ve ayri bir yukleme akisi gerekir`));
+    }
+    if (ext && allowedMimeTypes.has(mime)) {
       return cb(null, true);
     }
     return cb(new Error("Sadece jpg, png veya webp dosyalari yuklenebilir"));

@@ -469,8 +469,34 @@
       transition: 0.3s;
     }
 
+    .img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
     .listing-card:hover img {
       transform: scale(1.05);
+    }
+
+    .right-card-thumb-placeholder {
+      width: 120px;
+      height: 90px;
+      flex: 0 0 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .badge {
@@ -1234,7 +1260,6 @@
         <option value="Emlak">Emlak</option>
         <option value="Otomobil">Araç</option>
         <option value="Vasıta">Vasıta</option>
-        <option value="Elektronik">Elektronik</option>
         <option value="İş Makineleri">İş Makineleri</option>
         <option value="Yedek Parça">Yedek Parça</option>
       </select>
@@ -1248,8 +1273,6 @@
       <div class="category-grid">
         <a class="category-card" href="/listings.html?category=emlak" onclick="window.location='/listings.html?category=emlak'; return false;">Emlak</a>
         <a class="category-card" href="/listings.html?category=vasita" onclick="window.location='/listings.html?category=vasita'; return false;">Vasıta</a>
-        <a class="category-card" href="/listings.html?category=elektronik" onclick="window.location='/listings.html?category=elektronik'; return false;">Elektronik</a>
-        <a class="category-card" href="/listings.html?category=telefon" onclick="window.location='/listings.html?category=telefon'; return false;">Telefon</a>
         <a class="category-card" href="/listings.html?category=is-makineleri" onclick="window.location='/listings.html?category=is-makineleri'; return false;">İş Makineleri</a>
         <a class="category-card" href="/listings.html?category=yedek-parca" onclick="window.location='/listings.html?category=yedek-parca'; return false;">Yedek Parça</a>
       </div>
@@ -1375,7 +1398,7 @@
     };
 
     function escapeHtml(value) {
-      return String(value ?? "")
+      return String(value || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -1394,14 +1417,33 @@
       return `${DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
     }
 
-    function resolveImage(listing, size = "300/200") {
-      const raw =
-        (Array.isArray(listing.images) && listing.images[0]) ||
-        listing.image ||
-        `https://picsum.photos/${size}`;
-      const src = String(raw).trim();
-      if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) return src;
-      return `${API_ORIGIN}/${src.replace(/^\/+/, "")}`;
+    function isPlaceholderImage(src) {
+      const value = String(src || "").trim().toLowerCase();
+      if (!value) return true;
+      return value.includes("picsum.photos") || value.includes("images.unsplash.com") || value.includes("source.unsplash.com");
+    }
+
+    function getListingImages(listing) {
+      const values = [];
+      if (Array.isArray(listing.images)) values.push(...listing.images);
+      if (Array.isArray(listing.photos)) values.push(...listing.photos);
+      if (listing.image) values.push(listing.image);
+
+      return [...new Set(values.map((item) => String(item || "").trim()).filter((item) => item && !isPlaceholderImage(item)))];
+    }
+
+    function resolveImage(listing) {
+      const raw = getListingImages(listing)[0] || "";
+      if (!raw) return "";
+      if (raw.startsWith("http://") || raw.startsWith("https://") || raw.startsWith("data:")) return raw;
+      return `${API_ORIGIN}/${raw.replace(/^\/+/, "")}`;
+    }
+
+    function imageMarkup(listing, altText) {
+      const src = resolveImage(listing);
+      return src
+        ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(altText)}" loading="lazy">`
+        : `<div class="img-placeholder">Görsel yok</div>`;
     }
 
     function getLocalPendingListings() {
@@ -1483,9 +1525,9 @@
       return `
         <div class="listing-card ${listing.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(listing)}'">
           <div class="img-wrapper">
-            <img src="${resolveImage(listing)}" alt="${title}" loading="lazy">
+            ${imageMarkup(listing, title)}
             ${listingStatusBadge(listing) || (tag ? `<div class="badge">${tag}</div>` : "")}
-            <button class="fav-btn ${favs.includes(id) ? "active" : ""}" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${id}')">❤</button>
+            <button class="fav-btn ${favs.includes(id) ? "active" : ""}" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${id}')">♡</button>
           </div>
           <div class="card-body">
             <h3 class="title">${title}</h3>
@@ -1503,14 +1545,13 @@
     }
 
     function simpleApiCard(item) {
-      const image = item.image || (Array.isArray(item.images) && item.images[0]) || "https://picsum.photos/300/200";
       const favs = JSON.parse(localStorage.getItem("favs") || "[]");
       return `
         <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(item)}'">
           <div class="img-wrapper">
-            <img src="${escapeHtml(image)}" alt="${escapeHtml(item.title || "İlan")}" loading="lazy">
+            ${imageMarkup(item, item.title || "İlan")}
             ${listingStatusBadge(item) || ""}
-            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" onclick="event.stopPropagation(); toggleFavorite('${item._id}')">❤</button>
+            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" onclick="event.stopPropagation(); toggleFavorite('${item._id}')">♡</button>
           </div>
           <div class="card-body">
             <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
@@ -1563,9 +1604,12 @@
     }
 
     function rightCardTemplate(listing) {
+      const src = resolveImage(listing);
       return `
         <a class="right-card" href="${listingUrl(listing)}">
-          <img src="${resolveImage(listing, "120/90")}" alt="${escapeHtml(listing.title || "İlan")}">
+          ${src
+            ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}">`
+            : `<div class="right-card-thumb-placeholder">Görsel yok</div>`}
           <div>
             <strong>${escapeHtml(listing.title || "Başlıksız ilan")}</strong>
             <span>${formatPrice(listing.price)}</span>
@@ -1608,7 +1652,7 @@
     function renderSidebars(listings) {
       const searches = ["BMW 3 Serisi", "Satılık daire", "iPhone", "Kiralık ev", "Otomatik araç", "Arsa"];
       els.popularSearches.innerHTML = searches
-        .map((item) => `<li><a href="listings.html?search=${encodeURIComponent(item)}">${item}<span>›</span></a></li>`)
+        .map((item) => `<li><a href="listings.html?search=${encodeURIComponent(item)}">${item}<span>:</span></a></li>`)
         .join("");
 
       const premiumUsers = [];
@@ -1749,4 +1793,3 @@
   <script src="/auth-global.js"></script>
 </body>
 </html>
-

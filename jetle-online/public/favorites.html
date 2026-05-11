@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Favorilerim | Jetle</title>
+  <title>Favorilerim | jetle.online</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       background: #f3f4f6;
@@ -12,80 +16,680 @@
       font-family: Arial, sans-serif;
     }
 
-    .page {
-      max-width: 1000px;
-      margin: 28px auto;
-      padding: 0 16px;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    h2 {
-      margin: 0 0 16px;
-      font-size: 22px;
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
     }
 
-    #favoritesList {
+    .navbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 14px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: 150px minmax(320px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
     }
 
-    .listing-card {
-      overflow: hidden;
+    .logo {
+      color: #2563eb;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .logo span {
+      color: #111827;
+    }
+
+    .search {
+      display: flex;
+      min-width: 0;
+    }
+
+    .search input {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-right: 0;
+      border-radius: 8px 0 0 8px;
+      background: #f9fafb;
+      outline: none;
+    }
+
+    .search button {
+      height: 42px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 0 8px 8px 0;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .nav-right,
+    #authArea {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .post-btn {
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .account-shell {
+      max-width: 1180px;
+      margin: 20px auto;
+      padding: 0 14px;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .favorites-panel {
       background: #fff;
       border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    .listing-card img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-      display: block;
-      background: #e5e7eb;
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      padding: 16px;
     }
 
-    .listing-card h3,
-    .listing-card p {
+    .sidebar h3 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item.active,
+    .menu-item:hover {
+      background: #f3f4f6;
+      color: #1d4ed8;
+    }
+
+    .favorites-panel {
+      padding: 20px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel-head h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .panel-head p {
       margin: 0;
-      padding: 10px 12px 0;
+      color: #6b7280;
       font-size: 14px;
     }
 
-    .listing-card p {
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #e5e7eb;
       padding-bottom: 12px;
-      color: #2563eb;
-      font-weight: 800;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 760px) {
-      #favoritesList {
+    .tab-btn {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      border-color: #2563eb;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .panel-section {
+      display: none;
+    }
+
+    .panel-section.active {
+      display: block;
+    }
+
+    .status {
+      min-height: 18px;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status.error {
+      color: #b91c1c;
+    }
+
+    .favorites-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .favorite-row {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .favorite-row:hover {
+      border-color: #dbe3ef;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .favorite-media {
+      width: 160px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #eef2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .favorite-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .favorite-main {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .favorite-title {
+      margin: 0;
+      color: #1d4ed8;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .favorite-meta,
+    .favorite-submeta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .meta-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .favorite-side {
+      min-width: 170px;
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+      text-align: right;
+    }
+
+    .favorite-price {
+      color: #2563eb;
+      font-size: 22px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .favorite-date,
+    .favorite-location {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .favorite-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .ghost-btn,
+    .primary-btn,
+    .danger-btn {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+
+    .ghost-btn {
+      border-color: #d1d5db;
+      background: #fff;
+      color: #374151;
+    }
+
+    .primary-btn {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .danger-btn {
+      border-color: #fecaca;
+      background: #fff5f5;
+      color: #b91c1c;
+    }
+
+    .empty-state {
+      padding: 40px 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      text-align: center;
+    }
+
+    .empty-state h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .empty-state p {
+      margin: 0 auto 18px;
+      max-width: 520px;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .empty-searches {
+      padding: 32px 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .navbar-inner,
+      .account-shell {
         grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .favorite-row {
+        grid-template-columns: 1fr;
+      }
+
+      .favorite-media {
+        width: 100%;
+        height: 220px;
+      }
+
+      .favorite-side {
+        justify-items: start;
+        text-align: left;
+        min-width: 0;
+      }
+
+      .favorite-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-right {
+        flex-wrap: wrap;
+      }
+
+      .favorites-panel {
+        padding: 16px;
+      }
+
+      .favorite-media {
+        height: 180px;
       }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <h2>Favorilerim</h2>
-    <div id="favoritesList"></div>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="/index.html">jetle<span>.online</span></a>
+      <form class="search" action="/listings.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="/create-listing.html" class="post-btn">İlan Ver</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="account-shell">
+    <aside class="sidebar">
+      <h3>Hesabım</h3>
+      <a href="/dashboard.html" class="menu-item">Benim İlanlarım</a>
+      <a href="/create-listing.html" class="menu-item">Yeni İlan Ver</a>
+      <a href="/messages.html" class="menu-item"><i class="ri-chat-1-line"></i> Mesajlar</a>
+      <a href="/favorites.html" class="menu-item active"><i class="ri-heart-line"></i> Favoriler</a>
+      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarları</a>
+    </aside>
+
+    <section class="favorites-panel">
+      <div class="panel-head">
+        <h1>Favorilerim</h1>
+        <p>Beğendiğiniz ilanları burada takip edebilir, hızlıca detaylarına dönebilirsiniz.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Favori sekmeleri">
+        <button type="button" class="tab-btn active" data-tab="listings">Favori İlanlarım</button>
+        <button type="button" class="tab-btn" data-tab="searches">Favori Aramalarım</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <section id="favoritesListings" class="panel-section active">
+        <div id="favoritesList" class="favorites-list"></div>
+      </section>
+
+      <section id="favoritesSearches" class="panel-section">
+        <div class="empty-searches">
+          Henüz kayıtlı favori aramanız bulunmuyor.
+        </div>
+      </section>
+    </section>
   </main>
 
   <script src="/auth-global.js"></script>
   <script>
-const user = JSON.parse(localStorage.getItem("user"));
+    function getToken() {
+      return String(localStorage.getItem("token") || "").trim();
+    }
 
-fetch(`/api/listings/favorites?email=${user.email}`)
-  .then(res => res.json())
-  .then(data => {
-    document.body.innerHTML += data.map(l => `
-      <div>
-        <img src="${l.image}" width="200">
-        <h3>${l.title}</h3>
-        <p>${l.price} TL</p>
-      </div>
-    `).join("");
-  });
-</script>
+    function clearSessionAndRedirect() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+    }
+
+    function formatPrice(value) {
+      const numeric = Number(value || 0);
+      if (!Number.isFinite(numeric) || numeric <= 0) {
+        return "Fiyat bilgisi yok";
+      }
+      return numeric.toLocaleString("tr-TR") + " TL";
+    }
+
+    function formatDate(value) {
+      if (!value) return "Tarih yok";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Tarih yok";
+      return date.toLocaleDateString("tr-TR");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeImages(listing) {
+      const pool = [];
+
+      if (Array.isArray(listing?.images)) {
+        pool.push(...listing.images);
+      }
+
+      if (Array.isArray(listing?.photos)) {
+        pool.push(...listing.photos);
+      }
+
+      if (listing?.image) {
+        pool.push(listing.image);
+      }
+
+      return pool
+        .map((item) => {
+          if (!item) return "";
+          if (typeof item === "string") return item;
+          return item.url || item.src || item.path || "";
+        })
+        .filter(Boolean);
+    }
+
+    function getLocationText(listing) {
+      const city = listing?.city || listing?.location?.city || "";
+      const district = listing?.district || listing?.location?.district || "";
+      return [city, district].filter(Boolean).join(" / ") || "Konum belirtilmemiş";
+    }
+
+    function getMetaPills(listing) {
+      const pills = [];
+      const category = listing?.category || "";
+      const year = listing?.year || "";
+      const fuel = listing?.fuel || listing?.yakit || "";
+      const transmission = listing?.transmission || listing?.gear || listing?.vites || "";
+      const km = listing?.km || listing?.kilometer || listing?.mileage || "";
+
+      if (category) pills.push(category);
+      if (year) pills.push(String(year));
+      if (fuel) pills.push(fuel);
+      if (transmission) pills.push(transmission);
+      if (km) pills.push(String(km) + " km");
+
+      return pills.slice(0, 5);
+    }
+
+    function renderEmptyFavorites() {
+      document.getElementById("favoritesList").innerHTML = `
+        <div class="empty-state">
+          <h2>Favori ilanınız bulunmuyor.</h2>
+          <p>Beğendiğiniz ilanları favorilere ekleyerek burada takip edebilirsiniz.</p>
+          <a class="primary-btn" href="/listings.html">İlanlara Göz At</a>
+        </div>
+      `;
+    }
+
+    function renderFavorites(listings) {
+      const listEl = document.getElementById("favoritesList");
+
+      if (!Array.isArray(listings) || !listings.length) {
+        renderEmptyFavorites();
+        return;
+      }
+
+      listEl.innerHTML = listings.map((listing) => {
+        const images = normalizeImages(listing);
+        const imageMarkup = images.length
+          ? `<img src="${escapeHtml(images[0])}" alt="${escapeHtml(listing.title || "İlan görseli")}">`
+          : `Görsel yok`;
+        const metaPills = getMetaPills(listing)
+          .map((item) => `<span class="meta-pill">${escapeHtml(item)}</span>`)
+          .join("");
+
+        return `
+          <article class="favorite-row">
+            <a class="favorite-media" href="/listing-detail.html?id=${encodeURIComponent(listing._id || listing.id || "")}">
+              ${imageMarkup}
+            </a>
+            <div class="favorite-main">
+              <a class="favorite-title" href="/listing-detail.html?id=${encodeURIComponent(listing._id || listing.id || "")}">
+                ${escapeHtml(listing.title || "İsimsiz ilan")}
+              </a>
+              <div class="favorite-meta">${metaPills || '<span class="meta-pill">İlan</span>'}</div>
+              <div class="favorite-submeta">
+                <span>${escapeHtml(getLocationText(listing))}</span>
+                <span>•</span>
+                <span>${escapeHtml(listing.subcategory || listing.type || "Kategori belirtilmemiş")}</span>
+              </div>
+            </div>
+            <div class="favorite-side">
+              <div class="favorite-price">${escapeHtml(formatPrice(listing.price))}</div>
+              <div class="favorite-date">İlan Tarihi: ${escapeHtml(formatDate(listing.createdAt || listing.date))}</div>
+              <div class="favorite-location">${escapeHtml(getLocationText(listing))}</div>
+              <div class="favorite-actions">
+                <a class="ghost-btn" href="/listing-detail.html?id=${encodeURIComponent(listing._id || listing.id || "")}">Detay</a>
+                <button class="danger-btn" type="button" onclick="removeFavorite('${escapeHtml(listing._id || listing.id || "")}')">Favoriden Kaldır</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function loadFavorites() {
+      const statusEl = document.getElementById("status");
+      const token = getToken();
+
+      if (!token) {
+        clearSessionAndRedirect();
+        return;
+      }
+
+      statusEl.className = "status";
+      statusEl.textContent = "Favoriler yükleniyor...";
+
+      try {
+        const res = await fetch("/api/listings/favorites", {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          clearSessionAndRedirect();
+          return;
+        }
+
+        const data = await res.json().catch(() => []);
+        if (!res.ok) {
+          throw new Error("favorites_load_failed");
+        }
+
+        renderFavorites(Array.isArray(data) ? data : []);
+        statusEl.textContent = "";
+      } catch (_) {
+        statusEl.className = "status error";
+        statusEl.textContent = "Favoriler yüklenemedi. Lütfen tekrar deneyin.";
+        renderEmptyFavorites();
+      }
+    }
+
+    async function removeFavorite(id) {
+      const token = getToken();
+      if (!token) {
+        clearSessionAndRedirect();
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/listings/" + encodeURIComponent(id) + "/favorite", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          clearSessionAndRedirect();
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error("favorite_remove_failed");
+        }
+
+        await loadFavorites();
+      } catch (_) {
+        const statusEl = document.getElementById("status");
+        statusEl.className = "status error";
+        statusEl.textContent = "Favori kaldırılamadı. Lütfen tekrar deneyin.";
+      }
+    }
+
+    function initTabs() {
+      const buttons = document.querySelectorAll(".tab-btn");
+      const listingSection = document.getElementById("favoritesListings");
+      const searchSection = document.getElementById("favoritesSearches");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          buttons.forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+
+          const tab = button.dataset.tab;
+          listingSection.classList.toggle("active", tab === "listings");
+          searchSection.classList.toggle("active", tab === "searches");
+        });
+      });
+    }
+
+    initTabs();
+    loadFavorites();
+  </script>
 </body>
 </html>

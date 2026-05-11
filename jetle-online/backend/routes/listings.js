@@ -7,6 +7,8 @@ const Notification = require("../models/Notification");
 const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const isProduction = process.env.NODE_ENV === "production";
+const activeUploadMap = new Map();
+const MAX_CONCURRENT_UPLOADS = 3;
 
 function sanitizeText(value, maxLength = 500) {
   return String(value || "")
@@ -24,6 +26,41 @@ function sanitizeHtmlLikeObject(input = {}) {
     }
   });
   return clone;
+}
+
+function isPlaceholderImage(value) {
+  const src = String(value || "").trim().toLowerCase();
+  if (!src) return true;
+  return [
+    "picsum.photos",
+    "images.unsplash.com",
+    "source.unsplash.com"
+  ].some((token) => src.includes(token));
+}
+
+function normalizeImageList(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => String(item || "").trim())
+      .filter((item) => item && !isPlaceholderImage(item));
+  }
+
+  if (typeof value === "string") {
+    const raw = value.trim();
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return normalizeImageList(parsed);
+    } catch (_) {
+      return raw
+        .split(/[,|]/)
+        .map((item) => item.trim())
+        .filter((item) => item && !isPlaceholderImage(item));
+    }
+  }
+
+  return [];
 }
 
 function listingToClient(doc) {
@@ -123,13 +160,11 @@ function normalizeListingItem(raw) {
   if (!raw || typeof raw !== "object") return null;
 
   const item = raw.toObject ? raw.toObject() : { ...raw };
-  const images = Array.isArray(item.images)
-    ? item.images.filter((value) => typeof value === "string" && value.trim())
-    : [];
-  const image =
-    (typeof item.image === "string" && item.image.trim()) ||
-    images[0] ||
-    "https://picsum.photos/300/200";
+  const photos = normalizeImageList(item.photos);
+  const images = normalizeImageList(item.images);
+  const mergedImages = [...new Set([...images, ...photos])];
+  const image = !isPlaceholderImage(item.image) ? String(item.image || "").trim() : "";
+  const primaryImage = image || mergedImages[0] || "";
 
   const createdAt = item.createdAt ? new Date(item.createdAt) : null;
   const createdAtMs = createdAt && !Number.isNaN(createdAt.getTime())
@@ -138,8 +173,9 @@ function normalizeListingItem(raw) {
 
   return {
     ...item,
-    image,
-    images,
+    image: primaryImage,
+    images: mergedImages,
+    photos: mergedImages,
     favorites: Array.isArray(item.favorites) ? item.favorites : [],
     views: Number(item.views || 0),
     isFeatured: Boolean(item.isFeatured),
@@ -178,8 +214,44 @@ async function findListingsSafe(query, options = {}) {
   }
 }
 
+function getUploadKey(req) {
+  const userId = String(req.user?.id || req.user?._id || "").trim();
+  return userId || String(req.ip || "unknown");
+}
+
+function releaseUploadSlot(key) {
+  const current = Number(activeUploadMap.get(key) || 0);
+  if (current <= 1) {
+    activeUploadMap.delete(key);
+    return;
+  }
+  activeUploadMap.set(key, current - 1);
+}
+
+function withUploadGuard(req, res, next) {
+  const key = getUploadKey(req);
+  const current = Number(activeUploadMap.get(key) || 0);
+
+  if (current >= MAX_CONCURRENT_UPLOADS) {
+    return res.status(429).json({ error: "too_many_requests" });
+  }
+
+  activeUploadMap.set(key, current + 1);
+  let released = false;
+  const cleanup = () => {
+    if (released) return;
+    released = true;
+    releaseUploadSlot(key);
+  };
+
+  res.on("finish", cleanup);
+  res.on("close", cleanup);
+  next();
+}
 router.post(
   "/upload",
+  authMiddleware,
+  withUploadGuard,
   function (req, res, next) {
     upload.array("images", 10)(req, res, function (err) {
       if (err) return res.status(400).json({ msg: err.message || "upload hatası" });
@@ -199,7 +271,7 @@ router.post(
   }
 );
 
-router.post("/", function (req, res, next) {
+router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
   upload.array("images", 20)(req, res, function (err) {
     if (err) {
       return res.status(400).json({ error: err.message || "upload_error" });
@@ -208,12 +280,11 @@ router.post("/", function (req, res, next) {
   });
 }, async (req, res) => {
   try {
-    console.log("BODY SIZE:", JSON.stringify(req.body).length);
     req.body = sanitizeHtmlLikeObject(req.body);
     await upload.optimizeFiles(req.files || []);
     const imageUrls = (req.files || []).map((file) => "/uploads/" + file.filename);
-
-    const userEmail = req.body.userEmail;
+    const currentUserId = String(req.user?.id || req.user?._id || "").trim();
+    const currentUserEmail = String(req.user?.email || "").trim().toLowerCase();
     const title = sanitizeText(req.body.title, 160);
     const description = sanitizeText(req.body.description || req.body.desc, 5000);
     const {
@@ -245,9 +316,11 @@ router.post("/", function (req, res, next) {
       sellerType,
       city,
       district,
-      images
+      images,
+      photos
     } = req.body;
-    const listingImages = imageUrls.length ? imageUrls : images;
+    const bodyImages = normalizeImageList(images || photos);
+    const listingImages = imageUrls.length ? imageUrls : bodyImages;
 
     if (!title || title.length < 3 || title.length > 160) {
       return res.status(400).json({ error: "invalid_title" });
@@ -260,8 +333,6 @@ router.post("/", function (req, res, next) {
     if (!category || !city) {
       return res.status(400).json({ error: "invalid_listing" });
     }
-
-    const user = await User.findOne({ email: userEmail });
 
     const listing = new Listing({
       ...req.body,
@@ -295,20 +366,18 @@ router.post("/", function (req, res, next) {
       sellerType,
       city,
       district,
+      image: listingImages[0] || "",
       images: listingImages,
+      photos: listingImages,
       listingNo: req.body.listingNo || await generateUniqueListingNo(),
       status: "pending",
       isFeatured: false,
+      user: currentUserId || undefined,
+      userEmail: currentUserEmail || undefined
     });
 
     if (title.length < 3 || description.length < 10) {
       listing.isSuspicious = true;
-    }
-
-    if (user) {
-      listing.user = user._id;
-    } else {
-      console.log("USER NOT FOUND FOR LISTING:", userEmail);
     }
 
     await listing.save();
@@ -383,14 +452,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/my-listings", async (req, res) => {
+router.get("/my-listings", authMiddleware, async (req, res) => {
   try {
-    const email = req.query.email;
+    const currentUserId = String(req.user?.id || req.user?._id || "").trim();
+    if (!mongoose.Types.ObjectId.isValid(currentUserId)) {
+      return res.status(401).json({ error: "unauthorized" });
+    }
 
-    const user = await User.findOne({ email });
-    if (!user) return res.json([]);
-
-    const listings = await Listing.find({ user: user._id, isDeleted: false });
+    const listings = await Listing.find({ user: currentUserId, isDeleted: false });
 
     res.json(listings);
   } catch (err) {
@@ -399,32 +468,48 @@ router.get("/my-listings", async (req, res) => {
   }
 });
 
-router.post("/favorite/:id", async (req, res) => {
-  const { email } = req.body;
+router.post("/favorite/:id", authMiddleware, async (req, res) => {
+  try {
+    const listingId = String(req.params.id || "");
+    const userId = String(req.user?.id || req.user?._id || "").trim();
+    if (!mongoose.Types.ObjectId.isValid(listingId) || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "invalid_id" });
+    }
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ error: "User not found" });
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-  if (!user.favorites.includes(req.params.id)) {
-    user.favorites.push(req.params.id);
+    const exists = (user.favorites || []).some((id) => String(id) === listingId);
+    if (exists) {
+      user.favorites = user.favorites.filter((id) => String(id) !== listingId);
+    } else {
+      user.favorites.push(listingId);
+    }
+
+    await user.save();
+    res.json({ success: true, favorites: user.favorites });
+  } catch (err) {
+    res.status(500).json({ error: "server_error" });
   }
-
-  await user.save();
-  res.json({ success: true });
 });
 
-router.get("/favorites", async (req, res) => {
-  const { email } = req.query;
+router.get("/favorites", authMiddleware, async (req, res) => {
+  try {
+    const userId = String(req.user?.id || req.user?._id || "").trim();
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(401).json({ error: "unauthorized" });
+    }
 
-  const user = await User.findOne({ email });
-  if (!user) return res.json([]);
+    const user = await User.findById(userId).populate({
+      path: "favorites",
+      match: { isDeleted: false }
+    });
+    if (!user) return res.json([]);
 
-  const listings = await Listing.find({
-    favorites: user._id,
-    isDeleted: false
-  }).sort({ createdAt: -1 });
-
-  res.json(listings);
+    res.json(Array.isArray(user.favorites) ? user.favorites : []);
+  } catch (err) {
+    res.status(500).json({ error: "server_error" });
+  }
 });
 
 router.get("/user/:id", async (req, res) => {
@@ -432,18 +517,15 @@ router.get("/user/:id", async (req, res) => {
   res.json(listings);
 });
 
-router.patch("/:id/favorite", async (req, res) => {
+router.patch("/:id/favorite", authMiddleware, async (req, res) => {
   try {
-    const { email, userId } = req.body;
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
       return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
-    const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ email });
+    const user = await User.findById(req.user.id || req.user._id);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -469,18 +551,15 @@ router.patch("/:id/favorite", async (req, res) => {
   }
 });
 
-router.post("/:id/favorite", async (req, res) => {
+router.post("/:id/favorite", authMiddleware, async (req, res) => {
   try {
-    const { email, userId } = req.body;
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
       return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
-    const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ email });
+    const user = await User.findById(req.user.id || req.user._id);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -594,3 +673,6 @@ router.delete("/:id", authMiddleware, async function (req, res) {
 });
 
 module.exports = router;
+
+
+

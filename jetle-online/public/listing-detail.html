@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ä°lan DetayÄ± | jetle.online</title>
+  <title>İlan Detayı | jetle.online</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     * {
@@ -135,6 +135,9 @@
       max-height: 420px;
       border-radius: 12px;
       overflow: hidden;
+      isolation: isolate;
+      background: linear-gradient(180deg, #374151 0%, #111827 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
     }
 
     .slider img,
@@ -142,10 +145,11 @@
       width: 100%;
       height: 420px;
       max-height: 420px;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 12px;
       display: block;
-      background: #e5e7eb;
+      background: transparent;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     .image-container {
@@ -179,7 +183,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #6b7280;
+      color: rgba(255,255,255,0.72);
       font-weight: 600;
       pointer-events: none;
     }
@@ -194,61 +198,237 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.45);
       color: white;
       border: none;
-      padding: 10px 12px;
       cursor: pointer;
-      border-radius: 8px;
-      z-index: 2;
-      transition: background 0.2s ease;
+      border-radius: 999px;
+      z-index: 3;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(15,23,42,0.24);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 700;
+      padding: 0;
     }
 
     .slider button:hover {
-      background: rgba(0,0,0,0.7);
+      background: rgba(17,24,39,0.84);
+      transform: translateY(-50%) scale(1.04);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.34);
     }
 
     .card img:hover,
     .main-img:hover {
-      transform: scale(1.02);
+      transform: scale(1.01);
       transition: 0.3s;
     }
 
     #prev {
-      left: 10px;
+      left: 16px;
     }
 
     #next {
-      right: 10px;
+      right: 16px;
     }
 
     #thumbnails,
     .gallery {
       display: flex;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 10px;
+      margin-top: 14px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding: 2px 0 6px;
     }
 
     #thumbnails img,
     .gallery img {
-      width: 80px;
-      height: 60px;
+      width: 88px;
+      height: 66px;
       object-fit: cover;
       cursor: pointer;
-      border-radius: 6px;
-      border: 2px solid transparent;
+      border-radius: 8px;
+      border: 2px solid rgba(148,163,184,0.24);
       flex: 0 0 auto;
-      transition: border-color 0.2s ease, transform 0.2s ease;
+      background: #e5e7eb;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
 
     #thumbnails img:hover,
+    .gallery img:hover {
+      border-color: rgba(37,99,235,0.55);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.12);
+    }
+
     #thumbnails img.active,
-    .gallery img:hover,
     .gallery img.active {
       border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.16);
       transform: translateY(-1px);
+    }
+
+    .gallery-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(4px);
+    }
+
+    .gallery-modal.open {
+      display: flex;
+    }
+
+    .gallery-modal-dialog {
+      position: relative;
+      width: min(1180px, 100%);
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .gallery-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fff;
+    }
+
+    .gallery-modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .gallery-modal-counter {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .gallery-modal-close {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-modal-close:hover {
+      background: rgba(255,255,255,0.22);
+      transform: scale(1.04);
+    }
+
+    .gallery-modal-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      flex: 1;
+      background: rgba(17, 24, 39, 0.8);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .gallery-modal-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: calc(100vh - 220px);
+      object-fit: contain;
+      margin: 0 auto;
+    }
+
+    .gallery-modal-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-modal-nav:hover {
+      background: rgba(0,0,0,0.72);
+      transform: translateY(-50%) scale(1.04);
+    }
+
+    .gallery-modal-nav.prev {
+      left: 18px;
+    }
+
+    .gallery-modal-nav.next {
+      right: 18px;
+    }
+
+    .gallery-modal-thumbs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 2px 2px 8px;
+      scrollbar-width: thin;
+    }
+
+    .gallery-modal-thumbs img {
+      width: 92px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+      flex: 0 0 auto;
+      background: rgba(255,255,255,0.08);
+      transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+      opacity: 0.82;
+    }
+
+    .gallery-modal-thumbs img:hover {
+      border-color: rgba(96,165,250,0.9);
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .gallery-modal-thumbs img.active {
+      border-color: #60a5fa;
+      opacity: 1;
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.2);
     }
 
     .right {
@@ -775,6 +955,32 @@
         height: 300px;
       }
 
+      .slider button {
+        width: 38px;
+        height: 38px;
+        font-size: 28px;
+      }
+
+      #prev {
+        left: 10px;
+      }
+
+      #next {
+        right: 10px;
+      }
+
+      #thumbnails,
+      .gallery {
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      #thumbnails img,
+      .gallery img {
+        width: 76px;
+        height: 58px;
+      }
+
       .nav-right {
         width: 100%;
         justify-content: flex-end;
@@ -782,6 +988,61 @@
 
       .footer-container {
         grid-template-columns: 1fr;
+      }
+
+      .gallery-modal {
+        padding: 12px;
+      }
+
+      .gallery-modal-dialog {
+        width: 100%;
+        max-height: calc(100vh - 24px);
+        gap: 12px;
+      }
+
+      .gallery-modal-title {
+        font-size: 16px;
+      }
+
+      .gallery-modal-counter {
+        font-size: 13px;
+      }
+
+      .gallery-modal-close {
+        width: 38px;
+        height: 38px;
+        font-size: 24px;
+      }
+
+      .gallery-modal-stage {
+        border-radius: 14px;
+      }
+
+      .gallery-modal-image {
+        max-height: calc(100vh - 250px);
+      }
+
+      .gallery-modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 28px;
+      }
+
+      .gallery-modal-nav.prev {
+        left: 10px;
+      }
+
+      .gallery-modal-nav.next {
+        right: 10px;
+      }
+
+      .gallery-modal-thumbs {
+        gap: 8px;
+      }
+
+      .gallery-modal-thumbs img {
+        width: 74px;
+        height: 56px;
       }
     }
   </style>
@@ -811,11 +1072,11 @@
     <div class="detail-grid">
       <div class="left left-panel">
         <div class="slider image-container">
-          <button id="prev" type="button">â—€</button>
-          <img id="mainImage" class="main-img main-image" src="" alt="Ä°lan fotoÄŸrafÄ±">
-          <button id="next" type="button">â–¶</button>
+          <button id="prev" type="button" aria-label="Önceki fotoğraf">&lsaquo;</button>
+          <img id="mainImage" class="main-img main-image" src="" alt="İlan fotoğrafı">
+          <button id="next" type="button" aria-label="Sonraki fotoğraf">&rsaquo;</button>
           <button class="fav-btn" onclick="toggleFavorite(window.listingData?._id)">
-            â™¡
+            ♡
           </button>
           <div class="no-image-text">Fotoğraf yok</div>
         </div>
@@ -854,6 +1115,22 @@
 
     <div class="tab-content" id="tech">
       <p id="techText">Teknik özellikler buraya gelecek</p>
+    </div>
+  </div>
+
+  <div id="galleryModal" class="gallery-modal" aria-hidden="true">
+    <div class="gallery-modal-dialog" role="dialog" aria-modal="true" aria-label="Büyük Fotoğraf">
+      <div class="gallery-modal-header">
+        <div class="gallery-modal-title">Büyük Fotoğraf</div>
+        <div id="galleryModalCounter" class="gallery-modal-counter">1 / 1</div>
+        <button id="galleryModalClose" type="button" class="gallery-modal-close" aria-label="Kapat">×</button>
+      </div>
+      <div class="gallery-modal-stage">
+        <button id="galleryModalPrev" type="button" class="gallery-modal-nav prev" aria-label="Önceki fotoğraf">&lsaquo;</button>
+        <img id="galleryModalImage" class="gallery-modal-image" src="" alt="Büyük fotoğraf">
+        <button id="galleryModalNext" type="button" class="gallery-modal-nav next" aria-label="Sonraki fotoğraf">&rsaquo;</button>
+      </div>
+      <div id="galleryModalThumbs" class="gallery-modal-thumbs"></div>
     </div>
   </div>
 
@@ -944,14 +1221,23 @@
         if (listingNo) listingNo.textContent = listing.listingNo || String(listing._id || listing.id || "");
         const listingDate = document.getElementById("listingDate");
         if (listingDate) listingDate.textContent = formatDate(listing.createdAt);
+        const isVerifiedSeller = Boolean(
+          listing.isVerifiedSeller === true ||
+          listing.seller?.isVerified === true ||
+          listing.user?.isVerified === true ||
+          user.isVerified === true
+        );
         const imageCount = document.getElementById("imageCount");
-        if (imageCount) imageCount.textContent = `${listing.images?.length || 1} Fotoğraf`;
+        if (imageCount) {
+          const mediaCount = typeof getListingImages === "function" ? getListingImages(listing).length : 0;
+          imageCount.textContent = mediaCount ? `${mediaCount} Fotoğraf` : "Görsel yok";
+        }
 
         userBox.innerHTML = `
           <div class="seller-card">
             <div class="seller-header">
               <strong>${user.name || user.email || "Bilinmeyen kullanıcı"}</strong>
-              <span class="badge">Onaylı</span>
+              ${isVerifiedSeller ? '<span class="badge">Onaylı</span>' : ""}
             </div>
 
             <div class="seller-meta">
@@ -964,23 +1250,17 @@
               <button class="btn-secondary" onclick="showPhoneInfo()">Telefonu Göster</button>
             </div>
             ${isOwner ? '<button class="btn-boost" onclick="buyBoost()">İlanı Öne Çıkar</button>' : ''}
-
-            <div class="trust-box">
-              ✓ Doğrulanmış kullanıcı<br>
-              ✓ Güvenli mesaj sistemi<br>
-              ✓ Jetle koruması
-            </div>
           </div>
         `;
 
         const detailsBox = document.getElementById("detailsBox");
         if (detailsBox) {
           detailsBox.innerHTML = `
-            <h4>Ä°lan DetaylarÄ±</h4>
+            <h4>İlan Detayları</h4>
             <ul>
-              <li>Åehir: ${listing.city || ""}</li>
+              <li>Şehir: ${listing.city || ""}</li>
               <li>Kategori: ${listing.category || ""}</li>
-              <li>Durum: Ä°kinci El</li>
+              <li>Durum: İkinci El</li>
             </ul>
           `;
         }
@@ -998,27 +1278,35 @@
       const text = input?.value?.trim();
 
       if (!user.email && !user.id && !user._id) {
-        alert("Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapmalÄ±sÄ±nÄ±z.");
+        alert("Mesaj göndermek için giriş yapmalısınız.");
+        window.location.href = "/login.html";
         return;
       }
 
       if (!text) {
-        alert("Mesaj yazÄ±n.");
+        alert("Mesaj yazın.");
+        return;
+      }
+
+      const token = String(localStorage.getItem("token") || "").trim();
+      if (!token) {
+        window.location.href = "/login.html";
         return;
       }
 
       fetch("/api/messages", {
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
-          sender: user.email || user.id || user._id,
-          receiver: toId,
           listingId: listing._id,
-          message: text
+          text
         })
       }).then(() => {
         input.value = "";
-        alert("GÃ¶nderildi");
+        alert("Gönderildi");
       });
     }
 
@@ -1026,7 +1314,7 @@
       const listing = window.listingData || {};
 
       if (!listing._id) {
-        alert("Ä°lan bilgisi bulunamadÄ±");
+        alert("İlan bilgisi bulunamadı");
         return;
       }
 
@@ -1043,13 +1331,13 @@
         const data = await res.json();
 
         if (!res.ok || !data.success) {
-          throw new Error(data.error || "Boost iÅŸlemi baÅŸarÄ±sÄ±z");
+          throw new Error(data.error || "Boost işlemi başarısız");
         }
 
-        alert(`Boost aktif edildi. Ãœcret: ${data.price} TL`);
+        alert(`Boost aktif edildi. Ücret: ${data.price} TL`);
       } catch (err) {
         console.error("BOOST ERROR:", err);
-        alert("Boost iÅŸlemi tamamlanamadÄ±");
+        alert("Boost işlemi tamamlanamadı");
       }
     }
 

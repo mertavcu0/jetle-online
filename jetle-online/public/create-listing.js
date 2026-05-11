@@ -1,13 +1,13 @@
-﻿async function initCreateListingPage() {
+async function initCreateListingPage() {
   const user = localStorage.getItem("user");
   if (!user) {
-    alert("Ä°lan vermek iÃ§in giriÅŸ yapmalÄ±sÄ±n");
+    alert("İlan vermek için giriş yapmalısın");
     window.location.href = "login.html";
     return;
   }
 
   const PLACEHOLDER_IMG =
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='140'%3E%3Crect fill='%23e5e7eb' width='400' height='140'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='sans-serif' font-size='14'%3EFotoÄŸraf yok%3C/text%3E%3C/svg%3E";
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='140'%3E%3Crect fill='%23e5e7eb' width='400' height='140'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='sans-serif' font-size='14'%3EFotoğraf yok%3C/text%3E%3C/svg%3E";
 
   const cityData = window.cities || {};
 
@@ -90,7 +90,7 @@
   async function loadCarData() {
     try {
       const res = await fetch("/api/cars");
-      if (!res.ok) throw new Error("AraÃ§ verisi yÃ¼klenemedi");
+      if (!res.ok) throw new Error("Araç verisi yüklenemedi");
       carData = normalizeCarData(await res.json());
     } catch (err) {
       console.error("CAR DATA ERROR:", err);
@@ -126,9 +126,9 @@
   const token = localStorage.getItem("token");
   const MAX_PHOTOS = 30;
   const fuelOptions = ["Benzin", "Dizel", "LPG", "Hibrit", "Elektrik"];
-  const transmissionOptions = ["Manuel", "Otomatik", "YarÄ± Otomatik"];
+  const transmissionOptions = ["Manuel", "Otomatik", "Yarı Otomatik"];
   const bodyTypes = ["Sedan", "Hatchback", "SUV", "Coupe", "Pickup", "Minivan", "Station Wagon"];
-  const colors = ["Beyaz", "Siyah", "Gri", "KÄ±rmÄ±zÄ±", "Mavi"];
+  const colors = ["Beyaz", "Siyah", "Gri", "Kırmızı", "Mavi"];
 
   let currentStep = 1;
   let stagedImageFiles = [];
@@ -137,9 +137,9 @@
   const damageStates = ["original", "painted", "changed", "damaged"];
   const damageLabels = {
     original: "Normal",
-    painted: "BoyalÄ±",
-    changed: "DeÄŸiÅŸen",
-    damaged: "HasarlÄ±",
+    painted: "Boyalı",
+    changed: "Değişen",
+    damaged: "Hasarlı",
   };
 
   function digitsOnly(value) {
@@ -163,7 +163,7 @@
   function populateSelect(id, data) {
     const select = document.getElementById(id);
     if (!select) return;
-    select.innerHTML = '<option value="">SeÃ§</option>';
+    select.innerHTML = '<option value="">Seç</option>';
     data.forEach(item => {
       const opt = document.createElement("option");
       opt.setAttribute("value", item);
@@ -196,13 +196,13 @@
     if (!selected) return;
 
     if (field("engine") && selected.engine) {
-      field("engine").innerHTML = selectOptions([selected.engine], "Motor hacmi seÃ§in");
+      field("engine").innerHTML = selectOptions([selected.engine], "Motor hacmi seçin");
       setVal("engine", selected.engine);
     }
   }
 
   function populateCities() {
-    cityInput.innerHTML = selectOptions(Object.keys(cityData), "Åehir seÃ§in");
+    cityInput.innerHTML = selectOptions(Object.keys(cityData), "Şehir seçin");
     populateDistricts();
   }
 
@@ -210,8 +210,8 @@
     const districts = cityData[safeVal("city")] || [];
     districtInput.disabled = !districts.length;
     districtInput.innerHTML = districts.length
-      ? selectOptions(districts, "Ä°lÃ§e seÃ§in")
-      : '<option value="">Ã–nce ÅŸehir seÃ§in</option>';
+      ? selectOptions(districts, "İlçe seçin")
+      : '<option value="">Önce şehir seçin</option>';
   }
 
   function field(id) {
@@ -227,11 +227,11 @@
     const series = brand ? Object.keys(carData[brand] || {}) : [];
     seriesSelect.disabled = !series.length;
     seriesSelect.innerHTML = series.length
-      ? selectOptions(series, "Seri seÃ§in")
-      : '<option value="">Ã–nce marka seÃ§in</option>';
+      ? selectOptions(series, "Seri seçin")
+      : '<option value="">Önce marka seçin</option>';
 
     modelSelect.disabled = true;
-    modelSelect.innerHTML = '<option value="">Ã–nce seri seÃ§in</option>';
+    modelSelect.innerHTML = '<option value="">Önce seri seçin</option>';
     document.querySelectorAll("select").forEach((select) => {
       select.disabled = false;
     });
@@ -246,8 +246,8 @@
     const models = brand && series ? carData[brand]?.[series] || [] : [];
     modelSelect.disabled = !models.length;
     modelSelect.innerHTML = models.length
-      ? selectOptions(models.map((item) => item.name), "Model seÃ§in")
-      : '<option value="">Ã–nce seri seÃ§in</option>';
+      ? selectOptions(models.map((item) => item.name), "Model seçin")
+      : '<option value="">Önce seri seçin</option>';
     document.querySelectorAll("select").forEach((select) => {
       select.disabled = false;
     });
@@ -258,26 +258,26 @@
       <div class="form-grid">
         <div class="field-group">
           <label for="brand">Marka</label>
-          <select id="brand">${selectOptions(Object.keys(carData), "Marka seÃ§in")}</select>
+          <select id="brand">${selectOptions(Object.keys(carData), "Marka seçin")}</select>
         </div>
         <div class="field-group">
           <label for="series">Seri</label>
-          <select id="series" disabled><option value="">Ã–nce marka seÃ§in</option></select>
+          <select id="series" disabled><option value="">Önce marka seçin</option></select>
         </div>
         <div class="field-group">
           <label for="model">Model</label>
-          <select id="model" disabled><option value="">Ã–nce seri seÃ§in</option></select>
+          <select id="model" disabled><option value="">Önce seri seçin</option></select>
         </div>
         <div class="field-group">
-          <label for="year">YÄ±l</label>
-          <input type="number" id="year" min="1980" max="2026" placeholder="Ã–rn. 2020">
+          <label for="year">Yıl</label>
+          <input type="number" id="year" min="1980" max="2026" placeholder="Örn. 2020">
         </div>
         <div class="field-group">
           <label for="km">Kilometre</label>
-          <input type="number" id="km" min="0" max="1000000" placeholder="Ã–rn. 85000">
+          <input type="number" id="km" min="0" max="1000000" placeholder="Örn. 85000">
         </div>
         <div class="field-group">
-          <label for="fuel">YakÄ±t</label>
+          <label for="fuel">Yakıt</label>
           <select id="fuel" name="fuel"></select>
         </div>
         <div class="field-group">
@@ -295,11 +295,11 @@
         <div class="field-group">
           <label for="engine">Motor hacmi</label>
           <select id="engine">
-            <option value="">Motor hacmi seÃ§in</option>
+            <option value="">Motor hacmi seçin</option>
             <option>1.0 - 1.3</option>
             <option>1.4 - 1.6</option>
             <option>1.8 - 2.0</option>
-            <option>2.0 ve Ã¼zeri</option>
+            <option>2.0 ve üzeri</option>
             <option>Elektrik</option>
           </select>
         </div>
@@ -350,20 +350,20 @@
     dynamicFields.innerHTML = `
       <div class="form-grid">
         <div class="field-group">
-          <label for="rooms">Oda sayÄ±sÄ±</label>
-          <input type="text" id="rooms" placeholder="Ã–rn. 3+1">
+          <label for="rooms">Oda sayısı</label>
+          <input type="text" id="rooms" placeholder="Örn. 3+1">
         </div>
         <div class="field-group">
-          <label for="m2">mÂ²</label>
-          <input type="number" id="m2" placeholder="Ã–rn. 120">
+          <label for="m2">m²</label>
+          <input type="number" id="m2" placeholder="Örn. 120">
         </div>
         <div class="field-group">
-          <label for="age">Bina yaÅŸÄ±</label>
-          <input type="number" id="age" placeholder="Ã–rn. 5">
+          <label for="age">Bina yaşı</label>
+          <input type="number" id="age" placeholder="Örn. 5">
         </div>
         <div class="field-group">
           <label for="floor">Kat</label>
-          <input type="text" id="floor" placeholder="Ã–rn. 4">
+          <input type="text" id="floor" placeholder="Örn. 4">
         </div>
       </div>
     `;
@@ -447,8 +447,8 @@
     const ready2 = step2Ready();
     if (step1Next) step1Next.disabled = !ready1;
     if (step2Next) step2Next.disabled = !ready2;
-    if (step1Message) step1Message.textContent = ready1 ? "" : "Kategori, baÅŸlÄ±k ve ÅŸehir dolmadan devam edemezsiniz.";
-    if (step2Message) step2Message.textContent = ready2 ? "" : "Detay alanlarÄ±nÄ± doldurun.";
+    if (step1Message) step1Message.textContent = ready1 ? "" : "Kategori, başlık ve şehir dolmadan devam edemezsiniz.";
+    if (step2Message) step2Message.textContent = ready2 ? "" : "Detay alanlarını doldurun.";
 
     if (currentStep !== 5) return;
     submitBtn.disabled = !(ready1 && ready2);
@@ -462,7 +462,7 @@
         valid = false;
       }
     });
-    if (!valid) alert("Kategori, baÅŸlÄ±k ve ÅŸehir zorunlu.");
+    if (!valid) alert("Kategori, başlık ve şehir zorunlu.");
     updateStepButtons();
     return valid;
   }
@@ -481,11 +481,11 @@
         }
       });
       if (!safeVal("fuel") || !safeVal("transmission") || !safeVal("bodyType")) {
-        alert("LÃ¼tfen tÃ¼m araÃ§ bilgilerini seÃ§");
+        alert("Lütfen tüm araç bilgilerini seç");
         valid = false;
       }
     }
-    if (!valid) alert("LÃ¼tfen detay alanlarÄ±nÄ± doldurun.");
+    if (!valid) alert("Lütfen detay alanlarını doldurun.");
     updateStepButtons();
     return valid;
   }
@@ -503,7 +503,7 @@
     const districtValue = safeVal("district");
     const district = districtValue ? ` / ${districtValue}` : "";
     const vehicle = [safeVal("brand"), safeVal("series"), safeVal("model")].filter(Boolean).join(" ");
-    const location = [city ? `${city}${district}` : "", vehicle].filter(Boolean).join(" â€¢ ");
+    const location = [city ? `${city}${district}` : "", vehicle].filter(Boolean).join(" ");
     const priceValue = rawPrice();
     const price = priceValue ? `${Number(priceValue).toLocaleString("tr-TR")} TL` : "";
 
@@ -538,7 +538,7 @@
     stagedImageFiles.forEach((file, index) => {
       const item = document.createElement("div");
       item.className = "preview-item";
-      item.title = `${index + 1}. fotoÄŸraf`;
+      item.title = `${index + 1}. fotoğraf`;
       const img = document.createElement("img");
       img.style.width = "100px";
       img.style.margin = "5px";
@@ -566,13 +566,13 @@
     const images = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
     const freeSlots = MAX_PHOTOS - stagedImageFiles.length;
     if (freeSlots <= 0) {
-      alert("En fazla 30 fotoÄŸraf yÃ¼kleyebilirsin.");
+      alert("En fazla 30 fotoğraf yükleyebilirsin.");
       syncInputFiles();
       return;
     }
 
     if (images.length > freeSlots) {
-      alert("En fazla 30 fotoÄŸraf yÃ¼kleyebilirsin. Fazla fotoÄŸraflar eklenmedi.");
+      alert("En fazla 30 fotoğraf yükleyebilirsin. Fazla fotoğraflar eklenmedi.");
     }
 
     stagedImageFiles = stagedImageFiles.concat(images.slice(0, freeSlots));
@@ -645,6 +645,10 @@
 
   async function uploadImagesIfNeeded() {
     if (!stagedImageFiles.length) return [];
+    if (!token) {
+      window.location.href = "/login.html";
+      return [];
+    }
     const formData = new FormData();
     stagedImageFiles.forEach((file) => formData.append("images", file));
     const res = await fetch("/api/listings/upload", {
@@ -791,8 +795,8 @@
 
       const next =
         current === "none" ? "orijinal" :
-        current === "orijinal" ? "boyalÄ±" :
-        current === "boyalÄ±" ? "degisen" :
+        current === "orijinal" ? "boyal1" :
+        current === "boyal1" ? "degisen" :
         "none";
 
       el.dataset.status = next;
@@ -805,4 +809,3 @@
 document.addEventListener("DOMContentLoaded", () => {
   initCreateListingPage();
 });
-
