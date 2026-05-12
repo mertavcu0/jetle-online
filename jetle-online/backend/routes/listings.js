@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Notification = require("../models/Notification");
 const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const storage = require("../services/storage");
 const isProduction = process.env.NODE_ENV === "production";
 const activeUploadMap = new Map();
 const MAX_CONCURRENT_UPLOADS = 3;
@@ -76,6 +77,11 @@ function canModifyListing(listing, reqUser) {
   if (reqUser.role === "admin") return true;
   if (listing.user && String(listing.user) === String(reqUser.id)) return true;
   return String(listing.userId) === String(reqUser.id);
+}
+
+async function getUserFavoriteCount(listingId) {
+  if (!mongoose.Types.ObjectId.isValid(String(listingId || ""))) return 0;
+  return User.countDocuments({ favorites: listingId });
 }
 
 async function generateUniqueListingNo() {
@@ -261,12 +267,15 @@ router.post(
   function (req, res) {
     Promise.resolve(upload.optimizeFiles(req.files || []))
       .catch(() => [])
-      .then((thumbs) => {
-        const urls = (req.files || []).map(function (f) {
-          return "/uploads/" + f.filename;
+      .then((thumbs) => storage.storeFiles(req.files || [], thumbs))
+      .then(({ urls, thumbnailUrls, publicIds, assets, provider }) => {
+        res.json({ urls, thumbnailUrls, publicIds, assets, provider });
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: "upload_error",
+          ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
         });
-        const thumbnailUrls = (thumbs || []).map((item) => item.thumbnailUrl).filter(Boolean);
-        res.json({ urls, thumbnailUrls });
       });
   }
 );
@@ -281,8 +290,10 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
 }, async (req, res) => {
   try {
     req.body = sanitizeHtmlLikeObject(req.body);
-    await upload.optimizeFiles(req.files || []);
-    const imageUrls = (req.files || []).map((file) => "/uploads/" + file.filename);
+    const thumbResults = await upload.optimizeFiles(req.files || []);
+    const storedFiles = await storage.storeFiles(req.files || [], thumbResults);
+    const imageUrls = Array.isArray(storedFiles.urls) ? storedFiles.urls : [];
+    const imagePublicIds = Array.isArray(storedFiles.publicIds) ? storedFiles.publicIds : [];
     const currentUserId = String(req.user?.id || req.user?._id || "").trim();
     const currentUserEmail = String(req.user?.email || "").trim().toLowerCase();
     const title = sanitizeText(req.body.title, 160);
@@ -369,6 +380,8 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
       image: listingImages[0] || "",
       images: listingImages,
       photos: listingImages,
+      imagePublicIds,
+      uploadProvider: storedFiles.provider || "local",
       listingNo: req.body.listingNo || await generateUniqueListingNo(),
       status: "pending",
       isFeatured: false,
@@ -519,69 +532,73 @@ router.get("/user/:id", async (req, res) => {
 
 router.patch("/:id/favorite", authMiddleware, async (req, res) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listingId = String(req.params.id || "");
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return res.status(400).json({ error: "invalid_id" });
+    }
 
+    const listing = await Listing.findById(listingId);
     if (!listing) {
       return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
     const user = await User.findById(req.user.id || req.user._id);
-
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "user_not_found" });
     }
 
-    const exists = listing.favorites.some((id) => id.toString() === user._id.toString());
-
+    const exists = (user.favorites || []).some((id) => String(id) === listingId);
     if (exists) {
-      listing.favorites = listing.favorites.filter((id) => id.toString() !== user._id.toString());
+      user.favorites = (user.favorites || []).filter((id) => String(id) !== listingId);
     } else {
-      listing.favorites.push(user._id);
+      user.favorites = [...(user.favorites || []), listing._id];
     }
 
-    await listing.save();
+    await user.save();
 
     res.json({
       success: true,
       favorited: !exists,
-      count: listing.favorites.length
+      count: await getUserFavoriteCount(listingId)
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "server_error" });
   }
 });
 
 router.post("/:id/favorite", authMiddleware, async (req, res) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listingId = String(req.params.id || "");
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return res.status(400).json({ error: "invalid_id" });
+    }
 
+    const listing = await Listing.findById(listingId);
     if (!listing) {
       return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
     const user = await User.findById(req.user.id || req.user._id);
-
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "user_not_found" });
     }
 
-    const exists = listing.favorites.some((id) => id.toString() === user._id.toString());
-
+    const exists = (user.favorites || []).some((id) => String(id) === listingId);
     if (exists) {
-      listing.favorites = listing.favorites.filter((id) => id.toString() !== user._id.toString());
+      user.favorites = (user.favorites || []).filter((id) => String(id) !== listingId);
     } else {
-      listing.favorites.push(user._id);
+      user.favorites = [...(user.favorites || []), listing._id];
     }
 
-    await listing.save();
+    await user.save();
 
     res.json({
       success: true,
       favorited: !exists,
-      count: listing.favorites.length
+      count: await getUserFavoriteCount(listingId)
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "server_error" });
   }
 });
 

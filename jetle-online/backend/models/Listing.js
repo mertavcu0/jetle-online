@@ -54,6 +54,14 @@ const ListingSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  imagePublicIds: {
+    type: [String],
+    default: [],
+  },
+  uploadProvider: {
+    type: String,
+    default: "local",
+  },
   features: {
     type: mongoose.Schema.Types.Mixed,
     default: {},
