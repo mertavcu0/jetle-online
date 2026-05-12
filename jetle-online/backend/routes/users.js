@@ -27,12 +27,12 @@ router.get("/:id/favorites", async (req, res) => {
       return res.status(403).json({ error: "forbidden" });
     }
 
-    const listings = await Listing.find({
-      favorites: req.params.id,
-      isDeleted: false
-    }).sort({ createdAt: -1 });
+    const user = await User.findById(req.params.id).populate({
+      path: "favorites",
+      match: { isDeleted: false }
+    });
 
-    res.json(listings);
+    res.json(Array.isArray(user?.favorites) ? user.favorites : []);
   } catch (err) {
     res.status(500).json({
       error: "server_error",

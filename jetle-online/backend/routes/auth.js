@@ -19,6 +19,37 @@ function sanitizeText(value, maxLength = 120) {
     .slice(0, maxLength);
 }
 
+function sanitizePhone(value) {
+  return String(value || "")
+    .replace(/[^\d+\s()-]/g, "")
+    .trim()
+    .slice(0, 24);
+}
+
+function sanitizeUsername(value) {
+  return String(value || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[^\p{L}\p{N}._-]/gu, "")
+    .trim()
+    .slice(0, 40);
+}
+
+function userResponse(user) {
+  return {
+    id: user._id,
+    _id: user._id,
+    name: user.name || "",
+    username: user.username || "",
+    email: user.email || "",
+    city: user.city || "",
+    district: user.district || "",
+    phone: user.phone || "",
+    role: user.role || "user",
+    isVerified: Boolean(user.isVerified),
+    verifiedBadge: Boolean(user.verifiedBadge)
+  };
+}
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
 }
@@ -27,6 +58,9 @@ router.post("/register", async (req, res) => {
   try {
     const name = sanitizeText(req.body?.name, 80);
     const city = sanitizeText(req.body?.city, 80);
+    const district = sanitizeText(req.body?.district, 80);
+    const username = sanitizeUsername(req.body?.username);
+    const phone = sanitizePhone(req.body?.phone);
     const password = String(req.body?.password || "");
     const normalizedEmail = String(req.body?.email || "").trim().toLowerCase();
 
@@ -52,6 +86,9 @@ router.post("/register", async (req, res) => {
       email: normalizedEmail,
       password: hashed,
       city,
+      district,
+      username,
+      phone,
       role: "user"
     });
 
@@ -59,14 +96,7 @@ router.post("/register", async (req, res) => {
 
     res.json({
       success: true,
-      user: {
-        id: user._id,
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        city: user.city,
-        role: user.role
-      }
+      user: userResponse(user)
     });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
@@ -146,14 +176,7 @@ router.post("/login", async (req, res) => {
     res.json({
       success: true,
       token,
-      user: {
-        id: user._id,
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        city: user.city,
-        role: user.role || "user"
-      }
+      user: userResponse(user)
     });
   } catch (err) {
     console.error("LOGIN ERROR REAL:", err);
@@ -167,36 +190,38 @@ router.post("/login", async (req, res) => {
 
 router.post("/update", authMiddleware, async (req, res) => {
   try {
-    const email = String(req.body?.email || "").trim().toLowerCase();
     const name = sanitizeText(req.body?.name, 80);
     const city = sanitizeText(req.body?.city, 80);
+    const district = sanitizeText(req.body?.district, 80);
+    const username = sanitizeUsername(req.body?.username);
+    const phone = sanitizePhone(req.body?.phone);
+    const requestedEmail = String(req.body?.email || "").trim().toLowerCase();
+    const userId = String(req.user?.id || req.user?._id || "").trim();
 
-    if (!isValidEmail(email) || !name) {
-      return res.status(400).json({ success: false, message: "Geçersiz bilgi" });
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Yetkisiz işlem" });
     }
 
-    const requesterEmail = String(req.user?.email || "").trim().toLowerCase();
-    if (req.user?.role !== "admin" && requesterEmail !== email) {
-      return res.status(403).json({ success: false, message: "Yetkisiz işlem" });
-    }
-
-    const user = await User.findOneAndUpdate(
-      { email },
-      { name, city },
-      { new: true }
-    ).select("_id name email city role");
-
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: "Kullanıcı bulunamadı" });
     }
 
+    if (requestedEmail && requestedEmail !== String(user.email || "").trim().toLowerCase()) {
+      return res.status(400).json({ success: false, message: "E-posta değişikliği şu anda kapalı" });
+    }
+
+    if (name) user.name = name;
+    if (city) user.city = city;
+    if (district) user.district = district;
+    if (username) user.username = username;
+    if (phone) user.phone = phone;
+
+    await user.save();
+
     res.json({
-      id: user._id,
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      city: user.city,
-      role: user.role || "user"
+      success: true,
+      user: userResponse(user)
     });
   } catch (err) {
     console.error("AUTH UPDATE ERROR:", err);

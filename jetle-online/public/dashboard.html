@@ -530,6 +530,56 @@
         return { key: safe, label: map[safe] || "Pasif" };
       }
 
+      function bindAuthAreaActions() {
+        const logoutBtn = document.querySelector("#authArea .logout-btn");
+        if (!logoutBtn || logoutBtn.dataset.bound === "true") return;
+
+        logoutBtn.removeAttribute("onclick");
+        logoutBtn.dataset.bound = "true";
+        logoutBtn.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login.html";
+        });
+      }
+
+      function bindListingActions() {
+        if (!grid || grid.dataset.bound === "true") return;
+
+        grid.dataset.bound = "true";
+        grid.addEventListener("click", (event) => {
+          const actionBtn = event.target.closest("[data-action]");
+          if (actionBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const listingId = actionBtn.dataset.listingId || "";
+            const action = actionBtn.dataset.action || "";
+
+            if (action === "create") {
+              window.location.href = "/create-listing.html";
+              return;
+            }
+
+            if (!listingId) return;
+
+            if (action === "edit") {
+              editListing(listingId);
+              return;
+            }
+
+            if (action === "delete") {
+              deleteListing(listingId);
+              return;
+            }
+          }
+
+          const card = event.target.closest(".listing-card[data-listing-id]");
+          if (!card) return;
+          viewListing(card.dataset.listingId || "");
+        });
+      }
+
       async function renderManagedListings() {
         const user = getDashboardUser();
         if (!user?.email) return;
@@ -568,7 +618,7 @@
               <div class="empty-state" style="grid-column: 1 / -1;">
                 <h4>Henüz ilanınız yok</h4>
                 <p>Hemen ilan vererek satışa başlayın</p>
-                <button onclick="location.href='/create-listing.html'">İlan Ver</button>
+                <button type="button" data-action="create">İlan Ver</button>
               </div>
             `;
             return;
@@ -581,7 +631,7 @@
             const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
 
             return `
-              <article class="listing-card" onclick="viewListing('${escapeHtml(id)}')">
+              <article class="listing-card" data-listing-id="${escapeHtml(id)}">
                 <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
                 <div class="listing-info">
                   <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
@@ -592,10 +642,10 @@
                   </div>
                   <span class="listing-status ${status.key}">${status.label}</span>
                 </div>
-                <div class="listing-actions" onclick="event.stopPropagation()">
+                <div class="listing-actions">
                   <a class="btn-view" href="/listing-detail.html?id=${encodeURIComponent(id)}">Detay Gör</a>
-                  <button class="btn-edit" onclick="editListing('${escapeHtml(id)}')">Düzenle</button>
-                  <button class="btn-delete" onclick="deleteListing('${escapeHtml(id)}')">Sil</button>
+                  <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
+                  <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
                 </div>
               </article>
             `;
@@ -679,6 +729,15 @@
             list.innerHTML = `<div class="empty-state">Mesajlar yüklenemedi.</div>`;
           });
       };
+
+      bindAuthAreaActions();
+      bindListingActions();
+
+      const authArea = document.getElementById("authArea");
+      if (authArea) {
+        const observer = new MutationObserver(() => bindAuthAreaActions());
+        observer.observe(authArea, { childList: true, subtree: true });
+      }
 
       renderManagedListings();
     })();

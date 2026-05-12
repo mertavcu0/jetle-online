@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -445,30 +445,30 @@
       </form>
       <div class="nav-right">
         <div id="authArea"></div>
-        <a href="/create-listing.html" class="post-btn">İlan Ver</a>
+        <a href="/create-listing.html" class="post-btn">Ä°lan Ver</a>
       </div>
     </div>
   </header>
 
   <main class="account-shell">
     <aside class="sidebar">
-      <h3>Hesabım</h3>
-      <a href="/dashboard.html" class="menu-item">Benim İlanlarım</a>
-      <a href="/create-listing.html" class="menu-item">Yeni İlan Ver</a>
+      <h3>HesabÄ±m</h3>
+      <a href="/dashboard.html" class="menu-item">Benim Ä°lanlarÄ±m</a>
+      <a href="/create-listing.html" class="menu-item">Yeni Ä°lan Ver</a>
       <a href="/messages.html" class="menu-item"><i class="ri-chat-1-line"></i> Mesajlar</a>
       <a href="/favorites.html" class="menu-item active"><i class="ri-heart-line"></i> Favoriler</a>
-      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarları</a>
+      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap AyarlarÄ±</a>
     </aside>
 
     <section class="favorites-panel">
       <div class="panel-head">
         <h1>Favorilerim</h1>
-        <p>Beğendiğiniz ilanları burada takip edebilir, hızlıca detaylarına dönebilirsiniz.</p>
+        <p>BeÄŸendiÄŸiniz ilanlarÄ± burada takip edebilir, hÄ±zlÄ±ca detaylarÄ±na dÃ¶nebilirsiniz.</p>
       </div>
 
       <div class="tabs" role="tablist" aria-label="Favori sekmeleri">
-        <button type="button" class="tab-btn active" data-tab="listings">Favori İlanlarım</button>
-        <button type="button" class="tab-btn" data-tab="searches">Favori Aramalarım</button>
+        <button type="button" class="tab-btn active" data-tab="listings">Favori Ä°lanlarÄ±m</button>
+        <button type="button" class="tab-btn" data-tab="searches">Favori AramalarÄ±m</button>
       </div>
 
       <div id="status" class="status"></div>
@@ -479,7 +479,7 @@
 
       <section id="favoritesSearches" class="panel-section">
         <div class="empty-searches">
-          Henüz kayıtlı favori aramanız bulunmuyor.
+          HenÃ¼z kayÄ±tlÄ± favori aramanÄ±z bulunmuyor.
         </div>
       </section>
     </section>
@@ -548,7 +548,7 @@
     function getLocationText(listing) {
       const city = listing?.city || listing?.location?.city || "";
       const district = listing?.district || listing?.location?.district || "";
-      return [city, district].filter(Boolean).join(" / ") || "Konum belirtilmemiş";
+      return [city, district].filter(Boolean).join(" / ") || "Konum belirtilmemiÅŸ";
     }
 
     function getMetaPills(listing) {
@@ -571,7 +571,7 @@
     function renderEmptyFavorites() {
       document.getElementById("favoritesList").innerHTML = `
         <div class="empty-state">
-          <h2>Favori ilanınız bulunmuyor.</h2>
+          <h2>Henüz favori ilanınız yok.</h2>
           <p>Beğendiğiniz ilanları favorilere ekleyerek burada takip edebilirsiniz.</p>
           <a class="primary-btn" href="/listings.html">İlanlara Göz At</a>
         </div>
@@ -589,8 +589,8 @@
       listEl.innerHTML = listings.map((listing) => {
         const images = normalizeImages(listing);
         const imageMarkup = images.length
-          ? `<img src="${escapeHtml(images[0])}" alt="${escapeHtml(listing.title || "İlan görseli")}">`
-          : `Görsel yok`;
+          ? `<img src="${escapeHtml(images[0])}" alt="${escapeHtml(listing.title || "Ä°lan gÃ¶rseli")}">`
+          : `GÃ¶rsel yok`;
         const metaPills = getMetaPills(listing)
           .map((item) => `<span class="meta-pill">${escapeHtml(item)}</span>`)
           .join("");
@@ -602,22 +602,22 @@
             </a>
             <div class="favorite-main">
               <a class="favorite-title" href="/listing-detail.html?id=${encodeURIComponent(listing._id || listing.id || "")}">
-                ${escapeHtml(listing.title || "İsimsiz ilan")}
+                ${escapeHtml(listing.title || "Ä°simsiz ilan")}
               </a>
-              <div class="favorite-meta">${metaPills || '<span class="meta-pill">İlan</span>'}</div>
+              <div class="favorite-meta">${metaPills || '<span class="meta-pill">Ä°lan</span>'}</div>
               <div class="favorite-submeta">
                 <span>${escapeHtml(getLocationText(listing))}</span>
-                <span>•</span>
-                <span>${escapeHtml(listing.subcategory || listing.type || "Kategori belirtilmemiş")}</span>
+                <span>â€¢</span>
+                <span>${escapeHtml(listing.subcategory || listing.type || "Kategori belirtilmemiÅŸ")}</span>
               </div>
             </div>
             <div class="favorite-side">
               <div class="favorite-price">${escapeHtml(formatPrice(listing.price))}</div>
-              <div class="favorite-date">İlan Tarihi: ${escapeHtml(formatDate(listing.createdAt || listing.date))}</div>
+              <div class="favorite-date">Ä°lan Tarihi: ${escapeHtml(formatDate(listing.createdAt || listing.date))}</div>
               <div class="favorite-location">${escapeHtml(getLocationText(listing))}</div>
               <div class="favorite-actions">
                 <a class="ghost-btn" href="/listing-detail.html?id=${encodeURIComponent(listing._id || listing.id || "")}">Detay</a>
-                <button class="danger-btn" type="button" onclick="removeFavorite('${escapeHtml(listing._id || listing.id || "")}')">Favoriden Kaldır</button>
+                <button class="danger-btn" type="button" onclick="removeFavorite('${escapeHtml(listing._id || listing.id || "")}')">Favoriden KaldÄ±r</button>
               </div>
             </div>
           </article>
@@ -635,7 +635,7 @@
       }
 
       statusEl.className = "status";
-      statusEl.textContent = "Favoriler yükleniyor...";
+      statusEl.textContent = "Favoriler yÃ¼kleniyor...";
 
       try {
         const res = await fetch("/api/listings/favorites", {
@@ -658,7 +658,7 @@
         statusEl.textContent = "";
       } catch (_) {
         statusEl.className = "status error";
-        statusEl.textContent = "Favoriler yüklenemedi. Lütfen tekrar deneyin.";
+        statusEl.textContent = "Favoriler yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.";
         renderEmptyFavorites();
       }
     }
@@ -691,7 +691,7 @@
       } catch (_) {
         const statusEl = document.getElementById("status");
         statusEl.className = "status error";
-        statusEl.textContent = "Favori kaldırılamadı. Lütfen tekrar deneyin.";
+        statusEl.textContent = "Favori kaldÄ±rÄ±lamadÄ±. LÃ¼tfen tekrar deneyin.";
       }
     }
 
