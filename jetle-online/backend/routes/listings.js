@@ -189,7 +189,7 @@ function normalizeListingItem(raw) {
 }
 
 async function findListingsSafe(query, options = {}) {
-  const baseQuery = Listing.find(query);
+  const baseQuery = Listing.find(query).setOptions({ sanitizeFilter: false });
 
   if (options.sort) {
     baseQuery.sort(options.sort);
@@ -207,7 +207,7 @@ async function findListingsSafe(query, options = {}) {
   } catch (populateErr) {
     console.error("LISTINGS POPULATE FALLBACK:", populateErr);
 
-    const fallbackQuery = Listing.find(query);
+    const fallbackQuery = Listing.find(query).setOptions({ sanitizeFilter: false });
     if (options.sort) fallbackQuery.sort(options.sort);
     if (options.limit) fallbackQuery.limit(options.limit);
     return await fallbackQuery.lean();
@@ -402,14 +402,14 @@ router.get("/", async (req, res) => {
     const query = buildListingQuery(req);
 
     await Listing.updateMany(
-      { isBoosted: true, boostUntil: { $lt: now } },
+      { isBoosted: true, boostUntil: mongoose.trusted({ $lt: now }) },
       { $set: { isBoosted: false } }
-    );
+    ).setOptions({ sanitizeFilter: false });
 
     await Listing.updateMany(
-      { isFeatured: true, featuredUntil: { $lt: now } },
+      { isFeatured: true, featuredUntil: mongoose.trusted({ $lt: now }) },
       { $set: { isFeatured: false } }
-    );
+    ).setOptions({ sanitizeFilter: false });
 
     if (req.query.popular === "true") {
       const rawListings = await findListingsSafe(query, {

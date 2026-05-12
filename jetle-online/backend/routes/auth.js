@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
     }
 
     const existing = await User.findOne({
-      email: { $regex: `^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" }
+      email: normalizedEmail
     });
 
     if (existing) {
@@ -90,9 +90,8 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const safeEmail = email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const user = await User.findOne({
-      email: { $regex: `^${safeEmail}$`, $options: "i" }
+      email
     });
 
     if (!user || !user.password) {
