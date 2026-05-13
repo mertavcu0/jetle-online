@@ -392,7 +392,21 @@ function showPhoneInfo() {
 }
 
 async function loadListing() {
-  const id = new URLSearchParams(window.location.search).get("id");
+  const id = String(new URLSearchParams(window.location.search).get("id") || "").trim();
+  const container = document.querySelector(".detail-container");
+
+  if (!id) {
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:40px;">
+          <h2>İlan bulunamadı</h2>
+          <p>İlan bulunamadı veya yayında değil.</p>
+          <a href="index.html">Ana sayfaya dön</a>
+        </div>
+      `;
+    }
+    return;
+  }
 
   try {
     fetch(`/api/listings/${id}/view`, {
@@ -405,13 +419,15 @@ async function loadListing() {
     const data = await res.json();
     renderListingData(data);
   } catch (err) {
-    document.querySelector(".detail-container").innerHTML = `
-      <div style="text-align:center; padding:40px;">
-        <h2>İlan bulunamadı</h2>
-        <p>Bu ilan silinmiş veya mevcut değil.</p>
-        <a href="index.html">Ana sayfaya dön</a>
-      </div>
-    `;
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:40px;">
+          <h2>İlan bulunamadı</h2>
+          <p>İlan bulunamadı veya yayında değil.</p>
+          <a href="index.html">Ana sayfaya dön</a>
+        </div>
+      `;
+    }
   }
 }
 
