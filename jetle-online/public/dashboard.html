@@ -568,6 +568,11 @@
               return;
             }
 
+            if (action === "view") {
+              viewListing(listingId);
+              return;
+            }
+
             if (action === "delete") {
               deleteListing(listingId);
               return;
@@ -584,6 +589,7 @@
         const user = getDashboardUser();
         if (!user.email) return;
 
+        grid.dataset.hasListings = "false";
         grid.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1;">İlanlar yükleniyor...</div>
         `;
@@ -614,6 +620,7 @@
           }
 
           if (!listings.length) {
+            if (grid.dataset.hasListings === "true") return;
             grid.innerHTML = `
               <div class="empty-state" style="grid-column: 1 / -1;">
                 <h4>Henüz ilanınız yok</h4>
@@ -624,6 +631,7 @@
             return;
           }
 
+          grid.dataset.hasListings = "true";
           grid.innerHTML = listings.map((listing) => {
             const status = formatStatus(listing.status);
             const id = String(listing._id || listing.id || "");
@@ -643,7 +651,7 @@
                   <span class="listing-status ${status.key}">${status.label}</span>
                 </div>
                 <div class="listing-actions">
-                  <a class="btn-view" href="/listing-detail.html?id=${encodeURIComponent(id)}">Detay Gör</a>
+                  <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay Gör</button>
                   <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
                   <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
                 </div>
@@ -651,6 +659,7 @@
             `;
           }).join("");
         } catch (_) {
+          if (grid.dataset.hasListings === "true") return;
           grid.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
               İlanlar yüklenemedi. Lütfen tekrar deneyin.
@@ -723,7 +732,17 @@
         `;
 
         const list = content.querySelector(".chat-list");
-        fetch(`/api/messages/${encodeURIComponent(userKey)}`, {
+        if (draft?.listingId && !String(draft.listingId).trim()) {
+          renderMessagesEmptyState(list, null);
+          return;
+        }
+
+        if (draft) {
+          renderMessagesEmptyState(list, draft);
+          return;
+        }
+
+        fetch(`/api/messages`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
