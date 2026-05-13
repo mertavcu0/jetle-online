@@ -10,6 +10,11 @@
   const listingsPanel = document.getElementById("listingsPanel");
   const messagesPanel = document.getElementById("messagesPanel");
 
+  // dashboard.html already manages the listings panel with its own safer render path.
+  if (grid?.dataset.dashboardManaged === "inline") {
+    return;
+  }
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
