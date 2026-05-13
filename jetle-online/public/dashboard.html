@@ -445,26 +445,26 @@
       </form>
       <div class="nav-right">
         <div id="authArea"></div>
-        <a href="/create-listing.html" class="post-btn">?lan Ver</a>
+        <a href="/create-listing.html" class="post-btn">İlan Ver</a>
       </div>
     </div>
   </header>
 
   <main class="dashboard-shell">
     <aside class="sidebar">
-      <h3>Hesab?m</h3>
-      <a href="/dashboard.html" class="menu-item active">Benim ?lanlar?m</a>
-      <a href="/create-listing.html" class="menu-item">Yeni ?lan Ver</a>
+      <h3>Hesabım</h3>
+      <a href="/dashboard.html" class="menu-item active">Benim İlanlarım</a>
+      <a href="/create-listing.html" class="menu-item">Yeni İlan Ver</a>
       <a href="/messages.html" class="menu-item"><i class="ri-chat-1-line"></i> Mesajlar</a>
       <a href="/favorites.html" class="menu-item"><i class="ri-heart-line"></i> Favoriler</a>
-      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarlar?</a>
+      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarları</a>
     </aside>
 
     <section class="content-card" id="listingsPanel">
       <div class="section-head">
         <div>
-          <h1>Benim ?lanlar?m</h1>
-          <p class="muted">Yay?nlad???n ilanlar? burada takip edebilirsin.</p>
+          <h1>Benim İlanlarım</h1>
+          <p class="muted">Yayınladığın ilanları burada takip edebilirsin.</p>
         </div>
       </div>
       <div id="myListingsGrid" class="listing-grid"></div>
@@ -472,7 +472,7 @@
 
     <section class="content-card placeholder" id="messagesPanel">
       <h1>Mesajlar</h1>
-      <p>Mesajlar b?l?m? yak?nda aktif olacak.</p>
+      <p>İlan sahipleriyle konuşmalarınız burada görünecek.</p>
     </section>
   </main>
 
@@ -522,8 +522,8 @@
         const safe = String(status || "inactive").toLowerCase();
         const map = {
           pending: "Beklemede",
-          approved: "Onayl?",
-          suspicious: "??pheli",
+          approved: "Onaylı",
+          suspicious: "Şüpheli",
           inactive: "Pasif",
           active: "Aktif"
         };
@@ -585,7 +585,7 @@
         if (!user.email) return;
 
         grid.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">?lanlar y?kleniyor...</div>
+          <div class="empty-state" style="grid-column: 1 / -1;">İlanlar yükleniyor...</div>
         `;
 
         try {
@@ -616,9 +616,9 @@
           if (!listings.length) {
             grid.innerHTML = `
               <div class="empty-state" style="grid-column: 1 / -1;">
-                <h4>Hen?z ilan?n?z yok</h4>
-                <p>Hemen ilan vererek sat??a ba?lay?n</p>
-                <button type="button" data-action="create">?lan Ver</button>
+                <h4>Henüz ilanınız yok</h4>
+                <p>Hemen ilan vererek satışa başlayın</p>
+                <button type="button" data-action="create">İlan Ver</button>
               </div>
             `;
             return;
@@ -632,9 +632,9 @@
 
             return `
               <article class="listing-card" data-listing-id="${escapeHtml(id)}">
-                <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "?lan")}" loading="lazy">
+                <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
                 <div class="listing-info">
-                  <h4>${escapeHtml(listing.title || "Ba?l?ks?z ilan")}</h4>
+                  <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
                   <div class="listing-price">${formatPrice(listing.price)}</div>
                   <div class="listing-meta">
                     <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
@@ -643,8 +643,8 @@
                   <span class="listing-status ${status.key}">${status.label}</span>
                 </div>
                 <div class="listing-actions">
-                  <a class="btn-view" href="/listing-detail.html?id=${encodeURIComponent(id)}">Detay G?r</a>
-                  <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">D?zenle</button>
+                  <a class="btn-view" href="/listing-detail.html?id=${encodeURIComponent(id)}">Detay Gör</a>
+                  <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
                   <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
                 </div>
               </article>
@@ -653,10 +653,36 @@
         } catch (_) {
           grid.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
-              ?lanlar y?klenemedi. L?tfen tekrar deneyin.
+              İlanlar yüklenemedi. Lütfen tekrar deneyin.
             </div>
           `;
         }
+      }
+
+            function getStoredMessageDraft() {
+        try {
+          return JSON.parse(localStorage.getItem("jetle_message_draft") || "null");
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function renderMessagesEmptyState(list, draft) {
+        if (!list) return;
+        list.innerHTML = `
+          <div class="empty-state">
+            <h4>Henüz mesajınız yok.</h4>
+            <p>İlan sahipleriyle konuşmalarınız burada görünecek.</p>
+            ${draft ? `<div style="margin-top:10px;font-size:13px;color:#4b5563;"><strong>Taslak:</strong> ${escapeHtml(draft.title || draft.sellerName || "İlan mesajı")}</div>` : ""}
+          </div>
+        `;
+      }
+
+      function normalizeMessagesPayload(data) {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.messages)) return data.messages;
+        if (Array.isArray(data?.items)) return data.items;
+        return [];
       }
 
       window.loadSection = function loadSectionWithAuth(type) {
@@ -674,59 +700,71 @@
         const token = getDashboardToken();
         if (!token) {
           content.innerHTML = `
-            <h2>Mesajlar?m</h2>
-            <div class="empty-state">Mesajlar? g?rmek i?in giri? yap?n.</div>
+            <h2>Mesajlarım</h2>
+            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
           `;
           return;
         }
 
         const user = getDashboardUser();
         const userKey = user.id || user._id || user.email;
+        const draft = getStoredMessageDraft();
         if (!userKey) {
           content.innerHTML = `
-            <h2>Mesajlar?m</h2>
-            <div class="empty-state">Mesajlar? g?rmek i?in giri? yap?n.</div>
+            <h2>Mesajlarım</h2>
+            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
           `;
           return;
         }
 
         content.innerHTML = `
-          <h2>Mesajlar?m</h2>
-          <div class="chat-list">Mesajlar y?kleniyor...</div>
+          <h2>Mesajlarım</h2>
+          <div class="chat-list">Mesajlar yükleniyor...</div>
         `;
 
+        const list = content.querySelector(".chat-list");
         fetch(`/api/messages/${encodeURIComponent(userKey)}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
-          .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
-          .then(({ ok, data }) => {
-            const list = document.querySelector(".chat-list");
+          .then(async (res) => {
+            const data = await res.json().catch(() => null);
+            if (res.status === 401 || res.status === 403) {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login.html";
+              return null;
+            }
+            if (!res.ok) return null;
+            return normalizeMessagesPayload(data);
+          })
+          .then((messages) => {
             if (!list) return;
-
-            if (!ok) {
-              list.innerHTML = `<div class="empty-state">Mesajlar y?klenemedi.</div>`;
+            if (!Array.isArray(messages) || !messages.length) {
+              renderMessagesEmptyState(list, draft);
               return;
             }
 
-            list.innerHTML = Array.isArray(data) && data.length
-              ? data.map((m) => `
-                <div class="msg-card ${m.sender === userKey ? "mine" : "theirs"}">
+            list.innerHTML = messages.map((m) => {
+              const senderKey = m.sender || m.senderId || m.senderEmail || "";
+              const receiverKey = m.receiver || m.receiverId || m.receiverEmail || "";
+              const body = m.message || m.text || "";
+              const title = m.listingId?.title || m.listingTitle || draft?.title || "İlan mesajı";
+              return `
+                <div class="msg-card ${String(senderKey) === String(userKey) ? "mine" : "theirs"}">
                   <div>
-                    <b>${window.escapeMessageHtml ? window.escapeMessageHtml(m.sender === userKey ? m.receiver : m.sender) : ""}</b>
-                    <small>${m.listingId.title ? (window.escapeMessageHtml ? window.escapeMessageHtml(m.listingId.title) : "İlan mesajı") : "?lan mesaj?"}</small>
+                    <b>${window.escapeMessageHtml ? window.escapeMessageHtml(String(senderKey) === String(userKey) ? receiverKey : senderKey) : ""}</b>
+                    <small>${window.escapeMessageHtml ? window.escapeMessageHtml(title) : ""}</small>
                   </div>
-                  <p>${window.escapeMessageHtml ? window.escapeMessageHtml(m.message || "") : ""}</p>
-                  <span>${new Date(m.createdAt).toLocaleString("tr-TR")}</span>
+                  <p>${window.escapeMessageHtml ? window.escapeMessageHtml(body) : ""}</p>
+                  <span>${m.createdAt ? new Date(m.createdAt).toLocaleString("tr-TR") : ""}</span>
                 </div>
-              `).join("")
-              : `<div class="empty-state">Hen?z mesaj?n?z yok.</div>`;
+              `;
+            }).join("");
           })
           .catch(() => {
-            const list = document.querySelector(".chat-list");
-            if (!list) return;
-            list.innerHTML = `<div class="empty-state">Mesajlar y?klenemedi.</div>`;
+            renderMessagesEmptyState(list, draft);
           });
       };
 
@@ -739,7 +777,12 @@
         observer.observe(authArea, { childList: true, subtree: true });
       }
 
-      renderManagedListings();
+      const initialTab = new URLSearchParams(window.location.search).get("tab");
+      if (initialTab === "messages") {
+        window.loadSection("messages");
+      } else {
+        renderManagedListings();
+      }
     })();
   </script>
 </body>

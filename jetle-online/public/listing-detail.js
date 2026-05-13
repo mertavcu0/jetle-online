@@ -444,9 +444,23 @@ function renderListingData(data) {
 }
 
 function openMessagesForListing() {
+  const token = String(localStorage.getItem("token") || "").trim();
+  if (!token) {
+    window.location.href = "/login.html";
+    return;
+  }
+
   const listing = window.listingData || {};
   const listingId = listing._id || listing.id || "";
-  window.location.href = `/messages.html?listingId=${encodeURIComponent(listingId)}`;
+  const draft = {
+    listingId,
+    title: listing.title || "İlan mesajı",
+    sellerName: listing.user?.name || listing.sellerName || "",
+    createdAt: new Date().toISOString()
+  };
+
+  localStorage.setItem("jetle_message_draft", JSON.stringify(draft));
+  window.location.href = "/dashboard.html?tab=messages";
 }
 
 function showPhoneInfo() {
