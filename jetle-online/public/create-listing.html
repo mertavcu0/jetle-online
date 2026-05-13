@@ -1788,6 +1788,7 @@
       input.classList.add("field-error");
 
       const field = input.closest(".field") || input.parentElement;
+      if (!field) return;
       let error = field.querySelector(".error-message");
 
       if (!error) {
@@ -1803,9 +1804,11 @@
       const input = document.getElementById(id);
       if (!input) return;
 
-      input.classList.remove("field-error");
+      if (input.classList) input.classList.remove("field-error");
       const field = input.closest(".field") || input.parentElement;
-      field.querySelector(".error-message").remove();
+      if (!field) return;
+      const error = field.querySelector(".error-message");
+      if (error) error.remove();
     }
 
     function showToast(text, type = "success") {
@@ -1937,8 +1940,10 @@
       imagesInput.files = dataTransfer.files;
       renderImagePreview();
       if ((imagesInput.files || []).length >= 3) {
-        imagesInput.classList.remove("field-error");
-        imagesInput.closest(".field").querySelector(".error-message").remove();
+        if (imagesInput.classList) imagesInput.classList.remove("field-error");
+        const imageField = imagesInput.closest(".field");
+        const imageError = imageField ? imageField.querySelector(".error-message") : null;
+        if (imageError) imageError.remove();
       }
     }
 
