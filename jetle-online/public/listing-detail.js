@@ -64,21 +64,72 @@ function renderTagList(items) {
   return `<div class="tag-list">${values.map((item) => `<span class="tag-chip">${escapeHtml(formatValue(item))}</span>`).join("")}</div>`;
 }
 
-function renderSpecGrid(rows) {
-  const visibleRows = rows.filter((row) => formatValue(row.value));
-  if (!visibleRows.length) return "";
 
-  return `
-    <div class="spec-grid">
-      ${visibleRows.map((row) => `
-        <div class="spec-item">
-          <strong>${escapeHtml(row.label)}</strong>
-          <span>${escapeHtml(formatValue(row.value))}</span>
+
+function renderFeatureGroups(items) {
+  const values = asArray(items).map((item) => formatValue(item)).filter(Boolean);
+  if (!values.length) return "";
+
+  const categoryMap = new Map([
+    ["Güvenlik", new Set([
+      "ABS", "AEB", "BAS", "ESP", "ASR", "Airbag", "Immobilizer", "Isofix",
+      "Merkezi kilit", "Çocuk kilidi", "Şerit takip sistemi", "Yokuş kalkış desteği",
+      "Gece görüş sistemi", "Kör nokta uyarı sistemi", "Yorgunluk tespit sistemi"
+    ])],
+    ["İç Donanım", new Set([
+      "Klima", "Dijital klima", "Deri koltuk", "Kumaş koltuk", "Isıtmalı koltuk",
+      "Soğutmalı koltuk", "Elektrikli koltuk", "Hafızalı koltuk", "Elektrikli cam",
+      "Hız sabitleyici", "Adaptive Cruise Control", "Anahtarsız giriş ve çalıştırma",
+      "Start/Stop", "Hidrolik direksiyon", "Fonksiyonel direksiyon", "Isıtmalı direksiyon",
+      "Yol bilgisayarı", "Head-up Display"
+    ])],
+    ["Dış Donanım", new Set([
+      "Geri görüş kamerası", "Ön görüş kamerası", "Park sensörü ön", "Park sensörü arka",
+      "Park asistanı", "LED far", "Xenon far", "Adaptif far", "Sis far", "Sis farı",
+      "Sunroof", "Panoramik cam tavan", "Alaşım jant", "Aynalar elektrikli",
+      "Aynalar ısıtmalı", "Aynalar hafızalı", "Akıllı bagaj kapağı", "Römork çeki demiri"
+    ])],
+    ["Multimedya", new Set([
+      "Navigasyon", "Bluetooth", "USB / AUX", "Apple CarPlay", "Android Auto"
+    ])]
+  ]);
+
+  const grouped = new Map();
+  categoryMap.forEach((_, key) => grouped.set(key, []));
+  grouped.set("Diğer", []);
+
+  values.forEach((feature) => {
+    let placed = false;
+    for (const [groupName, knownItems] of categoryMap.entries()) {
+      if (knownItems.has(feature)) {
+        grouped.get(groupName).push(feature);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) grouped.get("Diğer").push(feature);
+  });
+
+  const sections = [...grouped.entries()]
+    .filter(([, list]) => list.length)
+    .map(([groupName, list]) => `
+      <div class="feature-group">
+        <h5>${escapeHtml(groupName)}</h5>
+        <div class="feature-grid">
+          ${list.map((feature) => `
+            <div class="feature-item">
+              <span class="feature-check" aria-hidden="true">✓</span>
+              <span>${escapeHtml(feature)}</span>
+            </div>
+          `).join("")}
         </div>
-      `).join("")}
-    </div>
-  `;
+      </div>
+    `)
+    .join("");
+
+  return `<div class="feature-groups">${sections}</div>`;
 }
+
 
 function setDetailRow(rowId, value) {
   const row = document.getElementById(rowId);
@@ -127,7 +178,7 @@ function renderTechSpecs(listing) {
   const featuresTab = document.getElementById("features");
   const expertiseTab = document.getElementById("expertise");
 
-  const featureMarkup = renderTagList(listing.features);
+  const featureMarkup = renderFeatureGroups(listing.features);
   if (featuresTab) {
     featuresTab.innerHTML = featureMarkup
       ? `
