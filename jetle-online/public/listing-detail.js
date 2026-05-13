@@ -80,27 +80,65 @@ function renderSpecGrid(rows) {
   `;
 }
 
-function renderTechSpecs(listing) {
-  const techTab = document.getElementById("tech");
-  if (!techTab) return;
+function setDetailRow(rowId, value) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  const text = formatValue(value);
+  row.hidden = !text;
+  const target = row.querySelector("span");
+  if (target) target.textContent = text;
+}
 
-  const specRows = [
-    { label: "Marka", value: listing.brand },
-    { label: "Seri", value: listing.series },
-    { label: "Model", value: listing.model },
-    { label: "Yıl", value: listing.year },
-    { label: "KM", value: listing.km },
-    { label: "Yakıt", value: listing.fuel },
-    { label: "Vites", value: listing.transmission },
-    { label: "Kasa Tipi", value: listing.bodyType || listing.body },
-    { label: "Motor Hacmi", value: listing.engineSize || listing.engineVolume || listing.engine },
-    { label: "Motor Gücü", value: listing.enginePower || listing.hp },
-    { label: "Renk", value: listing.color },
-    { label: "Çekiş", value: listing.traction || listing.drive },
-    { label: "Hasar Kaydı", value: listing.damageRecord || listing.damage }
-  ];
+function renderListingMeta(listing) {
+  const listingNo = document.getElementById("listingNo");
+  if (listingNo) listingNo.textContent = listing.listingNo || String(listing._id || listing.id || "");
+
+  const listingDate = document.getElementById("listingDate");
+  if (listingDate) {
+    const createdAt = listing.createdAt ? new Date(listing.createdAt) : null;
+    listingDate.textContent = createdAt && !Number.isNaN(createdAt.getTime())
+      ? createdAt.toLocaleDateString("tr-TR")
+      : "";
+  }
+
+  const city = document.getElementById("city");
+  if (city) city.textContent = formatValue(listing.city);
+
+  const category = document.getElementById("category");
+  if (category) category.textContent = formatValue(listing.category);
+
+  const condition = document.getElementById("condition");
+  if (condition) condition.textContent = formatValue(listing.condition || listing.conditionType || "İkinci El");
+
+  setDetailRow("districtRow", listing.district);
+  setDetailRow("brandRow", listing.brand);
+  setDetailRow("seriesRow", listing.series);
+  setDetailRow("modelRow", listing.model);
+  setDetailRow("yearRow", listing.year);
+  setDetailRow("kmRow", listing.km);
+  setDetailRow("fuelRow", listing.fuel);
+  setDetailRow("transmissionRow", listing.transmission);
+  setDetailRow("bodyTypeRow", listing.bodyType || listing.body);
+  setDetailRow("engineSizeRow", listing.engineSize || listing.engineVolume || listing.engine);
+  setDetailRow("colorRow", listing.color);
+}
+
+function renderTechSpecs(listing) {
+  const featuresTab = document.getElementById("features");
+  const expertiseTab = document.getElementById("expertise");
 
   const featureMarkup = renderTagList(listing.features);
+  if (featuresTab) {
+    featuresTab.innerHTML = featureMarkup
+      ? `
+        <div class="spec-section">
+          <h4>Özellikler</h4>
+          ${featureMarkup}
+        </div>
+      `
+      : `<p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>`;
+  }
+
   const expertiseRows = [
     { label: "Değişen", value: listing.changedParts },
     { label: "Boyalı", value: listing.paintedParts },
@@ -109,38 +147,16 @@ function renderTechSpecs(listing) {
     { label: "Ekspertiz", value: listing.expertise || listing.inspection }
   ].filter((row) => formatValue(row.value));
 
-  const sections = [];
-  const specsMarkup = renderSpecGrid(specRows);
-  if (specsMarkup) {
-    sections.push(`
-      <div class="spec-section">
-        <h4>Teknik Bilgiler</h4>
-        ${specsMarkup}
-      </div>
-    `);
+  if (expertiseTab) {
+    expertiseTab.innerHTML = expertiseRows.length
+      ? `
+        <div class="spec-section">
+          <h4>Ekspertiz Durumu</h4>
+          ${renderSpecGrid(expertiseRows)}
+        </div>
+      `
+      : `<p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>`;
   }
-
-  if (featureMarkup) {
-    sections.push(`
-      <div class="spec-section">
-        <h4>Özellikler</h4>
-        ${featureMarkup}
-      </div>
-    `);
-  }
-
-  if (expertiseRows.length) {
-    sections.push(`
-      <div class="spec-section">
-        <h4>Ekspertiz / Hasar Bilgisi</h4>
-        ${renderSpecGrid(expertiseRows)}
-      </div>
-    `);
-  }
-
-  techTab.innerHTML = sections.length
-    ? sections.join("")
-    : `<p id="techText">Bu ilan için teknik özellik bilgisi bulunmuyor.</p>`;
 }
 
 function getGalleryModalElements() {
@@ -371,6 +387,7 @@ function renderListingData(data) {
   if (sellerName) sellerName.innerText = data.sellerName || "Jetle Kullanıcı";
   if (sellerCity) sellerCity.innerText = data.city || "";
 
+  renderListingMeta(data);
   renderGallery(data);
   renderTechSpecs(data);
 }
@@ -434,13 +451,13 @@ async function loadListing() {
 loadListing();
 
 document.querySelectorAll(".tab").forEach((btn) => {
-  btn.onclick = () => {
+  btn.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach((b) => b.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
 
     btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.add("active");
-  };
+    document.getElementById(btn.dataset.tab)?.classList.add("active");
+  });
 });
 
 window.openMessagesForListing = openMessagesForListing;

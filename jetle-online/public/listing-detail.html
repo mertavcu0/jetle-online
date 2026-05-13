@@ -441,6 +441,8 @@
     .right-panel {
       width: 100%;
       align-self: start;
+      position: sticky;
+      top: 88px;
     }
 
     .info-card,
@@ -691,22 +693,25 @@
     .tabs {
       margin-top: 30px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .tab {
       padding: 10px 16px;
-      border: none;
-      background: #eee;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      color: #374151;
       cursor: pointer;
       border-radius: 8px;
-      font-weight: 600;
+      font-weight: 700;
       transition: all 0.2s ease;
     }
 
     .tab.active {
-      background: #2563eb;
-      color: white;
+      background: #fff;
+      color: #111827;
+      border-color: #d1d5db;
     }
 
     .tab-content {
@@ -771,12 +776,13 @@
     .tag-chip {
       display: inline-flex;
       align-items: center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: #eef4ff;
-      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      color: #374151;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .details-box {
@@ -816,30 +822,41 @@
 
     .details-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1fr;
+      gap: 0;
     }
 
     .details-grid div {
-      background: #f9fafb;
-      border: 1px solid #eef0f3;
-      border-radius: 8px;
-      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #eef0f3;
+      border-radius: 0;
+      padding: 10px 0;
       font-size: 13px;
-      color: #444;
+      color: #111827;
+    }
+
+    .details-grid div:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
     }
 
     .details-grid strong {
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 0;
       color: #6b7280;
       font-size: 12px;
       font-weight: 700;
+      flex: 0 0 110px;
     }
 
     .details-grid span,
     .details-grid div {
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .footer {
@@ -924,6 +941,7 @@
 
       .right-panel {
         width: 100%;
+        position: static;
       }
     }
 
@@ -1134,11 +1152,22 @@
         <div class="info-box listing-info-box">
           <h4>İlan Detayları</h4>
           <div class="details-grid">
-            <div><strong>İlan No:</strong> <span id="listingNo"></span></div>
-            <div><strong>Yayın Tarihi:</strong> <span id="listingDate"></span></div>
-            <div><strong>Şehir:</strong> <span id="city"></span></div>
-            <div><strong>Kategori:</strong> <span id="category"></span></div>
-            <div><strong>Durum:</strong> İkinci El</div>
+            <div><strong>İlan No</strong><span id="listingNo"></span></div>
+            <div><strong>Yayın Tarihi</strong><span id="listingDate"></span></div>
+            <div><strong>Şehir</strong><span id="city"></span></div>
+            <div id="districtRow" hidden><strong>İlçe</strong><span id="district"></span></div>
+            <div><strong>Kategori</strong><span id="category"></span></div>
+            <div id="brandRow" hidden><strong>Marka</strong><span id="brand"></span></div>
+            <div id="seriesRow" hidden><strong>Seri</strong><span id="series"></span></div>
+            <div id="modelRow" hidden><strong>Model</strong><span id="model"></span></div>
+            <div id="yearRow" hidden><strong>Yıl</strong><span id="year"></span></div>
+            <div id="kmRow" hidden><strong>KM</strong><span id="km"></span></div>
+            <div id="fuelRow" hidden><strong>Yakıt</strong><span id="fuel"></span></div>
+            <div id="transmissionRow" hidden><strong>Vites</strong><span id="transmission"></span></div>
+            <div id="bodyTypeRow" hidden><strong>Kasa Tipi</strong><span id="bodyType"></span></div>
+            <div id="engineSizeRow" hidden><strong>Motor Hacmi</strong><span id="engineSize"></span></div>
+            <div id="colorRow" hidden><strong>Renk</strong><span id="color"></span></div>
+            <div><strong>Durum</strong><span id="condition">İkinci El</span></div>
           </div>
         </div>
       </div>
@@ -1146,15 +1175,20 @@
 
     <div class="tabs">
       <button class="tab active" data-tab="desc">Açıklama</button>
-      <button class="tab" data-tab="tech">Teknik Özellikler</button>
+      <button class="tab" data-tab="features">Özellikler</button>
+      <button class="tab" data-tab="expertise">Ekspertiz Durumu</button>
     </div>
 
     <div class="tab-content active" id="desc">
       <p id="descText"></p>
     </div>
 
-    <div class="tab-content" id="tech">
-      <p id="techText">Teknik özellikler buraya gelecek</p>
+    <div class="tab-content" id="features">
+      <p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>
+    </div>
+
+    <div class="tab-content" id="expertise">
+      <p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>
     </div>
   </div>
 
@@ -1263,8 +1297,8 @@
         if (listingDate) listingDate.textContent = formatDate(listing.createdAt);
         const isVerifiedSeller = Boolean(
           listing.isVerifiedSeller === true ||
-          listing.seller.isVerified === true ||
-          listing.user.isVerified === true ||
+          listing.seller?.isVerified === true ||
+          listing.user?.isVerified === true ||
           user.isVerified === true
         );
         const imageCount = document.getElementById("imageCount");
