@@ -1248,8 +1248,8 @@
     const prevBtn = document.getElementById("prevBtn");
     const statusBox = document.getElementById("status");
 
-    prevBtn.addEventListener("click", prevStep);
-    nextBtn.addEventListener("click", nextStep);
+    if (prevBtn) prevBtn.addEventListener("click", prevStep);
+    if (nextBtn) nextBtn.addEventListener("click", nextStep);
     const progressFill = document.getElementById("progressFill");
     const stepLabel = document.getElementById("stepLabel");
     let totalSteps = 5;
@@ -1966,16 +1966,20 @@
       `).join("");
     }
 
-    document.getElementById("imagesGrid").addEventListener("click", (event) => {
-      const button = event.target.closest("[data-remove-index]");
-      if (!button) return;
-      const index = Number(button.getAttribute("data-remove-index"));
-      if (Number.isNaN(index)) return;
-      removeImage(index);
-    });
+    const imagePreviewGrid = document.getElementById("imagePreviewGrid");
+    if (imagePreviewGrid) {
+      imagePreviewGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-remove-index]");
+        if (!button) return;
+        const index = Number(button.getAttribute("data-remove-index"));
+        if (Number.isNaN(index)) return;
+        removeImage(index);
+      });
+    }
 
     function removeImage(index) {
       const imagesInput = document.getElementById("images");
+      if (!imagesInput) return;
       const currentFiles = Array.from(imagesInput.files || []);
       const dataTransfer = new DataTransfer();
       currentFiles
@@ -1987,10 +1991,10 @@
       collectStepData();
 
       if ((imagesInput.files || []).length < 3) {
-        showFieldError("images", "En az 3 fotoğraf zorunlu");
+        showFieldError("images", "En az 3 foto?raf zorunlu");
       } else {
         imagesInput.classList.remove("field-error");
-        imagesInput.closest(".field").querySelector(".error-message").remove();
+        imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
         clearStatus();
       }
     }
@@ -3049,85 +3053,102 @@
       showStep(currentStep - 1);
     }
 
-    form.addEventListener("input", (event) => {
-      if (event.target.id) clearFieldError(event.target.id);
-    });
+    if (form) {
+      form.addEventListener("input", (event) => {
+        if (event.target.id) clearFieldError(event.target.id);
+      });
 
-    form.addEventListener("change", (event) => {
-      if (event.target.id) clearFieldError(event.target.id);
-    });
+      form.addEventListener("change", (event) => {
+        if (event.target.id) clearFieldError(event.target.id);
+      });
+    }
 
-    document.getElementById("price").addEventListener("input", handlePriceInput);
-    document.getElementById("price").addEventListener("blur", handlePriceInput);
+    const priceField = document.getElementById("price");
+    if (priceField) {
+      priceField.addEventListener("input", handlePriceInput);
+      priceField.addEventListener("blur", handlePriceInput);
+    }
 
-    document.getElementById("city").addEventListener("change", (event) => {
-      fillDistricts(event.target.value);
-      document.getElementById("district").value = "";
-    });
+    const cityField = document.getElementById("city");
+    const districtField = document.getElementById("district");
+    if (cityField) {
+      cityField.addEventListener("change", (event) => {
+        fillDistricts(event.target.value);
+        if (districtField) districtField.value = "";
+      });
+    }
 
-    document.getElementById("mainCategory").addEventListener("change", (event) => {
-      const category = event.target.value;
-      fillSubCategories(category);
-      document.getElementById("subCategory").value = "";
-      renderDynamicFields(category);
-      renderFeatures(category, "");
-      removeIrrelevantCategoryData(category);
-      syncWizardByCategory(category);
-      showStep(1);
-    });
+    const mainCategoryField = document.getElementById("mainCategory");
+    const subCategoryField = document.getElementById("subCategory");
+    if (mainCategoryField) {
+      mainCategoryField.addEventListener("change", (event) => {
+        const category = event.target.value;
+        fillSubCategories(category);
+        if (subCategoryField) subCategoryField.value = "";
+        renderDynamicFields(category);
+        renderFeatures(category, "");
+        removeIrrelevantCategoryData(category);
+        syncWizardByCategory(category);
+        showStep(1);
+      });
+    }
 
-    document.getElementById("subCategory").addEventListener("change", () => {
-      const mainCategory = document.getElementById("mainCategory").value;
-      const subCategory = document.getElementById("subCategory").value;
-      renderSubCategoryFields(
-        mainCategory,
-        subCategory
-      );
-      renderFeatures(mainCategory, subCategory);
-      removeIrrelevantCategoryData(mainCategory);
-      collectStepData();
-    });
+    if (subCategoryField) {
+      subCategoryField.addEventListener("change", () => {
+        const mainCategory = mainCategoryField ? mainCategoryField.value : "";
+        const subCategory = subCategoryField.value;
+        renderSubCategoryFields(mainCategory, subCategory);
+        renderFeatures(mainCategory, subCategory);
+        removeIrrelevantCategoryData(mainCategory);
+        collectStepData();
+      });
+    }
 
     const imagesInput = document.getElementById("images");
     const uploadZone = document.getElementById("uploadZone");
+    const legacyPreview = document.getElementById("preview");
 
-    uploadZone.addEventListener("click", () => imagesInput.click());
-    imagesInput.addEventListener("change", (event) => handleFiles(event.target.files));
-    document.getElementById("images").addEventListener("change", function() {
-      const input = document.getElementById("images");
-      const preview = document.getElementById("preview");
-      preview.innerHTML = "";
+    if (uploadZone && imagesInput) {
+      uploadZone.addEventListener("click", () => imagesInput.click());
 
-      Array.from(input.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.style.width = "100px";
-          img.style.margin = "5px";
-          preview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
+      ["dragenter", "dragover"].forEach((eventName) => {
+        uploadZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          uploadZone.classList.add("drag-over");
+        });
       });
-    });
 
-    ["dragenter", "dragover"].forEach((eventName) => {
-      uploadZone.addEventListener(eventName, (event) => {
-        event.preventDefault();
-        uploadZone.classList.add("drag-over");
+      ["dragleave", "drop"].forEach((eventName) => {
+        uploadZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          uploadZone.classList.remove("drag-over");
+        });
       });
-    });
 
-    ["dragleave", "drop"].forEach((eventName) => {
-      uploadZone.addEventListener(eventName, (event) => {
-        event.preventDefault();
-        uploadZone.classList.remove("drag-over");
+      uploadZone.addEventListener("drop", (event) => {
+        handleFiles(event.dataTransfer.files);
       });
-    });
+    }
 
-    uploadZone.addEventListener("drop", (event) => {
-      handleFiles(event.dataTransfer.files);
-    });
+    if (imagesInput) {
+      imagesInput.addEventListener("change", (event) => handleFiles(event.target.files));
+      imagesInput.addEventListener("change", function() {
+        if (!legacyPreview) return;
+        legacyPreview.innerHTML = "";
+
+        Array.from(imagesInput.files || []).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.style.width = "100px";
+            img.style.margin = "5px";
+            legacyPreview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    }
 
     async function submitListingForm(event) {
       event.preventDefault();
@@ -3315,10 +3336,6 @@
               ...createdListing,
               ...data,
               _id: baseId,
-              id: baseId,
-              images: Array.isArray(createdListing.images) && createdListing.images.length
-                ? createdListing.images
-                : Array.from(files).map((file) => URL.createObjectURL(file)),
               status: createdListing.status || "pending",
               createdAt: createdListing.createdAt || new Date().toISOString(),
               isDeleted: false
@@ -3329,18 +3346,20 @@
           } catch {}
           window.location.href = "/";
         } else {
-          alert("Hata oluştu");
+          alert("Hata olu?tu");
         }
       } catch (err) {
         console.error("CREATE LISTING ERROR:", err);
-        alert("Sunucu hatası");
+        alert("Sunucu hatas?");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "İlan Yayınla";
+        submitBtn.textContent = "?lan Yay?nla";
       }
     }
 
-    form.addEventListener("submit", submitListingForm);
+    if (form) {
+      form.addEventListener("submit", submitListingForm);
+    }
 
     async function initCreateListingPage() {
       await loadCarData();
