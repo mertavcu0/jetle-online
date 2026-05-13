@@ -549,12 +549,12 @@
       <h2 class="brand">Jetle<span>Admin</span></h2>
       <nav class="menu">
         <ul>
-          <li class="active" onclick="loadPage('listings')">İlanlar</li>
-          <li onclick="loadPage('users')">Kullanıcılar</li>
-          <li onclick="loadPage('messages')">Mesajlar</li>
-          <li onclick="loadPage('reports')">Raporlar</li>
-          <li onclick="loadPage('cars')">Araç Yönetimi</li>
-          <li onclick="loadPage('notifications')">Bildirimler</li>
+          <li class="active" data-page="listings">İlanlar</li>
+          <li data-page="users">Kullanıcılar</li>
+          <li data-page="messages">Mesajlar</li>
+          <li data-page="reports">Raporlar</li>
+          <li data-page="cars">Araç Yönetimi</li>
+          <li data-page="notifications">Bildirimler</li>
         </ul>
       </nav>
     </aside>
@@ -564,7 +564,7 @@
         <h1>Admin Moderasyon</h1>
         <div class="admin-top-actions">
           <span>Admin</span>
-          <button type="button" class="logout-btn" onclick="logoutAdmin()">Çıkış</button>
+          <button type="button" class="logout-btn" data-action="logout">Çıkış</button>
         </div>
       </header>
 
@@ -585,7 +585,7 @@
     </main>
   </div>
 
-  <div class="admin-modal" id="admin-modal" onclick="closeAdminModal(event)">
+  <div class="admin-modal" id="admin-modal">
     <div class="admin-modal-card" id="admin-modal-card"></div>
   </div>
   <div class="loading-overlay" id="loading-overlay">
@@ -593,7 +593,6 @@
   </div>
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const adminRaw = localStorage.getItem("admin");
     const token = localStorage.getItem("token");
@@ -922,30 +921,30 @@
       function renderListingActions(item) {
         if (item.status === "pending") {
           return `
-            <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
-            <button type="button" onclick="approveListing('${item._id}')">Onayla</button>
-            <button type="button" class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
-            <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
+            <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+            <button type="button" data-action="approve" data-id="${item._id}">Onayla</button>
+            <button type="button" class="danger" data-action="reject" data-id="${item._id}">Reddet</button>
+            <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
           `;
         }
 
         if (item.status === "approved") {
           return `
-            <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
-            <button type="button" onclick="toggleListing('${item._id}')">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
-            <button type="button" onclick="markSuspicious('${item._id}')">Şüpheli</button>
-            <button type="button" onclick="boostListing('${item._id}')">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
-            <button type="button" onclick="featureListing('${item._id}')">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
-            <button type="button" onclick="rejectListing('${item._id}')">Reddet</button>
-            <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
+            <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+            <button type="button" data-action="toggle" data-id="${item._id}">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
+            <button type="button" data-action="suspicious" data-id="${item._id}">Şüpheli</button>
+            <button type="button" data-action="boost" data-id="${item._id}">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
+            <button type="button" data-action="feature" data-id="${item._id}">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
+            <button type="button" data-action="reject" data-id="${item._id}">Reddet</button>
+            <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
           `;
         }
 
         return `
-          <button type="button" onclick="viewListingDetail('${item._id}')">Detay Gör</button>
-          <button type="button" onclick="approveListing('${item._id}')">Onayla</button>
-          <button type="button" class="danger" onclick="rejectListing('${item._id}')">Reddet</button>
-          <button type="button" class="danger" onclick="deleteListing('${item._id}')">Sil</button>
+          <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+          <button type="button" data-action="approve" data-id="${item._id}">Onayla</button>
+          <button type="button" class="danger" data-action="reject" data-id="${item._id}">Reddet</button>
+          <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
         `;
       }
 
@@ -960,11 +959,11 @@
               <div>İlan listesini duruma göre daraltın.</div>
             </div>
             <div class="admin-actions">
-              <button type="button" onclick="bulkApproveSelected()">Toplu Onayla</button>
-              <button type="button" class="danger" onclick="bulkRejectSelected()">Toplu Reddet</button>
+              <button type="button" data-action="bulk-approve">Toplu Onayla</button>
+              <button type="button" class="danger" data-action="bulk-reject">Toplu Reddet</button>
             </div>
             <div class="admin-actions">
-            <select onchange="setListingStatusFilter(this.value)" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;">
+            <select data-action="listing-status-filter" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;">
               <option value="all" ${listingStatusFilter === "all" ? "selected" : ""}>Tümü</option>
               <option value="pending" ${listingStatusFilter === "pending" ? "selected" : ""}>Pending</option>
               <option value="approved" ${listingStatusFilter === "approved" ? "selected" : ""}>Approved</option>
@@ -978,7 +977,7 @@
           <div class="admin-card">
             <div>
               <label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <input type="checkbox" ${listingSelection.has(String(item._id)) ? "checked" : ""} onchange="toggleListingSelection('${item._id}', this.checked)" />
+                <input type="checkbox" ${listingSelection.has(String(item._id)) ? "checked" : ""} data-action="toggle-selection" data-id="${item._id}" />
                 <span style="font-size:12px;color:#6b7280;">Seç</span>
               </label>
               ${renderListingBadgesMarkup(item)}
@@ -987,7 +986,7 @@
               <p>Görüntülenme: ${item.views || 0}</p>
             </div>
             <div class="admin-actions">
-              <button type="button" onclick="showListingDetail('${item._id}')">Önizle</button>
+              <button type="button" data-action="preview" data-id="${item._id}">Önizle</button>
               ${renderListingActions(item)}
             </div>
           </div>
@@ -1018,7 +1017,7 @@
             <input
               type="search"
               value="${escapeHtml(userSearchQuery)}"
-              oninput="setUserSearch(this.value)"
+              data-action="user-search"
               placeholder="Kullanıcı ara"
               style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;"
             />
@@ -1031,10 +1030,10 @@
               <div>${user.email || ""}</div>
             </div>
             <div class="admin-actions">
-              <button type="button" onclick="showUserDetail('${user._id}')">Detay</button>
+              <button type="button" data-action="user-detail" data-id="${user._id}">Detay</button>
               ${user.role === "admin"
                 ? '<button type="button" disabled style="opacity:.6;cursor:not-allowed;">Admin Korumalı</button>'
-                : `<button type="button" onclick="banUser('${user._id}')">${user.banned ? "Banı Kaldır" : "Banla"}</button>`}
+                : `<button type="button" data-action="ban-user" data-id="${user._id}">${user.banned ? "Banı Kaldır" : "Banla"}</button>`}
             </div>
           </div>
         `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
@@ -1101,7 +1100,7 @@
               <strong>${item.title || "İlan"}</strong>
               <div>${item.city || ""}</div>
             </div>
-            <button type="button" onclick="toggleListing('${item._id}')">Onayla</button>
+            <button type="button" data-action="toggle" data-id="${item._id}">Onayla</button>
           </div>
         `).join("") || `<div class="empty">Şüpheli ilan bulunmuyor.</div>`}
       `;
@@ -1288,12 +1287,12 @@
       if (!item) return;
       const images = Array.isArray(item.images) ? item.images : [];
       openAdminModal(`
-        <div class="admin-modal-head">
-          <div>
-            <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "İlan")}</h2>
-            <div style="color:#6b7280;">${escapeHtml(item.city || "")} ${item.price ? "- " + escapeHtml(number(item.price) + " TL") : ""}</div>
-          </div>
-          <button type="button" class="logout-btn" onclick="closeAdminModal()">Kapat</button>
+          <div class="admin-modal-head">
+            <div>
+              <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "İlan")}</h2>
+              <div style="color:#6b7280;">${escapeHtml(item.city || "")} ${item.price ? "- " + escapeHtml(number(item.price) + " TL") : ""}</div>
+            </div>
+          <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
         </div>
         <div style="margin-bottom:14px;">${renderListingBadgesMarkup(item)}</div>
         <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "Açıklama yok")}</p>
@@ -1316,7 +1315,7 @@
               <h2 style="margin:0 0 6px;">${escapeHtml(data.user?.name || "Kullanıcı")}</h2>
               <div style="color:#6b7280;">${escapeHtml(data.user?.email || "")}</div>
             </div>
-            <button type="button" class="logout-btn" onclick="closeAdminModal()">Kapat</button>
+            <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
           </div>
           <div class="admin-modal-grid">
             <div class="toolbar-card"><strong>Rol</strong><div>${escapeHtml(data.user?.role || "user")}</div></div>
@@ -1338,6 +1337,22 @@
     function viewListingDetail(id) {
       if (!id) return;
       window.open(`/ilan-detay.html?id=${id}`, "_blank", "noopener");
+    }
+
+    function previewListing(id) {
+      showListingDetail(id);
+    }
+
+    function openListingDetail(id) {
+      viewListingDetail(id);
+    }
+
+    function bulkApprove() {
+      return bulkApproveSelected();
+    }
+
+    function bulkReject() {
+      return bulkRejectSelected();
     }
 
     async function toggleListing(id) {
@@ -1477,6 +1492,65 @@
         renderDefaultListings();
       }
     }
+
+    document.addEventListener("click", (event) => {
+      const pageItem = event.target.closest("[data-page]");
+      if (pageItem) {
+        loadPage(pageItem.dataset.page);
+        return;
+      }
+
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl) return;
+
+      const action = actionEl.dataset.action;
+      const id = actionEl.dataset.id || "";
+
+      if (action === "logout") return logoutAdmin();
+      if (action === "approve") return approveListing(id);
+      if (action === "reject") return rejectListing(id);
+      if (action === "delete") return deleteListing(id);
+      if (action === "preview") return previewListing(id);
+      if (action === "detail") return openListingDetail(id);
+      if (action === "toggle") return toggleListing(id);
+      if (action === "suspicious") return markSuspicious(id);
+      if (action === "boost") return boostListing(id);
+      if (action === "feature") return featureListing(id);
+      if (action === "bulk-approve") return bulkApprove();
+      if (action === "bulk-reject") return bulkReject();
+      if (action === "user-detail") return showUserDetail(id);
+      if (action === "ban-user") return banUser(id);
+      if (action === "close-modal") return closeAdminModal();
+    });
+
+    document.addEventListener("change", (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl) return;
+
+      if (actionEl.dataset.action === "listing-status-filter") {
+        setListingStatusFilter(event.target.value);
+        return;
+      }
+
+      if (actionEl.dataset.action === "toggle-selection") {
+        toggleListingSelection(actionEl.dataset.id || "", Boolean(event.target.checked));
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl) return;
+
+      if (actionEl.dataset.action === "user-search") {
+        setUserSearch(event.target.value);
+      }
+    });
+
+    document.getElementById("admin-modal")?.addEventListener("click", (event) => {
+      if (event.target?.id === "admin-modal") {
+        closeAdminModal();
+      }
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
       safeInit();
