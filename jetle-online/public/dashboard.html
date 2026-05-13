@@ -585,11 +585,40 @@
         });
       }
 
+      function renderManagedListingCard(listing) {
+        const status = formatStatus(listing.status);
+        const id = String(listing._id || listing.id || "");
+        const locationBits = [listing.city, listing.district].filter(Boolean).join(" / ");
+        const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
+
+        return `
+          <article class="listing-card" data-listing-id="${escapeHtml(id)}">
+            <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
+            <div class="listing-info">
+              <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
+              <div class="listing-price">${formatPrice(listing.price)}</div>
+              <div class="listing-meta">
+                <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
+                <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
+              </div>
+              <span class="listing-status ${status.key}">${status.label}</span>
+            </div>
+            <div class="listing-actions">
+              <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay Gör</button>
+              <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
+              <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
+            </div>
+          </article>
+        `;
+      }
+
       async function renderManagedListings() {
         const user = getDashboardUser();
         if (!user.email) return;
+        if (grid.dataset.renderLock === "true") return;
+        if (grid.dataset.renderComplete === "true") return;
 
-        grid.dataset.hasListings = "false";
+        grid.dataset.renderLock = "true";
         grid.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1;">İlanlar yükleniyor...</div>
         `;
@@ -628,36 +657,13 @@
                 <button type="button" data-action="create">İlan Ver</button>
               </div>
             `;
+            grid.dataset.renderComplete = "true";
             return;
           }
 
           grid.dataset.hasListings = "true";
-          grid.innerHTML = listings.map((listing) => {
-            const status = formatStatus(listing.status);
-            const id = String(listing._id || listing.id || "");
-            const locationBits = [listing.city, listing.district].filter(Boolean).join(" / ");
-            const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
-
-            return `
-              <article class="listing-card" data-listing-id="${escapeHtml(id)}">
-                <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
-                <div class="listing-info">
-                  <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
-                  <div class="listing-price">${formatPrice(listing.price)}</div>
-                  <div class="listing-meta">
-                    <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
-                    <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
-                  </div>
-                  <span class="listing-status ${status.key}">${status.label}</span>
-                </div>
-                <div class="listing-actions">
-                  <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay Gör</button>
-                  <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
-                  <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
-                </div>
-              </article>
-            `;
-          }).join("");
+          grid.dataset.renderComplete = "true";
+          grid.innerHTML = listings.map((listing) => renderManagedListingCard(listing)).join("");
         } catch (_) {
           if (grid.dataset.hasListings === "true") return;
           grid.innerHTML = `
@@ -665,6 +671,8 @@
               İlanlar yüklenemedi. Lütfen tekrar deneyin.
             </div>
           `;
+        } finally {
+          grid.dataset.renderLock = "false";
         }
       }
 
@@ -806,3 +814,4 @@
   </script>
 </body>
 </html>
+
