@@ -283,7 +283,7 @@ function debounce(fn, delay = 300) {
 }
 
 function goDetail(id) {
-  window.location.href = `listing.html?id=${encodeURIComponent(id)}`;
+  window.location.href = `listing-detail.html?id=${encodeURIComponent(id)}`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
