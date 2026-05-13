@@ -132,31 +132,6 @@ function listingImage(listing) {
   return getListingImages(listing)[0] || "";
 }
 
-function getLocalPendingListings() {
-  try {
-    const stored = JSON.parse(localStorage.getItem("jetleLocalPendingListings") || "[]");
-    return Array.isArray(stored)
-      ? stored.filter((item) => item && item.isDeleted !== true)
-      : [];
-  } catch (err) {
-    console.warn("LOCAL PENDING READ FAILED", err);
-    return [];
-  }
-}
-
-function mergeListingsWithLocalPending(listings) {
-  const localPending = getLocalPendingListings();
-  if (!localPending.length) return Array.isArray(listings) ? listings : [];
-
-  const merged = [...localPending];
-  (Array.isArray(listings) ? listings : []).forEach((item) => {
-    const id = String(item?._id || item?.id || "");
-    const exists = merged.some((pending) => String(pending?._id || pending?.id || "") === id);
-    if (!exists) merged.push(item);
-  });
-  return merged;
-}
-
 function formatPrice(price) {
   return new Intl.NumberFormat("tr-TR").format(Number(price || 0)) + " TL";
 }
@@ -251,7 +226,7 @@ async function loadListings() {
   const res = await fetch(`${API}/api/listings${params.toString() ? `?${params.toString()}` : ""}`);
   const data = await res.json();
   const activeCategory = getCategoryFromUrl();
-  const mergedListings = mergeListingsWithLocalPending(data);
+  const mergedListings = Array.isArray(data) ? data : [];
   const filteredListings = activeCategory
     ? mergedListings.filter((listing) => normalizeCategorySlug(listing?.category) === activeCategory)
     : mergedListings;
