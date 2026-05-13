@@ -524,7 +524,7 @@
       const seller = item.user || {};
       const sellerName = seller.name || seller.email || "İlan sahibi";
       const sellerCity = seller.city || item.city || "";
-      const profileUrl = seller._id ? `/profile.html?userId=${seller._id}` : "#";
+      const profileUrl = seller._id ? `/profile.htmluserId=${seller._id}` : "#";
 
       return `
         <div class="side-card seller-card">
@@ -545,7 +545,7 @@
         return;
       }
 
-      if (!listing?.user) {
+      if (!listing.user) {
         alert("İlan sahibi bilgisi bulunamadı");
         return;
       }
@@ -593,10 +593,10 @@
 
     async function loadSimilar() {
       const container = document.getElementById("similarListings");
-      if (!container || !listing?.category) return;
+      if (!container || !listing.category) return;
 
       try {
-        const res = await fetch(`/api/listings?category=${encodeURIComponent(listing.category)}`);
+        const res = await fetch(`/api/listingscategory=${encodeURIComponent(listing.category)}`);
         if (!res.ok) throw new Error("Benzer ilanlar alınamadı");
 
         const data = await res.json();
@@ -605,7 +605,7 @@
           .slice(0, 4);
 
         container.innerHTML = similar.length
-          ? similar.map(similarCard).join("")
+           similar.map(similarCard).join("")
           : `<div class="empty">Benzer ilan bulunmuyor</div>`;
       } catch (err) {
         console.error("SIMILAR ERROR:", err);
@@ -631,7 +631,7 @@
             <div class="content-card">
               <h2>İlan Detayları</h2>
               <div class="details-grid">
-                ${rows.length ? rows.map(([label, value]) => `
+                ${rows.length  rows.map(([label, value]) => `
                   <div class="detail-item">
                     <span>${escapeHtml(label)}</span>
                     ${escapeHtml(value)}

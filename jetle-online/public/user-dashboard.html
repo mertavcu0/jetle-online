@@ -311,7 +311,7 @@
 
       try {
         const res = await fetch(url, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
+          headers: token ? { Authorization : `Bearer ${token}` } : {}
         });
         if (res.status === 401 || res.status === 403) {
           localStorage.removeItem("token");
@@ -323,7 +323,7 @@
 
         const data = await res.json();
         target.innerHTML = data.length
-          ? data.map(renderer).join("")
+           data.map(renderer).join("")
           : `<div class="empty">${emptyText}</div>`;
       } catch (err) {
         target.innerHTML = `<div class="empty">Veriler yüklenemedi.</div>`;
@@ -374,7 +374,7 @@
         loadSection(`/api/listings/my-listings`, "myListings", listingCard, "İlanınız yok."),
         loadFavorites(),
         userId
-          ? loadSection(`/api/messages/${userId}`, "myMessages", messageCard, "Mesajınız yok.")
+           loadSection(`/api/messages/${userId}`, "myMessages", messageCard, "Mesajınız yok.")
           : Promise.resolve(document.getElementById("myMessages").innerHTML = `<div class="empty">Mesajlar için tekrar giriş yapın.</div>`)
       ]);
     }

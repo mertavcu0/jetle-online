@@ -1115,7 +1115,7 @@
           <button id="prev" type="button" aria-label="Önceki fotoğraf">&lsaquo;</button>
           <img id="mainImage" class="main-img main-image" src="" alt="İlan fotoğrafı">
           <button id="next" type="button" aria-label="Sonraki fotoğraf">&rsaquo;</button>
-          <button class="fav-btn" onclick="toggleFavorite(window.listingData?._id)">
+          <button id="detailFavoriteBtn" class="fav-btn" type="button">
             ♡
           </button>
           <div class="no-image-text">Fotoğraf yok</div>
@@ -1263,8 +1263,8 @@
         if (listingDate) listingDate.textContent = formatDate(listing.createdAt);
         const isVerifiedSeller = Boolean(
           listing.isVerifiedSeller === true ||
-          listing.seller?.isVerified === true ||
-          listing.user?.isVerified === true ||
+          listing.seller.isVerified === true ||
+          listing.user.isVerified === true ||
           user.isVerified === true
         );
         const imageCount = document.getElementById("imageCount");
@@ -1286,10 +1286,10 @@
             </div>
 
             <div class="seller-actions">
-              <button class="btn-primary" onclick="openMessagesForListing()">Satıcıya Mesaj Gönder</button>
-              <button class="btn-secondary" onclick="showPhoneInfo()">Telefonu Göster</button>
+              <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
+              <button class="btn-secondary" type="button" data-action="show-phone">Telefonu Göster</button>
             </div>
-            ${isOwner ? '<button class="btn-boost" onclick="buyBoost()">İlanı Öne Çıkar</button>' : ''}
+            ${isOwner ? '<button class="btn-boost" type="button" data-action="buy-boost">İlanı Öne Çıkar</button>' : ''}
           </div>
         `;
 
@@ -1315,7 +1315,7 @@
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const listing = window.listingData || {};
       const input = document.getElementById("sellerMessage");
-      const text = input?.value?.trim();
+      const text = input.value.trim();
 
       if (!user.email && !user.id && !user._id) {
         alert("Mesaj göndermek için giriş yapmalısınız.");
@@ -1393,6 +1393,20 @@
 
       localStorage.setItem("favs", JSON.stringify(favs));
     }
+
+    document.getElementById("detailFavoriteBtn").addEventListener("click", () => {
+      const id = window.listingData._id || window.listingData.id || "";
+      toggleFavorite(id);
+    });
+
+    document.addEventListener("click", (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl) return;
+
+      if (actionEl.dataset.action === "open-messages") return openMessagesForListing();
+      if (actionEl.dataset.action === "show-phone") return showPhoneInfo();
+      if (actionEl.dataset.action === "buy-boost") return buyBoost();
+    });
   </script>
   <script src="/auth-global.js"></script>
 </div>

@@ -165,8 +165,9 @@ function isFavorite(listing, user) {
 
 function favoriteButton(listing, user) {
   const active = isFavorite(listing, user);
+  const id = listing?._id || listing?.id || "";
   return `
-    <button class="fav-btn ${active ? "active" : ""}" onclick="event.stopPropagation(); toggleFavorite('${listing._id}')">
+    <button class="fav-btn ${active ? "active" : ""}" type="button" data-action="favorite" data-id="${escapeHtml(id)}">
       ${active ? "♥" : "♡"}
     </button>
   `;
@@ -193,7 +194,7 @@ function renderListings(listings) {
     const src = listingImage(listing);
 
     return `
-      <div class="listing-card" onclick="goDetail('${listing._id || listing.id || ""}')">
+      <div class="listing-card" data-action="detail" data-id="${escapeHtml(String(listing._id || listing.id || ""))}">
         ${src
           ? `<img class="card-img" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
           : `<div class="card-img-placeholder">Görsel yok</div>`}
@@ -306,5 +307,20 @@ document.addEventListener("DOMContentLoaded", () => {
         applyFilters();
       }
     });
+  });
+
+  document.addEventListener("click", (event) => {
+    const favoriteBtn = event.target.closest('[data-action="favorite"]');
+    if (favoriteBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleFavorite(favoriteBtn.dataset.id || "");
+      return;
+    }
+
+    const detailCard = event.target.closest('[data-action="detail"]');
+    if (detailCard) {
+      goDetail(detailCard.dataset.id || "");
+    }
   });
 });

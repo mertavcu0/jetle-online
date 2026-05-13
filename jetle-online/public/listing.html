@@ -6,7 +6,7 @@
   <title>Yönlendiriliyor...</title>
   <script>
     const id = new URLSearchParams(window.location.search).get("id") || "";
-    const q = id ? "?id=" + encodeURIComponent(id) : "";
+    const q = id ? "id=" + encodeURIComponent(id) : "";
     window.location.replace("listing-detail.html" + q);
   </script>
   <noscript>

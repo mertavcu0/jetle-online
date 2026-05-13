@@ -608,6 +608,13 @@ app.use("/api/admin", adminApiLimiter, authMiddleware, adminRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cars", carsRoute);
 
+app.use((req, res, next) => {
+  if (/\.(html|js|json|css)$/i.test(req.path)) {
+    res.charset = "utf-8";
+  }
+  next();
+});
+
 app.get("/api/my-listings", authMiddleware, async (req, res) => {
   try {
     const listings = await Listing.find({ user: req.user.id, isDeleted: false });
@@ -621,8 +628,21 @@ app.get("/api/test-auth", (req, res) => {
   res.json({ ok: true });
 });
 
-app.use(express.static(path.join(__dirname, "../public")));
-app.use("/uploads", express.static("uploads"));
+app.use(express.static(path.join(__dirname, "../public"), {
+  setHeaders(res, filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".html") res.setHeader("Content-Type", "text/html; charset=utf-8");
+    if (ext === ".js") res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+    if (ext === ".json") res.setHeader("Content-Type", "application/json; charset=utf-8");
+    if (ext === ".css") res.setHeader("Content-Type", "text/css; charset=utf-8");
+  }
+}));
+app.use("/uploads", express.static("uploads", {
+  setHeaders(res, filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".json") res.setHeader("Content-Type", "application/json; charset=utf-8");
+  }
+}));
 
 // Test route
 app.get("/api/test", (req, res) => {

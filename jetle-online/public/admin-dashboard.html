@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -549,11 +549,11 @@
       <h2 class="brand">Jetle<span>Admin</span></h2>
       <nav class="menu">
         <ul>
-          <li class="active" data-page="listings">İlanlar</li>
-          <li data-page="users">Kullanıcılar</li>
+          <li class="active" data-page="listings">?lanlar</li>
+          <li data-page="users">Kullan?c?lar</li>
           <li data-page="messages">Mesajlar</li>
           <li data-page="reports">Raporlar</li>
-          <li data-page="cars">Araç Yönetimi</li>
+          <li data-page="cars">Ara? Y?netimi</li>
           <li data-page="notifications">Bildirimler</li>
         </ul>
       </nav>
@@ -564,7 +564,7 @@
         <h1>Admin Moderasyon</h1>
         <div class="admin-top-actions">
           <span>Admin</span>
-          <button type="button" class="logout-btn" data-action="logout">Çıkış</button>
+          <button type="button" class="logout-btn" data-action="logout">??k??</button>
         </div>
       </header>
 
@@ -572,11 +572,11 @@
 
       <section class="charts-grid">
         <div class="chart-card">
-          <h2>Günlük İlan</h2>
+          <h2>G?nl?k ?lan</h2>
           <canvas id="dailyListingsChart" height="140"></canvas>
         </div>
         <div class="chart-card">
-          <h2>Görüntülenme</h2>
+          <h2>G?r?nt?lenme</h2>
           <canvas id="dailyViewsChart" height="140"></canvas>
         </div>
       </section>
@@ -707,10 +707,10 @@
 
     function renderListingBadgesMarkup(item) {
       return `
-        ${item.status === "pending" ? '<span class="badge-pending">⏳ Onay Bekliyor</span>' : ''}
-        ${item.status === "approved" ? '<span class="badge-approved">Onaylı</span>' : ''}
+        ${item.status === "pending" ? '<span class="badge-pending">? Onay Bekliyor</span>' : ''}
+        ${item.status === "approved" ? '<span class="badge-approved">Onayl?</span>' : ''}
         ${item.status === "rejected" ? '<span class="badge-passive">Reddedildi</span>' : ''}
-        ${item.isSuspicious ? '<span class="badge-suspicious">Şüpheli</span>' : ''}
+        ${item.isSuspicious ? '<span class="badge-suspicious">??pheli</span>' : ''}
         ${item.isFeatured ? '<span class="badge-boost">Vitrin</span>' : ''}
         ${!item.isFeatured && item.isBoosted ? '<span class="badge-boost">Boost</span>' : ''}
         ${item.isActive === false ? '<span class="badge-passive">Pasif</span>' : ''}
@@ -752,7 +752,7 @@
       }, 3200);
     }
 
-    function renderLoadingSkeleton(title = "Yükleniyor") {
+    function renderLoadingSkeleton(title = "Y?kleniyor") {
       const container = contentContainer();
       if (!container) return;
       container.innerHTML = `
@@ -775,13 +775,13 @@
       if (!box) return;
       box.innerHTML = `
         <div class="stats-grid">
-          <div class="stat-card">Toplam Kullanıcı: 0</div>
-          <div class="stat-card">Toplam İlan: 0</div>
-          <div class="stat-card">Aktif İlan: 0</div>
-          <div class="stat-card">Şüpheli İlan: 0</div>
-          <div class="stat-card">Bugün Eklenen: 0</div>
+          <div class="stat-card">Toplam Kullan?c?: 0</div>
+          <div class="stat-card">Toplam ?lan: 0</div>
+          <div class="stat-card">Aktif ?lan: 0</div>
+          <div class="stat-card">??pheli ?lan: 0</div>
+          <div class="stat-card">Bug?n Eklenen: 0</div>
           <div class="stat-card">Toplam Mesaj: 0</div>
-          <div class="stat-card">Online Kullanıcı: 0</div>
+          <div class="stat-card">Online Kullan?c?: 0</div>
           <div class="stat-card">Aktif Socket: 0</div>
         </div>
       `;
@@ -791,27 +791,27 @@
       const container = contentContainer();
       if (!container) return;
       container.innerHTML = `
-        <h2>İlanlar</h2>
+        <h2>?lanlar</h2>
         <div class="admin-card">
-          <div>İlan bulunamadı.</div>
+          <div>?lan bulunamad?.</div>
         </div>
       `;
     }
 
     function renderChartFallback() {
-      const listingCard = document.getElementById("dailyListingsChart")?.closest(".chart-card");
-      const viewsCard = document.getElementById("dailyViewsChart")?.closest(".chart-card");
+      const listingCard = document.getElementById("dailyListingsChart").closest(".chart-card");
+      const viewsCard = document.getElementById("dailyViewsChart").closest(".chart-card");
 
       if (listingCard) {
         listingCard.innerHTML = `
-          <h2>Günlük İlan</h2>
+          <h2>G?nl?k ?lan</h2>
           <div class="empty">Veri yok</div>
         `;
       }
 
       if (viewsCard) {
         viewsCard.innerHTML = `
-          <h2>Görüntülenme</h2>
+          <h2>G?r?nt?lenme</h2>
           <div class="empty">Veri yok</div>
         `;
       }
@@ -827,13 +827,13 @@
 
         box.innerHTML = `
           <div class="stats-grid">
-            <div class="stat-card">Toplam Kullanıcı: ${data.totalUsers || 0}</div>
-            <div class="stat-card">Toplam İlan: ${data.totalListings || data.total || 0}</div>
-            <div class="stat-card">Aktif İlan: ${data.activeListings || data.active || 0}</div>
-            <div class="stat-card">Şüpheli İlan: ${data.suspiciousListings || 0}</div>
-            <div class="stat-card">Bugün Eklenen: ${data.todayListings || data.today || 0}</div>
+            <div class="stat-card">Toplam Kullan?c?: ${data.totalUsers || 0}</div>
+            <div class="stat-card">Toplam ?lan: ${data.totalListings || data.total || 0}</div>
+            <div class="stat-card">Aktif ?lan: ${data.activeListings || data.active || 0}</div>
+            <div class="stat-card">??pheli ?lan: ${data.suspiciousListings || 0}</div>
+            <div class="stat-card">Bug?n Eklenen: ${data.todayListings || data.today || 0}</div>
             <div class="stat-card">Toplam Mesaj: ${data.totalMessages || 0}</div>
-            <div class="stat-card">Online Kullanıcı: ${data.onlineUsers || 0}</div>
+            <div class="stat-card">Online Kullan?c?: ${data.onlineUsers || 0}</div>
             <div class="stat-card">Aktif Socket: ${data.activeSockets || 0}</div>
           </div>
         `;
@@ -871,7 +871,7 @@
             labels,
             datasets: [
               {
-                label: "Günlük ilan sayısı",
+                label: "G?nl?k ilan say?s?",
                 data: listingCounts,
                 borderColor: "#2563eb",
                 backgroundColor: "rgba(37,99,235,0.12)",
@@ -893,7 +893,7 @@
             labels,
             datasets: [
               {
-                label: "Günlük görüntülenme",
+                label: "G?nl?k g?r?nt?lenme",
                 data: viewCounts,
                 backgroundColor: "rgba(249,115,22,0.72)",
                 borderColor: "#f97316",
@@ -921,7 +921,7 @@
       function renderListingActions(item) {
         if (item.status === "pending") {
           return `
-            <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+            <button type="button" data-action="detail" data-id="${item._id}">Detay G?r</button>
             <button type="button" data-action="approve" data-id="${item._id}">Onayla</button>
             <button type="button" class="danger" data-action="reject" data-id="${item._id}">Reddet</button>
             <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
@@ -930,10 +930,10 @@
 
         if (item.status === "approved") {
           return `
-            <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+            <button type="button" data-action="detail" data-id="${item._id}">Detay G?r</button>
             <button type="button" data-action="toggle" data-id="${item._id}">${item.isActive ? "Pasif Yap" : "Aktif Yap"}</button>
-            <button type="button" data-action="suspicious" data-id="${item._id}">Şüpheli</button>
-            <button type="button" data-action="boost" data-id="${item._id}">${item.isBoosted ? "Boost Aktif" : "Öne Çıkar"}</button>
+            <button type="button" data-action="suspicious" data-id="${item._id}">??pheli</button>
+            <button type="button" data-action="boost" data-id="${item._id}">${item.isBoosted ? "Boost Aktif" : "?ne ??kar"}</button>
             <button type="button" data-action="feature" data-id="${item._id}">${item.isFeatured ? "Vitrin Aktif" : "Vitrine Al"}</button>
             <button type="button" data-action="reject" data-id="${item._id}">Reddet</button>
             <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
@@ -941,7 +941,7 @@
         }
 
         return `
-          <button type="button" data-action="detail" data-id="${item._id}">Detay Gör</button>
+          <button type="button" data-action="detail" data-id="${item._id}">Detay G?r</button>
           <button type="button" data-action="approve" data-id="${item._id}">Onayla</button>
           <button type="button" class="danger" data-action="reject" data-id="${item._id}">Reddet</button>
           <button type="button" class="danger" data-action="delete" data-id="${item._id}">Sil</button>
@@ -951,12 +951,12 @@
       const items = (Array.isArray(data) ? data : []).filter(matchesListingFilter);
       adminListingsCache = items;
       container.innerHTML = `
-        <h2>İlanlar</h2>
+        <h2>?lanlar</h2>
         <div class="toolbar-card">
           <div class="toolbar-row">
             <div>
               <strong>Durum Filtresi</strong>
-              <div>İlan listesini duruma göre daraltın.</div>
+              <div>?lan listesini duruma g?re daralt?n.</div>
             </div>
             <div class="admin-actions">
               <button type="button" data-action="bulk-approve">Toplu Onayla</button>
@@ -964,7 +964,7 @@
             </div>
             <div class="admin-actions">
             <select data-action="listing-status-filter" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;">
-              <option value="all" ${listingStatusFilter === "all" ? "selected" : ""}>Tümü</option>
+              <option value="all" ${listingStatusFilter === "all" ? "selected" : ""}>T?m?</option>
               <option value="pending" ${listingStatusFilter === "pending" ? "selected" : ""}>Pending</option>
               <option value="approved" ${listingStatusFilter === "approved" ? "selected" : ""}>Approved</option>
               <option value="suspicious" ${listingStatusFilter === "suspicious" ? "selected" : ""}>Suspicious</option>
@@ -978,19 +978,19 @@
             <div>
               <label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;">
                 <input type="checkbox" ${listingSelection.has(String(item._id)) ? "checked" : ""} data-action="toggle-selection" data-id="${item._id}" />
-                <span style="font-size:12px;color:#6b7280;">Seç</span>
+                <span style="font-size:12px;color:#6b7280;">Se?</span>
               </label>
               ${renderListingBadgesMarkup(item)}
-              <strong>${item.title || "İlan"}</strong>
-              <div>${item.city || "Şehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
-              <p>Görüntülenme: ${item.views || 0}</p>
+              <strong>${item.title || "?lan"}</strong>
+              <div>${item.city || "?ehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
+              <p>G?r?nt?lenme: ${item.views || 0}</p>
             </div>
             <div class="admin-actions">
-              <button type="button" data-action="preview" data-id="${item._id}">Önizle</button>
+              <button type="button" data-action="preview" data-id="${item._id}">?nizle</button>
               ${renderListingActions(item)}
             </div>
           </div>
-        `).join("") || `<div class="empty">İlan bulunamadı.</div>`}
+        `).join("") || `<div class="empty">?lan bulunamad?.</div>`}
       `;
     }
 
@@ -1007,18 +1007,18 @@
       });
       adminUsersCache = Array.isArray(data) ? data : [];
       container.innerHTML = `
-        <h2>Kullanıcılar</h2>
+        <h2>Kullan?c?lar</h2>
         <div class="toolbar-card">
           <div>
-            <strong>Kullanıcı Ara</strong>
-            <div>İsim, e-posta veya şehir ile filtreleyin.</div>
+            <strong>Kullan?c? Ara</strong>
+            <div>?sim, e-posta veya ?ehir ile filtreleyin.</div>
           </div>
           <div class="admin-actions" style="width:min(320px,100%);">
             <input
               type="search"
               value="${escapeHtml(userSearchQuery)}"
               data-action="user-search"
-              placeholder="Kullanıcı ara"
+              placeholder="Kullan?c? ara"
               style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;"
             />
           </div>
@@ -1026,17 +1026,17 @@
         ${users.map(user => `
           <div class="admin-card">
             <div>
-              <strong>${user.name || "Kullanıcı"}</strong>
+              <strong>${user.name || "Kullan?c?"}</strong>
               <div>${user.email || ""}</div>
             </div>
             <div class="admin-actions">
               <button type="button" data-action="user-detail" data-id="${user._id}">Detay</button>
               ${user.role === "admin"
                 ? '<button type="button" disabled style="opacity:.6;cursor:not-allowed;">Admin Korumalı</button>'
-                : `<button type="button" data-action="ban-user" data-id="${user._id}">${user.banned ? "Banı Kaldır" : "Banla"}</button>`}
+                : `<button type="button" data-action="ban-user" data-id="${user._id}">${user.banned ? "Ban? Kald?r" : "Banla"}</button>`}
             </div>
           </div>
-        `).join("") || `<div class="empty">Kullanıcı bulunamadı.</div>`}
+        `).join("") || `<div class="empty">Kullan?c? bulunamad?.</div>`}
       `;
     }
 
@@ -1046,11 +1046,11 @@
 
       const brands = Array.isArray(data) ? data : [];
       container.innerHTML = `
-        <h2>Araç Yönetimi</h2>
+        <h2>Ara? Y?netimi</h2>
         <div class="admin-card">
           <div>
             <strong>Marka Listesi</strong>
-            <div>${brands.length ? brands.map((brand) => brand.name).join(", ") : "Kayıtlı marka yok."}</div>
+            <div>${brands.length ? brands.map((brand) => brand.name).join(", ") : "Kay?tl? marka yok."}</div>
           </div>
           <div class="admin-actions">
             <button type="button">Marka Ekle</button>
@@ -1061,7 +1061,7 @@
             <strong>Seri Listesi</strong>
             <div>${brands.length
               ? brands.flatMap((brand) => (brand.series || []).map((series) => `${brand.name} / ${series.name}`)).slice(0, 12).join(", ") || "Kayıtlı seri yok."
-              : "Kayıtlı seri yok."}</div>
+              : "Kay?tl? seri yok."}</div>
           </div>
           <div class="admin-actions">
             <button type="button">Seri Ekle</button>
@@ -1076,13 +1076,13 @@
                     (series.models || []).map((model) => `${brand.name} / ${series.name} / ${model.name}`)
                   )
                 ).slice(0, 16).join(", ") || "Kayıtlı model yok."
-              : "Kayıtlı model yok."}</div>
+              : "Kay?tl? model yok."}</div>
           </div>
           <div class="admin-actions">
             <button type="button">Model Ekle</button>
           </div>
         </div>
-        ${brands.length === 0 ? '<div class="empty">Araç verisi bulunamadı.</div>' : ""}
+        ${brands.length === 0 ? '<div class="empty">Ara? verisi bulunamad?.</div>' : ""}
       `;
     }
 
@@ -1092,17 +1092,17 @@
 
       const items = Array.isArray(data) ? data : [];
       container.innerHTML = `
-        <h2>Şüpheli İlanlar</h2>
+        <h2>??pheli ?lanlar</h2>
         ${items.map(item => `
           <div class="admin-card danger">
             <div>
-              <strong>⚠️ ŞÜPHELİ İLAN</strong>
-              <strong>${item.title || "İlan"}</strong>
+              <strong>?? ??PHEL? ?LAN</strong>
+              <strong>${item.title || "?lan"}</strong>
               <div>${item.city || ""}</div>
             </div>
             <button type="button" data-action="toggle" data-id="${item._id}">Onayla</button>
           </div>
-        `).join("") || `<div class="empty">Şüpheli ilan bulunmuyor.</div>`}
+        `).join("") || `<div class="empty">??pheli ilan bulunmuyor.</div>`}
       `;
     }
 
@@ -1113,11 +1113,11 @@
         const data = await res.json();
         const notifications = Array.isArray(data) ? data.reverse() : [];
         const notificationIcons = {
-          feature: "⭐",
-          boost: "🚀",
-          approve: "✅",
-          reject: "❌",
-          ban: "⛔"
+          feature: "â­",
+          boost: "ğŸš€",
+          approve: "âœ…",
+          reject: "âŒ",
+          ban: "â›”"
         };
 
         const container = contentContainer();
@@ -1130,7 +1130,7 @@
               ? "<p>Bildirim yok</p>"
               : notifications.map(n => `
                 <div class="admin-card">
-                  <strong>${notificationIcons[n.type] || "🔔"} ${n.type}</strong>
+                  <strong>${notificationIcons[n.type] || "??"} ${n.type}</strong>
                   <p>${n.message}</p>
                   <small>${new Date(n.createdAt).toLocaleString()}</small>
                 </div>
@@ -1143,7 +1143,7 @@
         if (!container) return;
         container.innerHTML = `
           <h2>Bildirimler</h2>
-          <div class="empty">Veri alınamadı</div>
+          <div class="empty">Veri al?namad?</div>
         `;
       }
     }
@@ -1155,7 +1155,7 @@
       if (!container) return;
 
       if (type === "listings") {
-        renderLoadingSkeleton("İlanlar");
+        renderLoadingSkeleton("?lanlar");
         authFetch("/api/admin/listings")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
@@ -1168,7 +1168,7 @@
       }
 
       if (type === "users") {
-        renderLoadingSkeleton("Kullanıcılar");
+        renderLoadingSkeleton("Kullan?c?lar");
         authFetch("/api/admin/users")
           .then((res) => {
             return ensureAdminResponse(res, "API HATA").json();
@@ -1176,14 +1176,14 @@
           .then((data) => renderUsers(data))
           .catch((err) => {
             console.error("USERS ERROR:", err);
-            container.innerHTML = `<h2>Kullanıcılar</h2><div class="empty">Veri alınamadı</div>`;
+            container.innerHTML = `<h2>Kullan?c?lar</h2><div class="empty">Veri al?namad?</div>`;
           });
       }
 
       if (type === "messages") {
         container.innerHTML = `
           <h2>Mesajlar</h2>
-          <div class="empty">Mesaj moderasyonu yakında aktif olacak.</div>
+          <div class="empty">Mesaj moderasyonu yak?nda aktif olacak.</div>
         `;
       }
 
@@ -1195,7 +1195,7 @@
           .then((data) => renderReports(data))
           .catch((err) => {
             console.error("REPORTS ERROR:", err);
-            container.innerHTML = `<h2>Raporlar</h2><div class="empty">Veri alınamadı</div>`;
+            container.innerHTML = `<h2>Raporlar</h2><div class="empty">Veri al?namad?</div>`;
           });
       }
 
@@ -1207,7 +1207,7 @@
           .then((data) => renderCars(data))
           .catch((err) => {
             console.error("CARS ERROR:", err);
-            container.innerHTML = `<h2>Araç Yönetimi</h2><div class="empty">Araç verisi bulunamadı.</div>`;
+            container.innerHTML = `<h2>Ara? Y?netimi</h2><div class="empty">Ara? verisi bulunamad?.</div>`;
           });
       }
 
@@ -1217,17 +1217,17 @@
     }
 
     async function deleteListing(id) {
-      if (!window.confirm("Bu ilanı silmek istediğinize emin misiniz?")) {
+      if (!window.confirm("Bu ilan? silmek istedi?inize emin misiniz")) {
         return;
       }
       try {
         setLoading(true);
         const res = await authFetch("/api/admin/listings/" + id, { method: "DELETE" });
         ensureAdminResponse(res, "Delete failed");
-        showToast("İlan silindi.", "success");
+        showToast("?lan silindi.", "success");
       } catch (err) {
         console.error("DELETE ERROR:", err);
-        showToast("İlan silinemedi.", "error");
+        showToast("?lan silinemedi.", "error");
       } finally {
         setLoading(false);
       }
@@ -1258,14 +1258,14 @@
       }
       listingSelection = new Set();
       setLoading(false);
-      showToast("Seçili ilanlar onaylandı.", "success");
+      showToast("Se?ili ilanlar onayland?.", "success");
       loadPage("listings");
       await loadNotifications();
     }
 
     async function bulkRejectSelected() {
       const ids = Array.from(listingSelection);
-      if (!ids.length || !window.confirm("Seçili ilanları reddetmek istediğinize emin misiniz?")) return;
+      if (!ids.length || !window.confirm("Se?ili ilanlar? reddetmek istedi?inize emin misiniz")) return;
       setLoading(true);
       for (const id of ids) {
         try {
@@ -1277,7 +1277,7 @@
       }
       listingSelection = new Set();
       setLoading(false);
-      showToast("Seçili ilanlar reddedildi.", "success");
+      showToast("Se?ili ilanlar reddedildi.", "success");
       loadPage("listings");
       await loadNotifications();
     }
@@ -1289,16 +1289,16 @@
       openAdminModal(`
           <div class="admin-modal-head">
             <div>
-              <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "İlan")}</h2>
+              <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "?lan")}</h2>
               <div style="color:#6b7280;">${escapeHtml(item.city || "")} ${item.price ? "- " + escapeHtml(number(item.price) + " TL") : ""}</div>
             </div>
           <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
         </div>
         <div style="margin-bottom:14px;">${renderListingBadgesMarkup(item)}</div>
-        <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "Açıklama yok")}</p>
+        <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "A??klama yok")}</p>
         <div class="admin-modal-grid">
           ${(images.length ? images : [item.image]).filter(Boolean).map((src) => `
-            <img src="${escapeHtml(src)}" alt="İlan görseli" />
+            <img src="${escapeHtml(src)}" alt="?lan g?rseli" />
           `).join("")}
         </div>
       `);
@@ -1312,23 +1312,23 @@
         openAdminModal(`
           <div class="admin-modal-head">
             <div>
-              <h2 style="margin:0 0 6px;">${escapeHtml(data.user?.name || "Kullanıcı")}</h2>
-              <div style="color:#6b7280;">${escapeHtml(data.user?.email || "")}</div>
+              <h2 style="margin:0 0 6px;">${escapeHtml(data.user.name || "Kullan?c?")}</h2>
+              <div style="color:#6b7280;">${escapeHtml(data.user.email || "")}</div>
             </div>
             <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
           </div>
           <div class="admin-modal-grid">
-            <div class="toolbar-card"><strong>Rol</strong><div>${escapeHtml(data.user?.role || "user")}</div></div>
-            <div class="toolbar-card"><strong>Durum</strong><div>${data.banned ? "Banlı" : "Aktif"}</div></div>
-            <div class="toolbar-card"><strong>Toplam İlan</strong><div>${number(data.totalListings || 0)}</div></div>
-            <div class="toolbar-card"><strong>Aktif İlan</strong><div>${number(data.activeListings || 0)}</div></div>
-            <div class="toolbar-card"><strong>Favori Sayısı</strong><div>${number(data.favoriteCount || 0)}</div></div>
-            <div class="toolbar-card"><strong>Kayıt Tarihi</strong><div>${data.createdAt ? new Date(data.createdAt).toLocaleString("tr-TR") : "-"}</div></div>
+            <div class="toolbar-card"><strong>Rol</strong><div>${escapeHtml(data.user.role || "user")}</div></div>
+            <div class="toolbar-card"><strong>Durum</strong><div>${data.banned ? "Banl?" : "Aktif"}</div></div>
+            <div class="toolbar-card"><strong>Toplam ?lan</strong><div>${number(data.totalListings || 0)}</div></div>
+            <div class="toolbar-card"><strong>Aktif ?lan</strong><div>${number(data.activeListings || 0)}</div></div>
+            <div class="toolbar-card"><strong>Favori Say?s?</strong><div>${number(data.favoriteCount || 0)}</div></div>
+            <div class="toolbar-card"><strong>Kay?t Tarihi</strong><div>${data.createdAt ? new Date(data.createdAt).toLocaleString("tr-TR") : "-"}</div></div>
           </div>
         `);
       } catch (err) {
         console.error("USER DETAIL ERROR:", err);
-        showToast("Kullanıcı detayı alınamadı.", "error");
+        showToast("Kullan?c? detay? al?namad?.", "error");
       } finally {
         setLoading(false);
       }
@@ -1362,10 +1362,10 @@
         ensureAdminResponse(res, "Toggle failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("İlan durumu güncellendi.", "success");
+        showToast("?lan durumu g?ncellendi.", "success");
       } catch (err) {
         console.error(err);
-        showToast("İşlem başarısız.", "error");
+        showToast("??lem ba?ar?s?z.", "error");
       } finally {
         setLoading(false);
       }
@@ -1380,10 +1380,10 @@
           body: JSON.stringify({ isSuspicious: true })
         });
         ensureAdminResponse(res, "Suspicious failed");
-        showToast("İlan şüpheli olarak işaretlendi.", "success");
+        showToast("?lan ??pheli olarak i?aretlendi.", "success");
       } catch (err) {
         console.error("SUSPICIOUS ERROR:", err);
-        showToast("İşlem başarısız.", "error");
+        showToast("??lem ba?ar?s?z.", "error");
       } finally {
         setLoading(false);
       }
@@ -1397,10 +1397,10 @@
         ensureAdminResponse(res, "Boost failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("İlan öne çıkarıldı.", "success");
+        showToast("?lan ?ne ??kar?ld?.", "success");
       } catch (err) {
         console.error(err);
-        showToast("Boost işlemi başarısız.", "error");
+        showToast("Boost i?lemi ba?ar?s?z.", "error");
       } finally {
         setLoading(false);
       }
@@ -1413,10 +1413,10 @@
         ensureAdminResponse(res, "Feature failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("İlan vitrine alındı.", "success");
+        showToast("?lan vitrine al?nd?.", "success");
       } catch (err) {
         console.error("FEATURE ERROR:", err);
-        showToast("Vitrin işlemi başarısız.", "error");
+        showToast("Vitrin i?lemi ba?ar?s?z.", "error");
         loadPage("listings");
       } finally {
         setLoading(false);
@@ -1430,10 +1430,10 @@
         ensureAdminResponse(res, "Approve failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("İlan onaylandı.", "success");
+        showToast("?lan onayland?.", "success");
       } catch (err) {
         console.error("APPROVE ERROR:", err);
-        showToast("İlan onaylanamadı.", "error");
+        showToast("?lan onaylanamad?.", "error");
         loadPage("listings");
       } finally {
         setLoading(false);
@@ -1441,19 +1441,19 @@
     }
 
     function rejectListing(id) {
-      if (!window.confirm("Bu ilanı reddetmek istediğinize emin misiniz?")) {
+      if (!window.confirm("Bu ilan? reddetmek istedi?inize emin misiniz")) {
         return;
       }
       setLoading(true);
       authFetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
         .then((res) => {
           ensureAdminResponse(res, "Reject failed");
-          showToast("İlan reddedildi.", "success");
+          showToast("?lan reddedildi.", "success");
           loadPage("listings");
         })
         .catch((err) => {
           console.error("REJECT ERROR:", err);
-          showToast("İlan reddedilemedi.", "error");
+          showToast("?lan reddedilemedi.", "error");
           loadPage("listings");
         })
         .finally(() => {
@@ -1466,10 +1466,10 @@
         setLoading(true);
         const res = await authFetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
         const data = await ensureAdminResponse(res, "Ban failed").json();
-        showToast(data.banned ? "Kullanıcı banlandı." : "Kullanıcı banı kaldırıldı.", "success");
+        showToast(data.banned ? "Kullan?c? banland?." : "Kullan?c? ban? kald?r?ld?.", "success");
       } catch (err) {
         console.error("BAN ERROR:", err);
-        showToast("Kullanıcı işlemi başarısız.", "error");
+        showToast("Kullan?c? i?lemi ba?ar?s?z.", "error");
       } finally {
         setLoading(false);
       }
@@ -1546,8 +1546,8 @@
       }
     });
 
-    document.getElementById("admin-modal")?.addEventListener("click", (event) => {
-      if (event.target?.id === "admin-modal") {
+    document.getElementById("admin-modal").addEventListener("click", (event) => {
+      if (event.target.id === "admin-modal") {
         closeAdminModal();
       }
     });

@@ -772,14 +772,14 @@
       <h3>Filtrele</h3>
 
       <div class="category-links">
-        <a href="listings.html?category=emlak">Emlak İlanları</a>
-        <a href="listings.html?category=vasita">Vasıta İlanları</a>
-        <a href="listings.html?category=is-makineleri">İş Makineleri İlanları</a>
-        <a href="listings.html?category=yedek-parca">Yedek Parça İlanları</a>
+        <a href="listings.htmlcategory=emlak">Emlak İlanları</a>
+        <a href="listings.htmlcategory=vasita">Vasıta İlanları</a>
+        <a href="listings.htmlcategory=is-makineleri">İş Makineleri İlanları</a>
+        <a href="listings.htmlcategory=yedek-parca">Yedek Parça İlanları</a>
       </div>
 
       <label>Arama</label>
-      <input type="text" id="searchInput" placeholder="Ne arıyorsun?">
+      <input type="text" id="searchInput" placeholder="Ne arıyorsun">
 
       <label>Kategori</label>
       <select id="filterCategory">
@@ -831,8 +831,8 @@
           <h4>Hizmetlerimiz</h4>
           <div class="jl-footer-links">
             <a href="/create-listing.html">İlan Ver</a>
-            <a href="/listings.html?category=vasita">Vasıta İlanları</a>
-            <a href="/listings.html?category=emlak">Emlak İlanları</a>
+            <a href="/listings.htmlcategory=vasita">Vasıta İlanları</a>
+            <a href="/listings.htmlcategory=emlak">Emlak İlanları</a>
           </div>
         </div>
         <div class="jl-footer-col">
@@ -898,10 +898,10 @@
       };
 
       const getSellerTypeValue = (listing) => {
-        return listing?.sellerType
-          || listing?.seller_type
-          || listing?.from
-          || listing?.kimden
+        return listing.sellerType
+          || listing.seller_type
+          || listing.from
+          || listing.kimden
           || "";
       };
 
@@ -952,18 +952,18 @@
 
       const buildMetaLine = (listing) => {
         const parts = [];
-        const category = (listing?.category || "").toString().trim();
+        const category = (listing.category || "").toString().trim();
 
         if (category.toLowerCase().includes("vas")) {
-          if (listing?.year) parts.push(String(listing.year));
-          if (listing?.fuel || listing?.fuelType) parts.push(String(listing.fuel || listing.fuelType));
-          if (listing?.transmission || listing?.gear) parts.push(String(listing.transmission || listing.gear));
-          if (listing?.km) parts.push(`${new Intl.NumberFormat("tr-TR").format(Number(listing.km || 0))} km`);
+          if (listing.year) parts.push(String(listing.year));
+          if (listing.fuel || listing.fuelType) parts.push(String(listing.fuel || listing.fuelType));
+          if (listing.transmission || listing.gear) parts.push(String(listing.transmission || listing.gear));
+          if (listing.km) parts.push(`${new Intl.NumberFormat("tr-TR").format(Number(listing.km || 0))} km`);
         } else {
-          if (listing?.subCategory) parts.push(String(listing.subCategory));
-          if (listing?.estateType) parts.push(String(listing.estateType));
-          if (listing?.grossArea || listing?.brutM2) parts.push(`${listing.grossArea || listing.brutM2} m²`);
-          if (listing?.roomCount) parts.push(String(listing.roomCount));
+          if (listing.subCategory) parts.push(String(listing.subCategory));
+          if (listing.estateType) parts.push(String(listing.estateType));
+          if (listing.grossArea || listing.brutM2) parts.push(`${listing.grossArea || listing.brutM2} m²`);
+          if (listing.roomCount) parts.push(String(listing.roomCount));
         }
 
         if (!parts.length && category) parts.push(category);
@@ -1026,34 +1026,33 @@
       };
 
       const renderVehicleRow = (listing, user, src, dateText, id) => {
-        const location = [listing?.city, listing?.district].filter(Boolean).join(" / ");
-        const model = [listing?.brand, listing?.series, listing?.model].filter(Boolean).join(" ");
+        const location = [listing.city, listing.district].filter(Boolean).join(" / ");
+        const model = [listing.brand, listing.series, listing.model].filter(Boolean).join(" ");
         const metaLine = [
-          listing?.fuel || listing?.fuelType,
-          listing?.transmission || listing?.gear,
-          listing?.bodyType || listing?.body,
+          listing.fuel || listing.fuelType,
+          listing.transmission || listing.gear,
+          listing.bodyType || listing.body,
           location
         ].filter(Boolean);
 
         return `
-          <div class="listing-row" onclick="goDetail('${id}')">
+          <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src
-                ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing?.title || "İlan")}" loading="lazy">`
+              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
                 : `<div class="listing-photo-placeholder">Görsel yok</div>`}
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell listing-model mobile-hide">${escapeHtml(model || "-")}</div>
             <div class="listing-cell">
-              <div class="listing-title">${escapeHtml(listing?.title || "")}</div>
+              <div class="listing-title">${escapeHtml(listing.title || "")}</div>
               <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
             </div>
-            <div class="listing-cell listing-year mobile-hide">${escapeHtml(String(listing?.year || "-"))}</div>
-            <div class="listing-cell listing-km mobile-hide">${listing?.km ? `${formatNumber(listing.km)} km` : "-"}</div>
-            <div class="listing-cell listing-color mobile-hide">${escapeHtml(String(listing?.color || "-"))}</div>
+            <div class="listing-cell listing-year mobile-hide">${escapeHtml(String(listing.year || "-"))}</div>
+            <div class="listing-cell listing-km mobile-hide">${listing.km ? `${formatNumber(listing.km)} km` : "-"}</div>
+            <div class="listing-cell listing-color mobile-hide">${escapeHtml(String(listing.color || "-"))}</div>
             <div class="listing-cell">
               <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing?.price) : ""}</div>
+                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
               </div>
             </div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
@@ -1063,33 +1062,32 @@
       };
 
       const renderEstateRow = (listing, user, src, dateText, id) => {
-        const location = [listing?.city, listing?.district].filter(Boolean).join(" / ");
-        const room = listing?.roomCount || listing?.rooms || "";
-        const size = listing?.grossArea || listing?.brutM2 || listing?.size || "";
+        const location = [listing.city, listing.district].filter(Boolean).join(" / ");
+        const room = listing.roomCount || listing.rooms || "";
+        const size = listing.grossArea || listing.brutM2 || listing.size || "";
         const metaLine = [
-          listing?.subCategory,
-          listing?.estateType,
-          listing?.heating,
+          listing.subCategory,
+          listing.estateType,
+          listing.heating,
           location
         ].filter(Boolean);
 
         return `
-          <div class="listing-row" onclick="goDetail('${id}')">
+          <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src
-                ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing?.title || "İlan")}" loading="lazy">`
+              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
                 : `<div class="listing-photo-placeholder">Görsel yok</div>`}
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell">
-              <div class="listing-title">${escapeHtml(listing?.title || "")}</div>
+              <div class="listing-title">${escapeHtml(listing.title || "")}</div>
               <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
             </div>
             <div class="listing-cell listing-size mobile-hide">${size ? `${escapeHtml(String(size))} m²` : "-"}</div>
             <div class="listing-cell listing-room mobile-hide">${escapeHtml(String(room || "-"))}</div>
             <div class="listing-cell">
               <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing?.price) : ""}</div>
+                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
               </div>
             </div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
@@ -1099,30 +1097,29 @@
       };
 
       const renderGenericRow = (listing, user, src, dateText, id) => {
-        const location = [listing?.city, listing?.district].filter(Boolean).join(" / ");
-        const displayCategory = listing?.subCategory || listing?.category || "";
+        const location = [listing.city, listing.district].filter(Boolean).join(" / ");
+        const displayCategory = listing.subCategory || listing.category || "";
         const metaLine = [
-          listing?.brand,
-          listing?.model,
+          listing.brand,
+          listing.model,
           location
         ].filter(Boolean);
 
         return `
-          <div class="listing-row" onclick="goDetail('${id}')">
+          <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src
-                ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing?.title || "İlan")}" loading="lazy">`
+              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
                 : `<div class="listing-photo-placeholder">Görsel yok</div>`}
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell">
-              <div class="listing-title">${escapeHtml(listing?.title || "")}</div>
+              <div class="listing-title">${escapeHtml(listing.title || "")}</div>
               <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
             </div>
             <div class="listing-cell listing-category mobile-hide">${escapeHtml(String(displayCategory || "-"))}</div>
             <div class="listing-cell">
               <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing?.price) : ""}</div>
+                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
               </div>
             </div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
@@ -1152,8 +1149,8 @@
           const viewType = getViewType();
           const rows = filteredByTab.map((listing) => {
             const src = typeof listingImage === "function" ? listingImage(listing) : "";
-            const dateText = formatListingDate(listing?.createdAt);
-            const id = listing?._id || listing?.id || "";
+            const dateText = formatListingDate(listing.createdAt);
+            const id = listing._id || listing.id || "";
 
             if (viewType === "vasita") return renderVehicleRow(listing, user, src, dateText, id);
             if (viewType === "emlak") return renderEstateRow(listing, user, src, dateText, id);
@@ -1183,6 +1180,12 @@
           updateActiveTab();
           renderListings(lastRenderedListings);
         });
+      });
+      document.addEventListener("click", (event) => {
+        const detailRow = event.target.closest('.listing-row[data-action="detail"]');
+        if (detailRow) {
+          goDetail(detailRow.dataset.id || "");
+        }
       });
       if (container) {
         new MutationObserver(applyCategoryLabels).observe(container, { childList: true, subtree: true });

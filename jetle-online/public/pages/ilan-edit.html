@@ -158,7 +158,7 @@
       const data = await res.json();
 
       q("fieldTitle").value = data.title || "";
-      q("fieldPrice").value = data.price != null ? data.price : "";
+      q("fieldPrice").value = data.price != null  data.price : "";
       q("fieldCategory").value = data.category || "";
       q("fieldCity").value = data.city || "";
       q("fieldDescription").value = data.description || "";

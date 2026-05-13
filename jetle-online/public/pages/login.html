@@ -118,8 +118,8 @@
       function setTab(register) {
         tabLogin.classList.toggle("is-active", !register);
         tabRegister.classList.toggle("is-active", !!register);
-        tabLogin.setAttribute("aria-selected", register ? "false" : "true");
-        tabRegister.setAttribute("aria-selected", register ? "true" : "false");
+        tabLogin.setAttribute("aria-selected", register  "false" : "true");
+        tabRegister.setAttribute("aria-selected", register  "true" : "false");
         panelLogin.hidden = !!register;
         panelRegister.hidden = !register;
         msg.textContent = "";
@@ -134,7 +134,7 @@
       });
 
       function saveSession(data) {
-        var user = data && data.user ? data.user : data;
+        var user = data && data.user  data.user : data;
         var id = user && (user.id || user._id);
         if (id) localStorage.setItem("userId", String(id));
         var em = user && user.email;

@@ -1317,7 +1317,7 @@
 
   <section class="home-hero">
     <form class="hero-search" id="homeSearchForm">
-      <input id="homeSearchInput" type="text" placeholder="Ne arıyorsun?">
+      <input id="homeSearchInput" type="text" placeholder="Ne arıyorsun">
       <select id="homeCategorySelect">
         <option value="">Tüm Kategoriler</option>
         <option value="Emlak">Emlak</option>
@@ -1334,10 +1334,10 @@
     <aside class="sidebar">
       <h2>Kategoriler</h2>
       <div class="category-grid">
-        <a class="category-card" href="/listings.html?category=emlak" onclick="window.location='/listings.html?category=emlak'; return false;">Emlak</a>
-        <a class="category-card" href="/listings.html?category=vasita" onclick="window.location='/listings.html?category=vasita'; return false;">Vasıta</a>
-        <a class="category-card" href="/listings.html?category=is-makineleri" onclick="window.location='/listings.html?category=is-makineleri'; return false;">İş Makineleri</a>
-        <a class="category-card" href="/listings.html?category=yedek-parca" onclick="window.location='/listings.html?category=yedek-parca'; return false;">Yedek Parça</a>
+        <a class="category-card" href="/listings.htmlcategory=emlak">Emlak</a>
+        <a class="category-card" href="/listings.htmlcategory=vasita">Vasıta</a>
+        <a class="category-card" href="/listings.htmlcategory=is-makineleri">İş Makineleri</a>
+        <a class="category-card" href="/listings.htmlcategory=yedek-parca">Yedek Parça</a>
       </div>
     </aside>
 
@@ -1345,7 +1345,7 @@
       <section class="home-section section-block">
         <div class="section-head">
           <h2>Vitrin İlanlar</h2>
-          <a href="listings.html?featured=true">Tüm vitrin ilanları</a>
+          <a href="listings.htmlfeatured=true">Tüm vitrin ilanları</a>
         </div>
         <div id="featured-slider" class="listing-slider"></div>
         <div id="featuredListings" class="featured-container hidden-compat"></div>
@@ -1356,7 +1356,7 @@
       <section class="home-section section-block">
         <div class="section-head">
           <h2>Son Eklenen İlanlar</h2>
-          <a href="listings.html?sort=new">Yeni ilanlar</a>
+          <a href="listings.htmlsort=new">Yeni ilanlar</a>
         </div>
         <div id="latestGrid" class="listing-grid"></div>
       </section>
@@ -1504,8 +1504,7 @@
 
     function imageMarkup(listing, altText) {
       const src = resolveImage(listing);
-      return src
-        ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(altText)}" loading="lazy">`
+      return src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(altText)}" loading="lazy">`
         : `<div class="img-placeholder">Görsel yok</div>`;
     }
 
@@ -1561,11 +1560,11 @@
       const id = listing._id || listing.id;
       const favs = JSON.parse(localStorage.getItem("favs") || "[]");
       return `
-        <div class="listing-card ${listing.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(listing)}'">
+        <div class="listing-card ${listing.isFeatured ? "featured-card" : ""}" data-action="detail" data-url="${escapeHtml(listingUrl(listing))}">
           <div class="img-wrapper">
             ${imageMarkup(listing, title)}
             ${listingStatusBadge(listing) || (tag ? `<div class="badge">${tag}</div>` : "")}
-            <button class="fav-btn ${favs.includes(id) ? "active" : ""}" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${id}')">♡</button>
+            <button class="fav-btn ${favs.includes(id) ? "active" : ""}" type="button" data-action="favorite" data-id="${escapeHtml(String(id))}">♡</button>
           </div>
           <div class="card-body">
             <h3 class="title">${title}</h3>
@@ -1585,11 +1584,11 @@
     function simpleApiCard(item) {
       const favs = JSON.parse(localStorage.getItem("favs") || "[]");
       return `
-        <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" onclick="window.location.href='${listingUrl(item)}'">
+        <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" data-action="detail" data-url="${escapeHtml(listingUrl(item))}">
           <div class="img-wrapper">
             ${imageMarkup(item, item.title || "İlan")}
             ${listingStatusBadge(item) || ""}
-            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" onclick="event.stopPropagation(); toggleFavorite('${item._id}')">♡</button>
+            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" type="button" data-action="favorite" data-id="${escapeHtml(String(item._id))}">♡</button>
           </div>
           <div class="card-body">
             <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
@@ -1645,8 +1644,7 @@
       const src = resolveImage(listing);
       return `
         <a class="right-card" href="${listingUrl(listing)}">
-          ${src
-            ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}">`
+          ${src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}">`
             : `<div class="right-card-thumb-placeholder">Görsel yok</div>`}
           <div>
             <strong>${escapeHtml(listing.title || "Başlıksız ilan")}</strong>
@@ -1823,6 +1821,24 @@
       if (!localStorage.getItem("user")) {
         event.preventDefault();
         window.location.href = "login.html";
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      const favoriteBtn = event.target.closest('[data-action="favorite"]');
+      if (favoriteBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleFavorite(favoriteBtn.dataset.id || "");
+        return;
+      }
+
+      const detailCard = event.target.closest('[data-action="detail"]');
+      if (detailCard) {
+        const url = detailCard.dataset.url || "";
+        if (url) {
+          window.location.href = url;
+        }
       }
     });
 
