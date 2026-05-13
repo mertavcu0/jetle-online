@@ -204,7 +204,7 @@
     }
 
     function imageOf(item) {
-      return item.image || item.images?.[0] || "https://picsum.photos/300/200";
+      return item.image || item.images.[0] || "https://picsum.photos/300/200";
     }
 
     function listingUrl(item) {
@@ -234,14 +234,14 @@
       grid.innerHTML = "<p>Vitrin ilanlar yükleniyor...</p>";
 
       try {
-        const res = await fetch("/api/listings?featured=true");
+        const res = await fetch("/api/listingsfeatured=true");
         if (!res.ok) throw new Error("Vitrin ilanlar alınamadı");
 
         const data = await res.json();
         const listings = Array.isArray(data) ? data : [];
 
         grid.innerHTML = listings.length
-          ? listings.map(cardTemplate).join("")
+           listings.map(cardTemplate).join("")
           : "<p>Henüz vitrin ilan bulunmuyor</p>";
       } catch (err) {
         console.error("VITRIN ERROR:", err);

@@ -1248,8 +1248,8 @@
     const prevBtn = document.getElementById("prevBtn");
     const statusBox = document.getElementById("status");
 
-    prevBtn?.addEventListener("click", prevStep);
-    nextBtn?.addEventListener("click", nextStep);
+    prevBtn.addEventListener("click", prevStep);
+    nextBtn.addEventListener("click", nextStep);
     const progressFill = document.getElementById("progressFill");
     const stepLabel = document.getElementById("stepLabel");
     let totalSteps = 5;
@@ -1560,12 +1560,12 @@
             const normalized = typeof item === 'string'
               ? { name: item, fuel: [], transmission: [], body: [] }
               : {
-                  name: item?.name || '',
-                  fuel: Array.isArray(item?.fuel) ? item.fuel : [],
-                  transmission: Array.isArray(item?.transmission) ? item.transmission : [],
-                  body: Array.isArray(item?.body) ? item.body : [],
-                  engine: item?.engine || '',
-                  hp: item?.hp || ''
+                  name: item.name || '',
+                  fuel: Array.isArray(item.fuel) ? item.fuel : [],
+                  transmission: Array.isArray(item.transmission) ? item.transmission : [],
+                  body: Array.isArray(item.body) ? item.body : [],
+                  engine: item.engine || '',
+                  hp: item.hp || ''
                 };
             if (normalized.name) modelMap.set(normalized.name, normalized);
           });
@@ -1615,7 +1615,7 @@
 
       if (Array.isArray(brands)) {
         return brands.reduce((acc, brand) => {
-          const brandName = brand?.name || brand?.brand || brand?.title;
+          const brandName = brand.name || brand.brand || brand.title;
           if (!brandName) return acc;
           acc[brandName] = {};
           const rawSeries = Array.isArray(brand.series)
@@ -1632,7 +1632,7 @@
               ? [{ name: brandName, models: brand.models }]
               : [];
           seriesList.forEach((series) => {
-            const seriesName = series?.name || series?.series || series?.title;
+            const seriesName = series.name || series.series || series.title;
             if (!seriesName) return;
             acc[brandName][seriesName] = normalizeSeriesModels(series.models || series.items || series.variants || []);
           });
@@ -1744,8 +1744,8 @@
       const items = subCategories[mainCategory] || {};
 
       subSelect.innerHTML = mainCategory
-        ? `<option value="">Alt kategori seç</option>`
-        : `<option value="">Önce ana kategori seç</option>`;
+        ? `<option value="">Alt kategori se?</option>`
+        : `<option value="">?nce ana kategori se?</option>`;
 
       Object.entries(items).forEach(([value, label]) => {
         subSelect.innerHTML += `<option value="${value}">${label}</option>`;
@@ -1805,7 +1805,7 @@
 
       input.classList.remove("field-error");
       const field = input.closest(".field") || input.parentElement;
-      field?.querySelector(".error-message")?.remove();
+      field.querySelector(".error-message").remove();
     }
 
     function showToast(text, type = "success") {
@@ -1836,11 +1836,11 @@
     }
 
     function getNumericPriceValue() {
-      return sanitizePriceValue(document.getElementById("price")?.value || formData.price || "");
+      return sanitizePriceValue(document.getElementById("price").value || formData.price || "");
     }
 
     function handlePriceInput(event) {
-      if (!event?.target) return;
+      if (!event.target) return;
       const formatted = formatPriceValue(event.target.value);
       event.target.value = formatted;
       formData.price = sanitizePriceValue(formatted);
@@ -1858,8 +1858,8 @@
         if (input) formData[id] = input.value.trim();
       });
 
-      formData.category = document.querySelector("[name=category]")?.value?.trim() || "";
-      formData.images = Array.from(document.getElementById("images")?.files || []);
+      formData.category = document.querySelector("[name=category]").value.trim() || "";
+      formData.images = Array.from(document.getElementById("images").files || []);
       formData.features = Array.from(document.querySelectorAll("#features input[type='checkbox']:checked"))
         .map((input) => input.value);
       expertiseFieldNames.forEach((name) => {
@@ -1905,7 +1905,7 @@
     }
 
     function getSelectedImageFiles() {
-      return Array.from(document.getElementById("images")?.files || []).filter((file) => file instanceof File);
+      return Array.from(document.getElementById("images").files || []).filter((file) => file instanceof File);
     }
 
     function createPreviewObjectUrl(file, target = "grid") {
@@ -1920,9 +1920,9 @@
 
     function handleFiles(files) {
       const imagesInput = document.getElementById("images");
-      const currentFiles = Array.from(imagesInput?.files || []);
+      const currentFiles = Array.from(imagesInput.files || []);
       const incoming = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
-      const nextFiles = files === imagesInput?.files
+      const nextFiles = files === imagesInput.files
         ? incoming.slice(0, 10)
         : [...currentFiles, ...incoming].slice(0, 10);
       const dataTransfer = new DataTransfer();
@@ -1938,7 +1938,7 @@
       renderImagePreview();
       if ((imagesInput.files || []).length >= 3) {
         imagesInput.classList.remove("field-error");
-        imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
+        imagesInput.closest(".field").querySelector(".error-message").remove();
       }
     }
 
@@ -1966,7 +1966,7 @@
       `).join("");
     }
 
-    document.getElementById("imagesGrid")?.addEventListener("click", (event) => {
+    document.getElementById("imagesGrid").addEventListener("click", (event) => {
       const button = event.target.closest("[data-remove-index]");
       if (!button) return;
       const index = Number(button.getAttribute("data-remove-index"));
@@ -1976,7 +1976,7 @@
 
     function removeImage(index) {
       const imagesInput = document.getElementById("images");
-      const currentFiles = Array.from(imagesInput?.files || []);
+      const currentFiles = Array.from(imagesInput.files || []);
       const dataTransfer = new DataTransfer();
       currentFiles
         .filter((_, fileIndex) => fileIndex !== index)
@@ -1990,7 +1990,7 @@
         showFieldError("images", "En az 3 fotoğraf zorunlu");
       } else {
         imagesInput.classList.remove("field-error");
-        imagesInput.closest(".field")?.querySelector(".error-message")?.remove();
+        imagesInput.closest(".field").querySelector(".error-message").remove();
         clearStatus();
       }
     }
@@ -2003,7 +2003,7 @@
       }
 
       const body = new FormData();
-      Array.from(document.getElementById("images")?.files || []).forEach((file) => body.append("images", file));
+      Array.from(document.getElementById("images").files || []).forEach((file) => body.append("images", file));
 
       const headers = {
         Authorization: `Bearer ${token}`
@@ -2060,7 +2060,7 @@
     }
 
     function getActiveCategory() {
-      return document.getElementById("mainCategory")?.value || formData.category || "";
+      return document.getElementById("mainCategory").value || formData.category || "";
     }
 
     function getVisibleStepIds(category = getActiveCategory()) {
@@ -2127,7 +2127,7 @@
         intro = document.createElement("p");
         intro.className = "section-intro";
         const title = step.querySelector(".step-title");
-        title?.insertAdjacentElement("afterend", intro);
+        title.insertAdjacentElement("afterend", intro);
       }
       intro.textContent = text;
     }
@@ -2201,9 +2201,9 @@
       const step3 = document.getElementById("step-3");
       const step4 = document.getElementById("step-4");
       const step5 = document.getElementById("step-5");
-      const step1Grid = step1?.querySelector(".form-grid");
-      const step3Grid = step3?.querySelector(".form-grid");
-      const step4Field = step4?.querySelector(".field.full");
+      const step1Grid = step1.querySelector(".form-grid");
+      const step3Grid = step3.querySelector(".form-grid");
+      const step4Field = step4.querySelector(".field.full");
       const features = document.getElementById("features");
       const ekspertizSection = document.getElementById("ekspertizSection");
       const previewBox = document.getElementById("previewBox");
@@ -2264,7 +2264,7 @@
         step5.innerHTML = `<h2 class="step-title">Fotoğraflar ve Önizleme</h2>`;
         ensureStepIntro(step5, "Fotoğrafları yükleyin, ilan özetini kontrol edin ve hazır olduğunda yayına gönderin.");
         step5.appendChild(step4Field);
-        step5.querySelector("label[for='images']")?.replaceChildren("Fotoğraf ekle (en az 3)");
+        step5.querySelector("label[for='images']").replaceChildren("Fotoğraf ekle (en az 3)");
         const zoneStrong = step5.querySelector(".upload-zone strong");
         const zoneText = step5.querySelector(".upload-zone span");
         if (zoneStrong) zoneStrong.textContent = "Fotoğraf ekle (en az 3)";
@@ -2272,8 +2272,8 @@
         if (previewBox) step5.appendChild(previewBox);
       }
 
-      ekspertizSection?.remove();
-      step3Grid?.remove();
+      ekspertizSection.remove();
+      step3Grid.remove();
       submitBtn.textContent = "Yayına Gönder";
       syncWizardByCategory();
     }
@@ -2292,7 +2292,7 @@
                     <option value="Kiralık">Kiralık</option>
                   </select>
                 `)}
-                ${fieldHtml("m2", "mÂ²", `<input id="m2" name="m2" type="number" min="0">`)}
+                ${fieldHtml("m2", "m²", `<input id="m2" name="m2" type="number" min="0">`)}
                 ${fieldHtml("m2Price", "m² fiyatı", `<input id="m2Price" name="m2Price" type="number" min="0">`)}
                 ${fieldHtml("zoning", "İmar durumu", `<input id="zoning" name="zoning">`)}
                 ${fieldHtml("blockParcelNo", "Ada no", `<input id="blockParcelNo" name="blockParcelNo">`)}
@@ -2362,7 +2362,7 @@
                   </select>
                 `)}
                 ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
-                ${fieldHtml("netM2", "Net mÂ²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+                ${fieldHtml("netM2", "Net m²", `<input id="netM2" name="netM2" type="number" min="0">`)}
                 ${fieldHtml("rooms", "Oda / Bölüm sayısı", `<input id="rooms" name="rooms">`)}
                 ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
                 ${fieldHtml("floor", "Bulunduğu kat", `<input id="floor" name="floor">`)}
@@ -2422,7 +2422,7 @@
                 </select>
               `)}
               ${fieldHtml("m2", "Brüt m²", `<input id="m2" name="m2" type="number" min="0">`)}
-              ${fieldHtml("netM2", "Net mÂ²", `<input id="netM2" name="netM2" type="number" min="0">`)}
+              ${fieldHtml("netM2", "Net m²", `<input id="netM2" name="netM2" type="number" min="0">`)}
               ${fieldHtml("rooms", "Oda sayısı", `<input id="rooms" name="rooms" placeholder="3+1">`)}
               ${fieldHtml("buildingAge", "Bina yaşı", `<input id="buildingAge" name="buildingAge" type="number" min="0">`)}
               ${fieldHtml("floor", "Bulunduğu kat", `<input id="floor" name="floor">`)}
@@ -2647,7 +2647,7 @@
               <input id="model" name="model" type="text">
             </div>
             <div class="field">
-              <label for="warranty">Garanti var mı?</label>
+              <label for="warranty">Garanti var mı</label>
               <select id="warranty" name="warranty">
                 <option value="">Seç</option>
                 <option value="var">Var</option>
@@ -2665,7 +2665,7 @@
     }
 
     function renderDynamicFields(category) {
-      const subCategory = document.getElementById("subCategory")?.value || "";
+      const subCategory = document.getElementById("subCategory").value || "";
       renderSubCategoryFields(category, subCategory);
     }
 
@@ -2723,7 +2723,7 @@
     }
 
     function updateModels() {
-      const brand = document.getElementById("brand")?.value || "";
+      const brand = document.getElementById("brand").value || "";
       const seriesSelect = document.getElementById("series");
       const modelSelect = document.getElementById("model");
       if (!modelSelect || !seriesSelect) return;
@@ -2757,9 +2757,9 @@
     }
 
     function getSelectedVehicleModel() {
-      const brand = document.getElementById("brand")?.value || "";
-      const series = document.getElementById("series")?.value || "";
-      const modelName = document.getElementById("model")?.value || "";
+      const brand = document.getElementById("brand").value || "";
+      const series = document.getElementById("series").value || "";
+      const modelName = document.getElementById("model").value || "";
       const models = brand && series ? (carData[brand] || {})[series] || [] : [];
       return models.find((item) => item.name === modelName) || null;
     }
@@ -2775,7 +2775,7 @@
     }
 
     function updateSeries() {
-      const brand = document.getElementById("brand")?.value || "";
+      const brand = document.getElementById("brand").value || "";
       const seriesSelect = document.getElementById("series");
       const modelSelect = document.getElementById("model");
       if (!seriesSelect || !modelSelect) return;
@@ -2875,7 +2875,7 @@
         if (!formData.listingType) errors.push(["listingType", "İlan tipi zorunlu"]);
         if (!formData.propertyType) errors.push(["propertyType", "Emlak tipi zorunlu"]);
         if (!formData.m2) errors.push(["m2", "Brüt m² zorunlu"]);
-        if (!formData.netM2) errors.push(["netM2", "Net mÂ² zorunlu"]);
+        if (!formData.netM2) errors.push(["netM2", "Net m² zorunlu"]);
         if (!formData.sellerType) errors.push(["sellerType", "Kimden bilgisi zorunlu"]);
       }
 
@@ -2890,7 +2890,7 @@
         errors.push(["m2", "m2 zorunlu"]);
       }
 
-      if (step === 5 && (document.getElementById("images")?.files || []).length < 3) {
+      if (step === 5 && (document.getElementById("images").files || []).length < 3) {
         errors.push(["images", "En az 3 fotoğraf zorunlu"]);
       }
 
@@ -2911,7 +2911,7 @@
     function hasRequiredSubmitData() {
       collectStepData();
       clearFieldErrors();
-      const imageFiles = document.getElementById("images")?.files || [];
+      const imageFiles = document.getElementById("images").files || [];
       const titleValue = String(formData.title || "").trim();
       const descriptionValue = String(formData.description || "").trim();
 
@@ -2943,7 +2943,7 @@
         checks.push(["listingType", Boolean(formData.listingType), "İlan tipi zorunlu"]);
         checks.push(["propertyType", Boolean(formData.propertyType), "Emlak tipi zorunlu"]);
         checks.push(["m2", Boolean(formData.m2), "Brüt m² zorunlu"]);
-        checks.push(["netM2", Boolean(formData.netM2), "Net mÂ² zorunlu"]);
+        checks.push(["netM2", Boolean(formData.netM2), "Net m² zorunlu"]);
         checks.push(["sellerType", Boolean(formData.sellerType), "Kimden bilgisi zorunlu"]);
       }
 
@@ -3050,15 +3050,15 @@
     }
 
     form.addEventListener("input", (event) => {
-      if (event.target?.id) clearFieldError(event.target.id);
+      if (event.target.id) clearFieldError(event.target.id);
     });
 
     form.addEventListener("change", (event) => {
-      if (event.target?.id) clearFieldError(event.target.id);
+      if (event.target.id) clearFieldError(event.target.id);
     });
 
-    document.getElementById("price")?.addEventListener("input", handlePriceInput);
-    document.getElementById("price")?.addEventListener("blur", handlePriceInput);
+    document.getElementById("price").addEventListener("input", handlePriceInput);
+    document.getElementById("price").addEventListener("blur", handlePriceInput);
 
     document.getElementById("city").addEventListener("change", (event) => {
       fillDistricts(event.target.value);
@@ -3134,8 +3134,8 @@
       removeInactiveRequiredFields();
       collectStepData();
 
-      const titleValue = String(document.querySelector("[name=title]")?.value || formData.title || "").trim();
-      const descriptionValue = String(document.querySelector("[name=description]")?.value || formData.description || "").trim();
+      const titleValue = String(document.querySelector("[name=title]").value || formData.title || "").trim();
+      const descriptionValue = String(document.querySelector("[name=description]").value || formData.description || "").trim();
 
       formData.title = titleValue;
       formData.description = descriptionValue;
@@ -3168,15 +3168,15 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = `<span class="btn-spinner"></span>Gönderiliyor...`;
 
-      const value = (name) => document.querySelector(`[name=${name}]`)?.value || "";
+      const value = (name) => document.querySelector(`[name=${name}]`).value || "";
       const data = {
         title: titleValue,
         description: descriptionValue,
         price: getNumericPriceValue(),
-        category: document.querySelector("[name=category]")?.value || "",
-        subCategory: document.querySelector("[name=subCategory]")?.value || "",
-        city: document.querySelector("[name=city]")?.value || "",
-        district: document.querySelector("[name=district]")?.value || "",
+        category: document.querySelector("[name=category]").value || "",
+        subCategory: document.querySelector("[name=subCategory]").value || "",
+        city: document.querySelector("[name=city]").value || "",
+        district: document.querySelector("[name=district]").value || "",
         brand: value("brand"),
         sellerProfileType: value("sellerProfileType"),
         series: value("series"),
@@ -3297,7 +3297,7 @@
         }
 
         if (!res.ok) {
-          if (result?.error === "invalid_description") {
+          if (result.error === "invalid_description") {
             showFieldError("description", "Açıklama en az 20 karakter olmalı");
             return;
           }

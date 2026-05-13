@@ -215,7 +215,7 @@
       const listings = await listingsRes.json();
 
       document.getElementById("listings").innerHTML = listings.length
-        ? listings.map(renderListing).join("")
+         listings.map(renderListing).join("")
         : `<div class="empty">Bu kullanıcının yayında ilanı yok.</div>`;
     }
 

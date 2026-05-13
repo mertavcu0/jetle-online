@@ -316,7 +316,7 @@
     }
 
     function escapeHtml(value) {
-      return String(value ?? "")
+      return String(value  "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -392,10 +392,10 @@
       document.getElementById("userEmail").textContent = user.email || "-";
       document.getElementById("totalListings").textContent = data.totalListings || 0;
       document.getElementById("registeredAt").textContent = data.registeredAt
-        ? new Date(data.registeredAt).toLocaleDateString("tr-TR")
+         new Date(data.registeredAt).toLocaleDateString("tr-TR")
         : "-";
       document.getElementById("banStatus").innerHTML = data.isBanned
-        ? `<span class="status-pill banned">Banlı</span>`
+         `<span class="status-pill banned">Banlı</span>`
         : `<span class="status-pill approved">Aktif</span>`;
       document.getElementById("badges").innerHTML = renderBadges(data.badges || []);
 

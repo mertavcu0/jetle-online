@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -802,11 +802,11 @@
     }
 
     function getCurrentUserId() {
-      return String(state.user?._id || state.user?.id || "");
+      return String(state.user._id || state.user.id || "");
     }
 
     function getCurrentUserEmail() {
-      return String(state.user?.email || "");
+      return String(state.user.email || "");
     }
 
     function getCurrentToken() {
@@ -818,7 +818,7 @@
     }
 
     function getUserKey(user) {
-      return String(user?._id || user?.id || user?.email || "");
+      return String(user._id || user.id || user.email || "");
     }
 
     function formatPrice(price) {
@@ -841,7 +841,7 @@
     }
 
     function relativeImage(listing) {
-      const src = (Array.isArray(listing?.images) && listing.images[0]) || listing?.image || "";
+      const src = (Array.isArray(listing.images) && listing.images[0]) || listing.image || "";
       if (!src) return "https://picsum.photos/400/300";
       if (String(src).startsWith("http") || String(src).startsWith("data:")) return src;
       return `/${String(src).replace(/^\/+/, "")}`;
@@ -851,7 +851,7 @@
       try {
         const stored = JSON.parse(localStorage.getItem("jetleLocalPendingListings") || "[]");
         if (!Array.isArray(stored)) return null;
-        return stored.find((item) => String(item?._id || item?.id || "") === String(id)) || null;
+        return stored.find((item) => String(item._id || item.id || "") === String(id)) || null;
       } catch (_) {
         return null;
       }
@@ -866,33 +866,33 @@
     }
 
     function normalizeListingOwner(listing) {
-      const owner = listing?.user || {};
+      const owner = listing.user || {};
       return {
         receiverId: String(
-          owner?._id ||
-          owner?.id ||
-          listing?.sellerId ||
-          listing?.userId ||
-          listing?.ownerId ||
+          owner._id ||
+          owner.id ||
+          listing.sellerId ||
+          listing.userId ||
+          listing.ownerId ||
           ""
         ),
         receiverEmail: String(
-          owner?.email ||
-          listing?.userEmail ||
-          listing?.email ||
-          listing?.ownerEmail ||
-          listing?.sellerEmail ||
+          owner.email ||
+          listing.userEmail ||
+          listing.email ||
+          listing.ownerEmail ||
+          listing.sellerEmail ||
           ""
         ),
-        receiverName: owner?.name || owner?.email || "Satıcı"
+        receiverName: owner.name || owner.email || "Satıcı"
       };
     }
 
     function getResolvedReceiverEmail() {
       return String(
-        state.activeListing?.user?.email ||
-        state.activeListing?.userEmail ||
-        state.activeListing?.email ||
+        state.activeListing.user.email ||
+        state.activeListing.userEmail ||
+        state.activeListing.email ||
         ""
       ).trim().toLowerCase();
     }
@@ -900,8 +900,8 @@
     function getConversationReceiver(conversation) {
       const listingOwner = normalizeListingOwner(state.activeListing || {});
       return {
-        receiverId: String(conversation?.otherUserId || listingOwner.receiverId || ""),
-        receiverEmail: String(conversation?.otherUserEmail || listingOwner.receiverEmail || "")
+        receiverId: String(conversation.otherUserId || listingOwner.receiverId || ""),
+        receiverEmail: String(conversation.otherUserEmail || listingOwner.receiverEmail || "")
       };
     }
 
@@ -925,7 +925,7 @@
 
     function extractListingIdFromConversationId(value) {
       const raw = String(value || "");
-      const match = raw.match(/^listing:([a-fA-F0-9]{24})(?::|$)/);
+      const match = raw.match(/^listing:([a-fA-F0-9]{24})(::|$)/);
       return match ? match[1] : "";
     }
 
@@ -1003,7 +1003,7 @@
       }
 
       if (!res.ok) {
-        const error = new Error(data?.error || "request_failed");
+        const error = new Error(data.error || "request_failed");
         error.status = res.status;
         error.payload = data;
         throw error;
@@ -1014,57 +1014,57 @@
 
     function normalizeMessage(message) {
       return {
-        id: String(message?.id || message?._id || ""),
+        id: String(message.id || message._id || ""),
         senderKey: String(
-          message?.senderId ||
-          message?.sender?._id ||
-          message?.sender?.id ||
-          message?.senderEmail ||
+          message.senderId ||
+          message.sender._id ||
+          message.sender.id ||
+          message.senderEmail ||
           ""
         ),
         senderEmail: String(
-          message?.sender?.email ||
-          message?.senderEmail ||
+          message.sender.email ||
+          message.senderEmail ||
           ""
         ).trim().toLowerCase(),
         receiverEmail: String(
-          message?.receiver?.email ||
-          message?.receiverEmail ||
+          message.receiver.email ||
+          message.receiverEmail ||
           ""
         ).trim().toLowerCase(),
-        senderName: message?.sender?.name || message?.senderName || message?.senderEmail || "Kullanıcı",
-        text: message?.text || "",
-        createdAt: message?.createdAt || new Date().toISOString(),
-        updatedAt: message?.updatedAt || message?.createdAt || new Date().toISOString(),
-        edited: Boolean(message?.edited)
+        senderName: message.sender.name || message.senderName || message.senderEmail || "Kullanıcı",
+        text: message.text || "",
+        createdAt: message.createdAt || new Date().toISOString(),
+        updatedAt: message.updatedAt || message.createdAt || new Date().toISOString(),
+        edited: Boolean(message.edited)
       };
     }
 
     function normalizeConversation(conv) {
-      const listingId = String(conv?.listingId || conv?.listing?.id || conv?.listing?._id || "");
-      const otherUserId = String(conv?.otherUserId || conv?.otherUser?.id || conv?.otherUser?._id || "");
-      const otherUserEmail = String(conv?.otherUserEmail || conv?.otherUser?.email || "");
+      const listingId = String(conv.listingId || conv.listing.id || conv.listing._id || "");
+      const otherUserId = String(conv.otherUserId || conv.otherUser.id || conv.otherUser._id || "");
+      const otherUserEmail = String(conv.otherUserEmail || conv.otherUser.email || "");
 
       return {
-        id: conv?.id || buildConversationId(listingId, getCurrentUserId(), otherUserId || otherUserEmail),
-        _id: conv?._id || "",
-        conversationId: conv?.conversationId || conv?.id || conv?._id || "",
+        id: conv.id || buildConversationId(listingId, getCurrentUserId(), otherUserId || otherUserEmail),
+        _id: conv._id || "",
+        conversationId: conv.conversationId || conv.id || conv._id || "",
         listingId,
         otherUserId,
         otherUserEmail,
-        otherUserName: conv?.otherUserName || conv?.otherUser?.name || conv?.otherUser?.email || "Satıcı",
-        listingTitle: conv?.listingTitle || conv?.listing?.title || "İlan",
-        listingImage: conv?.listingImage || conv?.listing?.image || "",
-        listingPrice: conv?.listingPrice || conv?.listing?.price || "",
-        listingCity: conv?.listingCity || conv?.listing?.city || "",
-        listingUrl: conv?.listingUrl || buildListingUrl(listingId),
-        unreadCount: Number(conv?.unreadCount || 0),
-        messages: Array.isArray(conv?.messages) ? conv.messages.map(normalizeMessage) : [],
-        lastMessage: conv?.lastMessage ? normalizeMessage(conv.lastMessage) : null,
-        updatedAt: conv?.updatedAt || conv?.lastMessage?.updatedAt || conv?.lastMessage?.createdAt || new Date().toISOString(),
-        isPlaceholder: Boolean(conv?.isPlaceholder),
-        hasMoreMessages: Boolean(conv?.hasMoreMessages),
-        nextBefore: conv?.nextBefore || null
+        otherUserName: conv.otherUserName || conv.otherUser.name || conv.otherUser.email || "Satıcı",
+        listingTitle: conv.listingTitle || conv.listing.title || "İlan",
+        listingImage: conv.listingImage || conv.listing.image || "",
+        listingPrice: conv.listingPrice || conv.listing.price || "",
+        listingCity: conv.listingCity || conv.listing.city || "",
+        listingUrl: conv.listingUrl || buildListingUrl(listingId),
+        unreadCount: Number(conv.unreadCount || 0),
+        messages: Array.isArray(conv.messages) ? conv.messages.map(normalizeMessage) : [],
+        lastMessage: conv.lastMessage ? normalizeMessage(conv.lastMessage) : null,
+        updatedAt: conv.updatedAt || conv.lastMessage.updatedAt || conv.lastMessage.createdAt || new Date().toISOString(),
+        isPlaceholder: Boolean(conv.isPlaceholder),
+        hasMoreMessages: Boolean(conv.hasMoreMessages),
+        nextBefore: conv.nextBefore || null
       };
     }
 
@@ -1102,7 +1102,7 @@
     }
 
     function isOtherUserOnline(conversation) {
-      const otherUserId = String(conversation?.otherUserId || "").trim();
+      const otherUserId = String(conversation.otherUserId || "").trim();
       return Boolean(otherUserId && state.onlineUserIds.has(otherUserId));
     }
 
@@ -1129,13 +1129,13 @@
     }
 
     function handleTypingInput() {
-      if (!state.socket?.connected) return;
+      if (!state.socket.connected) return;
       const activeConversation = getActiveConversation();
       const roomId = getRealtimeConversationId(activeConversation);
       if (!roomId) return;
 
       const input = document.getElementById("messageInput");
-      const text = String(input?.value || "").trim();
+      const text = String(input.value || "").trim();
 
       if (!text) {
         stopTyping(roomId);
@@ -1158,7 +1158,7 @@
 
     function updateSocketConversationSubscription() {
       const socket = state.socket;
-      if (!socket?.connected) return;
+      if (!socket.connected) return;
 
       const nextConversationId = getRealtimeConversationId(getActiveConversation());
       const currentConversationId = state.joinedConversationId;
@@ -1177,16 +1177,16 @@
       }
 
       socket.emit("join_conversation", nextConversationId, (response) => {
-        if (response?.success) {
+        if (response.success) {
           state.joinedConversationId = nextConversationId;
         }
       });
     }
 
     async function handleIncomingMessage(payload) {
-      const rawMessage = payload?.message || payload;
+      const rawMessage = payload.message || payload;
       const incomingMessage = normalizeMessage(rawMessage);
-      const roomId = String(payload?.conversationId || rawMessage?.conversationId || "").trim();
+      const roomId = String(payload.conversationId || rawMessage.conversationId || "").trim();
       let conversation = state.conversations.find((item) =>
         item.id === roomId ||
         item.conversationId === roomId ||
@@ -1222,7 +1222,7 @@
         conversation.unreadCount = Number(conversation.unreadCount || 0) + 1;
       } else if (conversation.id === state.activeConversationId) {
         conversation.unreadCount = 0;
-        if (!isMine && state.socket?.connected) {
+        if (!isMine && state.socket.connected) {
           state.socket.emit("seen", { conversationId: roomId });
         }
       }
@@ -1300,14 +1300,14 @@
           item.conversationId === roomId ||
           getRealtimeConversationId(item) === roomId
         );
-        if (!conversation?.messages?.length) return;
+        if (!conversation.messages.length) return;
 
         const currentUserId = String(getCurrentUserId() || "").trim();
         if (String(seenByUserId || "") === currentUserId) return;
 
         conversation.messages = conversation.messages.map((message) => {
           const mine = String(message.senderKey || "") === currentUserId;
-          return mine ? { ...message, isRead: true } : message;
+          return mine ? { ...message, isRead : true } : message;
         });
         renderMessages();
       });
@@ -1383,9 +1383,9 @@
     async function loadConversations() {
       const data = await apiFetch(withCurrentUserParams("/api/messages/conversations"));
       const conversations = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.conversations)
-          ? data.conversations
+         data
+        : Array.isArray(data.conversations)
+           data.conversations
           : [];
       syncConversations(conversations);
     }
@@ -1445,7 +1445,7 @@
         const requestPath = getConversationRequestPath(conversation);
         if (!requestPath) {
           const activeConversation = getActiveConversation();
-          if (activeConversation && !activeConversation.messages?.length && activeConversation.lastMessage) {
+          if (activeConversation && !activeConversation.messages.length && activeConversation.lastMessage) {
             activeConversation.messages = [activeConversation.lastMessage];
             renderMessages();
             return;
@@ -1464,46 +1464,46 @@
         const previousHeight = appendOlder && feed ? feed.scrollHeight : 0;
         const previousTop = appendOlder && feed ? feed.scrollTop : 0;
         const data = await apiFetch(requestUrl.pathname + requestUrl.search);
-        const normalizedMessages = Array.isArray(data?.messages)
-          ? data.messages.map(normalizeMessage)
+        const normalizedMessages = Array.isArray(data.messages)
+           data.messages.map(normalizeMessage)
           : [];
         const mergedMessages = appendOlder
-          ? [...normalizedMessages, ...(Array.isArray(conversation.messages) ? conversation.messages : [])]
+           [...normalizedMessages, ...(Array.isArray(conversation.messages) ? conversation.messages : [])]
           : normalizedMessages;
         const uniqueMessages = mergedMessages.filter((item, index, arr) =>
           arr.findIndex((candidate) => candidate.id === item.id) === index
         );
         upsertConversation({
           ...conversation,
-          id: data?.id || conversation.id,
-          listingId: data?.listing?.id || conversation.listingId,
-          listingTitle: data?.listing?.title || conversation.listingTitle,
-          listingImage: data?.listing?.image || conversation.listingImage,
-          listingPrice: data?.listing?.price || conversation.listingPrice,
-          listingCity: data?.listing?.city || conversation.listingCity,
-          otherUserId: data?.otherUser?.id || conversation.otherUserId,
-          otherUserEmail: data?.otherUser?.email || conversation.otherUserEmail,
-          otherUserName: data?.otherUser?.name || conversation.otherUserName,
+          id: data.id || conversation.id,
+          listingId: data.listing.id || conversation.listingId,
+          listingTitle: data.listing.title || conversation.listingTitle,
+          listingImage: data.listing.image || conversation.listingImage,
+          listingPrice: data.listing.price || conversation.listingPrice,
+          listingCity: data.listing.city || conversation.listingCity,
+          otherUserId: data.otherUser.id || conversation.otherUserId,
+          otherUserEmail: data.otherUser.email || conversation.otherUserEmail,
+          otherUserName: data.otherUser.name || conversation.otherUserName,
           unreadCount: 0,
           messages: uniqueMessages,
           updatedAt: normalizedMessages.length
-            ? normalizedMessages[normalizedMessages.length - 1].updatedAt || normalizedMessages[normalizedMessages.length - 1].createdAt
+             normalizedMessages[normalizedMessages.length - 1].updatedAt || normalizedMessages[normalizedMessages.length - 1].createdAt
             : conversation.updatedAt,
           isPlaceholder: false,
-          hasMoreMessages: Boolean(data?.pageInfo?.hasMore),
-          nextBefore: data?.pageInfo?.nextBefore || null
+          hasMoreMessages: Boolean(data.pageInfo.hasMore),
+          nextBefore: data.pageInfo.nextBefore || null
         });
         const activeConversation = getActiveConversation();
         if (activeConversation) {
           activeConversation.messages = uniqueMessages;
-          activeConversation.hasMoreMessages = Boolean(data?.pageInfo?.hasMore);
-          activeConversation.nextBefore = data?.pageInfo?.nextBefore || null;
+          activeConversation.hasMoreMessages = Boolean(data.pageInfo.hasMore);
+          activeConversation.nextBefore = data.pageInfo.nextBefore || null;
           renderMessages();
           if (appendOlder && feed) {
             const nextHeight = feed.scrollHeight;
             feed.scrollTop = Math.max(0, nextHeight - previousHeight + previousTop);
           }
-          if (state.socket?.connected) {
+          if (state.socket.connected) {
             state.socket.emit("seen", {
               conversationId: getRealtimeConversationId(activeConversation)
             });
@@ -1532,9 +1532,9 @@
           <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" onclick="selectConversation('${escapeHtml(conv.id)}')">
             <div class="conversation-top">
               <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
-              <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || conv.updatedAt))}</span>
+              <span class="conversation-time">${escapeHtml(formatTime(lastMessage.createdAt || conv.updatedAt))}</span>
             </div>
-            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
+            <div class="conversation-preview">${escapeHtml(lastMessage.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
             <div class="conversation-bottom">
               <span class="conversation-listing">${escapeHtml(conv.listingTitle)}</span>
               <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">•</span>` : ""}</span>
@@ -1578,9 +1578,9 @@
       const feed = document.getElementById("chatFeed");
       if (!feed) return;
 
-      const messages = conversation?.messages || [];
+      const messages = conversation.messages || [];
       const feedKey = [
-        String(conversation?.id || ""),
+        String(conversation.id || ""),
         messages.map((msg) => `${msg.id}:${msg.updatedAt}:${msg.isRead}:${msg.edited}`).join("|")
       ].join("::");
 
@@ -1708,7 +1708,7 @@
 
       if (!isAuthenticated) {
         setComposerStatus("Mesaj göndermek için giriş yapın.");
-      } else if (document.getElementById("composerStatus")?.textContent === "Mesaj göndermek için giriş yapın.") {
+      } else if (document.getElementById("composerStatus").textContent === "Mesaj göndermek için giriş yapın.") {
         setComposerStatus("");
       }
 
@@ -1741,13 +1741,13 @@
     }
 
     function closeMobileSidebar() {
-      document.getElementById("conversationSidebar")?.classList.remove("open");
-      document.getElementById("mobileOverlay")?.classList.remove("open");
+      document.getElementById("conversationSidebar").classList.remove("open");
+      document.getElementById("mobileOverlay").classList.remove("open");
     }
 
     function openMobileSidebar() {
-      document.getElementById("conversationSidebar")?.classList.add("open");
-      document.getElementById("mobileOverlay")?.classList.add("open");
+      document.getElementById("conversationSidebar").classList.add("open");
+      document.getElementById("mobileOverlay").classList.add("open");
     }
 
     async function selectConversation(id) {
@@ -1756,8 +1756,8 @@
       setComposerStatus("");
       renderAll();
       const conversation = getActiveConversation();
-      if (!conversation?.messages || !conversation.messages.length) {
-        await loadConversationMessages(conversation?.conversationId || conversation?._id || id);
+      if (!conversation.messages || !conversation.messages.length) {
+        await loadConversationMessages(conversation.conversationId || conversation._id || id);
       }
       const roomId = getRealtimeConversationId(getActiveConversation());
       if (roomId) {
@@ -1770,14 +1770,14 @@
     async function sendMessage(event) {
       event.preventDefault();
       const input = document.getElementById("messageInput");
-      const text = input?.value.trim();
+      const text = input.value.trim();
       const activeConversation = getActiveConversation();
       const activeListing = state.activeListing;
       const finalListingId =
         listingIdFromUrl ||
-        activeConversation?.listingId ||
-        activeListing?._id ||
-        activeListing?.id;
+        activeConversation.listingId ||
+        activeListing._id ||
+        activeListing.id;
 
       if (!text) return;
 
@@ -1815,7 +1815,7 @@
             })
           });
 
-          if (!response?.success) {
+          if (!response.success) {
             setComposerStatus("Mesaj gönderilemedi.");
             return;
           }
@@ -1834,7 +1834,7 @@
             body: JSON.stringify(payload)
           });
 
-          if (!data?.success) {
+          if (!data.success) {
             setComposerStatus("Mesaj gönderilemedi.");
             return;
           }
@@ -1843,7 +1843,7 @@
           if (!conversation) {
             const listingOwner = normalizeListingOwner(state.activeListing || {});
             const conversationId =
-              activeConversation?.id ||
+              activeConversation.id ||
               data.conversationId ||
               buildConversationId(finalListingId, getCurrentUserId(), listingOwner.receiverId || receiverEmail);
             conversation = normalizeConversation({
@@ -1852,10 +1852,10 @@
               otherUserId: listingOwner.receiverId || "",
               otherUserEmail: receiverEmail,
               otherUserName: receiverEmail,
-              listingTitle: state.activeListing?.title || "İlan",
+              listingTitle: state.activeListing.title || "İlan",
               listingImage: relativeImage(state.activeListing),
-              listingPrice: state.activeListing?.price || "",
-              listingCity: state.activeListing?.city || "",
+              listingPrice: state.activeListing.price || "",
+              listingCity: state.activeListing.city || "",
               listingUrl: buildListingUrl(finalListingId),
               messages: [],
               updatedAt: new Date().toISOString()
@@ -1904,11 +1904,11 @@
       } catch (err) {
         console.error("MESSAGE SEND ERROR", {
           error: err,
-          status: err?.status,
-          payload: err?.payload
+          status: err.status,
+          payload: err.payload
         });
-        const missingInfo = Array.isArray(err?.payload?.missing)
-          ? ` Eksik alanlar: ${err.payload.missing.join(", ")}`
+        const missingInfo = Array.isArray(err.payload.missing)
+           ` Eksik alanlar: ${err.payload.missing.join(", ")}`
           : "";
         setComposerStatus(`Mesaj gönderilemedi.${missingInfo}`);
       }
@@ -1918,7 +1918,7 @@
       if (event.key !== "Enter") return;
       if (event.shiftKey) return;
       event.preventDefault();
-      document.getElementById("composerForm")?.requestSubmit();
+      document.getElementById("composerForm").requestSubmit();
     }
 
     function startEditMessage(messageId) {
@@ -1965,7 +1965,7 @@
       const conversation = getActiveConversation();
       if (!conversation) return;
 
-      const ok = window.confirm("Bu sohbeti silmek istediğinize emin misiniz?");
+      const ok = window.confirm("Bu sohbeti silmek istediğinize emin misiniz");
       if (!ok) return;
 
       try {
@@ -1976,7 +1976,7 @@
         });
 
         state.conversations = state.conversations.filter((item) => item.id !== conversation.id);
-        state.activeConversationId = state.conversations[0]?.id || null;
+        state.activeConversationId = state.conversations[0].id || null;
         state.editingMessageId = null;
         renderAll();
       } catch (err) {
@@ -2017,14 +2017,14 @@
 
       renderAll();
 
-      document.getElementById("composerForm")?.addEventListener("submit", sendMessage);
-      document.getElementById("cancelEditBtn")?.addEventListener("click", cancelEditMessage);
-      document.getElementById("messageInput")?.addEventListener("keydown", handleComposerKeydown);
-      document.getElementById("messageInput")?.addEventListener("input", handleTypingInput);
-      document.getElementById("chatFeed")?.addEventListener("scroll", handleChatFeedScroll, { passive: true });
-      document.getElementById("mobileConversationToggle")?.addEventListener("click", openMobileSidebar);
-      document.getElementById("mobileOverlay")?.addEventListener("click", closeMobileSidebar);
-      document.getElementById("logoutBtn")?.addEventListener("click", logout);
+      document.getElementById("composerForm").addEventListener("submit", sendMessage);
+      document.getElementById("cancelEditBtn").addEventListener("click", cancelEditMessage);
+      document.getElementById("messageInput").addEventListener("keydown", handleComposerKeydown);
+      document.getElementById("messageInput").addEventListener("input", handleTypingInput);
+      document.getElementById("chatFeed").addEventListener("scroll", handleChatFeedScroll, { passive: true });
+      document.getElementById("mobileConversationToggle").addEventListener("click", openMobileSidebar);
+      document.getElementById("mobileOverlay").addEventListener("click", closeMobileSidebar);
+      document.getElementById("logoutBtn").addEventListener("click", logout);
 
       if (hasAuthenticatedSession()) {
         connectSocket();

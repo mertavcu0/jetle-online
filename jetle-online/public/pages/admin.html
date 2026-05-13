@@ -41,7 +41,7 @@
       function show(text, isErr) {
         msg.hidden = false;
         msg.textContent = text;
-        msg.className = "admin-msg " + (isErr ? "err" : "ok");
+        msg.className = "admin-msg " + (isErr  "err" : "ok");
       }
 
       function headersJson() {
@@ -92,7 +92,7 @@
                 "<td>" +
                 escapeHtml(L.title || "") +
                 "</td><td>" +
-                escapeHtml(String(L.price != null ? L.price : "")) +
+                escapeHtml(String(L.price != null  L.price : "")) +
                 "</td><td><code>" +
                 escapeHtml(String(L.userId || "")) +
                 "</code></td><td></td>";
@@ -101,7 +101,7 @@
               btn.type = "button";
               btn.textContent = "Sil";
               btn.addEventListener("click", function () {
-                if (!confirm("Bu ilanı silmek istediğinize emin misiniz?")) return;
+                if (!confirm("Bu ilanı silmek istediğinize emin misiniz")) return;
                 fetch(API_BASE + "/api/listings/" + encodeURIComponent(id), {
                   method: "DELETE",
                   headers: headersJson(),
