@@ -1096,7 +1096,7 @@
         ${items.map(item => `
           <div class="admin-card danger">
             <div>
-              <strong>?? ??PHEL? ?LAN</strong>
+              <strong>? ??PHEL? ?LAN</strong>
               <strong>${item.title || "?lan"}</strong>
               <div>${item.city || ""}</div>
             </div>
@@ -1466,7 +1466,7 @@
         setLoading(true);
         const res = await authFetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
         const data = await ensureAdminResponse(res, "Ban failed").json();
-        showToast(data.banned ? "Kullan?c? banland?." : "Kullan?c? ban? kald?r?ld?.", "success");
+        showToast(data.banned ? "Kullan?c? banland?." : "Kullan?c?n?n ban? kald?r?ld?.", "success");
       } catch (err) {
         console.error("BAN ERROR:", err);
         showToast("Kullan?c? i?lemi ba?ar?s?z.", "error");
