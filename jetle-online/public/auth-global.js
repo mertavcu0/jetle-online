@@ -17,7 +17,7 @@
       <div class="auth-user">
         <span class="user-name">${user.name || user.email}</span>
         <a class="panel-link" href="/dashboard.html">Profilim</a>
-        <button class="logout-btn" onclick="logout()">Çıkış</button>
+        <button class="logout-btn" type="button">Çıkış</button>
       </div>
     `;
   } else {
