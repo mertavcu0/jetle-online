@@ -1509,31 +1509,6 @@
         : `<div class="img-placeholder">Görsel yok</div>`;
     }
 
-    function getLocalPendingListings() {
-      try {
-        const stored = JSON.parse(localStorage.getItem("jetleLocalPendingListings") || "[]");
-        return Array.isArray(stored)
-          ? stored.filter((item) => item && item.isDeleted !== true)
-          : [];
-      } catch (err) {
-        console.warn("LOCAL PENDING READ FAILED", err);
-        return [];
-      }
-    }
-
-    function mergeListingsWithLocalPending(listings) {
-      const localPending = getLocalPendingListings();
-      if (!localPending.length) return Array.isArray(listings) ? listings : [];
-
-      const merged = [...localPending];
-      (Array.isArray(listings) ? listings : []).forEach((item) => {
-        const id = String(item?._id || item?.id || "");
-        const exists = merged.some((pending) => String(pending?._id || pending?.id || "") === id);
-        if (!exists) merged.push(item);
-      });
-      return merged;
-    }
-
     function normalizeCategory(value) {
       const text = String(value || "").toLocaleLowerCase("tr");
       if (text.includes("emlak")) return "Emlak";
@@ -1787,9 +1762,9 @@
         const res = await fetch("/api/listings");
         if (!res.ok) throw new Error("İlanlar alınamadı");
         const data = await res.json();
-        state.listings = mergeListingsWithLocalPending(Array.isArray(data) ? data : []);
+        state.listings = Array.isArray(data) ? data : [];
       } catch (err) {
-        state.listings = mergeListingsWithLocalPending([]);
+        state.listings = [];
       }
       renderApiListings(state.listings);
     }

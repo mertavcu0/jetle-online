@@ -272,8 +272,20 @@ router.post(
         res.json({ urls, thumbnailUrls, publicIds, assets, provider });
       })
       .catch((err) => {
+        console.error("LISTING UPLOAD ERROR REAL:", {
+          message: err?.message || "unknown_error",
+          stack: err?.stack || "",
+          fileCount: Array.isArray(req.files) ? req.files.length : 0,
+          hasCloudinaryUrl: Boolean(String(process.env.CLOUDINARY_URL || "").trim()),
+          hasCloudinaryParts: Boolean(
+            String(process.env.CLOUDINARY_CLOUD_NAME || "").trim() &&
+            String(process.env.CLOUDINARY_API_KEY || "").trim() &&
+            String(process.env.CLOUDINARY_API_SECRET || "").trim()
+          )
+        });
         res.status(500).json({
           error: "upload_error",
+          message: "Görseller yüklenemedi",
           ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
         });
       });
@@ -332,6 +344,7 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
     } = req.body;
     const bodyImages = normalizeImageList(images || photos);
     const listingImages = imageUrls.length ? imageUrls : bodyImages;
+    const uploadProvider = String(storedFiles.provider || "local").trim() || "local";
 
     if (!title || title.length < 3 || title.length > 160) {
       return res.status(400).json({ error: "invalid_title" });
@@ -381,7 +394,7 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
       images: listingImages,
       photos: listingImages,
       imagePublicIds,
-      uploadProvider: storedFiles.provider || "local",
+      uploadProvider,
       listingNo: req.body.listingNo || await generateUniqueListingNo(),
       status: "pending",
       isFeatured: false,
@@ -401,9 +414,22 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
 
     res.json({ success: true, listing });
   } catch (err) {
-    console.error("LISTING CREATE ERROR:", err);
+    console.error("LISTING CREATE ERROR REAL:", {
+      message: err?.message || "unknown_error",
+      stack: err?.stack || "",
+      bodyKeys: Object.keys(req.body || {}),
+      fileCount: Array.isArray(req.files) ? req.files.length : 0,
+      hasCloudinaryUrl: Boolean(String(process.env.CLOUDINARY_URL || "").trim()),
+      hasCloudinaryParts: Boolean(
+        String(process.env.CLOUDINARY_CLOUD_NAME || "").trim() &&
+        String(process.env.CLOUDINARY_API_KEY || "").trim() &&
+        String(process.env.CLOUDINARY_API_SECRET || "").trim()
+      )
+    });
     res.status(500).json({
-      error: "server error",
+      success: false,
+      error: "listing_create_failed",
+      message: "İlan kaydedilemedi",
       ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
     });
   }
@@ -526,8 +552,22 @@ router.get("/favorites", authMiddleware, async (req, res) => {
 });
 
 router.get("/user/:id", async (req, res) => {
-  const listings = await Listing.find({ user: req.params.id, isDeleted: false });
-  res.json(listings);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(String(req.params.id || ""))) {
+      return res.status(400).json({ error: "invalid_id" });
+    }
+
+    const listings = await Listing.find({
+      user: req.params.id,
+      status: "approved",
+      isDeleted: false
+    });
+
+    res.json(listings);
+  } catch (err) {
+    console.error("PUBLIC USER LISTINGS ERROR:", err);
+    res.status(500).json({ error: "server_error" });
+  }
 });
 
 router.patch("/:id/favorite", authMiddleware, async (req, res) => {
@@ -603,14 +643,37 @@ router.post("/:id/favorite", authMiddleware, async (req, res) => {
 });
 
 router.post("/:id/view", async (req, res) => {
-  await Listing.findByIdAndUpdate(req.params.id, {
-    $inc: { views: 1 }
-  });
-  res.json({ ok: true });
+  try {
+    if (!mongoose.Types.ObjectId.isValid(String(req.params.id || ""))) {
+      return res.status(400).json({ error: "invalid_id" });
+    }
+
+    await Listing.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        status: "approved",
+        isDeleted: false
+      },
+      { $inc: { views: 1 } }
+    );
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("LISTING VIEW ERROR:", err);
+    res.status(500).json({ error: "server_error" });
+  }
 });
 
 router.get("/:id", async (req, res) => {
-  const listing = await Listing.findById(req.params.id).populate("user");
+  if (!mongoose.Types.ObjectId.isValid(String(req.params.id || ""))) {
+    return res.status(404).json({ error: "İlan bulunamadı" });
+  }
+
+  const listing = await Listing.findOne({
+    _id: req.params.id,
+    status: "approved",
+    isDeleted: false
+  }).populate("user");
 
   if (!listing) {
     return res.status(404).json({ error: "İlan bulunamadı" });

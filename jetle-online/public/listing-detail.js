@@ -15,20 +15,6 @@ let galleryShowImage = null;
 let galleryModalOpen = false;
 let galleryModalBound = false;
 
-function getLocalPendingListingById(id) {
-  if (!id) return null;
-
-  try {
-    const stored = JSON.parse(localStorage.getItem("jetleLocalPendingListings") || "[]");
-    if (!Array.isArray(stored)) return null;
-
-    return stored.find((item) => String(item?._id || item?.id || "") === String(id)) || null;
-  } catch (err) {
-    console.warn("LOCAL PENDING DETAIL READ FAILED", err);
-    return null;
-  }
-}
-
 function resolveImage(src) {
   const value = String(src || "").trim();
   if (!value) return "";
@@ -417,16 +403,8 @@ async function loadListing() {
     if (!res.ok) throw new Error("not found");
 
     const data = await res.json();
-    console.log("DATA:", data);
     renderListingData(data);
   } catch (err) {
-    const localPending = getLocalPendingListingById(id);
-    if (localPending) {
-      console.log("DETAIL FALLBACK: local pending listing used", localPending);
-      renderListingData(localPending);
-      return;
-    }
-
     document.querySelector(".detail-container").innerHTML = `
       <div style="text-align:center; padding:40px;">
         <h2>İlan bulunamadı</h2>
