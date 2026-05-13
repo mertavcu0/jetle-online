@@ -605,7 +605,7 @@
           .slice(0, 4);
 
         container.innerHTML = similar.length
-           similar.map(similarCard).join("")
+          ? similar.map(similarCard).join("")
           : `<div class="empty">Benzer ilan bulunmuyor</div>`;
       } catch (err) {
         console.error("SIMILAR ERROR:", err);
@@ -631,7 +631,7 @@
             <div class="content-card">
               <h2>İlan Detayları</h2>
               <div class="details-grid">
-                ${rows.length  rows.map(([label, value]) => `
+                ${rows.length ? rows.map(([label, value]) => `
                   <div class="detail-item">
                     <span>${escapeHtml(label)}</span>
                     ${escapeHtml(value)}
