@@ -743,10 +743,10 @@
           </div>
 
           <div class="chat-composer">
-            <form class="composer-form" id="composerForm">
+            <form class="composer-form" id="composerForm" action="" novalidate>
               <textarea class="composer-input" id="messageInput" placeholder="Mesajınızı yazın" rows="2"></textarea>
               <button class="composer-cancel" type="button" id="cancelEditBtn">İptal</button>
-              <button class="composer-send" type="submit" id="sendMessageBtn">Gönder</button>
+              <button class="composer-send" type="button" id="sendMessageBtn">Gönder</button>
             </form>
             <div class="composer-status" id="composerStatus"></div>
           </div>
@@ -1752,7 +1752,9 @@
     }
 
     async function sendMessage(event) {
-      event.preventDefault();
+      if (event?.preventDefault) event.preventDefault();
+      if (event?.stopPropagation) event.stopPropagation();
+      if (event?.stopImmediatePropagation) event.stopImmediatePropagation();
       const input = document.getElementById("messageInput");
       const text = input.value.trim();
       const activeConversation = getActiveConversation();
@@ -1925,7 +1927,7 @@
       if (event.key !== "Enter") return;
       if (event.shiftKey) return;
       event.preventDefault();
-      document.getElementById("composerForm").requestSubmit();
+      sendMessage(event);
     }
 
     function startEditMessage(messageId) {
@@ -2039,7 +2041,17 @@
 
       renderAll();
 
-      document.getElementById("composerForm").addEventListener("submit", sendMessage);
+      document.getElementById("composerForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        sendMessage(event);
+        return false;
+      });
+      document.getElementById("sendMessageBtn").addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        sendMessage(event);
+      });
       document.getElementById("cancelEditBtn").addEventListener("click", cancelEditMessage);
       document.getElementById("messageInput").addEventListener("keydown", handleComposerKeydown);
       document.getElementById("messageInput").addEventListener("input", handleTypingInput);
