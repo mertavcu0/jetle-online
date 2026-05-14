@@ -771,6 +771,7 @@
     const listingIdFromUrl = params.get("listingId") || params.get("id") || "";
     const initialListingIdFromUrl = String(listingIdFromUrl || "").trim();
     console.log("[URL LISTING ID]", listingIdFromUrl);
+    let isSendingMessage = false;
     const state = {
       user: null,
       conversations: [],
@@ -1755,10 +1756,12 @@
       if (event?.preventDefault) event.preventDefault();
       if (event?.stopPropagation) event.stopPropagation();
       if (event?.stopImmediatePropagation) event.stopImmediatePropagation();
+      if (isSendingMessage) return;
       const input = document.getElementById("messageInput");
       const text = input.value.trim();
       const activeConversation = getActiveConversation();
       const activeListing = state.activeListing || {};
+      isSendingMessage = true;
       console.log("[SEND START]", {
         initialListingIdFromUrl,
         listingIdFromUrl,
@@ -1773,10 +1776,14 @@
         activeListing.id;
       console.log("[FINAL LISTING ID]", finalListingId);
 
-      if (!text) return;
+      if (!text) {
+        isSendingMessage = false;
+        return;
+      }
 
       if (!hasAuthenticatedSession()) {
         setComposerStatus("Mesaj göndermek için giriş yapın.");
+        isSendingMessage = false;
         return;
       }
 
@@ -1789,6 +1796,7 @@
           activeListingId: activeListing?.id
         });
         setComposerStatus("İlan bilgisi bulunamadı.");
+        isSendingMessage = false;
         return;
       }
 
@@ -1797,6 +1805,7 @@
       if (!receiverEmail) {
         console.error("RECEIVER EMAIL NOT FOUND");
         setComposerStatus("Satıcı bilgisi bulunamadı.");
+        isSendingMessage = false;
         return;
       }
 
@@ -1920,6 +1929,8 @@
           ? ` Eksik alanlar: ${err.payload.missing.join(", ")}`
           : "";
         setComposerStatus(`Mesaj gönderilemedi.${missingInfo}`);
+      } finally {
+        isSendingMessage = false;
       }
     }
 
@@ -2044,12 +2055,13 @@
       document.getElementById("composerForm").addEventListener("submit", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        sendMessage(event);
+        if (event?.stopImmediatePropagation) event.stopImmediatePropagation();
         return false;
       });
       document.getElementById("sendMessageBtn").addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
+        if (event?.stopImmediatePropagation) event.stopImmediatePropagation();
         sendMessage(event);
       });
       document.getElementById("cancelEditBtn").addEventListener("click", cancelEditMessage);
