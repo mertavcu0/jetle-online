@@ -1383,9 +1383,9 @@
     async function loadConversations() {
       const data = await apiFetch(withCurrentUserParams("/api/messages/conversations"));
       const conversations = Array.isArray(data)
-         data
-        : Array.isArray(data.conversations)
-           data.conversations
+        ? data
+        : Array.isArray(data?.conversations)
+          ? data.conversations
           : [];
       syncConversations(conversations);
     }
@@ -1465,10 +1465,10 @@
         const previousTop = appendOlder && feed ? feed.scrollTop : 0;
         const data = await apiFetch(requestUrl.pathname + requestUrl.search);
         const normalizedMessages = Array.isArray(data.messages)
-           data.messages.map(normalizeMessage)
+          ? data.messages.map(normalizeMessage)
           : [];
         const mergedMessages = appendOlder
-           [...normalizedMessages, ...(Array.isArray(conversation.messages) ? conversation.messages : [])]
+          ? [...normalizedMessages, ...(Array.isArray(conversation.messages) ? conversation.messages : [])]
           : normalizedMessages;
         const uniqueMessages = mergedMessages.filter((item, index, arr) =>
           arr.findIndex((candidate) => candidate.id === item.id) === index
@@ -1487,7 +1487,7 @@
           unreadCount: 0,
           messages: uniqueMessages,
           updatedAt: normalizedMessages.length
-             normalizedMessages[normalizedMessages.length - 1].updatedAt || normalizedMessages[normalizedMessages.length - 1].createdAt
+            ? normalizedMessages[normalizedMessages.length - 1].updatedAt || normalizedMessages[normalizedMessages.length - 1].createdAt
             : conversation.updatedAt,
           isPlaceholder: false,
           hasMoreMessages: Boolean(data.pageInfo.hasMore),
@@ -1907,8 +1907,8 @@
           status: err.status,
           payload: err.payload
         });
-        const missingInfo = Array.isArray(err.payload.missing)
-           ` Eksik alanlar: ${err.payload.missing.join(", ")}`
+        const missingInfo = Array.isArray(err?.payload?.missing)
+          ? ` Eksik alanlar: ${err.payload.missing.join(", ")}`
           : "";
         setComposerStatus(`Mesaj gönderilemedi.${missingInfo}`);
       }
@@ -2039,6 +2039,3 @@
   </script>
 </body>
 </html>
-
-
-
