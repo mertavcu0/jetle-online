@@ -223,11 +223,11 @@
 
     .listing-info {
       min-width: 0;
-      display: grid;
+      display: block !important;
       gap: 8px;
       align-content: center;
-      visibility: visible;
-      opacity: 1;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
 
     .listing-info h4 {
@@ -295,14 +295,14 @@
     }
 
     .listing-actions {
-      display: flex;
+      display: flex !important;
       flex-direction: column;
       gap: 8px;
       align-items: stretch;
       justify-self: end;
       min-width: 120px;
-      visibility: visible;
-      opacity: 1;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
 
     .listing-actions a,
@@ -599,7 +599,7 @@
         const statusLabel = status.label;
 
         return `
-          <article class="listing-card" data-listing-id="${escapeHtml(id)}">
+          <article class="listing-card" data-listing-id="${escapeHtml(id)}" data-test="managed-card">
             <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
             <div class="listing-info">
               <h4>${title}</h4>

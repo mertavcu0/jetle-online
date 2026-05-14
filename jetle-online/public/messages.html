@@ -1578,17 +1578,17 @@
       const feed = document.getElementById("chatFeed");
       if (!feed) return;
 
+      if (!conversation || !Array.isArray(conversation.messages)) {
+        state.lastRenderedFeedKey = "empty";
+        feed.innerHTML = `<div class="chat-empty">Hen?z mesaj yok. Konu?may? ba?lat?n.</div>`;
+        return;
+      }
+
       const messages = conversation.messages || [];
       const feedKey = [
         String(conversation.id || ""),
         messages.map((msg) => `${msg.id}:${msg.updatedAt}:${msg.isRead}:${msg.edited}`).join("|")
       ].join("::");
-
-      if (!conversation) {
-        state.lastRenderedFeedKey = "empty";
-        feed.innerHTML = `<div class="chat-empty">Henüz mesaj yok. Konuşmayı başlatın.</div>`;
-        return;
-      }
 
       if (!messages.length) {
         state.lastRenderedFeedKey = `${conversation.id || ""}::empty`;
