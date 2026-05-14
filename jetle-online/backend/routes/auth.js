@@ -71,9 +71,18 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    const safeEmail = String(normalizedEmail || "").trim().toLowerCase();
+
+    if (!safeEmail || safeEmail.includes("$") || safeEmail.includes("{")) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email"
+      });
+    }
+
     const existing = await User.findOne({
-      email: normalizedEmail
-    });
+      email: safeEmail
+    }).lean(false);
 
     if (existing) {
       return res.status(400).json({ success: false, message: "Zaten kayıtlı" });
@@ -83,7 +92,7 @@ router.post("/register", async (req, res) => {
 
     const user = new User({
       name,
-      email: normalizedEmail,
+      email: safeEmail,
       password: hashed,
       city,
       district,
@@ -99,7 +108,7 @@ router.post("/register", async (req, res) => {
       user: userResponse(user)
     });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
+    console.error("REGISTER ERROR REAL:", err);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -120,9 +129,18 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    const safeEmail = String(email || "").trim().toLowerCase();
+
+    if (!safeEmail || safeEmail.includes("$") || safeEmail.includes("{")) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email"
+      });
+    }
+
     const user = await User.findOne({
-      email
-    });
+      email: safeEmail
+    }).lean(false);
 
     if (!user || !user.password) {
       return res.status(401).json({
