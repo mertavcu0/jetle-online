@@ -1532,8 +1532,23 @@
     function renderChatHeader(conversation) {
       const header = document.getElementById("chatHeader");
       if (!header) return;
+      const activeListing = state.activeListing || null;
+      const listingOwner = normalizeListingOwner(activeListing || {});
 
       if (!conversation) {
+        if (activeListing) {
+          const ownerLabel = listingOwner.receiverEmail || listingOwner.receiverName || "İlan sahibi";
+          header.innerHTML = `
+            <div class="chat-header-main">
+              <img class="chat-listing-thumb" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "İlan")}">
+              <div class="chat-header-copy">
+                <h2>${escapeHtml(ownerLabel)}</h2>
+                <p>${escapeHtml(activeListing.title || "İlan")}</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
         header.innerHTML = `
           <div class="chat-header-copy">
             <h2>Mesajlar</h2>
@@ -1637,8 +1652,31 @@
     function renderListingSummary(conversation) {
       const panel = document.getElementById("listingSummary");
       if (!panel) return;
+      const activeListing = state.activeListing || null;
+      const listingOwner = normalizeListingOwner(activeListing || {});
 
       if (!conversation) {
+        if (activeListing) {
+          panel.innerHTML = `
+            <div class="listing-summary-header">
+              <h3>İlan Özeti</h3>
+              <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
+            </div>
+            <div class="listing-summary-body">
+              <img class="listing-summary-image" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "İlan")}">
+              <div>
+                <h4 class="listing-summary-title">${escapeHtml(activeListing.title || "İlan")}</h4>
+              </div>
+              <div class="listing-summary-price">${escapeHtml(formatPrice(activeListing.price))}</div>
+              <div class="listing-summary-meta">
+                ${activeListing.city ? `<span>${escapeHtml(activeListing.city)}</span>` : ""}
+                <span>İlan sahibi: ${escapeHtml(listingOwner.receiverEmail || listingOwner.receiverName || "Bilinmiyor")}</span>
+              </div>
+              <a class="listing-summary-link" href="${escapeHtml(buildListingUrl(activeListing._id || activeListing.id || ""))}">İlana Git</a>
+            </div>
+          `;
+          return;
+        }
         panel.innerHTML = `
           <div class="listing-summary-header">
             <h3>İlan Özeti</h3>
