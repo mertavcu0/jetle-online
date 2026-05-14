@@ -891,9 +891,9 @@
 
     function getResolvedReceiverEmail() {
       return String(
-        state.activeListing.user.email ||
-        state.activeListing.userEmail ||
-        state.activeListing.email ||
+        state.activeListing?.user?.email ||
+        state.activeListing?.userEmail ||
+        state.activeListing?.email ||
         ""
       ).trim().toLowerCase();
     }
@@ -1130,7 +1130,7 @@
     }
 
     function handleTypingInput() {
-      if (!state.socket.connected) return;
+      if (!state.socket || !state.socket.connected) return;
       const activeConversation = getActiveConversation();
       const roomId = getRealtimeConversationId(activeConversation);
       if (!roomId) return;
@@ -1159,7 +1159,7 @@
 
     function updateSocketConversationSubscription() {
       const socket = state.socket;
-      if (!socket.connected) return;
+      if (!socket || !socket.connected) return;
 
       const nextConversationId = getRealtimeConversationId(getActiveConversation());
       const currentConversationId = state.joinedConversationId;
@@ -1504,7 +1504,7 @@
             const nextHeight = feed.scrollHeight;
             feed.scrollTop = Math.max(0, nextHeight - previousHeight + previousTop);
           }
-          if (state.socket.connected) {
+          if (state.socket && state.socket.connected) {
             state.socket.emit("seen", {
               conversationId: getRealtimeConversationId(activeConversation)
             });
@@ -1773,10 +1773,10 @@
       const input = document.getElementById("messageInput");
       const text = input.value.trim();
       const activeConversation = getActiveConversation();
-      const activeListing = state.activeListing;
+      const activeListing = state.activeListing || {};
       const finalListingId =
         listingIdFromUrl ||
-        activeConversation.listingId ||
+        activeConversation?.listingId ||
         activeListing._id ||
         activeListing.id;
 
@@ -1844,7 +1844,7 @@
           if (!conversation) {
             const listingOwner = normalizeListingOwner(state.activeListing || {});
             const conversationId =
-              activeConversation.id ||
+              activeConversation?.id ||
               data.conversationId ||
               buildConversationId(finalListingId, getCurrentUserId(), listingOwner.receiverId || receiverEmail);
             conversation = normalizeConversation({
