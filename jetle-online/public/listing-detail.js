@@ -450,10 +450,10 @@ function openMessagesForListing() {
     return;
   }
 
-  const listing = window.listingData || {};
-  const listingId = listing._id || listing.id || "";
+  const listingId = new URLSearchParams(window.location.search).get("id");
   if (!listingId) {
-    window.location.href = "/messages.html";
+    console.error("MESSAGE REDIRECT ERROR: listingId not found in URL");
+    alert("İlan bilgisi bulunamadı.");
     return;
   }
 
