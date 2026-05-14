@@ -594,25 +594,25 @@
         const id = String(listing._id || listing.id || "");
         const locationBits = [listing.city, listing.district].filter(Boolean).join(" / ");
         const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
-        const title = escapeHtml(listing.title || "Başlıksız ilan");
-        const price = formatPrice(listing.price);
-        const statusLabel = status.label;
+        const title = escapeHtml(String(listing.title || "Ba\u015fl\u0131ks\u0131z ilan"));
+        const price = escapeHtml(formatPrice(listing.price));
+        const statusLabel = escapeHtml(status.label || "Pasif");
 
         return `
           <article class="listing-card" data-listing-id="${escapeHtml(id)}" data-test="managed-card">
-            <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
-            <div class="listing-info">
-              <h4>${title}</h4>
-              <div class="listing-price">${price}</div>
-              <div class="listing-meta">
+            <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "\u0130lan")}" loading="lazy">
+            <div class="listing-info" style="display:block;visibility:visible;opacity:1;">
+              <h4 style="display:block;visibility:visible;opacity:1;">${title}</h4>
+              <div class="listing-price" style="display:block;visibility:visible;opacity:1;">${price}</div>
+              <div class="listing-meta" style="display:flex;visibility:visible;opacity:1;">
                 <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
                 <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
               </div>
-              <span class="listing-status ${status.key}">${statusLabel}</span>
+              <span class="listing-status ${status.key}" style="display:inline-flex;visibility:visible;opacity:1;">${statusLabel}</span>
             </div>
-            <div class="listing-actions">
-              <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay Gör</button>
-              <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">Düzenle</button>
+            <div class="listing-actions" style="display:flex;visibility:visible;opacity:1;">
+              <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay G\u00f6r</button>
+              <button type="button" class="btn-edit" data-action="edit" data-listing-id="${escapeHtml(id)}">D\u00fczenle</button>
               <button type="button" class="btn-delete" data-action="delete" data-listing-id="${escapeHtml(id)}">Sil</button>
             </div>
           </article>
