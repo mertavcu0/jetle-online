@@ -1407,34 +1407,7 @@
       if (!listing) return;
 
       state.activeListing = listing;
-      const owner = normalizeListingOwner(listing);
-      if (!owner.receiverId && !owner.receiverEmail) return;
-
-      const receiverIdentity = owner.receiverId || owner.receiverEmail || `seller-${resolvedListingId}`;
-      const conversationId = buildConversationId(resolvedListingId, getCurrentUserId(), receiverIdentity);
-      const existing = state.conversations.find((item) => item.id === conversationId);
-
-      if (!existing) {
-        upsertConversation({
-          id: conversationId,
-          listingId: resolvedListingId,
-          otherUserId: owner.receiverId,
-          otherUserEmail: owner.receiverEmail,
-          otherUserName: owner.receiverName,
-          listingTitle: listing.title || "İlan",
-          listingImage: relativeImage(listing),
-          listingPrice: listing.price || "",
-          listingCity: listing.city || "",
-          listingUrl: buildListingUrl(resolvedListingId),
-          unreadCount: 0,
-          messages: [],
-          updatedAt: new Date().toISOString(),
-          isPlaceholder: true
-        });
-      }
-
-      state.activeConversationId = conversationId;
-      await loadConversationMessages(conversationId);
+      state.activeConversationId = null;
     }
 
     function getActiveConversation() {
@@ -1537,14 +1510,15 @@
 
       list.innerHTML = state.conversations.map((conv) => {
         const lastMessage = conv.lastMessage || conv.messages[conv.messages.length - 1];
+        const dateValue = conv?.updatedAt || conv?.createdAt || "";
         const isOnline = isOtherUserOnline(conv);
         return `
           <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" onclick="selectConversation('${escapeHtml(conv.id)}')">
             <div class="conversation-top">
               <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
-              <span class="conversation-time">${escapeHtml(formatTime(lastMessage.createdAt || conv.updatedAt))}</span>
+              <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || dateValue))}</span>
             </div>
-            <div class="conversation-preview">${escapeHtml(lastMessage.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
+            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
             <div class="conversation-bottom">
               <span class="conversation-listing">${escapeHtml(conv.listingTitle)}</span>
               <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">•</span>` : ""}</span>
@@ -1865,10 +1839,15 @@
           }
 
           let conversation = activeConversation;
+          if (data.conversationId) {
+            state.activeConversationId = data.conversationId;
+            await loadConversations();
+            await loadConversationMessages(data.conversationId);
+            conversation = getActiveConversation();
+          }
           if (!conversation) {
             const listingOwner = normalizeListingOwner(state.activeListing || {});
             const conversationId =
-              activeConversation?.id ||
               data.conversationId ||
               buildConversationId(finalListingId, getCurrentUserId(), listingOwner.receiverId || receiverEmail);
             conversation = normalizeConversation({
@@ -1886,8 +1865,7 @@
               updatedAt: new Date().toISOString()
             });
             state.conversations.unshift(conversation);
-          } else {
-            conversation = state.conversations.find((item) => item.id === conversation.id) || conversation;
+            state.activeConversationId = conversation.id || state.activeConversationId;
           }
 
           const renderedMessage = normalizeMessage(
@@ -1901,12 +1879,16 @@
             }
           );
 
-          conversation.messages = Array.isArray(conversation.messages) ? conversation.messages : [];
-          conversation.messages.push(renderedMessage);
-          conversation.lastMessage = renderedMessage;
-          conversation.updatedAt = renderedMessage.updatedAt || renderedMessage.createdAt;
-          state.activeConversationId = conversation.id || state.activeConversationId;
-          renderMessages();
+          if (conversation) {
+            conversation.messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+            if (!conversation.messages.some((item) => item.id === renderedMessage.id)) {
+              conversation.messages.push(renderedMessage);
+            }
+            conversation.lastMessage = renderedMessage;
+            conversation.updatedAt = renderedMessage.updatedAt || renderedMessage.createdAt;
+            state.activeConversationId = conversation.id || state.activeConversationId;
+            renderMessages();
+          }
         }
 
         state.editingMessageId = null;
