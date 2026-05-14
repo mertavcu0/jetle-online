@@ -769,6 +769,7 @@
     const params = new URLSearchParams(window.location.search);
     const conversationIdFromUrl = params.get("conversationId") || "";
     const listingIdFromUrl = params.get("listingId") || params.get("id") || "";
+    const initialListingIdFromUrl = String(listingIdFromUrl || "").trim();
     const state = {
       user: null,
       conversations: [],
@@ -1392,23 +1393,24 @@
     }
 
     async function ensureConversationFromListing() {
-      if (!listingIdFromUrl) return;
+      if (!initialListingIdFromUrl && !listingIdFromUrl) return;
 
-      const listing = await fetchListingById(listingIdFromUrl);
+      const resolvedListingId = initialListingIdFromUrl || String(listingIdFromUrl || "").trim();
+      const listing = await fetchListingById(resolvedListingId);
       if (!listing) return;
 
       state.activeListing = listing;
       const owner = normalizeListingOwner(listing);
       if (!owner.receiverId && !owner.receiverEmail) return;
 
-      const receiverIdentity = owner.receiverId || owner.receiverEmail || `seller-${listingIdFromUrl}`;
-      const conversationId = buildConversationId(listingIdFromUrl, getCurrentUserId(), receiverIdentity);
+      const receiverIdentity = owner.receiverId || owner.receiverEmail || `seller-${resolvedListingId}`;
+      const conversationId = buildConversationId(resolvedListingId, getCurrentUserId(), receiverIdentity);
       const existing = state.conversations.find((item) => item.id === conversationId);
 
       if (!existing) {
         upsertConversation({
           id: conversationId,
-          listingId: listingIdFromUrl,
+          listingId: resolvedListingId,
           otherUserId: owner.receiverId,
           otherUserEmail: owner.receiverEmail,
           otherUserName: owner.receiverName,
@@ -1416,7 +1418,7 @@
           listingImage: relativeImage(listing),
           listingPrice: listing.price || "",
           listingCity: listing.city || "",
-          listingUrl: buildListingUrl(listingIdFromUrl),
+          listingUrl: buildListingUrl(resolvedListingId),
           unreadCount: 0,
           messages: [],
           updatedAt: new Date().toISOString(),
@@ -1775,6 +1777,7 @@
       const activeConversation = getActiveConversation();
       const activeListing = state.activeListing || {};
       const finalListingId =
+        initialListingIdFromUrl ||
         listingIdFromUrl ||
         activeConversation?.listingId ||
         activeListing._id ||
