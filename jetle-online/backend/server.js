@@ -597,7 +597,8 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use("/api/auth", authLimiter);
-app.use("/api/messages", messageRouteLimiter);
+// Temporary diagnostic: disable route-level limiter for /api/messages
+// app.use("/api/messages", messageRouteLimiter);
 app.post("/api/listings/upload", listingWriteLimiter);
 app.post("/api/listings", listingWriteLimiter);
 app.use("/api/auth", authRoutes);
