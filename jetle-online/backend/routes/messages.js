@@ -511,20 +511,10 @@ router.post("/", async (req, res) => {
     const listingId = String(req.body.listingId || "").trim();
     const currentUser = req.user;
     const currentUserId = String(currentUser?._id || "");
-    if (!isMessageRateAllowed(currentUser?._id)) {
-      return res.status(429).json({
-        success: false,
-        error: "rate_limited"
-      });
-    }
-
-    const lastSentAt = messageSendCooldownMap.get(currentUserId) || 0;
-    if (currentUserId && Date.now() - lastSentAt < MESSAGE_SEND_COOLDOWN_MS) {
-      return res.status(429).json({
-        success: false,
-        error: "slow_down"
-      });
-    }
+    console.log("SEND MESSAGE HIT", {
+      userId: req.user?._id,
+      body: req.body
+    });
 
     const missing = [];
 
