@@ -147,7 +147,7 @@ function buildLimiter(windowMs, max) {
 const generalApiLimiter = buildLimiter(15 * 60 * 1000, 300);
 const authLimiter = buildLimiter(10 * 60 * 1000, 20);
 const listingWriteLimiter = buildLimiter(5 * 60 * 1000, 25);
-const messageRouteLimiter = buildLimiter(60 * 1000, 40);
+const messageRouteLimiter = buildLimiter(60 * 1000, isProduction ? 120 : 1000);
 const adminApiLimiter = buildLimiter(15 * 60 * 1000, 180);
 
 if (!isProduction) {

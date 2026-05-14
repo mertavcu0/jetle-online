@@ -7,10 +7,11 @@ const User = require("../models/User");
 
 const router = express.Router();
 const messageRateMap = new Map();
-const MESSAGE_RATE_LIMIT = 5;
+const isProduction = process.env.NODE_ENV === "production";
+const MESSAGE_RATE_LIMIT = isProduction ? 12 : 120;
 const MESSAGE_RATE_WINDOW_MS = 1000;
 const messageSendCooldownMap = new Map();
-const MESSAGE_SEND_COOLDOWN_MS = 5000;
+const MESSAGE_SEND_COOLDOWN_MS = isProduction ? 1000 : 0;
 
 function sanitizeText(value) {
   return String(value || "")
