@@ -691,20 +691,19 @@
         }
       }
 
-      function renderMessagesEmptyState(list, draft) {
+      function renderMessagesEmptyState(list) {
         if (!list) return;
         list.innerHTML = `
           <div class="empty-state">
             <h4>Henüz mesajınız yok.</h4>
             <p>İlan sahipleriyle konuşmalarınız burada görünecek.</p>
-            ${draft ? `<div style="margin-top:10px;font-size:13px;color:#4b5563;"><strong>Taslak:</strong> ${escapeHtml(draft.title || draft.sellerName || "İlan mesajı")}</div>` : ""}
           </div>
         `;
       }
 
-      function normalizeMessagesPayload(data) {
+      function normalizeConversationsPayload(data) {
         if (Array.isArray(data)) return data;
-        if (Array.isArray(data?.messages)) return data.messages;
+        if (Array.isArray(data?.conversations)) return data.conversations;
         if (Array.isArray(data?.items)) return data.items;
         return [];
       }
@@ -732,7 +731,6 @@
 
         const user = getDashboardUser();
         const userKey = user.id || user._id || user.email;
-        const draft = getStoredMessageDraft();
         if (!userKey) {
           content.innerHTML = `
             <h2>Mesajlarım</h2>
@@ -747,17 +745,7 @@
         `;
 
         const list = content.querySelector(".chat-list");
-        if (draft?.listingId && !String(draft.listingId).trim()) {
-          renderMessagesEmptyState(list, null);
-          return;
-        }
-
-        if (draft) {
-          renderMessagesEmptyState(list, draft);
-          return;
-        }
-
-        fetch(`/api/messages`, {
+        fetch(`/api/messages/conversations`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -771,34 +759,34 @@
               return null;
             }
             if (!res.ok) return null;
-            return normalizeMessagesPayload(data);
+            return normalizeConversationsPayload(data);
           })
-          .then((messages) => {
+          .then((conversations) => {
             if (!list) return;
-            if (!Array.isArray(messages) || !messages.length) {
-              renderMessagesEmptyState(list, draft);
+            if (!Array.isArray(conversations) || !conversations.length) {
+              renderMessagesEmptyState(list);
               return;
             }
 
-            list.innerHTML = messages.map((m) => {
-              const senderKey = m.sender || m.senderId || m.senderEmail || "";
-              const receiverKey = m.receiver || m.receiverId || m.receiverEmail || "";
-              const body = m.message || m.text || "";
-              const title = m.listingId?.title || m.listingTitle || draft?.title || "İlan mesajı";
+            list.innerHTML = conversations.map((conversation) => {
+              const otherUser = conversation.otherUserName || conversation.otherUserEmail || "Kullanıcı";
+              const body = conversation.lastMessage || "Henüz mesaj yok";
+              const title = conversation.listingTitle || "İlan mesajı";
+              const conversationId = conversation.conversationId || conversation.id || "";
               return `
-                <div class="msg-card ${String(senderKey) === String(userKey) ? "mine" : "theirs"}">
+                <a class="msg-card theirs" href="/messages.html?conversationId=${encodeURIComponent(conversationId)}">
                   <div>
-                    <b>${window.escapeMessageHtml ? window.escapeMessageHtml(String(senderKey) === String(userKey) ? receiverKey : senderKey) : ""}</b>
+                    <b>${window.escapeMessageHtml ? window.escapeMessageHtml(otherUser) : ""}</b>
                     <small>${window.escapeMessageHtml ? window.escapeMessageHtml(title) : ""}</small>
                   </div>
                   <p>${window.escapeMessageHtml ? window.escapeMessageHtml(body) : ""}</p>
-                  <span>${m.createdAt ? new Date(m.createdAt).toLocaleString("tr-TR") : ""}</span>
-                </div>
+                  <span>${conversation.updatedAt ? new Date(conversation.updatedAt).toLocaleString("tr-TR") : ""}</span>
+                </a>
               `;
             }).join("");
           })
           .catch(() => {
-            renderMessagesEmptyState(list, draft);
+            renderMessagesEmptyState(list);
           });
       };
 
