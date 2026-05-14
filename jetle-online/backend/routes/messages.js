@@ -288,6 +288,98 @@ router.get("/conversations", async (req, res) => {
   }
 });
 
+router.get("/listing/:listingId", async (req, res) => {
+  try {
+    const currentUser = req.user;
+    const listingId = String(req.params.listingId || "").trim();
+
+    if (!currentUser || !isValidObjectId(listingId)) {
+      return res.status(200).json({
+        success: false,
+        message: "Konuşma bulunamadı",
+        conversation: null
+      });
+    }
+
+    const listing = await Listing.findById(listingId).populate("user", "_id name email");
+    if (!listing || !listing.user?._id) {
+      return res.status(200).json({
+        success: false,
+        message: "Konuşma bulunamadı",
+        conversation: null
+      });
+    }
+
+    const currentUserId = String(currentUser._id);
+    const otherUserId = String(listing.user._id);
+    if (!currentUserId || !otherUserId || currentUserId === otherUserId) {
+      return res.status(200).json({
+        success: false,
+        message: "Konuşma bulunamadı",
+        conversation: null
+      });
+    }
+
+    const messages = await Message.find({
+      listingId: asObjectId(listingId),
+      isDeleted: false,
+      $or: [
+        { senderId: asObjectId(currentUserId), receiverId: asObjectId(otherUserId) },
+        { senderId: asObjectId(otherUserId), receiverId: asObjectId(currentUserId) }
+      ]
+    })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .populate("senderId", "name email")
+      .populate("receiverId", "name email")
+      .lean();
+
+    if (!Array.isArray(messages) || !messages.length) {
+      return res.status(200).json({
+        success: false,
+        message: "Konuşma bulunamadı",
+        conversation: null,
+        listing: normalizeListing(listing),
+        otherUser: normalizeUser(listing.user)
+      });
+    }
+
+    const orderedMessages = messages.reverse();
+    const conversationId = makeConversationId(listingId, currentUserId, otherUserId);
+
+    return res.status(200).json({
+      success: true,
+      conversation: {
+        id: conversationId,
+        conversationId,
+        listingId,
+        listingTitle: listing.title || "Ilan",
+        updatedAt: orderedMessages[orderedMessages.length - 1]?.updatedAt ||
+          orderedMessages[orderedMessages.length - 1]?.createdAt ||
+          null,
+        otherUserId,
+        otherUserName: listing.user?.name || listing.user?.email || "Kullanici",
+        otherUserEmail: listing.user?.email || ""
+      },
+      listing: normalizeListing(listing),
+      otherUser: normalizeUser(listing.user),
+      messages: orderedMessages.map(normalizeMessage),
+      pageInfo: {
+        limit: 50,
+        hasMore: messages.length === 50,
+        nextBefore: orderedMessages[0]?.createdAt || null
+      }
+    });
+  } catch (err) {
+    console.error("MESSAGE LISTING LOOKUP ERROR:", err);
+    return res.status(200).json({
+      success: false,
+      message: "Konuşma bulunamadı",
+      conversation: null
+    });
+  }
+});
+
 router.get("/:conversationId", async (req, res) => {
   try {
     const currentUser = req.user;
