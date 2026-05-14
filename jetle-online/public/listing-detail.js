@@ -443,7 +443,7 @@ function renderListingData(data) {
   renderTechSpecs(data);
 }
 
-function openMessagesForListing() {
+async function openMessagesForListing() {
   const token = String(localStorage.getItem("token") || "").trim();
   if (!token) {
     window.location.href = "/login.html";
@@ -452,15 +452,44 @@ function openMessagesForListing() {
 
   const listing = window.listingData || {};
   const listingId = listing._id || listing.id || "";
-  const draft = {
-    listingId,
-    title: listing.title || "İlan mesajı",
-    sellerName: listing.user?.name || listing.sellerName || "",
-    createdAt: new Date().toISOString()
-  };
+  if (!listingId) {
+    window.location.href = "/messages.html";
+    return;
+  }
 
-  localStorage.setItem("jetle_message_draft", JSON.stringify(draft));
-  window.location.href = "/dashboard.html?tab=messages";
+  const sellerId = String(listing.user?._id || listing.user?.id || listing.sellerId || "").trim();
+
+  try {
+    const response = await fetch("/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        listingId,
+        sellerId,
+        text: "Merhaba"
+      })
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+      return;
+    }
+
+    const data = await response.json().catch(() => null);
+    if (response.ok && data?.success && data?.conversationId) {
+      window.location.href = `/messages.html?conversationId=${encodeURIComponent(data.conversationId)}`;
+      return;
+    }
+  } catch (_) {
+    // Mesaj sayfası gerçek backend akışını listingId üzerinden başlatmayı sürdürebilir.
+  }
+
+  window.location.href = `/messages.html?listingId=${encodeURIComponent(listingId)}`;
 }
 
 function showPhoneInfo() {

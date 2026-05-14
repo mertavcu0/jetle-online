@@ -767,6 +767,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
+    const conversationIdFromUrl = params.get("conversationId") || "";
     const listingIdFromUrl = params.get("listingId") || params.get("id") || "";
     const state = {
       user: null,
@@ -2002,7 +2003,22 @@
       try {
         if (hasAuthenticatedSession()) {
           await loadConversations();
-          await ensureConversationFromListing();
+          if (conversationIdFromUrl) {
+            const matchedConversation = state.conversations.find((item) =>
+              item.id === conversationIdFromUrl ||
+              item._id === conversationIdFromUrl ||
+              item.conversationId === conversationIdFromUrl
+            );
+
+            if (matchedConversation) {
+              state.activeConversationId = matchedConversation.id || matchedConversation.conversationId || conversationIdFromUrl;
+              await loadConversationMessages(matchedConversation.conversationId || matchedConversation.id || conversationIdFromUrl);
+            }
+          }
+
+          if (!state.activeConversationId) {
+            await ensureConversationFromListing();
+          }
 
           if (!state.activeConversationId && state.conversations.length) {
             state.activeConversationId = state.conversations[0].id;
