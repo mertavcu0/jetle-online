@@ -226,6 +226,8 @@
       display: grid;
       gap: 8px;
       align-content: center;
+      visibility: visible;
+      opacity: 1;
     }
 
     .listing-info h4 {
@@ -299,6 +301,8 @@
       align-items: stretch;
       justify-self: end;
       min-width: 120px;
+      visibility: visible;
+      opacity: 1;
     }
 
     .listing-actions a,
@@ -590,18 +594,21 @@
         const id = String(listing._id || listing.id || "");
         const locationBits = [listing.city, listing.district].filter(Boolean).join(" / ");
         const categoryBits = [listing.category, listing.subCategory].filter(Boolean).join(" / ");
+        const title = escapeHtml(listing.title || "Başlıksız ilan");
+        const price = formatPrice(listing.price);
+        const statusLabel = status.label;
 
         return `
           <article class="listing-card" data-listing-id="${escapeHtml(id)}">
             <img src="${escapeHtml(listingImage(listing))}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">
             <div class="listing-info">
-              <h4>${escapeHtml(listing.title || "Başlıksız ilan")}</h4>
-              <div class="listing-price">${formatPrice(listing.price)}</div>
+              <h4>${title}</h4>
+              <div class="listing-price">${price}</div>
               <div class="listing-meta">
                 <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
                 <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
               </div>
-              <span class="listing-status ${status.key}">${status.label}</span>
+              <span class="listing-status ${status.key}">${statusLabel}</span>
             </div>
             <div class="listing-actions">
               <button type="button" class="btn-view" data-action="view" data-listing-id="${escapeHtml(id)}">Detay Gör</button>
