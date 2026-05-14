@@ -547,12 +547,28 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const listingDoc = await Listing.findById(listingId).populate("user", "_id name email");
+    let listingDoc;
+    try {
+      console.log("[STEP 1 START] Listing.findById populate user");
+      listingDoc = await Listing.findById(listingId).populate("user", "_id name email");
+      console.log("[STEP 1 OK] Listing.findById populate user");
+    } catch (err) {
+      console.error("[STEP 1 FAIL]", err);
+      throw err;
+    }
     if (!listingDoc) {
       return res.status(404).json({ success: false, error: "listing_not_found" });
     }
 
-    const receiver = await resolveReceiverFromListing(listingDoc, currentUser._id);
+    let receiver;
+    try {
+      console.log("[STEP 2 START] resolveReceiverFromListing");
+      receiver = await resolveReceiverFromListing(listingDoc, currentUser._id);
+      console.log("[STEP 2 OK] resolveReceiverFromListing");
+    } catch (err) {
+      console.error("[STEP 2 FAIL]", err);
+      throw err;
+    }
     if (!receiver) {
       return res.status(400).json({ success: false, error: "receiver_not_found" });
     }
@@ -564,18 +580,26 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ success: false, error: "same_user" });
     }
 
-    const message = await Message.create({
-      senderId: currentUser._id,
-      receiverId: receiver._id,
-      senderEmail,
-      receiverEmail,
-      conversationId: makeConversationId(listingId, currentUser._id, receiver._id),
-      listingId: listingDoc._id,
-      text,
-      isRead: false,
-      isDeleted: false,
-      edited: false
-    });
+    let message;
+    try {
+      console.log("[STEP 3 START] Message.create");
+      message = await Message.create({
+        senderId: currentUser._id,
+        receiverId: receiver._id,
+        senderEmail,
+        receiverEmail,
+        conversationId: makeConversationId(listingId, currentUser._id, receiver._id),
+        listingId: listingDoc._id,
+        text,
+        isRead: false,
+        isDeleted: false,
+        edited: false
+      });
+      console.log("[STEP 3 OK] Message.create");
+    } catch (err) {
+      console.error("[STEP 3 FAIL]", err);
+      throw err;
+    }
 
     const savedMessage = await Message.findById(message._id)
       .populate("senderId", "name email")
