@@ -1371,7 +1371,7 @@
             </div>
 
             <div class="seller-actions">
-              <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
+              <button class="btn-primary" type="button" data-action="open-messages" data-listing-id="${listing._id || listing.id || ""}">Satıcıya Mesaj Gönder</button>
               <button class="btn-secondary" type="button" data-action="show-phone">Telefonu Göster</button>
             </div>
             ${isOwner ? '<button class="btn-boost" type="button" data-action="buy-boost">İlanı Öne Çıkar</button>' : ''}
@@ -1488,7 +1488,21 @@
       const actionEl = event.target.closest("[data-action]");
       if (!actionEl) return;
 
-      if (actionEl.dataset.action === "open-messages") return openMessagesForListing();
+      if (actionEl.dataset.action === "open-messages") {
+        const id =
+          String(actionEl.dataset.listingId || "").trim() ||
+          String(new URLSearchParams(window.location.search).get("id") || "").trim() ||
+          String(window.listingData?._id || "").trim() ||
+          String(window.listingData?.id || "").trim();
+
+        if (!id) {
+          alert("İlan bilgisi bulunamadı.");
+          return;
+        }
+
+        window.location.href = `/messages.html?listingId=${encodeURIComponent(id)}`;
+        return;
+      }
       if (actionEl.dataset.action === "show-phone") return showPhoneInfo();
       if (actionEl.dataset.action === "buy-boost") return buyBoost();
     });
