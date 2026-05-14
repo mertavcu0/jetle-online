@@ -147,7 +147,7 @@ function buildLimiter(windowMs, max) {
 const generalApiLimiter = buildLimiter(15 * 60 * 1000, 300);
 const authLimiter = buildLimiter(10 * 60 * 1000, 20);
 const listingWriteLimiter = buildLimiter(5 * 60 * 1000, 25);
-const messageRouteLimiter = buildLimiter(60 * 1000, isProduction ? 120 : 1000);
+const messageRouteLimiter = (_req, _res, next) => next();
 const adminApiLimiter = buildLimiter(15 * 60 * 1000, 180);
 
 if (!isProduction) {
@@ -597,8 +597,7 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use("/api/auth", authLimiter);
-// Temporary diagnostic: disable route-level limiter for /api/messages
-// app.use("/api/messages", messageRouteLimiter);
+app.use("/api/messages", messageRouteLimiter);
 app.post("/api/listings/upload", listingWriteLimiter);
 app.post("/api/listings", listingWriteLimiter);
 app.use("/api/auth", authRoutes);

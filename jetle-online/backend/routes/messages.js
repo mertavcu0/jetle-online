@@ -8,10 +8,10 @@ const User = require("../models/User");
 const router = express.Router();
 const messageRateMap = new Map();
 const isProduction = process.env.NODE_ENV === "production";
-const MESSAGE_RATE_LIMIT = isProduction ? 12 : 120;
+const MESSAGE_RATE_LIMIT = 0;
 const MESSAGE_RATE_WINDOW_MS = 1000;
 const messageSendCooldownMap = new Map();
-const MESSAGE_SEND_COOLDOWN_MS = isProduction ? 1000 : 0;
+const MESSAGE_SEND_COOLDOWN_MS = 0;
 
 function sanitizeText(value) {
   return String(value || "")
@@ -22,6 +22,7 @@ function sanitizeText(value) {
 }
 
 function isMessageRateAllowed(userId) {
+  return true;
   const now = Date.now();
   const timestamps = (messageRateMap.get(String(userId || "")) || [])
     .filter((timestamp) => now - timestamp < MESSAGE_RATE_WINDOW_MS);
