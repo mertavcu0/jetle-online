@@ -192,12 +192,23 @@ router.get("/conversations", async (req, res) => {
       return res.json({ success: true, conversations: [] });
     }
 
-    const query = { isDeleted: { $ne: true } };
+    const query = {
+      $and: [
+        {
+          $or: [
+            { isDeleted: false },
+            { isDeleted: { $exists: false } }
+          ]
+        }
+      ]
+    };
     const userObjectId = asObjectId(currentUserId);
-    query.$or = [
-      { senderId: userObjectId },
-      { receiverId: userObjectId }
-    ];
+    query.$and.push({
+      $or: [
+        { senderId: userObjectId },
+        { receiverId: userObjectId }
+      ]
+    });
 
     const messages = await Message.find(query)
       .sort({ updatedAt: -1 })
