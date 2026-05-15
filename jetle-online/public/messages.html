@@ -845,7 +845,14 @@
     }
 
     function relativeImage(listing) {
-      const src = (Array.isArray(listing.images) && listing.images[0]) || listing.image || "";
+      const safeListing = listing || {};
+      const src =
+        (Array.isArray(safeListing.images) && safeListing.images[0]) ||
+        safeListing.image ||
+        safeListing.mainImage ||
+        safeListing.coverImage ||
+        (Array.isArray(safeListing.photos) && safeListing.photos[0]) ||
+        "";
       if (!src) return "https://picsum.photos/400/300";
       if (String(src).startsWith("http") || String(src).startsWith("data:")) return src;
       return `/${String(src).replace(/^\/+/, "")}`;
@@ -1045,30 +1052,54 @@
     }
 
     function normalizeConversation(conv) {
-      const listingId = String(conv.listingId || conv.listing.id || conv.listing._id || "");
-      const otherUserId = String(conv.otherUserId || conv.otherUser.id || conv.otherUser._id || "");
-      const otherUserEmail = String(conv.otherUserEmail || conv.otherUser.email || "");
+      const conversation = conv || {};
+      const listing =
+        conversation?.listing ||
+        conversation?.message?.listing ||
+        {};
+      const firstImage =
+        listing?.image ||
+        listing?.mainImage ||
+        listing?.coverImage ||
+        listing?.images?.[0] ||
+        listing?.photos?.[0] ||
+        "";
+      const otherUser = conversation?.otherUser || {};
+      const listingId = String(conversation.listingId || listing?.id || listing?._id || "");
+      const otherUserId = String(conversation.otherUserId || otherUser.id || otherUser._id || "");
+      const otherUserEmail = String(conversation.otherUserEmail || otherUser.email || "");
+      const otherUserName = String(
+        conversation.otherUserName ||
+        otherUser.name ||
+        otherUser.email ||
+        listing?.user?.email ||
+        listing?.user?.username ||
+        "Satıcı"
+      );
+      const listingTitle = String(conversation.listingTitle || listing?.title || "İlan");
+      const listingPrice = conversation.listingPrice ?? listing?.price ?? "";
+      const listingCity = String(conversation.listingCity || listing?.city || "");
 
       return {
-        id: conv.id || buildConversationId(listingId, getCurrentUserId(), otherUserId || otherUserEmail),
-        _id: conv._id || "",
-        conversationId: conv.conversationId || conv.id || conv._id || "",
+        id: conversation.id || buildConversationId(listingId, getCurrentUserId(), otherUserId || otherUserEmail),
+        _id: conversation._id || "",
+        conversationId: conversation.conversationId || conversation.id || conversation._id || "",
         listingId,
         otherUserId,
         otherUserEmail,
-        otherUserName: conv.otherUserName || conv.otherUser.name || conv.otherUser.email || "Satıcı",
-        listingTitle: conv.listingTitle || conv.listing.title || "İlan",
-        listingImage: conv.listingImage || conv.listing.image || "",
-        listingPrice: conv.listingPrice || conv.listing.price || "",
-        listingCity: conv.listingCity || conv.listing.city || "",
-        listingUrl: conv.listingUrl || buildListingUrl(listingId),
-        unreadCount: Number(conv.unreadCount || 0),
-        messages: Array.isArray(conv.messages) ? conv.messages.map(normalizeMessage) : [],
-        lastMessage: conv.lastMessage ? normalizeMessage(conv.lastMessage) : null,
-        updatedAt: conv.updatedAt || conv.lastMessage.updatedAt || conv.lastMessage.createdAt || new Date().toISOString(),
-        isPlaceholder: Boolean(conv.isPlaceholder),
-        hasMoreMessages: Boolean(conv.hasMoreMessages),
-        nextBefore: conv.nextBefore || null
+        otherUserName,
+        listingTitle,
+        listingImage: conversation.listingImage || firstImage || "",
+        listingPrice,
+        listingCity,
+        listingUrl: conversation.listingUrl || buildListingUrl(listingId),
+        unreadCount: Number(conversation.unreadCount || 0),
+        messages: Array.isArray(conversation.messages) ? conversation.messages.map(normalizeMessage) : [],
+        lastMessage: conversation.lastMessage ? normalizeMessage(conversation.lastMessage) : null,
+        updatedAt: conversation.updatedAt || conversation?.lastMessage?.updatedAt || conversation?.lastMessage?.createdAt || new Date().toISOString(),
+        isPlaceholder: Boolean(conversation.isPlaceholder),
+        hasMoreMessages: Boolean(conversation.hasMoreMessages),
+        nextBefore: conversation.nextBefore || null
       };
     }
 
@@ -1460,14 +1491,14 @@
         upsertConversation({
           ...conversation,
           id: data.id || conversation.id,
-          listingId: data.listing.id || conversation.listingId,
-          listingTitle: data.listing.title || conversation.listingTitle,
-          listingImage: data.listing.image || conversation.listingImage,
-          listingPrice: data.listing.price || conversation.listingPrice,
-          listingCity: data.listing.city || conversation.listingCity,
-          otherUserId: data.otherUser.id || conversation.otherUserId,
-          otherUserEmail: data.otherUser.email || conversation.otherUserEmail,
-          otherUserName: data.otherUser.name || conversation.otherUserName,
+          listingId: data?.listing?.id || data?.listing?._id || conversation.listingId,
+          listingTitle: data?.listing?.title || conversation.listingTitle,
+          listingImage: data?.listing?.image || data?.listing?.images?.[0] || data?.listing?.photos?.[0] || conversation.listingImage,
+          listingPrice: data?.listing?.price ?? conversation.listingPrice,
+          listingCity: data?.listing?.city || conversation.listingCity,
+          otherUserId: data?.otherUser?.id || data?.otherUser?._id || conversation.otherUserId,
+          otherUserEmail: data?.otherUser?.email || conversation.otherUserEmail,
+          otherUserName: data?.otherUser?.name || conversation.otherUserName,
           unreadCount: 0,
           messages: uniqueMessages,
           updatedAt: normalizedMessages.length
