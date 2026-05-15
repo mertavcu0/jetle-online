@@ -1050,7 +1050,11 @@
         text: safeMessage?.text || "",
         createdAt: safeMessage?.createdAt || new Date().toISOString(),
         updatedAt: safeMessage?.updatedAt || safeMessage?.createdAt || new Date().toISOString(),
-        edited: Boolean(safeMessage?.edited)
+        edited: Boolean(safeMessage?.edited),
+        isRead: Boolean(safeMessage?.isRead),
+        pending: Boolean(safeMessage?.pending),
+        localOnly: Boolean(safeMessage?.localOnly),
+        status: safeMessage?.status || "sent"
       };
     }
 
@@ -1387,10 +1391,22 @@
 
           if (!previous) return item;
 
+          const previousMessages = Array.isArray(previous.messages) ? previous.messages : [];
+          const incomingMessages = Array.isArray(item.messages) ? item.messages : [];
+          const shouldKeepExistingMessages = previousMessages.length > incomingMessages.length;
+          const mergedMessages = shouldKeepExistingMessages ? previousMessages : incomingMessages;
+          if (shouldKeepExistingMessages) {
+            console.log("MERGE KEEP EXISTING MESSAGES", {
+              conversationId: item.conversationId || item.id,
+              previousCount: previousMessages.length,
+              incomingCount: incomingMessages.length
+            });
+          }
+
           return {
             ...previous,
             ...item,
-            messages: item.messages.length ? item.messages : previous.messages,
+            messages: mergedMessages.length ? mergedMessages : previousMessages,
             lastMessage: item.lastMessage || previous.lastMessage,
             updatedAt: item.updatedAt || previous.updatedAt,
             conversationId: item.conversationId || previous.conversationId
@@ -1498,6 +1514,13 @@
           ? data.messages.map(normalizeMessage)
           : [];
         const existingMessages = Array.isArray(conversation.messages) ? conversation.messages : [];
+        if (!appendOlder && !normalizedMessages.length && existingMessages.length) {
+          console.log("SKIP EMPTY RESPONSE OVERWRITE", {
+            conversationId: conversation.conversationId || conversation.id,
+            existingCount: existingMessages.length
+          });
+          return;
+        }
         const shouldPreserveExisting = !appendOlder && !normalizedMessages.length && existingMessages.length > 0;
         const mergedMessages = appendOlder
           ? [...normalizedMessages, ...existingMessages]
@@ -1950,7 +1973,10 @@
               receiverEmail,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              conversationId: data.conversationId || ""
+              conversationId: data.conversationId || "",
+              pending: false,
+              localOnly: false,
+              status: "sent"
             }
           );
 
@@ -1989,6 +2015,11 @@
             lastMessage: renderedMessage,
             updatedAt: renderedMessage.updatedAt || renderedMessage.createdAt,
             isPlaceholder: false
+          });
+          console.log("LOCAL MESSAGE PRESERVED", {
+            conversationId,
+            messageId: renderedMessage.id,
+            localCount: mergedLocalMessages.length
           });
           state.activeConversationId = conversationId;
 
