@@ -560,7 +560,9 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ success: false, error: "listing_not_found" });
     }
 
-    const listingOwnerId = String(listingDoc?.user?._id || "").trim();
+    const listing = listingDoc?.toObject ? listingDoc.toObject() : listingDoc;
+    const listingOwnerId = String(listingDoc?.user?._id || listing?.user?._id || listing?.user || "").trim();
+    console.log("LISTING USER ID", listing?.user?._id || listing?.user);
 
     let receiver;
     try {
@@ -568,6 +570,7 @@ router.post("/", async (req, res) => {
       if (listingOwnerId) {
         receiver = await User.findById(listingOwnerId).select("_id name email username");
       }
+      console.log("RECEIVER FOUND", receiver?._id, receiver?.email);
       console.log("[STEP 2 OK] resolveReceiverFromListing");
     } catch (err) {
       console.error("[STEP 2 FAIL]", err);
