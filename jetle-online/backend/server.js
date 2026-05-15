@@ -251,6 +251,17 @@ function parseConversationId(value) {
   return { listingId, userIds: users };
 }
 
+function normalizeSocketId(value) {
+  if (!value) return "";
+
+  if (typeof value === "object") {
+    if (value.$ne) return String(value.$ne);
+    if (value._id) return String(value._id);
+  }
+
+  return String(value);
+}
+
 function safeEmit(target, eventName, payload) {
   try {
     target.emit(eventName, payload);
@@ -305,12 +316,22 @@ async function canAccessConversation(user, conversationId) {
     return true;
   }
 
+  console.log("RAW currentUserId", currentUserId);
+  console.log("RAW otherUserId", otherUserId);
+  console.log("TYPE currentUserId", typeof currentUserId);
+  console.log("TYPE otherUserId", typeof otherUserId);
+  console.log("JSON currentUserId", JSON.stringify(currentUserId));
+  console.log("JSON otherUserId", JSON.stringify(otherUserId));
+
+  const safeCurrentUserId = normalizeSocketId(currentUserId);
+  const safeOtherUserId = normalizeSocketId(otherUserId);
+
   const existingMessage = await Message.exists({
     listingId: parsed.listingId,
     isDeleted: { $ne: true },
     $or: [
-      { senderId: currentUserId, receiverId: otherUserId },
-      { senderId: otherUserId, receiverId: currentUserId }
+      { senderId: asObjectId(safeCurrentUserId), receiverId: asObjectId(safeOtherUserId) },
+      { senderId: asObjectId(safeOtherUserId), receiverId: asObjectId(safeCurrentUserId) }
     ]
   });
 
@@ -527,10 +548,12 @@ io.on("connection", (socket) => {
         return;
       }
 
+      const safeSocketUserId = normalizeSocketId(socket.user?._id);
+
       await Message.updateMany(
         {
           conversationId: normalizedConversationId,
-          receiverId: socket.user._id,
+          receiverId: asObjectId(safeSocketUserId),
           isDeleted: false,
           isRead: false
         },
