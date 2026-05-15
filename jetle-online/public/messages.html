@@ -1226,6 +1226,27 @@
       );
     }
 
+    function getConversationLastMessage(conversation) {
+      if (!conversation) return null;
+      const messages = Array.isArray(conversation.messages) ? conversation.messages : [];
+      return messages[messages.length - 1] || conversation.lastMessage || null;
+    }
+
+    function syncConversationDerivedFields(conversation) {
+      if (!conversation) return conversation;
+      const lastMessage = getConversationLastMessage(conversation);
+      return {
+        ...conversation,
+        lastMessage,
+        updatedAt:
+          lastMessage?.updatedAt ||
+          lastMessage?.createdAt ||
+          conversation.updatedAt ||
+          conversation.createdAt ||
+          new Date().toISOString()
+      };
+    }
+
     function getRealtimeConversationId(conversation) {
       if (!conversation) return "";
       if (conversation.conversationId && isBackendConversationId(conversation.conversationId)) {
@@ -1524,6 +1545,7 @@
             conversationId: item.conversationId || previous.conversationId
           };
         })
+        .map(syncConversationDerivedFields)
         .filter((item, index, arr) => arr.findIndex((candidate) =>
           getConversationIdentity(candidate) === getConversationIdentity(item)
         ) === index)
@@ -1558,10 +1580,10 @@
       );
 
       if (index === -1) {
-        state.conversations.unshift(normalized);
+        state.conversations.unshift(syncConversationDerivedFields(normalized));
       } else {
         const existing = state.conversations[index];
-        state.conversations[index] = {
+        state.conversations[index] = syncConversationDerivedFields({
           ...existing,
           ...normalized,
           messages: mergeConversationMessages(existing.messages, normalized.messages),
@@ -1570,7 +1592,7 @@
             existing.lastMessage ||
             mergeConversationMessages(existing.messages, normalized.messages).slice(-1)[0] ||
             null
-        };
+        });
       }
 
       syncConversations(state.conversations);
@@ -1714,7 +1736,7 @@
       }
 
       list.innerHTML = state.conversations.map((conv) => {
-        const lastMessage = conv.lastMessage || conv.messages[conv.messages.length - 1];
+        const lastMessage = getConversationLastMessage(conv);
         const dateValue = conv?.updatedAt || conv?.createdAt || "";
         const isOnline = isOtherUserOnline(conv);
         return `
@@ -1831,7 +1853,18 @@
     }
 
     function renderMessages() {
-      renderChatFeed(getActiveConversation());
+      const activeConversation = getActiveConversation();
+      if (activeConversation) {
+        const syncedConversation = syncConversationDerivedFields(activeConversation);
+        const index = state.conversations.findIndex((item) => item.id === activeConversation.id);
+        if (index >= 0) {
+          state.conversations[index] = syncedConversation;
+        }
+        renderChatFeed(syncedConversation);
+        renderConversationList();
+        return;
+      }
+      renderChatFeed(activeConversation);
     }
 
     async function handleChatFeedScroll() {
