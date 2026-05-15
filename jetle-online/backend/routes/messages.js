@@ -560,7 +560,6 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ success: false, error: "listing_not_found" });
     }
 
-    const listing = listingDoc?.toObject ? listingDoc.toObject() : listingDoc;
     const listingOwnerId = String(listingDoc?.user?._id || "").trim();
 
     let receiver;
@@ -577,7 +576,7 @@ router.post("/", async (req, res) => {
     if (!receiver) {
       console.error("RECEIVER EMAIL NOT FOUND", {
         listingId,
-        listingUser: listing?.user || null,
+        listingUser: listingDoc?.user || null,
         body: req.body
       });
       return res.status(400).json({ success: false, error: "receiver_not_found" });
@@ -585,9 +584,8 @@ router.post("/", async (req, res) => {
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
     const receiverEmail = String(
-      receiver.email ||
+      receiver?.email ||
       listingDoc?.user?.email ||
-      listingDoc?.user?.username ||
       ""
     ).trim().toLowerCase();
 
