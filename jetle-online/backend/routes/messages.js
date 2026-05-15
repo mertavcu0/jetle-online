@@ -327,8 +327,9 @@ router.get("/listing/:listingId", async (req, res) => {
       });
     }
 
+    const listingObjectId = asObjectId(listingId);
     const messages = await Message.find({
-      listingId: asObjectId(listingId),
+      listingId: listingObjectId,
       isDeleted: false,
       $or: [
         { senderId: asObjectId(currentUserId), receiverId: asObjectId(otherUserId) },
@@ -442,8 +443,9 @@ router.get("/:conversationId", async (req, res) => {
     const before = String(req.query.before || "").trim();
     const listing = await Listing.findById(parsed.listingId).populate("user", "name email");
 
+    const parsedListingObjectId = asObjectId(parsed.listingId);
     const messageQuery = {
-      listingId: asObjectId(parsed.listingId),
+      listingId: parsedListingObjectId,
       isDeleted: false,
       $or: [
         { senderId: asObjectId(userA), receiverId: asObjectId(userB) },
@@ -468,7 +470,7 @@ router.get("/:conversationId", async (req, res) => {
 
     await Message.updateMany(
       {
-        listingId: asObjectId(parsed.listingId),
+        listingId: parsedListingObjectId,
         senderId: { $ne: currentUser._id },
         receiverId: currentUser._id,
         isDeleted: false,
@@ -713,7 +715,7 @@ router.delete("/:id", async (req, res) => {
 
       await Message.updateMany(
         {
-          listingId: asObjectId(parsed.listingId),
+          listingId: parsedListingObjectId,
           isDeleted: false,
           $or: [
             { senderId: asObjectId(parsed.userIds[0]), receiverId: asObjectId(parsed.userIds[1]) },
