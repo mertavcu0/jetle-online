@@ -743,6 +743,8 @@ router.delete("/:id", async (req, res) => {
         return res.status(403).json({ error: "forbidden" });
       }
 
+      const parsedListingObjectId = asObjectId(parsed.listingId);
+
       await Message.updateMany(
         {
           listingId: parsedListingObjectId,

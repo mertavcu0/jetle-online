@@ -784,7 +784,9 @@
       typingStopTimer: null,
       typingActiveConversationId: "",
       loadingOlderMessages: false,
-      lastRenderedFeedKey: ""
+      lastRenderedFeedKey: "",
+      deletedConversationMeta: new Map(),
+      conversationRequestTokens: new Map()
     };
 
     function escapeHtml(value) {
@@ -1130,6 +1132,33 @@
       );
     }
 
+    function rememberDeletedConversation(conversation) {
+      if (!conversation) return;
+      const deletedAt = Date.now();
+      const identity = getConversationIdentity(conversation);
+      const stableKey = getConversationStableKey(conversation);
+      if (identity) {
+        state.deletedConversationMeta.set(identity, deletedAt);
+      }
+      if (stableKey) {
+        state.deletedConversationMeta.set(stableKey, deletedAt);
+      }
+    }
+
+    function getDeletedConversationTimestamp(conversation) {
+      if (!conversation) return 0;
+      return Math.max(
+        Number(state.deletedConversationMeta.get(getConversationIdentity(conversation)) || 0),
+        Number(state.deletedConversationMeta.get(getConversationStableKey(conversation)) || 0)
+      );
+    }
+
+    function clearDeletedConversationMarker(conversation) {
+      if (!conversation) return;
+      state.deletedConversationMeta.delete(getConversationIdentity(conversation));
+      state.deletedConversationMeta.delete(getConversationStableKey(conversation));
+    }
+
     function uniqueMessagesById(messages) {
       const seen = new Set();
       return (Array.isArray(messages) ? messages : []).filter((item) => {
@@ -1462,6 +1491,16 @@
 
       const nextConversations = conversations
         .map(normalizeConversation)
+        .filter((item) => {
+          const deletedAt = getDeletedConversationTimestamp(item);
+          if (!deletedAt) return true;
+          const updatedAt = new Date(item.updatedAt || item.lastMessage?.createdAt || 0).getTime();
+          if (updatedAt > deletedAt) {
+            clearDeletedConversationMarker(item);
+            return true;
+          }
+          return false;
+        })
         .map((item) => {
           const previous =
             previousById.get(item.id) ||
@@ -1569,8 +1608,12 @@
         item.conversationId === conversationId
       );
       if (!conversation) return;
+      const conversationIdentity = getConversationIdentity(conversation);
+      if (getDeletedConversationTimestamp(conversation)) return;
       const appendOlder = Boolean(options.appendOlder);
       const before = options.before || conversation.nextBefore || null;
+      const requestToken = `${Date.now()}:${Math.random().toString(36).slice(2)}`;
+      state.conversationRequestTokens.set(conversationIdentity, requestToken);
 
       try {
         const requestPath = getConversationRequestPath(conversation);
@@ -1595,6 +1638,12 @@
         const previousHeight = appendOlder && feed ? feed.scrollHeight : 0;
         const previousTop = appendOlder && feed ? feed.scrollTop : 0;
         const data = await apiFetch(requestUrl.pathname + requestUrl.search);
+        if (state.conversationRequestTokens.get(conversationIdentity) !== requestToken) {
+          return;
+        }
+        if (getDeletedConversationTimestamp(conversation)) {
+          return;
+        }
         const normalizedMessages = Array.isArray(data.messages)
           ? data.messages.map(normalizeMessage)
           : [];
@@ -1647,6 +1696,10 @@
       } catch (err) {
         if (err.status !== 404) {
           console.warn("CONVERSATION LOAD FAILED", err);
+        }
+      } finally {
+        if (state.conversationRequestTokens.get(conversationIdentity) === requestToken) {
+          state.conversationRequestTokens.delete(conversationIdentity);
         }
       }
     }
@@ -2074,6 +2127,14 @@
             updatedAt: renderedMessage.updatedAt || renderedMessage.createdAt,
             isPlaceholder: false
           });
+          clearDeletedConversationMarker({
+            ...(existingConversation || {}),
+            id: conversationId,
+            conversationId,
+            listingId: finalListingId,
+            otherUserId: listingOwner.receiverId || existingConversation?.otherUserId || "",
+            otherUserEmail: receiverEmail || existingConversation?.otherUserEmail || ""
+          });
           state.activeConversationId = conversationId;
 
           await loadConversationMessages(conversationId);
@@ -2166,6 +2227,8 @@
       if (!ok) return;
 
       try {
+        rememberDeletedConversation(conversation);
+        state.conversationRequestTokens.delete(getConversationIdentity(conversation));
         await apiFetch(withCurrentUserParams(`/api/messages/${encodeURIComponent(conversation.id)}`, {
           scope: "conversation"
         }), {
@@ -2173,8 +2236,10 @@
         });
 
         state.conversations = state.conversations.filter((item) => item.id !== conversation.id);
-        state.activeConversationId = state.conversations[0].id || null;
+        const nextConversation = state.conversations[0] || null;
+        state.activeConversationId = nextConversation?.id || null;
         state.editingMessageId = null;
+        state.lastRenderedFeedKey = "";
         renderAll();
       } catch (err) {
         console.error("CONVERSATION DELETE ERROR", err);
