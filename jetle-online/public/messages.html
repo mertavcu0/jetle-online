@@ -846,13 +846,15 @@
     function relativeImage(listing) {
       const safeListing = listing || {};
       const src =
-        (Array.isArray(safeListing.images) && safeListing.images[0]) ||
-        safeListing.image ||
-        safeListing.mainImage ||
         safeListing.coverImage ||
+        safeListing.mainImage ||
+        (Array.isArray(safeListing.images) && safeListing.images[0]) ||
         (Array.isArray(safeListing.photos) && safeListing.photos[0]) ||
+        safeListing.image ||
         "";
-      if (!src) return "https://picsum.photos/400/300";
+      if (!src) {
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480' viewBox='0 0 640 480'%3E%3Crect width='640' height='480' fill='%23eef2f7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%236b7280' font-family='Arial,sans-serif' font-size='24'%3EFoto%C4%9Fraf%20yok%3C/text%3E%3C/svg%3E";
+      }
       if (String(src).startsWith("http") || String(src).startsWith("data:")) return src;
       return `/${String(src).replace(/^\/+/, "")}`;
     }
@@ -1064,11 +1066,11 @@
         conversation?.message?.listing ||
         {};
       const firstImage =
-        listing?.image ||
-        listing?.mainImage ||
         listing?.coverImage ||
+        listing?.mainImage ||
         listing?.images?.[0] ||
         listing?.photos?.[0] ||
+        listing?.image ||
         "";
       const otherUser = conversation?.otherUser || {};
       const listingId = String(conversation?.listingId || listing?._id || listing?.id || "");
@@ -1609,7 +1611,7 @@
           id: data.id || conversation.id,
           listingId: safeListing?.id || safeListing?._id || conversation.listingId,
           listingTitle: safeListing?.title || conversation.listingTitle,
-          listingImage: safeListing?.image || safeListing?.images?.[0] || safeListing?.photos?.[0] || conversation.listingImage,
+          listingImage: relativeImage(safeListing) || conversation.listingImage,
           listingPrice: safeListing?.price ?? conversation.listingPrice,
           listingCity: safeListing?.city || conversation.listingCity,
           otherUserId: data?.otherUser?.id || data?.otherUser?._id || conversation.otherUserId,
@@ -1711,7 +1713,7 @@
       const presenceLabel = typingIndicator || (isOtherUserOnline(conversation) ? "Çevrimiçi" : "Çevrimdışı");
       header.innerHTML = `
         <div class="chat-header-main">
-          <img class="chat-listing-thumb" src="${escapeHtml(conversation.listingImage || "https://picsum.photos/120/120")}" alt="${escapeHtml(conversation.listingTitle)}">
+          <img class="chat-listing-thumb" src="${escapeHtml(conversation.listingImage || relativeImage(state.activeListing || {}))}" alt="${escapeHtml(conversation.listingTitle)}">
           <div class="chat-header-copy">
             <h2>${escapeHtml(conversation.otherUserName)}</h2>
             <p>${escapeHtml(conversation.listingTitle)}${presenceLabel ? ` â€¢ ${escapeHtml(presenceLabel)}` : ""}</p>
@@ -1842,7 +1844,7 @@
           <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
         </div>
         <div class="listing-summary-body">
-          <img class="listing-summary-image" src="${escapeHtml(conversation.listingImage || "https://picsum.photos/400/300")}" alt="${escapeHtml(conversation.listingTitle)}">
+          <img class="listing-summary-image" src="${escapeHtml(conversation.listingImage || relativeImage(state.activeListing || {}))}" alt="${escapeHtml(conversation.listingTitle)}">
           <div>
             <h4 class="listing-summary-title">${escapeHtml(conversation.listingTitle)}</h4>
           </div>

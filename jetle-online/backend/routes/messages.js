@@ -132,9 +132,13 @@ async function requireAuth(req, res, next) {
 }
 
 function normalizeImage(listing) {
-  const firstImage = Array.isArray(listing?.images) && listing.images.length
-    ? listing.images[0]
-    : listing?.image;
+  const firstImage =
+    listing?.coverImage ||
+    listing?.mainImage ||
+    ((Array.isArray(listing?.images) && listing.images.length) ? listing.images[0] : "") ||
+    ((Array.isArray(listing?.photos) && listing.photos.length) ? listing.photos[0] : "") ||
+    listing?.image ||
+    "";
 
   if (!firstImage) return "";
   if (String(firstImage).startsWith("http") || String(firstImage).startsWith("data:")) {
@@ -151,7 +155,10 @@ function normalizeListing(listing) {
     title: listing.title || "Ilan",
     price: listing.price || 0,
     city: listing.city || "",
-    image: normalizeImage(listing)
+    image: normalizeImage(listing),
+    coverImage: listing.coverImage || listing.mainImage || "",
+    images: Array.isArray(listing.images) ? listing.images.filter(Boolean) : [],
+    photos: Array.isArray(listing.photos) ? listing.photos.filter(Boolean) : []
   };
 }
 
@@ -240,7 +247,7 @@ router.get("/conversations", async (req, res) => {
           listingIds.map(async (id) => {
             if (!isValidObjectId(id)) return null;
             return await Listing.findById(id)
-              .select("title")
+              .select("title price city image images photos coverImage mainImage")
               .lean();
           })
         );
@@ -286,6 +293,9 @@ router.get("/conversations", async (req, res) => {
             conversationId: otherUserId ? makeConversationId(listingId, currentUserId, otherUserId) : "",
             listingId,
             listingTitle: listing?.title || "Ilan",
+            listingImage: normalizeImage(listing),
+            listingPrice: listing?.price || 0,
+            listingCity: listing?.city || "",
             lastMessage: message.text || "",
             updatedAt: message.updatedAt || message.createdAt || null,
             unreadCount: 0,
