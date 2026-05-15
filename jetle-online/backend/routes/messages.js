@@ -559,6 +559,7 @@ router.post("/", async (req, res) => {
         path: "user",
         select: "_id name email username"
       });
+      console.log("LISTING USER:", listingDoc?.user);
       console.log("[STEP 1 OK] Listing.findById populate user");
     } catch (err) {
       console.error("[STEP 1 FAIL]", err);
@@ -568,37 +569,35 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ success: false, error: "listing_not_found" });
     }
 
-    const listing = listingDoc?.toObject ? listingDoc.toObject() : listingDoc;
-    const listingOwnerId = String(listingDoc?.user?._id || listing?.user?._id || listing?.user || "").trim();
-    console.log("LISTING USER ID", listing?.user?._id || listing?.user);
+    const receiverId =
+      listingDoc?.user?._id ||
+      listingDoc?.user ||
+      null;
+
+    if (!receiverId) {
+      return res.status(400).json({
+        success: false,
+        error: "receiver_not_found"
+      });
+    }
 
     let receiver;
     try {
       console.log("[STEP 2 START] resolveReceiverFromListing");
-      if (listingOwnerId) {
-        receiver = await User.findById(listingOwnerId).select("_id name email username");
-      }
-      console.log("RECEIVER FOUND", receiver?._id, receiver?.email);
+      receiver = await User.findById(receiverId)
+        .select("_id name email username");
+      console.log("RECEIVER:", receiver);
       console.log("[STEP 2 OK] resolveReceiverFromListing");
     } catch (err) {
       console.error("[STEP 2 FAIL]", err);
       throw err;
     }
     if (!receiver) {
-      console.error("RECEIVER EMAIL NOT FOUND", {
-        listingId,
-        listingUser: listingDoc?.user || null,
-        body: req.body
-      });
       return res.status(400).json({ success: false, error: "receiver_not_found" });
     }
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
-    const receiverEmail = String(
-      receiver?.email ||
-      listingDoc?.user?.email ||
-      ""
-    ).trim().toLowerCase();
+    const receiverEmail = String(receiver?.email || "").trim().toLowerCase();
 
     if (String(receiver._id) === String(currentUser._id)) {
       return res.status(400).json({ success: false, error: "same_user" });
