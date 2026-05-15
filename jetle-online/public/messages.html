@@ -794,6 +794,7 @@
       conversations: [],
       activeConversationId: null,
       activeListing: null,
+      isHydratingListingConversation: Boolean(initialListingIdFromUrl && !conversationIdFromUrl),
       editingMessageId: null,
       socket: null,
       joinedConversationId: "",
@@ -900,6 +901,7 @@
     function normalizeListingOwner(listing) {
       const safeListing = listing || {};
       const owner = safeListing.user || {};
+      const receiverName = owner.name || owner.username || owner.email || "";
       return {
         receiverId: String(
           owner._id ||
@@ -917,7 +919,7 @@
           safeListing.sellerEmail ||
           ""
         ),
-        receiverName: owner.name || owner.username || owner.email || "Satıcı"
+        receiverName
       };
     }
 
@@ -949,12 +951,17 @@
         ""
       ).trim();
 
-      const useListingOwnerFallback = !explicitOtherUserId && !explicitOtherUserEmail && !explicitOtherUserName;
-      const otherUserId = useListingOwnerFallback ? listingOwner.receiverId : explicitOtherUserId;
-      const otherUserEmail = useListingOwnerFallback ? listingOwner.receiverEmail : explicitOtherUserEmail;
+      const hasDeterministicListingOwner = Boolean(
+        listingOwner.receiverId ||
+        listingOwner.receiverEmail ||
+        listingOwner.receiverName
+      );
+      const useListingOwnerFallback = hasDeterministicListingOwner || (!explicitOtherUserId && !explicitOtherUserEmail && !explicitOtherUserName);
+      const otherUserId = useListingOwnerFallback ? (listingOwner.receiverId || explicitOtherUserId) : explicitOtherUserId;
+      const otherUserEmail = useListingOwnerFallback ? (listingOwner.receiverEmail || explicitOtherUserEmail) : explicitOtherUserEmail;
       const otherUserName = useListingOwnerFallback
-        ? (listingOwner.receiverName || listingOwner.receiverEmail || "Satıcı")
-        : (explicitOtherUserName || explicitOtherUserEmail || listingOwner.receiverName || "Satıcı");
+        ? (listingOwner.receiverName || listingOwner.receiverEmail || explicitOtherUserName || explicitOtherUserEmail || "Satıcı")
+        : (explicitOtherUserName || explicitOtherUserEmail || "Satıcı");
 
       return {
         listingOwner,
@@ -969,6 +976,33 @@
         receiverId: String(listingOwner.receiverId || otherUserId || ""),
         receiverEmail: String(listingOwner.receiverEmail || otherUserEmail || "")
       };
+    }
+
+    function hasResolvedParticipant(conversation, fallbackListing = null) {
+      const participant = resolveConversationParticipant(conversation, fallbackListing);
+      return Boolean(
+        participant.otherUserId ||
+        participant.otherUserEmail ||
+        participant.otherUserName && participant.otherUserName !== "Satıcı"
+      );
+    }
+
+    function findConversationForListing(listing) {
+      const safeListing = listing || {};
+      const listingId = String(safeListing._id || safeListing.id || "").trim();
+      if (!listingId) return null;
+      const listingOwner = normalizeListingOwner(safeListing);
+      return state.conversations
+        .filter((item) => String(item.listingId || "").trim() === listingId)
+        .find((item) => {
+          if (listingOwner.receiverId && String(item.otherUserId || "").trim() === listingOwner.receiverId) {
+            return true;
+          }
+          if (listingOwner.receiverEmail && String(item.otherUserEmail || "").trim().toLowerCase() === listingOwner.receiverEmail.toLowerCase()) {
+            return true;
+          }
+          return false;
+        }) || null;
     }
 
     function getResolvedReceiverEmail() {
@@ -1644,7 +1678,7 @@
         }
       }
 
-      if (!state.activeConversationId && state.conversations.length) {
+      if (!state.activeConversationId && state.conversations.length && !state.isHydratingListingConversation) {
         state.activeConversationId = state.conversations[0].id;
       }
     }
@@ -1689,10 +1723,18 @@
 
       const resolvedListingId = initialListingIdFromUrl || String(listingIdFromUrl || "").trim();
       const listing = await fetchListingById(resolvedListingId);
-      if (!listing) return;
+      if (!listing) {
+        state.isHydratingListingConversation = false;
+        return;
+      }
 
       state.activeListing = listing;
       state.activeConversationId = null;
+      const matchedConversation = findConversationForListing(listing);
+      if (matchedConversation && hasResolvedParticipant(matchedConversation, listing)) {
+        state.activeConversationId = matchedConversation.id || matchedConversation.conversationId || null;
+      }
+      state.isHydratingListingConversation = false;
     }
 
     function getActiveConversation() {
@@ -1815,13 +1857,15 @@
       }
 
       list.innerHTML = state.conversations.map((conv) => {
+        const participantReady = hasResolvedParticipant(conv, state.activeListing || {});
+        const displayName = participantReady ? conv.otherUserName : "";
         const lastMessage = getConversationLastMessage(conv);
         const dateValue = conv?.updatedAt || conv?.createdAt || "";
         const isOnline = isOtherUserOnline(conv);
         return `
           <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" data-action="select-conversation" data-conversation-id="${escapeHtml(conv.id)}">
             <div class="conversation-top">
-              <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
+              <span class="conversation-name">${escapeHtml(displayName || "Konuşma")}</span>
               <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || dateValue))}</span>
             </div>
             <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj bulunmuyor.")}</div>
@@ -1858,6 +1902,16 @@
           <div class="chat-header-copy">
             <h2>Mesajlar</h2>
             <p>Bir konuşma seçildiğinde detaylar burada görünecek.</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (!hasResolvedParticipant(conversation, activeListing || {})) {
+        header.innerHTML = `
+          <div class="chat-header-copy">
+            <h2>Mesajlar</h2>
+            <p>Konuşma bilgileri hazırlanıyor.</p>
           </div>
         `;
         return;
@@ -1973,6 +2027,7 @@
 
       if (!conversation) {
         if (activeListing) {
+          const ownerLabel = listingOwner.receiverName || listingOwner.receiverEmail || "Bilinmiyor";
           panel.innerHTML = `
             <div class="listing-summary-header">
               <h3>İlan Özeti</h3>
@@ -1986,7 +2041,7 @@
               <div class="listing-summary-price">${escapeHtml(formatPrice(activeListing.price))}</div>
               <div class="listing-summary-meta">
                 ${activeListing.city ? `<span>${escapeHtml(activeListing.city)}</span>` : ""}
-                <span>İlan sahibi: ${escapeHtml(listingOwner.receiverName || listingOwner.receiverEmail || "Bilinmiyor")}</span>
+                <span>İlan sahibi: ${escapeHtml(ownerLabel)}</span>
               </div>
               <a class="listing-summary-link" href="${escapeHtml(buildListingUrl(activeListing._id || activeListing.id || ""))}">İlana Git</a>
             </div>
@@ -1999,6 +2054,17 @@
             <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
           </div>
           <div class="empty-panel">Bir ilan seçildiğinde özeti burada gösterilecek.</div>
+        `;
+        return;
+      }
+
+      if (!hasResolvedParticipant(conversation, activeListing || {})) {
+        panel.innerHTML = `
+          <div class="listing-summary-header">
+            <h3>İlan Özeti</h3>
+            <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
+          </div>
+          <div class="empty-panel">İlan sahibi bilgisi hazırlanıyor.</div>
         `;
         return;
       }
@@ -2416,6 +2482,9 @@
 
       try {
         if (hasAuthenticatedSession()) {
+          if (initialListingIdFromUrl && !conversationIdFromUrl) {
+            await ensureConversationFromListing();
+          }
           await loadConversations();
           if (conversationIdFromUrl) {
             const matchedConversation = state.conversations.find((item) =>
@@ -2430,7 +2499,7 @@
             }
           }
 
-          if (!state.activeConversationId) {
+          if (!state.activeConversationId && (!initialListingIdFromUrl || conversationIdFromUrl)) {
             await ensureConversationFromListing();
           }
 
