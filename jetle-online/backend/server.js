@@ -529,8 +529,7 @@ io.on("connection", (socket) => {
 
       await Message.updateMany(
         {
-          listingId: parsed.listingId,
-          senderId: { $ne: socket.user._id },
+          conversationId: normalizedConversationId,
           receiverId: socket.user._id,
           isDeleted: false,
           isRead: false
