@@ -981,7 +981,7 @@
                 <span style="font-size:12px;color:#6b7280;">Seç</span>
               </label>
               ${renderListingBadgesMarkup(item)}
-              <strong>${item.title || "?lan"}</strong>
+              <strong>${item.title || "İlan"}</strong>
               <div>${item.city || "Şehir yok"} - ${item.price ? number(item.price) + " TL" : "Fiyat yok"}</div>
               <p>Görüntülenme: ${item.views || 0}</p>
             </div>
@@ -1130,7 +1130,7 @@
               ? "<p>Bildirim yok</p>"
               : notifications.map(n => `
                 <div class="admin-card">
-                  <strong>${notificationIcons[n.type] || "??"} ${n.type}</strong>
+                  <strong>${notificationIcons[n.type] || "?"} ${n.type}</strong>
                   <p>${n.message}</p>
                   <small>${new Date(n.createdAt).toLocaleString()}</small>
                 </div>
@@ -1195,7 +1195,7 @@
           .then((data) => renderReports(data))
           .catch((err) => {
             console.error("REPORTS ERROR:", err);
-            container.innerHTML = `<h2>Raporlar</h2><div class="empty">Veri al?namad?</div>`;
+            container.innerHTML = `<h2>Raporlar</h2><div class="empty">Veri alınamadı.</div>`;
           });
       }
 
@@ -1217,17 +1217,17 @@
     }
 
     async function deleteListing(id) {
-      if (!window.confirm("Bu ilan? silmek istedi?inize emin misiniz")) {
+      if (!window.confirm("Bu ilanı silmek istediğinize emin misiniz?")) {
         return;
       }
       try {
         setLoading(true);
         const res = await authFetch("/api/admin/listings/" + id, { method: "DELETE" });
         ensureAdminResponse(res, "Delete failed");
-        showToast("?lan silindi.", "success");
+        showToast("İlan silindi.", "success");
       } catch (err) {
         console.error("DELETE ERROR:", err);
-        showToast("?lan silinemedi.", "error");
+        showToast("İlan silinemedi.", "error");
       } finally {
         setLoading(false);
       }
@@ -1258,14 +1258,14 @@
       }
       listingSelection = new Set();
       setLoading(false);
-      showToast("Se?ili ilanlar onayland?.", "success");
+      showToast("Seçili ilanlar onaylandı.", "success");
       loadPage("listings");
       await loadNotifications();
     }
 
     async function bulkRejectSelected() {
       const ids = Array.from(listingSelection);
-      if (!ids.length || !window.confirm("Se?ili ilanlar? reddetmek istedi?inize emin misiniz")) return;
+      if (!ids.length || !window.confirm("Seçili ilanları reddetmek istediğinize emin misiniz?")) return;
       setLoading(true);
       for (const id of ids) {
         try {
@@ -1277,7 +1277,7 @@
       }
       listingSelection = new Set();
       setLoading(false);
-      showToast("Se?ili ilanlar reddedildi.", "success");
+      showToast("Seçili ilanlar reddedildi.", "success");
       loadPage("listings");
       await loadNotifications();
     }
@@ -1289,16 +1289,16 @@
       openAdminModal(`
           <div class="admin-modal-head">
             <div>
-              <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "?lan")}</h2>
+              <h2 style="margin:0 0 6px;">${escapeHtml(item.title || "İlan")}</h2>
               <div style="color:#6b7280;">${escapeHtml(item.city || "")} ${item.price ? "- " + escapeHtml(number(item.price) + " TL") : ""}</div>
             </div>
           <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
         </div>
         <div style="margin-bottom:14px;">${renderListingBadgesMarkup(item)}</div>
-        <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "A??klama yok")}</p>
+        <p style="color:#374151;line-height:1.55;">${escapeHtml(item.description || item.desc || "Açıklama yok")}</p>
         <div class="admin-modal-grid">
           ${(images.length ? images : [item.image]).filter(Boolean).map((src) => `
-            <img src="${escapeHtml(src)}" alt="?lan g?rseli" />
+            <img src="${escapeHtml(src)}" alt="İlan görseli" />
           `).join("")}
         </div>
       `);
@@ -1312,7 +1312,7 @@
         openAdminModal(`
           <div class="admin-modal-head">
             <div>
-              <h2 style="margin:0 0 6px;">${escapeHtml(data.user.name || "Kullan?c?")}</h2>
+              <h2 style="margin:0 0 6px;">${escapeHtml(data.user.name || "Kullanıcı")}</h2>
               <div style="color:#6b7280;">${escapeHtml(data.user.email || "")}</div>
             </div>
             <button type="button" class="logout-btn" data-action="close-modal">Kapat</button>
@@ -1362,10 +1362,10 @@
         ensureAdminResponse(res, "Toggle failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("?lan durumu g?ncellendi.", "success");
+        showToast("İlan durumu güncellendi.", "success");
       } catch (err) {
         console.error(err);
-        showToast("??lem ba?ar?s?z.", "error");
+        showToast("İşlem başarısız.", "error");
       } finally {
         setLoading(false);
       }
@@ -1383,7 +1383,7 @@
         showToast("İlan şüpheli olarak işaretlendi.", "success");
       } catch (err) {
         console.error("SUSPICIOUS ERROR:", err);
-        showToast("??lem ba?ar?s?z.", "error");
+        showToast("İşlem başarısız.", "error");
       } finally {
         setLoading(false);
       }
@@ -1413,10 +1413,10 @@
         ensureAdminResponse(res, "Feature failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("?lan vitrine al?nd?.", "success");
+        showToast("İlan vitrine alındı.", "success");
       } catch (err) {
         console.error("FEATURE ERROR:", err);
-        showToast("Vitrin i?lemi ba?ar?s?z.", "error");
+        showToast("Vitrin işlemi başarısız.", "error");
         loadPage("listings");
       } finally {
         setLoading(false);
@@ -1430,10 +1430,10 @@
         ensureAdminResponse(res, "Approve failed");
         loadPage("listings");
         await loadNotifications();
-        showToast("?lan onayland?.", "success");
+        showToast("İlan onaylandı.", "success");
       } catch (err) {
         console.error("APPROVE ERROR:", err);
-        showToast("?lan onaylanamad?.", "error");
+        showToast("İlan onaylanamadı.", "error");
         loadPage("listings");
       } finally {
         setLoading(false);
@@ -1441,19 +1441,19 @@
     }
 
     function rejectListing(id) {
-      if (!window.confirm("Bu ilan? reddetmek istedi?inize emin misiniz")) {
+      if (!window.confirm("Bu ilanı reddetmek istediğinize emin misiniz?")) {
         return;
       }
       setLoading(true);
       authFetch(`/api/admin/listings/${id}/reject`, { method: "PATCH" })
         .then((res) => {
           ensureAdminResponse(res, "Reject failed");
-          showToast("?lan reddedildi.", "success");
+          showToast("İlan reddedildi.", "success");
           loadPage("listings");
         })
         .catch((err) => {
           console.error("REJECT ERROR:", err);
-          showToast("?lan reddedilemedi.", "error");
+          showToast("İlan reddedilemedi.", "error");
           loadPage("listings");
         })
         .finally(() => {
@@ -1466,10 +1466,10 @@
         setLoading(true);
         const res = await authFetch("/api/admin/users/" + id + "/ban", { method: "PATCH" });
         const data = await ensureAdminResponse(res, "Ban failed").json();
-        showToast(data.banned ? "Kullan?c? banland?." : "Kullan?c?n?n ban? kald?r?ld?.", "success");
+        showToast(data.banned ? "Kullanıcı banlandı." : "Kullanıcının banı kaldırıldı.", "success");
       } catch (err) {
         console.error("BAN ERROR:", err);
-        showToast("Kullan?c? i?lemi ba?ar?s?z.", "error");
+        showToast("Kullanıcı işlemi başarısız.", "error");
       } finally {
         setLoading(false);
       }
@@ -1558,4 +1558,3 @@
   </script>
 </body>
 </html>
-

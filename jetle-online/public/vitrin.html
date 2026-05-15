@@ -215,11 +215,11 @@
       return `
         <div class="listing-card featured-card" data-action="detail" data-url="${listingUrl(item)}">
           <div class="img-wrapper">
-            <img src="${escapeHtml(imageOf(item))}" alt="${escapeHtml(item.title || "?lan")}" loading="lazy">
+            <img src="${escapeHtml(imageOf(item))}" alt="${escapeHtml(item.title || "İlan")}" loading="lazy">
             <span class="badge-featured">Vitrin</span>
           </div>
           <div class="card-body">
-            <h3 class="title">${escapeHtml(item.title || "Ba?l?ks?z ilan")}</h3>
+            <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
             <p class="price">${formatPrice(item.price)}</p>
             <div class="meta">
               <span>${escapeHtml(item.city || item.location || "Konum yok")}</span>
@@ -231,21 +231,21 @@
     }
 
     async function loadFeaturedListings() {
-      grid.innerHTML = "<p>Vitrin ilanlar y?kleniyor...</p>";
+        grid.innerHTML = "<p>Vitrin ilanlar yükleniyor...</p>";
 
       try {
         const res = await fetch("/api/listings?featured=true");
-        if (!res.ok) throw new Error("Vitrin ilanlar al?namad?");
+        if (!res.ok) throw new Error("Vitrin ilanlar alınamadı");
 
         const data = await res.json();
         const listings = Array.isArray(data) ? data : [];
 
         grid.innerHTML = listings.length
           ? listings.map(cardTemplate).join("")
-          : "<p>Hen?z vitrin ilan bulunmuyor</p>";
+          : "<p>Henüz vitrin ilanı bulunmuyor.</p>";
       } catch (err) {
         console.error("VITRIN ERROR:", err);
-        grid.innerHTML = "<p>Vitrin ilanlar y?klenemedi</p>";
+        grid.innerHTML = "<p>Vitrin ilanlar yüklenemedi.</p>";
       }
     }
 
