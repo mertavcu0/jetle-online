@@ -1881,13 +1881,6 @@
         ""
       ).trim().toLowerCase();
 
-      if (!receiverEmail) {
-        console.error("RECEIVER EMAIL NOT FOUND");
-        setComposerStatus("Satıcı bilgisi bulunamadı.");
-        isSendingMessage = false;
-        return;
-      }
-
       try {
         setComposerStatus("");
         const previousActiveId = state.activeConversationId;
