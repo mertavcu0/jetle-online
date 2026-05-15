@@ -445,6 +445,7 @@ router.get("/:conversationId", async (req, res) => {
     }
 
     const [userA, userB] = parsed.userIds;
+    const conversationId = makeConversationId(parsed.listingId, userA, userB);
     const limit = Math.min(Math.max(Number(req.query.limit) || 30, 1), 100);
     const before = String(req.query.before || "").trim();
     const listing = await Listing.findById(parsed.listingId).populate("user", "name email");
@@ -476,8 +477,7 @@ router.get("/:conversationId", async (req, res) => {
 
     await Message.updateMany(
       {
-        listingId: parsedListingObjectId,
-        senderId: { $ne: currentUser._id },
+        conversationId: conversationId,
         receiverId: currentUser._id,
         isDeleted: false,
         isRead: false
@@ -490,7 +490,6 @@ router.get("/:conversationId", async (req, res) => {
     const otherUserId = parsed.userIds.find((id) => id !== currentUserId) || currentUserId;
     const otherUser = await User.findById(otherUserId).select("_id name email");
 
-    const conversationId = makeConversationId(parsed.listingId, userA, userB);
     const io = req.app.get("io");
     if (io) {
       io.to(conversationId).emit("messages_seen", {
