@@ -898,25 +898,76 @@
     }
 
     function normalizeListingOwner(listing) {
-      const owner = listing.user || {};
+      const safeListing = listing || {};
+      const owner = safeListing.user || {};
       return {
         receiverId: String(
           owner._id ||
           owner.id ||
-          listing.sellerId ||
-          listing.userId ||
-          listing.ownerId ||
+          safeListing.sellerId ||
+          safeListing.userId ||
+          safeListing.ownerId ||
           ""
         ),
         receiverEmail: String(
           owner.email ||
-          listing.userEmail ||
-          listing.email ||
-          listing.ownerEmail ||
-          listing.sellerEmail ||
+          safeListing.userEmail ||
+          safeListing.email ||
+          safeListing.ownerEmail ||
+          safeListing.sellerEmail ||
           ""
         ),
-        receiverName: owner.name || owner.email || "Satıcı"
+        receiverName: owner.name || owner.username || owner.email || "Satıcı"
+      };
+    }
+
+    function resolveConversationParticipant(conversation, fallbackListing = null) {
+      const safeConversation = conversation || {};
+      const listing =
+        safeConversation.listing ||
+        safeConversation.message?.listing ||
+        fallbackListing ||
+        {};
+      const listingOwner = normalizeListingOwner(listing);
+      const rawOtherUser = safeConversation.otherUser || {};
+      const explicitOtherUserId = String(
+        safeConversation.otherUserId ||
+        rawOtherUser._id ||
+        rawOtherUser.id ||
+        ""
+      ).trim();
+      const explicitOtherUserEmail = String(
+        safeConversation.otherUserEmail ||
+        rawOtherUser.email ||
+        ""
+      ).trim().toLowerCase();
+      const explicitOtherUserName = String(
+        safeConversation.otherUserName ||
+        rawOtherUser.name ||
+        rawOtherUser.username ||
+        rawOtherUser.email ||
+        ""
+      ).trim();
+
+      const useListingOwnerFallback = !explicitOtherUserId && !explicitOtherUserEmail && !explicitOtherUserName;
+      const otherUserId = useListingOwnerFallback ? listingOwner.receiverId : explicitOtherUserId;
+      const otherUserEmail = useListingOwnerFallback ? listingOwner.receiverEmail : explicitOtherUserEmail;
+      const otherUserName = useListingOwnerFallback
+        ? (listingOwner.receiverName || listingOwner.receiverEmail || "Satıcı")
+        : (explicitOtherUserName || explicitOtherUserEmail || listingOwner.receiverName || "Satıcı");
+
+      return {
+        listingOwner,
+        otherUser: {
+          _id: otherUserId || "",
+          email: otherUserEmail || "",
+          name: otherUserName || ""
+        },
+        otherUserId: String(otherUserId || ""),
+        otherUserEmail: String(otherUserEmail || ""),
+        otherUserName: String(otherUserName || ""),
+        receiverId: String(listingOwner.receiverId || otherUserId || ""),
+        receiverEmail: String(listingOwner.receiverEmail || otherUserEmail || "")
       };
     }
 
@@ -930,10 +981,10 @@
     }
 
     function getConversationReceiver(conversation) {
-      const listingOwner = normalizeListingOwner(state.activeListing || {});
+      const participant = resolveConversationParticipant(conversation, state.activeListing || {});
       return {
-        receiverId: String(conversation.otherUserId || listingOwner.receiverId || ""),
-        receiverEmail: String(conversation.otherUserEmail || listingOwner.receiverEmail || "")
+        receiverId: participant.receiverId,
+        receiverEmail: participant.receiverEmail
       };
     }
 
@@ -1092,18 +1143,11 @@
         listing?.photos?.[0] ||
         listing?.image ||
         "";
-      const otherUser = conversation?.otherUser || {};
+      const participant = resolveConversationParticipant(conversation, listing);
       const listingId = String(conversation?.listingId || listing?._id || listing?.id || "");
-      const otherUserId = String(conversation?.otherUserId || otherUser?._id || otherUser?.id || "");
-      const otherUserEmail = String(conversation?.otherUserEmail || otherUser?.email || "");
-      const otherUserName = String(
-        conversation?.otherUserName ||
-        otherUser?.name ||
-        otherUser?.email ||
-        listing?.user?.email ||
-        listing?.user?.username ||
-        "Satıcı"
-      );
+      const otherUserId = participant.otherUserId;
+      const otherUserEmail = participant.otherUserEmail;
+      const otherUserName = participant.otherUserName;
       const listingTitle = String(conversation?.listingTitle || listing?.title || "İlan");
       const listingPrice = conversation?.listingPrice ?? listing?.price ?? "";
       const listingCity = String(conversation?.listingCity || listing?.city || "");
@@ -1113,9 +1157,14 @@
         _id: conversation?._id || "",
         conversationId: conversation?.conversationId || conversation?.id || conversation?._id || "",
         listingId,
+        listing,
+        listingOwner: participant.listingOwner,
+        otherUser: participant.otherUser,
         otherUserId,
         otherUserEmail,
         otherUserName,
+        receiverId: participant.receiverId,
+        receiverEmail: participant.receiverEmail,
         listingTitle,
         listingImage: conversation?.listingImage || firstImage || "",
         listingPrice,
@@ -1253,8 +1302,16 @@
     function syncConversationDerivedFields(conversation) {
       if (!conversation) return conversation;
       const lastMessage = getConversationLastMessage(conversation);
+      const participant = resolveConversationParticipant(conversation, conversation.listing || state.activeListing || {});
       return {
         ...conversation,
+        listingOwner: participant.listingOwner,
+        otherUser: participant.otherUser,
+        otherUserId: participant.otherUserId,
+        otherUserEmail: participant.otherUserEmail,
+        otherUserName: participant.otherUserName,
+        receiverId: participant.receiverId,
+        receiverEmail: participant.receiverEmail,
         lastMessage,
         updatedAt:
           lastMessage?.updatedAt ||
@@ -1557,6 +1614,7 @@
           return {
             ...previous,
             ...item,
+            listing: item.listing || previous.listing || null,
             messages: mergedMessages,
             lastMessage,
             updatedAt: item.updatedAt || previous.updatedAt,
@@ -1698,6 +1756,9 @@
         upsertConversation({
           ...conversation,
           id: data.id || conversation.id,
+          listing: safeListing?._id || safeListing?.id ? safeListing : (conversation.listing || state.activeListing || null),
+          listingOwner: normalizeListingOwner(safeListing?._id || safeListing?.id ? safeListing : (conversation.listing || state.activeListing || null)),
+          otherUser: data?.otherUser || conversation.otherUser || null,
           listingId: safeListing?.id || safeListing?._id || conversation.listingId,
           listingTitle: safeListing?.title || conversation.listingTitle,
           listingImage: relativeImage(safeListing) || conversation.listingImage,
@@ -1781,7 +1842,7 @@
 
       if (!conversation) {
         if (activeListing) {
-          const ownerLabel = listingOwner.receiverEmail || listingOwner.receiverName || "İlan sahibi";
+          const ownerLabel = listingOwner.receiverName || listingOwner.receiverEmail || "İlan sahibi";
           header.innerHTML = `
             <div class="chat-header-main">
               <img class="chat-listing-thumb" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "İlan")}">
@@ -1925,7 +1986,7 @@
               <div class="listing-summary-price">${escapeHtml(formatPrice(activeListing.price))}</div>
               <div class="listing-summary-meta">
                 ${activeListing.city ? `<span>${escapeHtml(activeListing.city)}</span>` : ""}
-                <span>İlan sahibi: ${escapeHtml(listingOwner.receiverEmail || listingOwner.receiverName || "Bilinmiyor")}</span>
+                <span>İlan sahibi: ${escapeHtml(listingOwner.receiverName || listingOwner.receiverEmail || "Bilinmiyor")}</span>
               </div>
               <a class="listing-summary-link" href="${escapeHtml(buildListingUrl(activeListing._id || activeListing.id || ""))}">İlana Git</a>
             </div>
@@ -1955,7 +2016,7 @@
           <div class="listing-summary-price">${escapeHtml(formatPrice(conversation.listingPrice))}</div>
           <div class="listing-summary-meta">
             ${conversation.listingCity ? `<span>${escapeHtml(conversation.listingCity)}</span>` : ""}
-            <span>İlan sahibi: ${escapeHtml(conversation.otherUserName)}</span>
+            <span>İlan sahibi: ${escapeHtml(conversation.listingOwner?.receiverName || conversation.listingOwner?.receiverEmail || conversation.otherUserName || "Bilinmiyor")}</span>
           </div>
           <a class="listing-summary-link" href="${escapeHtml(conversation.listingUrl)}">İlana Git</a>
         </div>
@@ -2164,10 +2225,17 @@
             ...(existingConversation || {}),
             id: conversationId,
             conversationId,
+            listing: safeActiveListing,
+            listingOwner,
+            otherUser: {
+              _id: listingOwner.receiverId || "",
+              email: receiverEmail || "",
+              name: listingOwner.receiverName || receiverEmail || ""
+            },
             listingId: finalListingId,
             otherUserId: listingOwner.receiverId || existingConversation?.otherUserId || "",
             otherUserEmail: receiverEmail || existingConversation?.otherUserEmail || "",
-            otherUserName: receiverEmail || existingConversation?.otherUserName || "",
+            otherUserName: listingOwner.receiverName || receiverEmail || existingConversation?.otherUserName || "",
             listingTitle: safeActiveListing?.title || existingConversation?.listingTitle || "İlan",
             listingImage: relativeImage(safeActiveListing) || existingConversation?.listingImage || "",
             listingPrice: safeActiveListing?.price ?? existingConversation?.listingPrice ?? "",
