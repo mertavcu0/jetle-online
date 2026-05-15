@@ -342,7 +342,7 @@ router.get("/listing/:listingId", async (req, res) => {
         { senderId: asObjectId(otherUserId), receiverId: asObjectId(currentUserId) }
       ]
     })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .limit(50)
       .populate("senderId", "name email")
       .populate("receiverId", "name email")
@@ -358,7 +358,7 @@ router.get("/listing/:listingId", async (req, res) => {
       });
     }
 
-    const orderedMessages = messages.reverse();
+    const orderedMessages = messages;
     const conversationId = makeConversationId(listingId, currentUserId, otherUserId);
 
     return res.status(200).json({
@@ -410,7 +410,7 @@ router.get("/:conversationId", async (req, res) => {
           { receiverId: asObjectId(legacyUserId) }
         ]
       })
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .limit(100)
         .populate("listingId", "title")
         .populate("senderId", "email name")
@@ -468,12 +468,12 @@ router.get("/:conversationId", async (req, res) => {
     }
 
     const messages = await Message.find(messageQuery)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .limit(limit)
       .populate("senderId", "name email")
       .populate("receiverId", "name email")
       .lean();
-    const orderedMessages = messages.reverse();
+    const orderedMessages = messages;
 
     await Message.updateMany(
       {
