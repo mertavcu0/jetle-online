@@ -547,7 +547,10 @@ router.post("/", async (req, res) => {
     let listingDoc;
     try {
       console.log("[STEP 1 START] Listing.findById populate user");
-      listingDoc = await Listing.findById(listingId).populate("user", "_id name email username");
+      listingDoc = await Listing.findById(listingId).populate({
+        path: "user",
+        select: "_id name email username"
+      });
       console.log("[STEP 1 OK] Listing.findById populate user");
     } catch (err) {
       console.error("[STEP 1 FAIL]", err);
@@ -557,14 +560,39 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ success: false, error: "listing_not_found" });
     }
 
+    const listing = listingDoc?.toObject ? listingDoc.toObject() : listingDoc;
+    console.log("LISTING RAW", JSON.stringify(listing, null, 2));
+
+    const resolvedReceiverEmail =
+      listing?.user?.email ||
+      listing?.user?.username ||
+      listing?.email ||
+      req.body?.receiverEmail ||
+      null;
+
+    console.log("RESOLVED RECEIVER", resolvedReceiverEmail);
+
+    if (!resolvedReceiverEmail) {
+      return res.status(400).json({
+        success: false,
+        error: "receiver_not_found",
+        listing
+      });
+    }
+
     let receiver;
     try {
       console.log("[STEP 2 START] resolveReceiverFromListing");
-      receiver = await resolveReceiverFromListing(
-        listingDoc,
-        currentUser._id,
-        req.body?.receiverEmail
-      );
+      if (listingDoc?.user?._id) {
+        receiver = await User.findById(listingDoc.user._id).select("_id name email username");
+      } else {
+        receiver = await User.findOne({
+          $or: [
+            { email: String(resolvedReceiverEmail).trim().toLowerCase() },
+            { username: String(resolvedReceiverEmail).trim() }
+          ]
+        }).select("_id name email username");
+      }
       console.log("[STEP 2 OK] resolveReceiverFromListing");
     } catch (err) {
       console.error("[STEP 2 FAIL]", err);
@@ -573,10 +601,14 @@ router.post("/", async (req, res) => {
     if (!receiver) {
       console.error("RECEIVER EMAIL NOT FOUND", {
         listingId,
-        listingUser: listingDoc?.user || null,
+        listingUser: listing?.user || null,
         body: req.body
       });
-      return res.status(400).json({ success: false, error: "receiver_not_found" });
+      return res.status(400).json({
+        success: false,
+        error: "receiver_not_found",
+        listing
+      });
     }
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
