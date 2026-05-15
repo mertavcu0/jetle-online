@@ -770,7 +770,6 @@
     const conversationIdFromUrl = params.get("conversationId") || "";
     const listingIdFromUrl = params.get("listingId") || params.get("id") || "";
     const initialListingIdFromUrl = String(listingIdFromUrl || "").trim();
-    console.log("[URL LISTING ID]", listingIdFromUrl);
     let isSendingMessage = false;
     const state = {
       user: null,
@@ -1119,6 +1118,83 @@
       ].join("|");
     }
 
+    function getConversationIdentity(conversation) {
+      if (!conversation) return "";
+      return String(
+        conversation.conversationId ||
+        conversation.id ||
+        conversation._id ||
+        getConversationStableKey(conversation)
+      );
+    }
+
+    function uniqueMessagesById(messages) {
+      const seen = new Set();
+      return (Array.isArray(messages) ? messages : []).filter((item) => {
+        const key = String(item?.id || item?._id || "");
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function mergeConversationMessages(existingMessages, incomingMessages) {
+      const existing = uniqueMessagesById(existingMessages);
+      const incoming = uniqueMessagesById(incomingMessages);
+
+      if (!incoming.length && existing.length) {
+        return existing;
+      }
+
+      const mergedById = new Map();
+      existing.forEach((item) => {
+        mergedById.set(String(item.id || item._id || ""), item);
+      });
+      incoming.forEach((item) => {
+        const key = String(item.id || item._id || "");
+        const previous = mergedById.get(key) || {};
+        mergedById.set(key, {
+          ...previous,
+          ...item,
+          pending: item.pending ?? previous.pending ?? false,
+          localOnly: item.localOnly ?? previous.localOnly ?? false,
+          status: item.status || previous.status || "sent"
+        });
+      });
+
+      return Array.from(mergedById.values()).sort(
+        (a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+      );
+    }
+
+    function areMessagesEquivalent(leftMessages, rightMessages) {
+      const left = uniqueMessagesById(leftMessages);
+      const right = uniqueMessagesById(rightMessages);
+      if (left.length !== right.length) return false;
+
+      return left.every((item, index) => {
+        const other = right[index];
+        return (
+          String(item?.id || "") === String(other?.id || "") &&
+          String(item?.updatedAt || item?.createdAt || "") === String(other?.updatedAt || other?.createdAt || "") &&
+          String(item?.text || "") === String(other?.text || "") &&
+          Boolean(item?.isRead) === Boolean(other?.isRead) &&
+          Boolean(item?.edited) === Boolean(other?.edited)
+        );
+      });
+    }
+
+    function areConversationsEquivalent(left, right) {
+      if (!left || !right) return false;
+      return (
+        getConversationIdentity(left) === getConversationIdentity(right) &&
+        String(left?.updatedAt || "") === String(right?.updatedAt || "") &&
+        String(left?.lastMessage?.id || "") === String(right?.lastMessage?.id || "") &&
+        Number(left?.unreadCount || 0) === Number(right?.unreadCount || 0) &&
+        areMessagesEquivalent(left?.messages, right?.messages)
+      );
+    }
+
     function getRealtimeConversationId(conversation) {
       if (!conversation) return "";
       if (conversation.conversationId && isBackendConversationId(conversation.conversationId)) {
@@ -1382,7 +1458,7 @@
         state.conversations.map((item) => [getConversationStableKey(item), item])
       );
 
-      state.conversations = conversations
+      const nextConversations = conversations
         .map(normalizeConversation)
         .map((item) => {
           const previous =
@@ -1391,29 +1467,36 @@
 
           if (!previous) return item;
 
-          const previousMessages = Array.isArray(previous.messages) ? previous.messages : [];
-          const incomingMessages = Array.isArray(item.messages) ? item.messages : [];
-          const shouldKeepExistingMessages = previousMessages.length > incomingMessages.length;
-          const mergedMessages = shouldKeepExistingMessages ? previousMessages : incomingMessages;
-          if (shouldKeepExistingMessages) {
-            console.log("MERGE KEEP EXISTING MESSAGES", {
-              conversationId: item.conversationId || item.id,
-              previousCount: previousMessages.length,
-              incomingCount: incomingMessages.length
-            });
-          }
+          const mergedMessages = mergeConversationMessages(previous.messages, item.messages);
+          const lastMessage =
+            item.lastMessage ||
+            previous.lastMessage ||
+            mergedMessages[mergedMessages.length - 1] ||
+            null;
 
           return {
             ...previous,
             ...item,
-            messages: mergedMessages.length ? mergedMessages : previousMessages,
-            lastMessage: item.lastMessage || previous.lastMessage,
+            messages: mergedMessages,
+            lastMessage,
             updatedAt: item.updatedAt || previous.updatedAt,
             conversationId: item.conversationId || previous.conversationId
           };
         })
-        .filter((item, index, arr) => arr.findIndex((candidate) => candidate.id === item.id) === index)
+        .filter((item, index, arr) => arr.findIndex((candidate) =>
+          getConversationIdentity(candidate) === getConversationIdentity(item)
+        ) === index)
         .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+      const hasMeaningfulChange =
+        nextConversations.length !== state.conversations.length ||
+        nextConversations.some((item, index) => !areConversationsEquivalent(item, state.conversations[index]));
+
+      if (!hasMeaningfulChange) {
+        return;
+      }
+
+      state.conversations = nextConversations;
 
       if (state.activeConversationId && !state.conversations.some((item) => item.id === state.activeConversationId) && previousActiveKey) {
         const fallbackActive = state.conversations.find((item) => getConversationStableKey(item) === previousActiveKey);
@@ -1429,15 +1512,23 @@
 
     function upsertConversation(conversation) {
       const normalized = normalizeConversation(conversation);
-      const index = state.conversations.findIndex((item) => item.id === normalized.id);
+      const index = state.conversations.findIndex((item) =>
+        getConversationIdentity(item) === getConversationIdentity(normalized)
+      );
 
       if (index === -1) {
         state.conversations.unshift(normalized);
       } else {
+        const existing = state.conversations[index];
         state.conversations[index] = {
-          ...state.conversations[index],
+          ...existing,
           ...normalized,
-          messages: normalized.messages.length ? normalized.messages : state.conversations[index].messages
+          messages: mergeConversationMessages(existing.messages, normalized.messages),
+          lastMessage:
+            normalized.lastMessage ||
+            existing.lastMessage ||
+            mergeConversationMessages(existing.messages, normalized.messages).slice(-1)[0] ||
+            null
         };
       }
 
@@ -1455,12 +1546,6 @@
     }
 
     async function ensureConversationFromListing() {
-      console.log("[ENSURE START]", {
-        listingIdFromUrl,
-        initialListingIdFromUrl,
-        activeListing: state.activeListing,
-        activeConversation: getActiveConversation()
-      });
       if (!initialListingIdFromUrl && !listingIdFromUrl) return;
 
       const resolvedListingId = initialListingIdFromUrl || String(listingIdFromUrl || "").trim();
@@ -1508,28 +1593,16 @@
         const previousHeight = appendOlder && feed ? feed.scrollHeight : 0;
         const previousTop = appendOlder && feed ? feed.scrollTop : 0;
         const data = await apiFetch(requestUrl.pathname + requestUrl.search);
-        console.log("LOAD MESSAGES RESPONSE", data);
-        console.log("ACTIVE CONVERSATION BEFORE MERGE", conversation);
         const normalizedMessages = Array.isArray(data.messages)
           ? data.messages.map(normalizeMessage)
           : [];
         const existingMessages = Array.isArray(conversation.messages) ? conversation.messages : [];
         if (!appendOlder && !normalizedMessages.length && existingMessages.length) {
-          console.log("SKIP EMPTY RESPONSE OVERWRITE", {
-            conversationId: conversation.conversationId || conversation.id,
-            existingCount: existingMessages.length
-          });
           return;
         }
-        const shouldPreserveExisting = !appendOlder && !normalizedMessages.length && existingMessages.length > 0;
-        const mergedMessages = appendOlder
-          ? [...normalizedMessages, ...existingMessages]
-          : shouldPreserveExisting
-            ? existingMessages
-            : normalizedMessages;
-        const uniqueMessages = mergedMessages.filter((item, index, arr) =>
-          arr.findIndex((candidate) => candidate.id === item.id) === index
-        );
+        const uniqueMessages = appendOlder
+          ? mergeConversationMessages(normalizedMessages, existingMessages)
+          : mergeConversationMessages(existingMessages, normalizedMessages);
         const safeListing = data?.listing || {};
         upsertConversation({
           ...conversation,
@@ -1553,10 +1626,11 @@
         });
         const activeConversation = getActiveConversation();
         if (activeConversation) {
-          activeConversation.messages = uniqueMessages;
+          if (uniqueMessages.length || !activeConversation.messages?.length) {
+            activeConversation.messages = uniqueMessages;
+          }
           activeConversation.hasMoreMessages = Boolean(data.pageInfo.hasMore);
           activeConversation.nextBefore = data.pageInfo.nextBefore || null;
-          console.log("ACTIVE CONVERSATION AFTER MERGE", activeConversation);
           renderMessages();
           if (appendOlder && feed) {
             const nextHeight = feed.scrollHeight;
@@ -1875,19 +1949,12 @@
       const activeConversation = getActiveConversation();
       const activeListing = state.activeListing || {};
       isSendingMessage = true;
-      console.log("[SEND START]", {
-        initialListingIdFromUrl,
-        listingIdFromUrl,
-        activeConversation,
-        activeListing
-      });
       const finalListingId =
         initialListingIdFromUrl ||
         listingIdFromUrl ||
         activeConversation?.listingId ||
         activeListing._id ||
         activeListing.id;
-      console.log("[FINAL LISTING ID]", finalListingId);
 
       if (!text) {
         isSendingMessage = false;
@@ -1901,13 +1968,6 @@
       }
 
       if (!finalListingId) {
-        console.log("[FINAL LISTING ID EMPTY FIELDS]", {
-          initialListingIdFromUrl,
-          listingIdFromUrl,
-          activeConversationListingId: activeConversation?.listingId,
-          activeListingObjectId: activeListing?._id,
-          activeListingId: activeListing?.id
-        });
         setComposerStatus("İlan bilgisi bulunamadı.");
         isSendingMessage = false;
         return;
@@ -1963,8 +2023,6 @@
             return;
           }
 
-          console.log("SEND OK RESPONSE", data);
-
           const renderedMessage = normalizeMessage(
             data.message || {
               text,
@@ -1996,8 +2054,6 @@
             ? existingMessages
             : [...existingMessages, renderedMessage];
 
-          console.log("ACTIVE CONVERSATION BEFORE MERGE", existingConversation || null);
-
           upsertConversation({
             ...(existingConversation || {}),
             id: conversationId,
@@ -2016,21 +2072,9 @@
             updatedAt: renderedMessage.updatedAt || renderedMessage.createdAt,
             isPlaceholder: false
           });
-          console.log("LOCAL MESSAGE PRESERVED", {
-            conversationId,
-            messageId: renderedMessage.id,
-            localCount: mergedLocalMessages.length
-          });
           state.activeConversationId = conversationId;
 
-          console.log("ACTIVE CONVERSATION AFTER MERGE", getActiveConversation());
-
           await loadConversationMessages(conversationId);
-          await loadConversations();
-          const conversation = getActiveConversation();
-          if (conversation) {
-            renderMessages();
-          }
         }
 
         state.editingMessageId = null;
