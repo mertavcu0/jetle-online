@@ -66,6 +66,17 @@ function asObjectId(value) {
   return new mongoose.Types.ObjectId(String(value));
 }
 
+function normalizeId(value) {
+  if (!value) return "";
+
+  if (typeof value === "object") {
+    if (value.$ne) return String(value.$ne);
+    if (value._id) return String(value._id);
+  }
+
+  return String(value);
+}
+
 function makeConversationId(listingId, senderId, receiverId) {
   const users = [String(senderId), String(receiverId)].sort();
   return `listing:${String(listingId)}:users:${users.join("__")}`;
@@ -198,7 +209,8 @@ router.get("/conversations", async (req, res) => {
     }
 
     const query = {};
-    const userObjectId = asObjectId(currentUserId);
+    const safeCurrentUserId = normalizeId(currentUserId);
+    const userObjectId = asObjectId(safeCurrentUserId);
     query.$or = [
       { senderId: userObjectId },
       { receiverId: userObjectId }
@@ -325,6 +337,8 @@ router.get("/listing/:listingId", async (req, res) => {
 
     const currentUserId = String(currentUser._id);
     const otherUserId = String(listing.user._id);
+    const safeCurrentUserId = normalizeId(currentUserId);
+    const safeOtherUserId = normalizeId(otherUserId);
     if (!currentUserId || !otherUserId || currentUserId === otherUserId) {
       return res.status(200).json({
         success: false,
@@ -338,8 +352,8 @@ router.get("/listing/:listingId", async (req, res) => {
       listingId: listingObjectId,
       isDeleted: false,
       $or: [
-        { senderId: asObjectId(currentUserId), receiverId: asObjectId(otherUserId) },
-        { senderId: asObjectId(otherUserId), receiverId: asObjectId(currentUserId) }
+        { senderId: asObjectId(safeCurrentUserId), receiverId: asObjectId(safeOtherUserId) },
+        { senderId: asObjectId(safeOtherUserId), receiverId: asObjectId(safeCurrentUserId) }
       ]
     })
       .sort({ createdAt: 1 })
@@ -402,12 +416,13 @@ router.get("/:conversationId", async (req, res) => {
     }
 
     const legacyUserId = String(req.params.conversationId || "").trim();
-    if (isValidObjectId(legacyUserId) && legacyUserId === String(currentUser._id)) {
+    const safeLegacyUserId = normalizeId(legacyUserId);
+    if (isValidObjectId(safeLegacyUserId) && safeLegacyUserId === String(currentUser._id)) {
       const legacyMessages = await Message.find({
         isDeleted: false,
         $or: [
-          { senderId: asObjectId(legacyUserId) },
-          { receiverId: asObjectId(legacyUserId) }
+          { senderId: asObjectId(safeLegacyUserId) },
+          { receiverId: asObjectId(safeLegacyUserId) }
         ]
       })
         .sort({ createdAt: 1 })
@@ -445,7 +460,9 @@ router.get("/:conversationId", async (req, res) => {
     }
 
     const [userA, userB] = parsed.userIds;
-    const conversationId = makeConversationId(parsed.listingId, userA, userB);
+    const safeUserA = normalizeId(userA);
+    const safeUserB = normalizeId(userB);
+    const conversationId = makeConversationId(parsed.listingId, safeUserA, safeUserB);
     const limit = Math.min(Math.max(Number(req.query.limit) || 30, 1), 100);
     const before = String(req.query.before || "").trim();
     const listing = await Listing.findById(parsed.listingId).populate("user", "name email");
@@ -455,8 +472,8 @@ router.get("/:conversationId", async (req, res) => {
       listingId: parsedListingObjectId,
       isDeleted: false,
       $or: [
-        { senderId: asObjectId(userA), receiverId: asObjectId(userB) },
-        { senderId: asObjectId(userB), receiverId: asObjectId(userA) }
+        { senderId: asObjectId(safeUserA), receiverId: asObjectId(safeUserB) },
+        { senderId: asObjectId(safeUserB), receiverId: asObjectId(safeUserA) }
       ]
     };
 
@@ -721,8 +738,8 @@ router.delete("/:id", async (req, res) => {
           listingId: parsedListingObjectId,
           isDeleted: false,
           $or: [
-            { senderId: asObjectId(parsed.userIds[0]), receiverId: asObjectId(parsed.userIds[1]) },
-            { senderId: asObjectId(parsed.userIds[1]), receiverId: asObjectId(parsed.userIds[0]) }
+            { senderId: asObjectId(normalizeId(parsed.userIds[0])), receiverId: asObjectId(normalizeId(parsed.userIds[1])) },
+            { senderId: asObjectId(normalizeId(parsed.userIds[1])), receiverId: asObjectId(normalizeId(parsed.userIds[0])) }
           ]
         },
         {
