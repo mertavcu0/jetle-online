@@ -1718,7 +1718,7 @@
         const dateValue = conv?.updatedAt || conv?.createdAt || "";
         const isOnline = isOtherUserOnline(conv);
         return `
-          <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" onclick="selectConversation('${escapeHtml(conv.id)}')">
+          <button class="conversation-item ${conv.id === state.activeConversationId ? "active" : ""}" type="button" data-action="select-conversation" data-conversation-id="${escapeHtml(conv.id)}">
             <div class="conversation-top">
               <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
               <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || dateValue))}</span>
@@ -1773,7 +1773,7 @@
           </div>
         </div>
         <div class="chat-header-actions">
-          <button class="chat-header-btn" type="button" onclick="deleteConversation()">Sohbeti Sil</button>
+          <button class="chat-header-btn" type="button" data-action="delete-conversation">Sohbeti Sil</button>
         </div>
       `;
     }
@@ -1819,8 +1819,8 @@
             ${mine ? `
               <div class="message-tools">
                 ${msg.edited ? `<span class="edited-badge">düzenlendi</span>` : ""}
-                <button class="message-tool" type="button" onclick="startEditMessage('${escapeHtml(msg.id)}')">Düzenle</button>
-                <button class="message-tool" type="button" onclick="deleteMessage('${escapeHtml(msg.id)}')">Sil</button>
+                <button class="message-tool" type="button" data-action="edit-message" data-message-id="${escapeHtml(msg.id)}">Düzenle</button>
+                <button class="message-tool" type="button" data-action="delete-message" data-message-id="${escapeHtml(msg.id)}">Sil</button>
               </div>
             ` : ""}
           </div>
@@ -2258,6 +2258,40 @@
       window.location.href = "/login.html";
     }
 
+    async function handleConversationListClick(event) {
+      const button = event.target.closest('[data-action="select-conversation"]');
+      if (!button) return;
+      event.preventDefault();
+      const conversationId = String(button.dataset.conversationId || "").trim();
+      if (!conversationId) return;
+      await selectConversation(conversationId);
+    }
+
+    async function handleChatHeaderClick(event) {
+      const button = event.target.closest('[data-action="delete-conversation"]');
+      if (!button) return;
+      event.preventDefault();
+      await deleteConversation();
+    }
+
+    async function handleChatFeedClick(event) {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+      event.preventDefault();
+
+      const action = String(button.dataset.action || "").trim();
+      const messageId = String(button.dataset.messageId || "").trim();
+
+      if (action === "edit-message" && messageId) {
+        startEditMessage(messageId);
+        return;
+      }
+
+      if (action === "delete-message" && messageId) {
+        await deleteMessage(messageId);
+      }
+    }
+
     async function initMessagesPage() {
       state.user = getCurrentUser();
 
@@ -2310,6 +2344,21 @@
       document.getElementById("messageInput").addEventListener("keydown", handleComposerKeydown);
       document.getElementById("messageInput").addEventListener("input", handleTypingInput);
       document.getElementById("chatFeed").addEventListener("scroll", handleChatFeedScroll, { passive: true });
+      document.getElementById("conversationList").addEventListener("click", (event) => {
+        handleConversationListClick(event).catch((err) => {
+          console.error("CONVERSATION LIST CLICK ERROR", err);
+        });
+      });
+      document.getElementById("chatHeader").addEventListener("click", (event) => {
+        handleChatHeaderClick(event).catch((err) => {
+          console.error("CHAT HEADER CLICK ERROR", err);
+        });
+      });
+      document.getElementById("chatFeed").addEventListener("click", (event) => {
+        handleChatFeedClick(event).catch((err) => {
+          console.error("CHAT FEED CLICK ERROR", err);
+        });
+      });
       document.getElementById("mobileConversationToggle").addEventListener("click", openMobileSidebar);
       document.getElementById("mobileOverlay").addEventListener("click", closeMobileSidebar);
       document.getElementById("logoutBtn").addEventListener("click", logout);
@@ -2319,10 +2368,6 @@
       }
     }
 
-    window.selectConversation = selectConversation;
-    window.startEditMessage = startEditMessage;
-    window.deleteMessage = deleteMessage;
-    window.deleteConversation = deleteConversation;
     initMessagesPage();
   </script>
 </body>
