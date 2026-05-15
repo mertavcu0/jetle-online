@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panelim | jetle.online</title>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <style>
     * { box-sizing: border-box; }
@@ -156,6 +155,25 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+    }
+
+    .menu-icon,
+    .meta-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 16px;
+      color: currentColor;
+    }
+
+    .menu-icon svg,
+    .meta-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      stroke: currentColor;
     }
 
     .menu-item.active,
@@ -449,26 +467,26 @@
       </form>
       <div class="nav-right">
         <div id="authArea"></div>
-        <a href="/create-listing.html" class="post-btn">İlan Ver</a>
+        <a href="/create-listing.html" class="post-btn">Ä°lan Ver</a>
       </div>
     </div>
   </header>
 
   <main class="dashboard-shell">
     <aside class="sidebar">
-      <h3>Hesabım</h3>
-      <a href="/dashboard.html" class="menu-item active">Benim İlanlarım</a>
-      <a href="/create-listing.html" class="menu-item">Yeni İlan Ver</a>
-      <a href="/messages.html" class="menu-item"><i class="ri-chat-1-line"></i> Mesajlar</a>
-      <a href="/favorites.html" class="menu-item"><i class="ri-heart-line"></i> Favoriler</a>
-      <a href="/account.html" class="menu-item"><i class="ri-user-settings-line"></i> Hesap Ayarları</a>
+      <h3>HesabÄ±m</h3>
+      <a href="/dashboard.html" class="menu-item active">Benim Ä°lanlarÄ±m</a>
+      <a href="/create-listing.html" class="menu-item">Yeni Ä°lan Ver</a>
+      <a href="/messages.html" class="menu-item"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h10"/><path d="M7 14h6"/><path d="M21 12c0 4.418-4.03 8-9 8a9.94 9.94 0 0 1-4.255-.95L3 20l1.255-4.18A7.5 7.5 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z"/></svg></span> Mesajlar</a>
+      <a href="/favorites.html" class="menu-item"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.716-4.35-9.193-8.115C.516 9.4 2.275 5 6.407 5c2.182 0 3.593 1.34 4.37 2.535C11.554 6.34 12.965 5 15.147 5c4.132 0 5.891 4.4 3.6 7.885C18.716 16.65 12 21 12 21Z"/></svg></span> Favoriler</a>
+      <a href="/account.html" class="menu-item"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="m19.4 15 .9.6.9-.6.9 1.56-.9.54v1.08l.9.54-.9 1.56-.9-.6-.9.6-.9-1.56.9-.54V17.1l-.9-.54Z"/></svg></span> Hesap AyarlarÄ±</a>
     </aside>
 
     <section class="content-card" id="listingsPanel">
       <div class="section-head">
         <div>
-          <h1>Benim İlanlarım</h1>
-          <p class="muted">Yayınladığın ilanları burada takip edebilirsin.</p>
+          <h1>Benim Ä°lanlarÄ±m</h1>
+          <p class="muted">YayÄ±nladÄ±ÄŸÄ±n ilanlarÄ± burada takip edebilirsin.</p>
         </div>
       </div>
       <div id="myListingsGrid" class="listing-grid" data-dashboard-managed="inline"></div>
@@ -476,7 +494,7 @@
 
     <section class="content-card placeholder" id="messagesPanel">
       <h1>Mesajlar</h1>
-      <p>İlan sahipleriyle konuşmalarınız burada görünecek.</p>
+      <p>Ä°lan sahipleriyle konuÅŸmalarÄ±nÄ±z burada gÃ¶rÃ¼necek.</p>
     </section>
   </main>
 
@@ -526,12 +544,20 @@
         const safe = String(status || "inactive").toLowerCase();
         const map = {
           pending: "Beklemede",
-          approved: "Onaylı",
-          suspicious: "Şüpheli",
+          approved: "OnaylÄ±",
+          suspicious: "ÅÃ¼pheli",
           inactive: "Pasif",
           active: "Aktif"
         };
         return { key: safe, label: map[safe] || "Pasif" };
+      }
+
+      function iconMapPin() {
+        return '<span class="meta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s6-5.686 6-11a6 6 0 1 0-12 0c0 5.314 6 11 6 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span>';
+      }
+
+      function iconFolder() {
+        return '<span class="meta-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-10Z"></path></svg></span>';
       }
 
       function bindAuthAreaActions() {
@@ -605,8 +631,8 @@
               <h4 style="display:block;visibility:visible;opacity:1;">${title}</h4>
               <div class="listing-price" style="display:block;visibility:visible;opacity:1;">${price}</div>
               <div class="listing-meta" style="display:flex;visibility:visible;opacity:1;">
-                <span><i class="ri-map-pin-line"></i>${escapeHtml(locationBits || "Konum yok")}</span>
-                <span><i class="ri-folder-2-line"></i>${escapeHtml(categoryBits || "Kategori yok")}</span>
+                <span>${iconMapPin()}${escapeHtml(locationBits || "Konum yok")}</span>
+                <span>${iconFolder()}${escapeHtml(categoryBits || "Kategori yok")}</span>
               </div>
               <span class="listing-status ${status.key}" style="display:inline-flex;visibility:visible;opacity:1;">${statusLabel}</span>
             </div>
@@ -627,7 +653,7 @@
 
         grid.dataset.renderLock = "true";
         grid.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">İlanlar yükleniyor...</div>
+          <div class="empty-state" style="grid-column: 1 / -1;">Ä°lanlar yÃ¼kleniyor...</div>
         `;
 
         try {
@@ -659,9 +685,9 @@
             if (grid.dataset.hasListings === "true") return;
             grid.innerHTML = `
               <div class="empty-state" style="grid-column: 1 / -1;">
-                <h4>Henüz ilanınız yok</h4>
-                <p>Hemen ilan vererek satışa başlayın</p>
-                <button type="button" data-action="create">İlan Ver</button>
+                <h4>HenÃ¼z ilanÄ±nÄ±z yok</h4>
+                <p>Hemen ilan vererek satÄ±ÅŸa baÅŸlayÄ±n</p>
+                <button type="button" data-action="create">Ä°lan Ver</button>
               </div>
             `;
             grid.dataset.renderComplete = "true";
@@ -675,7 +701,7 @@
           if (grid.dataset.hasListings === "true") return;
           grid.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
-              İlanlar yüklenemedi. Lütfen tekrar deneyin.
+              Ä°lanlar yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.
             </div>
           `;
         } finally {
@@ -695,8 +721,8 @@
         if (!list) return;
         list.innerHTML = `
           <div class="empty-state">
-            <h4>Henüz mesajınız yok.</h4>
-            <p>İlan sahipleriyle konuşmalarınız burada görünecek.</p>
+            <h4>HenÃ¼z mesajÄ±nÄ±z yok.</h4>
+            <p>Ä°lan sahipleriyle konuÅŸmalarÄ±nÄ±z burada gÃ¶rÃ¼necek.</p>
           </div>
         `;
       }
@@ -723,8 +749,8 @@
         const token = getDashboardToken();
         if (!token) {
           content.innerHTML = `
-            <h2>Mesajlarım</h2>
-            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
+            <h2>MesajlarÄ±m</h2>
+            <div class="empty-state">MesajlarÄ± gÃ¶rmek iÃ§in giriÅŸ yapÄ±n.</div>
           `;
           return;
         }
@@ -733,15 +759,15 @@
         const userKey = user.id || user._id || user.email;
         if (!userKey) {
           content.innerHTML = `
-            <h2>Mesajlarım</h2>
-            <div class="empty-state">Mesajları görmek için giriş yapın.</div>
+            <h2>MesajlarÄ±m</h2>
+            <div class="empty-state">MesajlarÄ± gÃ¶rmek iÃ§in giriÅŸ yapÄ±n.</div>
           `;
           return;
         }
 
         content.innerHTML = `
-          <h2>Mesajlarım</h2>
-          <div class="chat-list">Mesajlar yükleniyor...</div>
+          <h2>MesajlarÄ±m</h2>
+          <div class="chat-list">Mesajlar yÃ¼kleniyor...</div>
         `;
 
         const list = content.querySelector(".chat-list");
@@ -769,9 +795,9 @@
             }
 
             list.innerHTML = conversations.map((conversation) => {
-              const otherUser = conversation.otherUserName || conversation.otherUserEmail || "Kullanıcı";
-              const body = conversation.lastMessage || "Henüz mesaj yok";
-              const title = conversation.listingTitle || "İlan mesajı";
+              const otherUser = conversation.otherUserName || conversation.otherUserEmail || "KullanÄ±cÄ±";
+              const body = conversation.lastMessage || "HenÃ¼z mesaj yok";
+              const title = conversation.listingTitle || "Ä°lan mesajÄ±";
               const conversationId = conversation.conversationId || conversation.id || "";
               return `
                 <a class="msg-card theirs" href="/messages.html?conversationId=${encodeURIComponent(conversationId)}">
@@ -809,4 +835,5 @@
   </script>
 </body>
 </html>
+
 
