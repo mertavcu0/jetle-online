@@ -597,7 +597,6 @@ router.post("/", async (req, res) => {
     }
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
-    const receiverEmail = String(receiver?.email || "").trim().toLowerCase();
 
     if (String(receiver._id) === String(currentUser._id)) {
       return res.status(400).json({ success: false, error: "same_user" });
@@ -610,7 +609,7 @@ router.post("/", async (req, res) => {
         senderId: currentUser._id,
         receiverId: receiver._id,
         senderEmail,
-        receiverEmail,
+        receiverEmail: String(receiver?.email || "").trim().toLowerCase(),
         conversationId: makeConversationId(listingId, currentUser._id, receiver._id),
         listingId: listingDoc._id,
         text,
