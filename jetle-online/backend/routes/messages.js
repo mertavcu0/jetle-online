@@ -224,9 +224,15 @@ router.get("/conversations", async (req, res) => {
     let listingMap = new Map();
     if (listingIds.length) {
       try {
-        const listings = await Listing.find({ _id: { $in: listingIds.map((id) => asObjectId(id)) } })
-          .select("title")
-          .lean();
+        const listingResults = await Promise.all(
+          listingIds.map(async (id) => {
+            if (!isValidObjectId(id)) return null;
+            return await Listing.findById(id)
+              .select("title")
+              .lean();
+          })
+        );
+        const listings = listingResults.filter(Boolean);
         listingMap = new Map(
           listings.map((listing) => [String(listing._id), listing])
         );
