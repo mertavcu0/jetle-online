@@ -173,8 +173,13 @@ function normalizeMessage(doc) {
 
 router.use(requireAuth);
 
-async function resolveReceiverFromListing(listing, currentUserId) {
-  const receiverEmail = String(listing?.user?.email || "").trim().toLowerCase();
+async function resolveReceiverFromListing(listing, currentUserId, fallbackReceiverEmail = "") {
+  const receiverEmail = String(
+    listing?.user?.email ||
+    listing?.email ||
+    fallbackReceiverEmail ||
+    ""
+  ).trim().toLowerCase();
   const receiverId = listing?.user?._id ? String(listing.user._id) : "";
 
   if (!receiverEmail || !receiverId || String(receiverId) === String(currentUserId)) {
@@ -542,7 +547,7 @@ router.post("/", async (req, res) => {
     let listingDoc;
     try {
       console.log("[STEP 1 START] Listing.findById populate user");
-      listingDoc = await Listing.findById(listingId).populate("user", "_id name email");
+      listingDoc = await Listing.findById(listingId).populate("user", "_id name email username");
       console.log("[STEP 1 OK] Listing.findById populate user");
     } catch (err) {
       console.error("[STEP 1 FAIL]", err);
@@ -555,20 +560,29 @@ router.post("/", async (req, res) => {
     let receiver;
     try {
       console.log("[STEP 2 START] resolveReceiverFromListing");
-      receiver = await resolveReceiverFromListing(listingDoc, currentUser._id);
+      receiver = await resolveReceiverFromListing(
+        listingDoc,
+        currentUser._id,
+        req.body?.receiverEmail
+      );
       console.log("[STEP 2 OK] resolveReceiverFromListing");
     } catch (err) {
       console.error("[STEP 2 FAIL]", err);
       throw err;
     }
     if (!receiver) {
+      console.error("RECEIVER EMAIL NOT FOUND", {
+        listingId,
+        listingUser: listingDoc?.user || null,
+        body: req.body
+      });
       return res.status(400).json({ success: false, error: "receiver_not_found" });
     }
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
     const receiverEmail = String(receiver.email || "").trim().toLowerCase();
 
-    if (senderEmail && receiverEmail && senderEmail === receiverEmail) {
+    if (String(receiver._id) === String(currentUser._id)) {
       return res.status(400).json({ success: false, error: "same_user" });
     }
 
