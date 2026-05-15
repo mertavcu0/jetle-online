@@ -3351,14 +3351,14 @@
           } catch {}
           window.location.href = "/";
         } else {
-          alert("Hata olu?tu");
+          alert("Hata oluştu");
         }
       } catch (err) {
         console.error("CREATE LISTING ERROR:", err);
-        alert("Sunucu hatas?");
+        alert("Sunucu hatası");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "?lan Yay?nla";
+        submitBtn.textContent = "İlan Yayınla";
       }
     }
 

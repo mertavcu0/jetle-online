@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -205,12 +205,13 @@
       flex: 0 0 auto;
       min-width: 42px;
       text-align: right;
+      letter-spacing: 0;
     }
 
     .conversation-preview {
       font-size: 13px;
       color: #4b5563;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .conversation-bottom {
@@ -293,6 +294,7 @@
       margin: 4px 0 0;
       font-size: 13px;
       color: var(--muted);
+      line-height: 1.45;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -379,13 +381,28 @@
       font-size: 12px;
       color: var(--muted);
       padding: 0 4px;
+      letter-spacing: 0;
+      line-height: 1.4;
     }
 
     .message-tools {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       padding: 0 4px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-2px);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    }
+
+    .message-row.mine:hover .message-tools,
+    .message-row.mine:focus-within .message-tools {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
     }
 
     .message-tool {
@@ -397,6 +414,7 @@
       font-weight: 700;
       padding: 0;
       cursor: pointer;
+      letter-spacing: 0;
     }
 
     .message-tool:hover {
@@ -739,12 +757,12 @@
           </div>
 
           <div class="chat-feed" id="chatFeed">
-            <div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>
+            <div class="chat-empty">Henüz mesaj bulunmuyor.</div>
           </div>
 
           <div class="chat-composer">
             <form class="composer-form" id="composerForm" action="" novalidate>
-              <textarea class="composer-input" id="messageInput" placeholder="Mesajınızı yazın" rows="2"></textarea>
+              <textarea class="composer-input" id="messageInput" placeholder="Mesaj yaz..." rows="2"></textarea>
               <button class="composer-cancel" type="button" id="cancelEditBtn">İptal</button>
               <button class="composer-send" type="button" id="sendMessageBtn">Gönder</button>
             </form>
@@ -1049,7 +1067,7 @@
           safeMessage?.receiverEmail ||
           ""
         ).trim().toLowerCase(),
-        senderName: sender?.name || safeMessage?.senderName || safeMessage?.senderEmail || "Kullan?c?",
+        senderName: sender?.name || safeMessage?.senderName || safeMessage?.senderEmail || "Kullanıcı",
         text: safeMessage?.text || "",
         createdAt: safeMessage?.createdAt || new Date().toISOString(),
         updatedAt: safeMessage?.updatedAt || safeMessage?.createdAt || new Date().toISOString(),
@@ -1084,9 +1102,9 @@
         otherUser?.email ||
         listing?.user?.email ||
         listing?.user?.username ||
-        "Sat?c?"
+        "Satıcı"
       );
-      const listingTitle = String(conversation?.listingTitle || listing?.title || "?lan");
+      const listingTitle = String(conversation?.listingTitle || listing?.title || "İlan");
       const listingPrice = conversation?.listingPrice ?? listing?.price ?? "";
       const listingCity = String(conversation?.listingCity || listing?.city || "");
 
@@ -1731,7 +1749,7 @@
       if (!list) return;
 
       if (!state.conversations.length) {
-        list.innerHTML = `<div class="empty-panel">Henüz mesaj yok. Konuşmayı başlatın.</div>`;
+        list.innerHTML = `<div class="empty-panel">Henüz mesaj bulunmuyor.</div>`;
         return;
       }
 
@@ -1745,10 +1763,10 @@
               <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
               <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || dateValue))}</span>
             </div>
-            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
+            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj bulunmuyor.")}</div>
             <div class="conversation-bottom">
               <span class="conversation-listing">${escapeHtml(conv.listingTitle)}</span>
-              <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">â€¢</span>` : ""}</span>
+              <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">•</span>` : ""}</span>
             </div>
           </button>
         `;
@@ -1791,11 +1809,11 @@
           <img class="chat-listing-thumb" src="${escapeHtml(conversation.listingImage || relativeImage(state.activeListing || {}))}" alt="${escapeHtml(conversation.listingTitle)}">
           <div class="chat-header-copy">
             <h2>${escapeHtml(conversation.otherUserName)}</h2>
-            <p>${escapeHtml(conversation.listingTitle)}${presenceLabel ? ` â€¢ ${escapeHtml(presenceLabel)}` : ""}</p>
+            <p>${escapeHtml(conversation.listingTitle)}${presenceLabel ? ` • ${escapeHtml(presenceLabel)}` : ""}</p>
           </div>
         </div>
         <div class="chat-header-actions">
-          <button class="chat-header-btn" type="button" data-action="delete-conversation">Sohbeti Sil</button>
+          <button class="chat-header-btn" type="button" data-action="delete-conversation">Konuşmayı Sil</button>
         </div>
       `;
     }
@@ -1806,7 +1824,7 @@
 
       if (!conversation || !Array.isArray(conversation.messages)) {
         state.lastRenderedFeedKey = "empty";
-        feed.innerHTML = `<div class="chat-empty">Hen?z mesaj yok. Konu?may? ba?lat?n.</div>`;
+        feed.innerHTML = `<div class="chat-empty">Henüz mesaj bulunmuyor.</div>`;
         return;
       }
 
@@ -1818,7 +1836,7 @@
 
       if (!messages.length) {
         state.lastRenderedFeedKey = `${conversation.id || ""}::empty`;
-        feed.innerHTML = `<div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>`;
+        feed.innerHTML = `<div class="chat-empty">Henüz mesaj bulunmuyor.</div>`;
         return;
       }
 
@@ -1837,7 +1855,7 @@
         return `
           <div class="message-row ${mine ? "mine" : "theirs"}">
             <div class="message-bubble">${escapeHtml(msg.text)}</div>
-            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}${mine && msg.isRead ? " â€¢ Görüldü" : ""}</div>
+            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}${mine && msg.isRead ? " • Görüldü" : ""}</div>
             ${mine ? `
               <div class="message-tools">
                 ${msg.edited ? `<span class="edited-badge">düzenlendi</span>` : ""}
@@ -1976,7 +1994,7 @@
         if (!state.editingMessageId) {
           input.value = "";
         }
-        input.placeholder = "Mesajınızı yazın";
+        input.placeholder = "Mesaj yaz...";
         sendBtn.textContent = "Gönder";
         cancelBtn.classList.remove("show");
         return;
@@ -1986,7 +2004,7 @@
       if (!message) {
         state.editingMessageId = null;
         input.value = "";
-        input.placeholder = "Mesajınızı yazın";
+        input.placeholder = "Mesaj yaz...";
         sendBtn.textContent = "Gönder";
         cancelBtn.classList.remove("show");
         return;

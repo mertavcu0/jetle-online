@@ -1,4 +1,4 @@
-﻿require("dotenv").config({ path: __dirname + "/.env" });
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const express = require("express");
 const http = require("http");
@@ -668,7 +668,7 @@ app.use("/uploads", express.static("uploads", {
 
 // Test route
 app.get("/api/test", (req, res) => {
-  res.json({ message: "API Ã§alÄ±ÅŸÄ±yor" });
+  res.json({ message: "API çalışıyor" });
 });
 
 app.get("/health", (req, res) => {
@@ -697,7 +697,7 @@ app.get("/api/admin/metrics", authMiddleware, (req, res) => {
   });
 });
 
-// Ä°lan detay sayfasÄ±
+// İlan detay sayfası
 app.get("/ilan/:slug", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/ilan-detay.html"));
 });
