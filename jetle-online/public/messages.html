@@ -712,20 +712,20 @@
         <a class="messages-brand" href="/index.html"><span>jetle</span><span class="brand-suffix">.online</span></a>
         <div class="messages-header-actions">
           <a href="/dashboard.html">Profil</a>
-          <button type="button" id="logoutBtn">Ã‡Ä±kÄ±ÅŸ</button>
+          <button type="button" id="logoutBtn">Çıkış</button>
         </div>
       </div>
     </header>
 
     <main class="messages-main">
-      <button class="mobile-conversations-toggle" type="button" id="mobileConversationToggle">KonuÅŸmalarÄ± GÃ¶ster</button>
+      <button class="mobile-conversations-toggle" type="button" id="mobileConversationToggle">Konuşmaları Göster</button>
       <div class="mobile-overlay" id="mobileOverlay"></div>
 
       <div class="messages-layout">
         <aside class="conversation-sidebar panel-card" id="conversationSidebar">
           <div class="sidebar-header">
-            <h2>KonuÅŸmalar</h2>
-            <p>Ä°lan bazlÄ± gÃ¶rÃ¼ÅŸmelerinizi buradan takip edin.</p>
+            <h2>Konuşmalar</h2>
+            <p>İlan bazlı görüşmelerinizi buradan takip edin.</p>
           </div>
           <div class="conversation-list" id="conversationList"></div>
         </aside>
@@ -734,19 +734,19 @@
           <div class="chat-header" id="chatHeader">
             <div class="chat-header-copy">
               <h2>Mesajlar</h2>
-              <p>Bir konuÅŸma seÃ§ildiÄŸinde detaylar burada gÃ¶rÃ¼necek.</p>
+              <p>Bir konuşma seçildiğinde detaylar burada görünecek.</p>
             </div>
           </div>
 
           <div class="chat-feed" id="chatFeed">
-            <div class="chat-empty">HenÃ¼z mesaj yok. Ä°lk mesajÄ± gÃ¶ndererek konuÅŸmayÄ± baÅŸlatÄ±n.</div>
+            <div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>
           </div>
 
           <div class="chat-composer">
             <form class="composer-form" id="composerForm" action="" novalidate>
-              <textarea class="composer-input" id="messageInput" placeholder="MesajÄ±nÄ±zÄ± yazÄ±n" rows="2"></textarea>
-              <button class="composer-cancel" type="button" id="cancelEditBtn">Ä°ptal</button>
-              <button class="composer-send" type="button" id="sendMessageBtn">GÃ¶nder</button>
+              <textarea class="composer-input" id="messageInput" placeholder="Mesajınızı yazın" rows="2"></textarea>
+              <button class="composer-cancel" type="button" id="cancelEditBtn">İptal</button>
+              <button class="composer-send" type="button" id="sendMessageBtn">Gönder</button>
             </form>
             <div class="composer-status" id="composerStatus"></div>
           </div>
@@ -754,10 +754,10 @@
 
         <aside class="listing-summary panel-card" id="listingSummary">
           <div class="listing-summary-header">
-            <h3>Ä°lan Ã–zeti</h3>
-            <p>KonuÅŸtuÄŸunuz ilanÄ± hÄ±zlÄ±ca gÃ¶zden geÃ§irin.</p>
+            <h3>İlan Özeti</h3>
+            <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
           </div>
-          <div class="empty-panel">Bir ilan seÃ§ildiÄŸinde Ã¶zeti burada gÃ¶sterilecek.</div>
+          <div class="empty-panel">Bir ilan seçildiğinde özeti burada gösterilecek.</div>
         </aside>
       </div>
     </main>
@@ -895,7 +895,7 @@
           listing.sellerEmail ||
           ""
         ),
-        receiverName: owner.name || owner.email || "SatÄ±cÄ±"
+        receiverName: owner.name || owner.email || "Satıcı"
       };
     }
 
@@ -1149,7 +1149,7 @@
       if (!roomId) return "";
       const typingUser = state.typingUsers.get(roomId);
       if (!typingUser) return "";
-      return `${typingUser.userName || "KullanÄ±cÄ±"} yazÄ±yor...`;
+      return `${typingUser.userName || "Kullanıcı"} yazıyor...`;
     }
 
     function stopTyping(roomId = state.typingActiveConversationId) {
@@ -1311,7 +1311,7 @@
         if (!roomId || String(userId || "") === String(getCurrentUserId() || "")) return;
         state.typingUsers.set(roomId, {
           userId: String(userId || ""),
-          userName: String(userName || "KullanÄ±cÄ±")
+          userName: String(userName || "Kullanıcı")
         });
         renderAll();
       });
@@ -1468,7 +1468,7 @@
             renderMessages();
             return;
           }
-          setComposerStatus("KonuÅŸma bilgisi okunamadÄ±.");
+          setComposerStatus("Konuşma bilgisi okunamadı.");
           return;
         }
 
@@ -1540,7 +1540,7 @@
       if (!list) return;
 
       if (!state.conversations.length) {
-        list.innerHTML = `<div class="empty-panel">HenÃ¼z mesaj yok. KonuÅŸmayÄ± baÅŸlatÄ±n.</div>`;
+        list.innerHTML = `<div class="empty-panel">Henüz mesaj yok. Konuşmayı başlatın.</div>`;
         return;
       }
 
@@ -1554,7 +1554,7 @@
               <span class="conversation-name">${escapeHtml(conv.otherUserName)}</span>
               <span class="conversation-time">${escapeHtml(formatTime(lastMessage?.createdAt || dateValue))}</span>
             </div>
-            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "HenÃ¼z mesaj yok. KonuÅŸmayÄ± baÅŸlatÄ±n.")}</div>
+            <div class="conversation-preview">${escapeHtml(lastMessage?.text || "Henüz mesaj yok. Konuşmayı başlatın.")}</div>
             <div class="conversation-bottom">
               <span class="conversation-listing">${escapeHtml(conv.listingTitle)}</span>
               <span class="conversation-status">${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : isOnline ? `<span class="unread-badge">â€¢</span>` : ""}</span>
@@ -1572,13 +1572,13 @@
 
       if (!conversation) {
         if (activeListing) {
-          const ownerLabel = listingOwner.receiverEmail || listingOwner.receiverName || "Ä°lan sahibi";
+          const ownerLabel = listingOwner.receiverEmail || listingOwner.receiverName || "İlan sahibi";
           header.innerHTML = `
             <div class="chat-header-main">
-              <img class="chat-listing-thumb" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "Ä°lan")}">
+              <img class="chat-listing-thumb" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "İlan")}">
               <div class="chat-header-copy">
                 <h2>${escapeHtml(ownerLabel)}</h2>
-                <p>${escapeHtml(activeListing.title || "Ä°lan")}</p>
+                <p>${escapeHtml(activeListing.title || "İlan")}</p>
               </div>
             </div>
           `;
@@ -1587,14 +1587,14 @@
         header.innerHTML = `
           <div class="chat-header-copy">
             <h2>Mesajlar</h2>
-            <p>Bir konuÅŸma seÃ§ildiÄŸinde detaylar burada gÃ¶rÃ¼necek.</p>
+            <p>Bir konuşma seçildiğinde detaylar burada görünecek.</p>
           </div>
         `;
         return;
       }
 
       const typingIndicator = getTypingIndicator(conversation);
-      const presenceLabel = typingIndicator || (isOtherUserOnline(conversation) ? "Ã‡evrimiÃ§i" : "Ã‡evrimdÄ±ÅŸÄ±");
+      const presenceLabel = typingIndicator || (isOtherUserOnline(conversation) ? "Çevrimiçi" : "Çevrimdışı");
       header.innerHTML = `
         <div class="chat-header-main">
           <img class="chat-listing-thumb" src="${escapeHtml(conversation.listingImage || "https://picsum.photos/120/120")}" alt="${escapeHtml(conversation.listingTitle)}">
@@ -1627,7 +1627,7 @@
 
       if (!messages.length) {
         state.lastRenderedFeedKey = `${conversation.id || ""}::empty`;
-        feed.innerHTML = `<div class="chat-empty">HenÃ¼z mesaj yok. Ä°lk mesajÄ± gÃ¶ndererek konuÅŸmayÄ± baÅŸlatÄ±n.</div>`;
+        feed.innerHTML = `<div class="chat-empty">Henüz mesaj yok. İlk mesajı göndererek konuşmayı başlatın.</div>`;
         return;
       }
 
@@ -1646,11 +1646,11 @@
         return `
           <div class="message-row ${mine ? "mine" : "theirs"}">
             <div class="message-bubble">${escapeHtml(msg.text)}</div>
-            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}${mine && msg.isRead ? " â€¢ GÃ¶rÃ¼ldÃ¼" : ""}</div>
+            <div class="message-meta">${escapeHtml(formatDateTime(msg.createdAt))}${mine && msg.isRead ? " â€¢ Görüldü" : ""}</div>
             ${mine ? `
               <div class="message-tools">
-                ${msg.edited ? `<span class="edited-badge">dÃ¼zenlendi</span>` : ""}
-                <button class="message-tool" type="button" onclick="startEditMessage('${escapeHtml(msg.id)}')">DÃ¼zenle</button>
+                ${msg.edited ? `<span class="edited-badge">düzenlendi</span>` : ""}
+                <button class="message-tool" type="button" onclick="startEditMessage('${escapeHtml(msg.id)}')">Düzenle</button>
                 <button class="message-tool" type="button" onclick="deleteMessage('${escapeHtml(msg.id)}')">Sil</button>
               </div>
             ` : ""}
@@ -1694,38 +1694,38 @@
         if (activeListing) {
           panel.innerHTML = `
             <div class="listing-summary-header">
-              <h3>Ä°lan Ã–zeti</h3>
-              <p>KonuÅŸtuÄŸunuz ilanÄ± hÄ±zlÄ±ca gÃ¶zden geÃ§irin.</p>
+              <h3>İlan Özeti</h3>
+              <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
             </div>
             <div class="listing-summary-body">
-              <img class="listing-summary-image" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "Ä°lan")}">
+              <img class="listing-summary-image" src="${escapeHtml(relativeImage(activeListing))}" alt="${escapeHtml(activeListing.title || "İlan")}">
               <div>
-                <h4 class="listing-summary-title">${escapeHtml(activeListing.title || "Ä°lan")}</h4>
+                <h4 class="listing-summary-title">${escapeHtml(activeListing.title || "İlan")}</h4>
               </div>
               <div class="listing-summary-price">${escapeHtml(formatPrice(activeListing.price))}</div>
               <div class="listing-summary-meta">
                 ${activeListing.city ? `<span>${escapeHtml(activeListing.city)}</span>` : ""}
-                <span>Ä°lan sahibi: ${escapeHtml(listingOwner.receiverEmail || listingOwner.receiverName || "Bilinmiyor")}</span>
+                <span>İlan sahibi: ${escapeHtml(listingOwner.receiverEmail || listingOwner.receiverName || "Bilinmiyor")}</span>
               </div>
-              <a class="listing-summary-link" href="${escapeHtml(buildListingUrl(activeListing._id || activeListing.id || ""))}">Ä°lana Git</a>
+              <a class="listing-summary-link" href="${escapeHtml(buildListingUrl(activeListing._id || activeListing.id || ""))}">İlana Git</a>
             </div>
           `;
           return;
         }
         panel.innerHTML = `
           <div class="listing-summary-header">
-            <h3>Ä°lan Ã–zeti</h3>
-            <p>KonuÅŸtuÄŸunuz ilanÄ± hÄ±zlÄ±ca gÃ¶zden geÃ§irin.</p>
+            <h3>İlan Özeti</h3>
+            <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
           </div>
-          <div class="empty-panel">Bir ilan seÃ§ildiÄŸinde Ã¶zeti burada gÃ¶sterilecek.</div>
+          <div class="empty-panel">Bir ilan seçildiğinde özeti burada gösterilecek.</div>
         `;
         return;
       }
 
       panel.innerHTML = `
         <div class="listing-summary-header">
-          <h3>Ä°lan Ã–zeti</h3>
-          <p>KonuÅŸtuÄŸunuz ilanÄ± hÄ±zlÄ±ca gÃ¶zden geÃ§irin.</p>
+          <h3>İlan Özeti</h3>
+          <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
         </div>
         <div class="listing-summary-body">
           <img class="listing-summary-image" src="${escapeHtml(conversation.listingImage || "https://picsum.photos/400/300")}" alt="${escapeHtml(conversation.listingTitle)}">
@@ -1735,9 +1735,9 @@
           <div class="listing-summary-price">${escapeHtml(formatPrice(conversation.listingPrice))}</div>
           <div class="listing-summary-meta">
             ${conversation.listingCity ? `<span>${escapeHtml(conversation.listingCity)}</span>` : ""}
-            <span>Ä°lan sahibi: ${escapeHtml(conversation.otherUserName)}</span>
+            <span>İlan sahibi: ${escapeHtml(conversation.otherUserName)}</span>
           </div>
-          <a class="listing-summary-link" href="${escapeHtml(conversation.listingUrl)}">Ä°lana Git</a>
+          <a class="listing-summary-link" href="${escapeHtml(conversation.listingUrl)}">İlana Git</a>
         </div>
       `;
     }
@@ -1765,8 +1765,8 @@
       input.disabled = !isAuthenticated;
 
       if (!isAuthenticated) {
-        setComposerStatus("Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapÄ±n.");
-      } else if (document.getElementById("composerStatus").textContent === "Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapÄ±n.") {
+        setComposerStatus("Mesaj göndermek için giriş yapın.");
+      } else if (document.getElementById("composerStatus").textContent === "Mesaj göndermek için giriş yapın.") {
         setComposerStatus("");
       }
 
@@ -1774,8 +1774,8 @@
         if (!state.editingMessageId) {
           input.value = "";
         }
-        input.placeholder = "MesajÄ±nÄ±zÄ± yazÄ±n";
-        sendBtn.textContent = "GÃ¶nder";
+        input.placeholder = "Mesajınızı yazın";
+        sendBtn.textContent = "Gönder";
         cancelBtn.classList.remove("show");
         return;
       }
@@ -1784,14 +1784,14 @@
       if (!message) {
         state.editingMessageId = null;
         input.value = "";
-        input.placeholder = "MesajÄ±nÄ±zÄ± yazÄ±n";
-        sendBtn.textContent = "GÃ¶nder";
+        input.placeholder = "Mesajınızı yazın";
+        sendBtn.textContent = "Gönder";
         cancelBtn.classList.remove("show");
         return;
       }
 
       input.value = message.text || "";
-      input.placeholder = "MesajÄ± dÃ¼zenleyin";
+      input.placeholder = "Mesajı düzenleyin";
       sendBtn.textContent = "Kaydet";
       cancelBtn.classList.add("show");
       input.focus();
@@ -1855,7 +1855,7 @@
       }
 
       if (!hasAuthenticatedSession()) {
-        setComposerStatus("Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapÄ±n.");
+        setComposerStatus("Mesaj göndermek için giriş yapın.");
         isSendingMessage = false;
         return;
       }
@@ -1868,7 +1868,7 @@
           activeListingObjectId: activeListing?._id,
           activeListingId: activeListing?.id
         });
-        setComposerStatus("Ä°lan bilgisi bulunamadÄ±.");
+        setComposerStatus("İlan bilgisi bulunamadı.");
         isSendingMessage = false;
         return;
       }
@@ -1899,7 +1899,7 @@
           });
 
           if (!response.success) {
-            setComposerStatus("Mesaj gÃ¶nderilemedi.");
+            setComposerStatus("Mesaj gönderilemedi.");
             return;
           }
 
@@ -1919,7 +1919,7 @@
           });
 
           if (!data.success) {
-            setComposerStatus("Mesaj gÃ¶nderilemedi.");
+            setComposerStatus("Mesaj gönderilemedi.");
             return;
           }
 
@@ -2003,7 +2003,7 @@
         const missingInfo = Array.isArray(err?.payload?.missing)
           ? ` Eksik alanlar: ${err.payload.missing.join(", ")}`
           : "";
-        setComposerStatus(`Mesaj gÃ¶nderilemedi.${missingInfo}`);
+        setComposerStatus(`Mesaj gönderilemedi.${missingInfo}`);
       } finally {
         isSendingMessage = false;
       }
@@ -2060,7 +2060,7 @@
       const conversation = getActiveConversation();
       if (!conversation) return;
 
-      const ok = window.confirm("Bu sohbeti silmek istediÄŸinize emin misiniz");
+      const ok = window.confirm("Bu sohbeti silmek istediğinize emin misiniz");
       if (!ok) return;
 
       try {
@@ -2119,7 +2119,7 @@
             await loadConversationMessages(state.activeConversationId);
           }
         } else {
-          setComposerStatus("Mesaj gÃ¶ndermek iÃ§in giriÅŸ yapÄ±n.");
+          setComposerStatus("Mesaj göndermek için giriş yapın.");
         }
       } catch (err) {
         console.error("MESSAGES INIT ERROR", err);
@@ -2160,3 +2160,5 @@
   </script>
 </body>
 </html>
+
+
