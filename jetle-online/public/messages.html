@@ -30,13 +30,19 @@
       color: var(--text);
       font-family: Inter, Arial, sans-serif;
       overflow-x: hidden;
+      overflow-y: hidden;
+      height: 100vh;
+      height: 100dvh;
     }
 
     .messages-shell {
       min-height: 100vh;
       min-height: 100dvh;
+      height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .messages-header {
@@ -104,6 +110,10 @@
       margin: 0 auto;
       padding: 20px 18px calc(24px + var(--safe-bottom));
       flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .mobile-conversations-toggle {
@@ -125,8 +135,12 @@
     .messages-layout {
       display: grid;
       grid-template-columns: 320px minmax(0, 1fr) 300px;
+      grid-template-rows: minmax(0, 1fr);
       gap: 16px;
-      align-items: start;
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
     }
 
     .panel-card {
@@ -138,6 +152,10 @@
 
     .conversation-sidebar {
       overflow: hidden;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar-header,
@@ -163,7 +181,9 @@
     }
 
     .conversation-list {
-      max-height: calc(100vh - 200px);
+      max-height: none;
+      min-height: 0;
+      height: 100%;
       overflow-y: auto;
       padding: 8px;
       overscroll-behavior: contain;
@@ -271,7 +291,8 @@
     }
 
     .chat-panel {
-      min-height: 720px;
+      min-height: 0;
+      height: 100%;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
       overflow: hidden;
@@ -348,6 +369,8 @@
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
       scroll-padding-bottom: 140px;
+      min-height: 0;
+      height: 100%;
     }
 
     .chat-empty {
@@ -459,10 +482,8 @@
       border-top: 1px solid var(--line);
       padding: 14px;
       background: #fff;
-      position: sticky;
-      bottom: 0;
-      z-index: 3;
       padding-bottom: calc(14px + var(--safe-bottom) + var(--viewport-offset-bottom));
+      flex: 0 0 auto;
     }
 
     .composer-status {
@@ -537,12 +558,19 @@
 
     .listing-summary {
       overflow: hidden;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .listing-summary-body {
       padding: 16px;
       display: grid;
       gap: 14px;
+      overflow-y: auto;
+      min-height: 0;
+      -webkit-overflow-scrolling: touch;
     }
 
     .listing-summary-image {
@@ -603,13 +631,44 @@
       display: none;
     }
 
+    .conversation-list::-webkit-scrollbar,
+    .chat-feed::-webkit-scrollbar,
+    .listing-summary-body::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .conversation-list::-webkit-scrollbar-track,
+    .chat-feed::-webkit-scrollbar-track,
+    .listing-summary-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .conversation-list::-webkit-scrollbar-thumb,
+    .chat-feed::-webkit-scrollbar-thumb,
+    .listing-summary-body::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.55);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+
+    .conversation-list,
+    .chat-feed,
+    .listing-summary-body {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+    }
+
     @media (max-width: 1080px) {
       .messages-layout {
         grid-template-columns: 280px minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) auto;
       }
 
       .listing-summary {
         grid-column: 1 / -1;
+        height: auto;
+        max-height: min(240px, 28vh);
       }
     }
 
@@ -624,6 +683,7 @@
 
       .messages-layout {
         grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
         gap: 12px;
       }
 
@@ -698,6 +758,8 @@
 
       .listing-summary {
         min-width: 0;
+        height: auto;
+        max-height: min(220px, 26vh);
       }
 
       .listing-summary-body {
