@@ -54,6 +54,12 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
 }
 
+function normalizeRole(value) {
+  return User.normalizeUserRole
+    ? User.normalizeUserRole(value)
+    : String(value || "").trim().toLowerCase();
+}
+
 router.post("/register", async (req, res) => {
   try {
     const name = sanitizeText(req.body?.name, 80);
@@ -168,6 +174,15 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    const normalizedRole = normalizeRole(user.role);
+    if (normalizedRole !== String(user.role || "")) {
+      console.log("LOGIN STEP role_normalize_before_save:", {
+        from: user.role,
+        to: normalizedRole
+      });
+      user.role = normalizedRole;
+    }
+
     let ok = false;
     const storedPassword = String(user.password || "");
     const hasBcryptPassword = isBcryptHash(storedPassword);
@@ -192,6 +207,7 @@ router.post("/login", async (req, res) => {
       ok = true;
       console.log("LOGIN STEP legacy_plaintext_upgrade_start:", { email: safeEmail });
       try {
+        user.role = normalizeRole(user.role);
         user.password = await bcrypt.hash(password, 10);
         await user.save();
         console.log("LOGIN STEP legacy_plaintext_upgrade_ok:", { email: safeEmail });
@@ -215,14 +231,14 @@ router.post("/login", async (req, res) => {
 
     console.log("LOGIN STEP token_sign_start:", {
       userId: String(user._id),
-      role: user.role || "user"
+      role: normalizeRole(user.role)
     });
     let token = "";
     try {
       token = jwt.sign(
         {
           id: String(user._id),
-          role: user.role || "user"
+          role: normalizeRole(user.role)
         },
         jwtSecret,
         { expiresIn: "7d" }

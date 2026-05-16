@@ -216,6 +216,42 @@ function getRuntimeMetrics() {
   };
 }
 
+async function normalizeLegacyUserRoles() {
+  const invalidRoleUsers = await User.find({
+    role: { $nin: ["user", "admin", "moderator"] }
+  }).select("_id email role");
+
+  if (!invalidRoleUsers.length) {
+    if (!isProduction) {
+      console.log("USER ROLE MIGRATION: clean");
+    }
+    return;
+  }
+
+  let fixedCount = 0;
+
+  for (const user of invalidRoleUsers) {
+    const normalizedRole = User.normalizeUserRole
+      ? User.normalizeUserRole(user.role)
+      : String(user.role || "").trim().toLowerCase();
+
+    if (!["user", "admin", "moderator"].includes(normalizedRole)) {
+      console.warn("USER ROLE MIGRATION SKIP:", {
+        userId: String(user._id),
+        email: user.email || "",
+        role: user.role
+      });
+      continue;
+    }
+
+    user.role = normalizedRole;
+    await user.save();
+    fixedCount += 1;
+  }
+
+  console.log("USER ROLE MIGRATION OK:", { fixedCount });
+}
+
 async function ensureDevelopmentAdmin() {
   if (isProduction) return;
 
@@ -829,7 +865,11 @@ mongoose.connect(process.env.MONGO_URI)
     if (!isProduction) {
       console.log("DB CONNECT OK");
     }
-    return ensureDevelopmentAdmin()
+    return normalizeLegacyUserRoles()
+      .catch((err) => {
+        console.error("USER ROLE MIGRATION ERROR:", err);
+      })
+      .then(() => ensureDevelopmentAdmin())
       .catch((err) => {
         console.error("DEV ADMIN SEED ERROR:", err);
       })
