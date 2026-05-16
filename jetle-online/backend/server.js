@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
@@ -213,6 +214,68 @@ function getRuntimeMetrics() {
     activeSockets: io.engine.clientsCount,
     totalSocketRooms: socketRoomMap.size
   };
+}
+
+async function ensureDevelopmentAdmin() {
+  if (isProduction) return;
+
+  const rawEmail = String(
+    process.env.DEV_ADMIN_EMAIL ||
+    process.env.ADMIN_EMAIL ||
+    "babacandir@gmail.com"
+  ).trim().toLowerCase();
+  const rawPassword = String(
+    process.env.DEV_ADMIN_PASSWORD ||
+    process.env.ADMIN_PASSWORD ||
+    "Jetle3080"
+  );
+
+  if (!rawEmail || !rawPassword) {
+    console.warn("WARN DEV ADMIN CONFIG MISSING");
+    return;
+  }
+
+  const existing = await User.findOne({ email: rawEmail });
+  const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+  if (!existing) {
+    await User.create({
+      name: "Admin",
+      email: rawEmail,
+      password: hashedPassword,
+      role: "admin",
+      banned: false
+    });
+    console.log(`DEV ADMIN CREATED ${rawEmail}`);
+    return;
+  }
+
+  let shouldSave = false;
+  if (existing.role !== "admin") {
+    existing.role = "admin";
+    shouldSave = true;
+  }
+  if (existing.banned) {
+    existing.banned = false;
+    shouldSave = true;
+  }
+
+  const storedPassword = String(existing.password || "");
+  const passwordMatches = storedPassword
+    ? await bcrypt.compare(rawPassword, storedPassword).catch(() => false)
+    : false;
+
+  if (!passwordMatches) {
+    existing.password = hashedPassword;
+    shouldSave = true;
+  }
+
+  if (shouldSave) {
+    await existing.save();
+    console.log(`DEV ADMIN UPDATED ${rawEmail}`);
+  } else {
+    console.log(`DEV ADMIN READY ${rawEmail}`);
+  }
 }
 
 async function gracefulShutdown(signal) {
@@ -766,11 +829,17 @@ mongoose.connect(process.env.MONGO_URI)
     if (!isProduction) {
       console.log("DB CONNECT OK");
     }
-    server.listen(process.env.PORT || 3000, () => {
-      if (!isProduction) {
-        console.log("START HTTP " + (process.env.PORT || 3000));
-      }
-    });
+    return ensureDevelopmentAdmin()
+      .catch((err) => {
+        console.error("DEV ADMIN SEED ERROR:", err);
+      })
+      .then(() => {
+        server.listen(process.env.PORT || 3000, () => {
+          if (!isProduction) {
+            console.log("START HTTP " + (process.env.PORT || 3000));
+          }
+        });
+      });
   })
   .catch((err) => {
     console.error("DB CONNECT ERROR:", err);
