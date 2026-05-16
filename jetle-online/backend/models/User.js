@@ -1,5 +1,15 @@
 const mongoose = require("mongoose");
 
+const ALLOWED_ROLES = ["user", "admin", "moderator"];
+
+function normalizeUserRole(value) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  return normalized || "user";
+}
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -38,7 +48,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin", "moderator"],
+    enum: ALLOWED_ROLES,
+    set: normalizeUserRole,
     default: "user"
   },
   isVerified: {
@@ -64,5 +75,48 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+function normalizeRoleUpdate(update) {
+  if (!update || typeof update !== "object") return;
+
+  if (Object.prototype.hasOwnProperty.call(update, "role")) {
+    update.role = normalizeUserRole(update.role);
+  }
+
+  if (update.$set && Object.prototype.hasOwnProperty.call(update.$set, "role")) {
+    update.$set.role = normalizeUserRole(update.$set.role);
+  }
+
+  if (update.$setOnInsert && Object.prototype.hasOwnProperty.call(update.$setOnInsert, "role")) {
+    update.$setOnInsert.role = normalizeUserRole(update.$setOnInsert.role);
+  }
+}
+
+userSchema.pre("validate", function normalizeRoleBeforeValidate(next) {
+  this.role = normalizeUserRole(this.role);
+  next();
+});
+
+userSchema.pre("save", function normalizeRoleBeforeSave(next) {
+  this.role = normalizeUserRole(this.role);
+  next();
+});
+
+userSchema.pre("updateOne", function normalizeRoleInUpdateOne(next) {
+  normalizeRoleUpdate(this.getUpdate());
+  next();
+});
+
+userSchema.pre("updateMany", function normalizeRoleInUpdateMany(next) {
+  normalizeRoleUpdate(this.getUpdate());
+  next();
+});
+
+userSchema.pre("findOneAndUpdate", function normalizeRoleInFindOneAndUpdate(next) {
+  normalizeRoleUpdate(this.getUpdate());
+  next();
+});
+
+userSchema.statics.normalizeUserRole = normalizeUserRole;
 
 module.exports = mongoose.model("User", userSchema);
