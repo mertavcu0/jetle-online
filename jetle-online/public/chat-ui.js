@@ -41,15 +41,15 @@
   }
 
   function hasSession(store) {
-    return Boolean(
-      store.token &&
-      ChatState.getUserId(store.currentUser) &&
-      ChatState.getUserEmail(store.currentUser)
-    );
+    return Boolean(store.token && ChatState.getUserId(store.currentUser));
+  }
+
+  function getConversationIdentity(conversation) {
+    return String(conversation?.conversationId || conversation?.id || conversation?.conversationKey || "");
   }
 
   function getActiveConversation(store) {
-    return store.conversations.find((item) => item.id === store.activeConversationId) || null;
+    return store.conversations.find((item) => getConversationIdentity(item) === store.activeConversationId) || null;
   }
 
   function syncActiveConversation(store) {
@@ -57,22 +57,33 @@
     return store.activeConversation;
   }
 
-  function upsertConversation(store, conversation) {
-    const summary = ChatState.buildConversationSummary(conversation, {
+  function dedupeConversations(conversations) {
+    const map = new Map();
+    for (const conversation of conversations) {
+      const identity = getConversationIdentity(conversation);
+      const dedupeKey = identity || conversation.conversationKey;
+      if (!dedupeKey) continue;
+      const existing = map.get(dedupeKey);
+      if (!existing) {
+        map.set(dedupeKey, conversation);
+        continue;
+      }
+      const existingUpdated = new Date(existing.updatedAt || 0).getTime();
+      const incomingUpdated = new Date(conversation.updatedAt || 0).getTime();
+      map.set(dedupeKey, incomingUpdated >= existingUpdated ? conversation : existing);
+    }
+    return Array.from(map.values()).sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+  }
+
+  function upsertConversation(store, rawConversation) {
+    const summary = ChatState.buildConversationSummary(rawConversation, {
       currentUser: store.currentUser,
       listing: store.listing
     });
-    const index = store.conversations.findIndex((item) => item.id === summary.id);
-    if (index === -1) {
-      store.conversations.unshift(summary);
-    } else {
-      store.conversations[index] = summary;
-    }
-    store.conversations.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
-    if (!store.activeConversationId) {
-      store.activeConversationId = summary.id;
-    }
-    syncActiveConversation(store);
+    const identity = getConversationIdentity(summary);
+    const next = store.conversations.filter((item) => getConversationIdentity(item) !== identity);
+    next.unshift(summary);
+    store.conversations = dedupeConversations(next);
     return summary;
   }
 
@@ -80,13 +91,17 @@
     const active = syncActiveConversation(store);
     if (!active) return;
     const lastMessage = store.activeMessages[store.activeMessages.length - 1] || null;
-    const index = store.conversations.findIndex((item) => item.id === active.id);
-    if (index === -1) return;
-    store.conversations[index] = {
-      ...store.conversations[index],
-      lastMessage,
-      updatedAt: lastMessage?.updatedAt || lastMessage?.createdAt || store.conversations[index].updatedAt
-    };
+    if (!lastMessage) return;
+    const identity = getConversationIdentity(active);
+    store.conversations = store.conversations.map((item) => (
+      getConversationIdentity(item) === identity
+        ? {
+            ...item,
+            lastMessage,
+            updatedAt: lastMessage.updatedAt || lastMessage.createdAt || item.updatedAt
+          }
+        : item
+    ));
     syncActiveConversation(store);
   }
 
@@ -100,10 +115,11 @@
     }
 
     list.innerHTML = store.conversations.map((conversation) => {
+      const identity = getConversationIdentity(conversation);
       const preview = conversation.lastMessage?.text || "Henüz mesaj bulunmuyor.";
       const timestamp = conversation.lastMessage?.createdAt || conversation.updatedAt;
       return `
-        <button class="conversation-item ${conversation.id === store.activeConversationId ? "active" : ""}" type="button" data-action="select-conversation" data-conversation-id="${ChatState.escapeHtml(conversation.id)}">
+        <button class="conversation-item ${identity === store.activeConversationId ? "active" : ""}" type="button" data-action="select-conversation" data-conversation-id="${ChatState.escapeHtml(identity)}">
           <div class="conversation-top">
             <span class="conversation-name">${ChatState.escapeHtml(conversation.otherUserName || "İlan sahibi")}</span>
             <span class="conversation-time">${ChatState.escapeHtml(formatTime(timestamp))}</span>
@@ -126,24 +142,11 @@
     const listing = active?.listing || store.listing;
     const owner = active?.listingOwner || store.listingOwner;
 
-    if (!active) {
-      if (!listing) {
-        header.innerHTML = `
-          <div class="chat-header-copy">
-            <h2>Mesajlar</h2>
-            <p>Bir konuşma seçildiğinde detaylar burada görünecek.</p>
-          </div>
-        `;
-        return;
-      }
-
+    if (!active && !listing) {
       header.innerHTML = `
-        <div class="chat-header-main">
-          <img class="chat-listing-thumb" src="${ChatState.escapeHtml(relativeImage(listing))}" alt="${ChatState.escapeHtml(listing.title || "İlan")}">
-          <div class="chat-header-copy">
-            <h2>${ChatState.escapeHtml(owner?.name || owner?.email || "İlan sahibi")}</h2>
-            <p>${ChatState.escapeHtml(listing.title || "İlan")}</p>
-          </div>
+        <div class="chat-header-copy">
+          <h2>Mesajlar</h2>
+          <p>Bir konuşma seçildiğinde detaylar burada görünecek.</p>
         </div>
       `;
       return;
@@ -151,15 +154,17 @@
 
     header.innerHTML = `
       <div class="chat-header-main">
-        <img class="chat-listing-thumb" src="${ChatState.escapeHtml(relativeImage(listing))}" alt="${ChatState.escapeHtml(active.listingTitle || "İlan")}">
+        <img class="chat-listing-thumb" src="${ChatState.escapeHtml(relativeImage(listing || {}))}" alt="${ChatState.escapeHtml(listing?.title || "İlan")}">
         <div class="chat-header-copy">
-          <h2>${ChatState.escapeHtml(active.otherUserName || owner?.name || owner?.email || "İlan sahibi")}</h2>
-          <p>${ChatState.escapeHtml(active.listingTitle || "İlan")}</p>
+          <h2>${ChatState.escapeHtml(active?.otherUserName || owner?.name || owner?.email || "İlan sahibi")}</h2>
+          <p>${ChatState.escapeHtml(listing?.title || "İlan")}</p>
         </div>
       </div>
-      <div class="chat-header-actions">
-        <button class="chat-header-btn" type="button" data-action="delete-conversation">Konuşmayı Sil</button>
-      </div>
+      ${active ? `
+        <div class="chat-header-actions">
+          <button class="chat-header-btn" type="button" data-action="delete-conversation">Konuşmayı Sil</button>
+        </div>
+      ` : ""}
     `;
   }
 
@@ -167,12 +172,7 @@
     const feed = document.getElementById("chatFeed");
     if (!feed) return;
 
-    if (!store.activeConversationId) {
-      feed.innerHTML = `<div class="chat-empty">Henüz mesaj bulunmuyor.</div>`;
-      return;
-    }
-
-    if (!store.activeMessages.length) {
+    if (!store.activeConversationId || !store.activeMessages.length) {
       feed.innerHTML = `<div class="chat-empty">Henüz mesaj bulunmuyor.</div>`;
       return;
     }
@@ -180,7 +180,7 @@
     feed.innerHTML = store.activeMessages.map((message) => `
       <div class="message-row ${message.mine ? "mine" : "theirs"}">
         <div class="message-bubble">${ChatState.escapeHtml(message.text)}</div>
-        <div class="message-meta">${ChatState.escapeHtml(formatDateTime(message.createdAt))}${message.mine && message.isRead ? " â€¢ Görüldü" : ""}</div>
+        <div class="message-meta">${ChatState.escapeHtml(formatDateTime(message.createdAt))}${message.mine && message.isRead ? " • Görüldü" : ""}</div>
         ${message.mine ? `
           <div class="message-tools">
             ${message.edited ? `<span class="edited-badge">düzenlendi</span>` : ""}
@@ -205,7 +205,7 @@
     if (!listing) {
       panel.innerHTML = `
         <div class="listing-summary-header">
-          <h3>İlan Ã–zeti</h3>
+          <h3>İlan Özeti</h3>
           <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
         </div>
         <div class="empty-panel">Bir ilan seçildiğinde özeti burada gösterilecek.</div>
@@ -215,7 +215,7 @@
 
     panel.innerHTML = `
       <div class="listing-summary-header">
-        <h3>İlan Ã–zeti</h3>
+        <h3>İlan Özeti</h3>
         <p>Konuştuğunuz ilanı hızlıca gözden geçirin.</p>
       </div>
       <div class="listing-summary-body">
@@ -266,7 +266,7 @@
     }
 
     input.value = editing.text;
-    input.placeholder = "Mesajı düzenleyin.";
+    input.placeholder = "Mesajı düzenleyin...";
     sendButton.textContent = "Kaydet";
     cancelButton.classList.add("show");
   }
@@ -279,43 +279,50 @@
     syncComposer(store);
   }
 
-  async function loadConversationDetail(store, conversationId) {
-    const detail = await ChatApi.fetchConversation(conversationId);
-    if (!detail) return null;
-
-    const listing = ChatState.normalizeListing(detail.listing || store.listing || {});
-    const listingOwner = ChatState.normalizeListingOwner(listing);
+  function applyConversationDetail(store, detail, fallbackConversationId = "") {
+    const listing = ChatState.normalizeListing(detail?.listing || store.listing || {});
     const summary = upsertConversation(store, {
-      id: detail.id || conversationId,
-      conversationId: detail.id || conversationId,
+      id: detail?.conversation?.id || detail?.id || fallbackConversationId,
+      conversationId: detail?.conversation?.conversationId || detail?.id || fallbackConversationId,
       listing,
-      otherUser: detail.otherUser || null,
-      otherUserId: detail.otherUser?._id || detail.otherUser?.id || listingOwner.id,
-      otherUserEmail: detail.otherUser?.email || listingOwner.email,
-      otherUserName: detail.otherUser?.name || detail.otherUser?.email || listingOwner.name || listingOwner.email,
+      sellerId: listing?.user?.id || detail?.conversation?.otherUserId || "",
+      otherUser: detail?.otherUser || detail?.conversation?.otherUser || null,
+      otherUserId: detail?.conversation?.otherUserId || detail?.otherUser?.id || listing?.user?.id || "",
+      otherUserEmail: detail?.conversation?.otherUserEmail || detail?.otherUser?.email || listing?.user?.email || "",
+      otherUserName: detail?.conversation?.otherUserName || detail?.otherUser?.name || listing?.user?.name || listing?.user?.email || "",
       listingId: listing.id,
       listingTitle: listing.title,
       listingImage: ChatState.pickListingImage(listing),
       listingPrice: listing.price,
       listingCity: listing.city,
-      lastMessage: Array.isArray(detail.messages) && detail.messages.length
+      updatedAt: detail?.conversation?.updatedAt || detail?.id || "",
+      lastMessage: Array.isArray(detail?.messages) && detail.messages.length
         ? ChatState.normalizeMessage(detail.messages[detail.messages.length - 1], store.currentUser)
         : null,
-      updatedAt: Array.isArray(detail.messages) && detail.messages.length
-        ? detail.messages[detail.messages.length - 1].updatedAt || detail.messages[detail.messages.length - 1].createdAt
-        : "",
       unreadCount: 0
     });
 
     store.listing = listing.id ? listing : store.listing;
-    store.listingOwner = listingOwner.id || listingOwner.email || listingOwner.name ? listingOwner : store.listingOwner;
-    store.activeConversationId = summary.id;
-    store.activeMessages = Array.isArray(detail.messages)
+    store.listingOwner = ChatState.normalizeListingOwner(store.listing || listing);
+    store.activeConversationId = getConversationIdentity(summary);
+    store.activeMessages = Array.isArray(detail?.messages)
       ? detail.messages.map((message) => ChatState.normalizeMessage(message, store.currentUser))
       : [];
     syncActiveConversation(store);
     updateConversationPreviewFromMessages(store);
-    return detail;
+    return summary;
+  }
+
+  async function loadConversationDetail(store, conversationId) {
+    if (!conversationId) return null;
+    store.isLoadingConversation = true;
+    try {
+      const detail = await ChatApi.fetchConversation(conversationId);
+      applyConversationDetail(store, detail, conversationId);
+      return detail;
+    } finally {
+      store.isLoadingConversation = false;
+    }
   }
 
   async function loadInitialData(store) {
@@ -328,13 +335,13 @@
     }
 
     const rawConversations = hasSession(store) ? await ChatApi.fetchConversations() : [];
-    store.conversations = rawConversations.map((conversation) =>
-      ChatState.buildConversationSummary(conversation, {
+    store.conversations = dedupeConversations(
+      rawConversations.map((conversation) => ChatState.buildConversationSummary(conversation, {
         currentUser: store.currentUser,
         listing: store.listing && String(conversation.listingId || "") === String(store.listing.id || "")
           ? store.listing
           : null
-      })
+      }))
     );
 
     if (store.query.conversationId) {
@@ -342,27 +349,19 @@
       return;
     }
 
-    if (store.query.listingId && store.listing && store.listingOwner?.id) {
-      const derivedConversationId = ChatState.buildConversationId(
-        store.listing.id,
-        ChatState.getUserId(store.currentUser),
-        store.listingOwner.id
-      );
-      const matchingSummary = store.conversations.find((item) => item.id === derivedConversationId || item.conversationId === derivedConversationId);
-      if (matchingSummary) {
-        await loadConversationDetail(store, matchingSummary.conversationId || matchingSummary.id);
+    if (store.query.listingId) {
+      const byListing = await ChatApi.fetchConversationByListing(store.query.listingId);
+      if (byListing?.success && byListing?.conversation?.conversationId) {
+        applyConversationDetail(store, byListing, byListing.conversation.conversationId);
         return;
-      }
-
-      try {
-        await loadConversationDetail(store, derivedConversationId);
-        return;
-      } catch (_) {
       }
     }
 
     if (store.conversations.length) {
-      await loadConversationDetail(store, store.conversations[0].conversationId || store.conversations[0].id);
+      const firstConversationId = store.conversations[0].conversationId || store.conversations[0].id;
+      if (firstConversationId) {
+        await loadConversationDetail(store, firstConversationId);
+      }
     }
   }
 
@@ -380,9 +379,9 @@
       return;
     }
 
-    const listingId = String(store.listing?.id || store.listing?._id || store.activeConversation?.listingId || "").trim();
+    const listingId = String(store.listing?.id || store.listing?._id || "").trim();
     if (!listingId) {
-      setComposerStatus("İlan bilgisi bulunamadÄ±.");
+      setComposerStatus("İlan bilgisi bulunamadı.");
       return;
     }
 
@@ -390,13 +389,14 @@
 
     try {
       setComposerStatus("");
+
       if (store.editingMessageId) {
         const response = await ChatApi.updateMessage(store.editingMessageId, text);
-        store.activeMessages = store.activeMessages.map((item) =>
+        store.activeMessages = store.activeMessages.map((item) => (
           item.id === response.message.id
             ? ChatState.normalizeMessage(response.message, store.currentUser)
             : item
-        );
+        ));
         store.editingMessageId = "";
       } else {
         const response = await ChatApi.sendMessage({
@@ -405,22 +405,21 @@
           receiverEmail: store.listingOwner?.email || ""
         });
         const message = ChatState.normalizeMessage(response.message, store.currentUser);
-        const conversationId = String(response.conversationId || message.conversationId || "");
-        let summary = store.conversations.find((item) => item.id === conversationId || item.conversationId === conversationId);
-        if (!summary) {
-          summary = upsertConversation(store, {
-            id: conversationId,
-            conversationId,
-            listing: store.listing,
-            otherUserId: store.listingOwner?.id || "",
-            otherUserEmail: store.listingOwner?.email || "",
-            otherUserName: store.listingOwner?.name || store.listingOwner?.email || "İlan sahibi",
-            lastMessage: message,
-            updatedAt: message.updatedAt || message.createdAt,
-            unreadCount: 0
-          });
-        }
-        store.activeConversationId = summary.id;
+        const conversationId = String(response.conversationId || message.conversationId || "").trim();
+        const summary = upsertConversation(store, {
+          id: conversationId,
+          conversationId,
+          listing: store.listing,
+          sellerId: store.listingOwner?.id || "",
+          otherUser: store.listing?.user || null,
+          otherUserId: store.listingOwner?.id || "",
+          otherUserEmail: store.listingOwner?.email || "",
+          otherUserName: store.listingOwner?.name || store.listingOwner?.email || "İlan sahibi",
+          lastMessage: message,
+          updatedAt: message.updatedAt || message.createdAt,
+          unreadCount: 0
+        });
+        store.activeConversationId = getConversationIdentity(summary);
         store.activeMessages = [...store.activeMessages, message];
         updateConversationPreviewFromMessages(store);
       }
@@ -438,7 +437,16 @@
 
   async function handleConversationSelect(store, button) {
     const conversationId = String(button.dataset.conversationId || "").trim();
-    if (!conversationId) return;
+    if (!conversationId || conversationId === store.activeConversationId) {
+      closeMobileSidebar();
+      return;
+    }
+    store.activeConversationId = conversationId;
+    syncActiveConversation(store);
+    renderConversationList(store);
+    renderChatHeader(store);
+    renderChatFeed(store);
+    renderListingSummary(store);
     await loadConversationDetail(store, conversationId);
     renderAll(store);
     closeMobileSidebar();
@@ -464,21 +472,21 @@
 
   async function handleDeleteConversation(store) {
     const active = syncActiveConversation(store);
-    if (!active) return;
+    if (!active?.conversationId) return;
     if (!window.confirm("Bu konuşmayı silmek istediğinize emin misiniz?")) return;
 
     try {
-      await ChatApi.deleteConversation(active.id);
-      store.conversations = store.conversations.filter((item) => item.id !== active.id);
+      await ChatApi.deleteConversation(active.conversationId);
+      store.conversations = store.conversations.filter((item) => getConversationIdentity(item) !== getConversationIdentity(active));
       store.activeConversationId = "";
       store.activeMessages = [];
       store.editingMessageId = "";
+      syncActiveConversation(store);
 
       if (store.conversations.length) {
         await loadConversationDetail(store, store.conversations[0].conversationId || store.conversations[0].id);
-      } else {
-        syncActiveConversation(store);
       }
+
       renderAll(store);
     } catch (error) {
       console.error("CONVERSATION DELETE ERROR", error);
@@ -560,14 +568,8 @@
       void handleDeleteConversation(store);
     });
 
-    document.getElementById("mobileConversationToggle")?.addEventListener("click", () => {
-      openMobileSidebar();
-    });
-
-    document.getElementById("mobileOverlay")?.addEventListener("click", () => {
-      closeMobileSidebar();
-    });
-
+    document.getElementById("mobileConversationToggle")?.addEventListener("click", openMobileSidebar);
+    document.getElementById("mobileOverlay")?.addEventListener("click", closeMobileSidebar);
     document.getElementById("logoutBtn")?.addEventListener("click", () => {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
@@ -576,9 +578,7 @@
   }
 
   async function initMessagesPage() {
-    if (!document.body.dataset.page || document.body.dataset.page !== "messages") {
-      return;
-    }
+    if (document.body.dataset.page !== "messages") return;
 
     const store = ChatState.createStore();
     bindEvents(store);
