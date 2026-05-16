@@ -152,13 +152,21 @@ function normalizeListing(listing) {
 
   return {
     id: String(listing._id),
-    title: listing.title || "Ilan",
+    title: listing.title || "İlan",
     price: listing.price || 0,
     city: listing.city || "",
     image: normalizeImage(listing),
     coverImage: listing.coverImage || listing.mainImage || "",
     images: Array.isArray(listing.images) ? listing.images.filter(Boolean) : [],
-    photos: Array.isArray(listing.photos) ? listing.photos.filter(Boolean) : []
+    photos: Array.isArray(listing.photos) ? listing.photos.filter(Boolean) : [],
+    user: listing.user
+      ? {
+          _id: String(listing.user._id || listing.user),
+          name: listing.user.name || listing.user.username || listing.user.email || "",
+          username: listing.user.username || "",
+          email: listing.user.email || ""
+        }
+      : null
   };
 }
 
@@ -166,7 +174,7 @@ function normalizeUser(user) {
   if (!user) return null;
   return {
     id: String(user._id),
-    name: user.name || user.email || "Kullanici",
+    name: user.name || user.email || "Kullanıcı",
     email: user.email || ""
   };
 }
@@ -247,7 +255,8 @@ router.get("/conversations", async (req, res) => {
           listingIds.map(async (id) => {
             if (!isValidObjectId(id)) return null;
             return await Listing.findById(id)
-              .select("title price city image images photos coverImage mainImage")
+              .select("title price city image images photos coverImage mainImage user")
+              .populate("user", "_id name email username")
               .lean();
           })
         );
@@ -281,27 +290,51 @@ router.get("/conversations", async (req, res) => {
 
         if (!isSenderCurrent && !isReceiverCurrent) continue;
 
+        const listing = listingMap.get(listingId);
         const otherUserEmail = isSenderCurrent ? receiverEmail : senderEmail;
         const otherUserId = isSenderCurrent ? receiverId : senderId;
-        const otherUserName = otherUserEmail || otherUserId || "Kullanici";
-        const conversationId = `listing:${listingId}:user:${otherUserId || otherUserEmail || "unknown"}`;
-        const listing = listingMap.get(listingId);
+        const listingOwnerId = String(listing?.user?._id || "").trim();
+        const listingOwnerEmail = String(listing?.user?.email || "").trim().toLowerCase();
+        const listingOwnerName = String(
+          listing?.user?.name ||
+          listing?.user?.username ||
+          listing?.user?.email ||
+          ""
+        ).trim();
+        const otherUserName =
+          otherUserId === listingOwnerId
+            ? (listingOwnerName || listingOwnerEmail || otherUserEmail || otherUserId || "Kullanıcı")
+            : (otherUserEmail || otherUserId || "Kullanıcı");
+        const canonicalConversationId =
+          otherUserId && isValidObjectId(otherUserId)
+            ? makeConversationId(listingId, currentUserId, otherUserId)
+            : "";
 
-        if (!conversationMap.has(conversationId)) {
-          conversationMap.set(conversationId, {
-            id: conversationId,
-            conversationId: otherUserId ? makeConversationId(listingId, currentUserId, otherUserId) : "",
+        if (!canonicalConversationId) continue;
+
+        if (!conversationMap.has(canonicalConversationId)) {
+          conversationMap.set(canonicalConversationId, {
+            id: canonicalConversationId,
+            conversationId: canonicalConversationId,
             listingId,
-            listingTitle: listing?.title || "Ilan",
+            listing: normalizeListing(listing),
+            listingTitle: listing?.title || "İlan",
             listingImage: normalizeImage(listing),
             listingPrice: listing?.price || 0,
             listingCity: listing?.city || "",
             lastMessage: message.text || "",
             updatedAt: message.updatedAt || message.createdAt || null,
             unreadCount: 0,
+            sellerId: listingOwnerId,
+            buyerId: currentUserId === listingOwnerId ? otherUserId : currentUserId,
             otherUserId,
             otherUserName,
-            otherUserEmail
+            otherUserEmail,
+            otherUser: {
+              _id: otherUserId,
+              name: otherUserName,
+              email: otherUserEmail
+            }
           });
         }
       } catch (itemErr) {
@@ -391,12 +424,12 @@ router.get("/listing/:listingId", async (req, res) => {
         id: conversationId,
         conversationId,
         listingId,
-        listingTitle: listing.title || "Ilan",
+        listingTitle: listing.title || "İlan",
         updatedAt: orderedMessages[orderedMessages.length - 1]?.updatedAt ||
           orderedMessages[orderedMessages.length - 1]?.createdAt ||
           null,
         otherUserId,
-        otherUserName: listing.user?.name || listing.user?.email || "Kullanici",
+        otherUserName: listing.user?.name || listing.user?.email || "Kullanıcı",
         otherUserEmail: listing.user?.email || ""
       },
       listing: normalizeListing(listing),
@@ -452,7 +485,7 @@ router.get("/:conversationId", async (req, res) => {
           listingId: message.listingId
             ? {
                 _id: String(message.listingId._id),
-                title: message.listingId.title || "Ilan"
+                title: message.listingId.title || "İlan"
               }
             : null
         }))

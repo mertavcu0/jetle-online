@@ -42,24 +42,23 @@
   async function fetchListing(listingId) {
     if (!listingId) return null;
     const response = await fetch(`/api/listings/${encodeURIComponent(listingId)}`);
-    if (!response.ok) {
-      return null;
-    }
+    if (!response.ok) return null;
     return response.json();
   }
 
   async function fetchConversations() {
     const data = await request("/api/messages/conversations");
-    return Array.isArray(data)
-      ? data
-      : Array.isArray(data?.conversations)
-        ? data.conversations
-        : [];
+    return Array.isArray(data?.conversations) ? data.conversations : [];
   }
 
   async function fetchConversation(conversationId, limit = 100) {
     if (!conversationId) return null;
     return request(`/api/messages/${encodeURIComponent(conversationId)}?limit=${encodeURIComponent(String(limit))}`);
+  }
+
+  async function fetchConversationByListing(listingId) {
+    if (!listingId) return null;
+    return request(`/api/messages/listing/${encodeURIComponent(listingId)}`);
   }
 
   async function sendMessage(payload) {
@@ -93,6 +92,7 @@
     fetchListing,
     fetchConversations,
     fetchConversation,
+    fetchConversationByListing,
     sendMessage,
     updateMessage,
     deleteMessage,

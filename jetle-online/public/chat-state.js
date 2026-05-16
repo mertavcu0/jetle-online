@@ -21,7 +21,7 @@
   }
 
   function getUserId(user) {
-    return String(user?._id || user?.id || "");
+    return String(user?._id || user?.id || "").trim();
   }
 
   function getUserEmail(user) {
@@ -33,58 +33,40 @@
     return `listing:${String(listingId || "")}:users:${sorted.join("__")}`;
   }
 
+  function buildConversationKey(listingId, buyerId, sellerId) {
+    return [
+      String(listingId || "").trim(),
+      String(buyerId || "").trim(),
+      String(sellerId || "").trim()
+    ].join("|");
+  }
+
+  function normalizeUser(user) {
+    if (!user) return null;
+    return {
+      id: String(user._id || user.id || "").trim(),
+      name: String(user.name || user.username || user.email || "").trim(),
+      email: String(user.email || "").trim().toLowerCase(),
+      username: String(user.username || "").trim()
+    };
+  }
+
   function normalizeListing(listing) {
     const safeListing = listing || {};
     return {
-      _id: String(safeListing._id || safeListing.id || ""),
-      id: String(safeListing.id || safeListing._id || ""),
+      _id: String(safeListing._id || safeListing.id || "").trim(),
+      id: String(safeListing.id || safeListing._id || "").trim(),
       title: String(safeListing.title || "İlan"),
       price: Number(safeListing.price || 0),
       city: String(safeListing.city || ""),
-      image: safeListing.image || "",
-      mainImage: safeListing.mainImage || "",
-      coverImage: safeListing.coverImage || "",
-      images: Array.isArray(safeListing.images) ? safeListing.images : [],
-      photos: Array.isArray(safeListing.photos) ? safeListing.photos : [],
-      user: safeListing.user || null,
-      userEmail: safeListing.userEmail || "",
-      ownerEmail: safeListing.ownerEmail || ""
-    };
-  }
-
-  function normalizeListingOwner(listing) {
-    const safeListing = normalizeListing(listing);
-    const owner = safeListing.user || {};
-    return {
-      id: String(owner._id || owner.id || ""),
-      email: String(owner.email || safeListing.userEmail || safeListing.ownerEmail || "").trim().toLowerCase(),
-      name: String(owner.name || owner.username || owner.email || "").trim()
-    };
-  }
-
-  function normalizeMessage(message, currentUser) {
-    const safeMessage = message || {};
-    const sender = safeMessage.sender || {};
-    const currentUserId = getUserId(currentUser);
-    const currentUserEmail = getUserEmail(currentUser);
-    const senderId = String(safeMessage.senderId || sender._id || sender.id || "");
-    const senderEmail = String(sender.email || safeMessage.senderEmail || "").trim().toLowerCase();
-
-    return {
-      id: String(safeMessage.id || safeMessage._id || ""),
-      conversationId: String(safeMessage.conversationId || ""),
-      senderId,
-      senderEmail,
-      senderName: String(sender.name || safeMessage.senderName || senderEmail || "Kullanıcı"),
-      text: String(safeMessage.text || ""),
-      createdAt: safeMessage.createdAt || new Date().toISOString(),
-      updatedAt: safeMessage.updatedAt || safeMessage.createdAt || new Date().toISOString(),
-      isRead: Boolean(safeMessage.isRead),
-      edited: Boolean(safeMessage.edited),
-      mine: Boolean(
-        (currentUserId && senderId === currentUserId) ||
-        (currentUserEmail && senderEmail === currentUserEmail)
-      )
+      image: String(safeListing.image || ""),
+      mainImage: String(safeListing.mainImage || ""),
+      coverImage: String(safeListing.coverImage || ""),
+      images: Array.isArray(safeListing.images) ? safeListing.images.filter(Boolean) : [],
+      photos: Array.isArray(safeListing.photos) ? safeListing.photos.filter(Boolean) : [],
+      user: normalizeUser(safeListing.user),
+      userEmail: String(safeListing.userEmail || "").trim().toLowerCase(),
+      ownerEmail: String(safeListing.ownerEmail || "").trim().toLowerCase()
     };
   }
 
@@ -100,85 +82,123 @@
     );
   }
 
+  function normalizeListingOwner(listing) {
+    const safeListing = normalizeListing(listing);
+    const owner = safeListing.user || null;
+    return {
+      id: String(owner?.id || "").trim(),
+      email: String(owner?.email || safeListing.userEmail || safeListing.ownerEmail || "").trim().toLowerCase(),
+      name: String(owner?.name || owner?.username || owner?.email || "").trim()
+    };
+  }
+
+  function normalizeMessage(message, currentUser) {
+    const safeMessage = message || {};
+    const sender = normalizeUser(safeMessage.sender);
+    const currentUserId = getUserId(currentUser);
+    const currentUserEmail = getUserEmail(currentUser);
+    const senderId = String(safeMessage.senderId || sender?.id || "").trim();
+    const senderEmail = String(sender?.email || safeMessage.senderEmail || "").trim().toLowerCase();
+
+    return {
+      id: String(safeMessage.id || safeMessage._id || "").trim(),
+      conversationId: String(safeMessage.conversationId || "").trim(),
+      senderId,
+      senderEmail,
+      senderName: String(sender?.name || safeMessage.senderName || senderEmail || "Kullanıcı").trim(),
+      text: String(safeMessage.text || ""),
+      createdAt: safeMessage.createdAt || new Date().toISOString(),
+      updatedAt: safeMessage.updatedAt || safeMessage.createdAt || new Date().toISOString(),
+      isRead: Boolean(safeMessage.isRead),
+      edited: Boolean(safeMessage.edited),
+      mine: Boolean(
+        (currentUserId && senderId === currentUserId) ||
+        (currentUserEmail && senderEmail === currentUserEmail)
+      )
+    };
+  }
+
   function buildConversationSummary(rawConversation, context) {
     const currentUser = context.currentUser || {};
-    const listingOverride = context.listing || null;
-    const safeConversation = rawConversation || {};
-    const listing = normalizeListing(safeConversation.listing || listingOverride || {});
+    const listing = normalizeListing(rawConversation?.listing || context.listing || {});
     const listingOwner = normalizeListingOwner(listing);
-    const derivedConversationId =
-      safeConversation.conversationId ||
-      safeConversation.id ||
-      (listing.id && listingOwner.id && getUserId(currentUser)
-        ? buildConversationId(listing.id, getUserId(currentUser), listingOwner.id)
-        : "");
+    const rawOtherUser = normalizeUser(rawConversation?.otherUser);
 
     const otherUserId = String(
+      rawConversation?.otherUserId ||
+      rawOtherUser?.id ||
       listingOwner.id ||
-      safeConversation.otherUserId ||
-      safeConversation.sellerId ||
       ""
-    );
+    ).trim();
     const otherUserEmail = String(
+      rawConversation?.otherUserEmail ||
+      rawOtherUser?.email ||
       listingOwner.email ||
-      safeConversation.otherUserEmail ||
       ""
     ).trim().toLowerCase();
     const otherUserName = String(
+      rawConversation?.otherUserName ||
+      rawOtherUser?.name ||
       listingOwner.name ||
-      safeConversation.otherUserName ||
-      safeConversation.otherUser?.name ||
-      safeConversation.otherUser?.email ||
       otherUserEmail ||
       "İlan sahibi"
-    );
+    ).trim();
 
-    const rawLastMessage = safeConversation.lastMessage;
-    const lastMessage = rawLastMessage && typeof rawLastMessage === "object"
-      ? normalizeMessage(rawLastMessage, currentUser)
-      : rawLastMessage
-        ? {
-            id: "",
-            conversationId: derivedConversationId,
-            senderId: "",
-            senderEmail: "",
-            senderName: "",
-            text: String(rawLastMessage),
-            createdAt: safeConversation.updatedAt || new Date().toISOString(),
-            updatedAt: safeConversation.updatedAt || new Date().toISOString(),
-            isRead: true,
-            edited: false,
-            mine: false
-          }
-        : null;
+    const currentUserId = getUserId(currentUser);
+    const sellerId = String(rawConversation?.sellerId || listingOwner.id || "").trim();
+    const buyerId = String(
+      rawConversation?.buyerId ||
+      (sellerId && currentUserId !== sellerId ? currentUserId : otherUserId) ||
+      ""
+    ).trim();
+    const listingId = String(rawConversation?.listingId || listing.id || "").trim();
+    const canonicalConversationId = String(
+      rawConversation?.conversationId ||
+      rawConversation?.id ||
+      (listingId && otherUserId && currentUserId
+        ? buildConversationId(listingId, currentUserId, otherUserId)
+        : "")
+    ).trim();
+    const identity = canonicalConversationId || `draft:${buildConversationKey(listingId, buyerId, sellerId)}`;
+
+    const lastMessage = rawConversation?.lastMessage
+      ? normalizeMessage(rawConversation.lastMessage, currentUser)
+      : null;
 
     return {
-      id: String(safeConversation.id || derivedConversationId),
-      conversationId: String(derivedConversationId),
-      listingId: String(safeConversation.listingId || listing.id || ""),
-      buyerId: String(safeConversation.buyerId || getUserId(currentUser) || ""),
-      sellerId: String(safeConversation.sellerId || listingOwner.id || ""),
+      id: identity,
+      conversationId: canonicalConversationId,
+      conversationKey: buildConversationKey(listingId, buyerId, sellerId),
+      listingId,
+      buyerId,
+      sellerId,
+      listing,
+      listingOwner,
+      otherUser: {
+        id: otherUserId,
+        email: otherUserEmail,
+        name: otherUserName
+      },
       otherUserId,
       otherUserEmail,
       otherUserName,
-      listingOwner,
-      listing,
-      listingTitle: String(safeConversation.listingTitle || listing.title || "İlan"),
+      listingTitle: String(rawConversation?.listingTitle || listing.title || "İlan"),
       listingImage: pickListingImage(listing),
       listingPrice: Number(
-        safeConversation.listingPrice !== undefined
-          ? safeConversation.listingPrice
+        rawConversation?.listingPrice !== undefined
+          ? rawConversation.listingPrice
           : listing.price || 0
       ),
-      listingCity: String(safeConversation.listingCity || listing.city || ""),
-      listingUrl: `/listing-detail.html?id=${encodeURIComponent(String(safeConversation.listingId || listing.id || ""))}`,
+      listingCity: String(rawConversation?.listingCity || listing.city || ""),
+      listingUrl: `/listing-detail.html?id=${encodeURIComponent(String(listingId || ""))}`,
       lastMessage,
-      updatedAt: safeConversation.updatedAt || lastMessage?.updatedAt || lastMessage?.createdAt || "",
-      unreadCount: Number(safeConversation.unreadCount || 0)
+      updatedAt: rawConversation?.updatedAt || lastMessage?.updatedAt || lastMessage?.createdAt || "",
+      unreadCount: Number(rawConversation?.unreadCount || 0)
     };
   }
 
   function createStore() {
+    const params = new URLSearchParams(window.location.search);
     return {
       currentUser: getStoredUser(),
       token: getStoredToken(),
@@ -190,10 +210,10 @@
       activeConversation: null,
       editingMessageId: "",
       isSending: false,
-      isLoading: false,
+      isLoadingConversation: false,
       query: {
-        listingId: String(new URLSearchParams(window.location.search).get("listingId") || new URLSearchParams(window.location.search).get("id") || "").trim(),
-        conversationId: String(new URLSearchParams(window.location.search).get("conversationId") || "").trim()
+        listingId: String(params.get("listingId") || params.get("id") || "").trim(),
+        conversationId: String(params.get("conversationId") || "").trim()
       }
     };
   }
@@ -204,10 +224,12 @@
     getStoredToken,
     getUserId,
     getUserEmail,
-    buildConversationId,
+    normalizeUser,
     normalizeListing,
     normalizeListingOwner,
     normalizeMessage,
+    buildConversationId,
+    buildConversationKey,
     buildConversationSummary,
     pickListingImage,
     createStore
