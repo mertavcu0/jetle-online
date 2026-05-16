@@ -44,6 +44,34 @@
     return Boolean(store.token && ChatState.getUserId(store.currentUser));
   }
 
+  function isMobileInputMode() {
+    return window.matchMedia("(hover: none), (pointer: coarse), (max-width: 820px)").matches;
+  }
+
+  function autoResizeTextarea(textarea) {
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const nextHeight = Math.min(textarea.scrollHeight, 168);
+    textarea.style.height = `${Math.max(nextHeight, 52)}px`;
+    textarea.style.overflowY = textarea.scrollHeight > 168 ? "auto" : "hidden";
+  }
+
+  function resetTextarea(textarea) {
+    if (!textarea) return;
+    textarea.style.height = "";
+    textarea.style.overflowY = "";
+  }
+
+  function keepComposerVisible() {
+    if (!isMobileInputMode()) return;
+    window.requestAnimationFrame(() => {
+      document.getElementById("composerForm")?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest"
+      });
+    });
+  }
+
   function getConversationIdentity(conversation) {
     return String(conversation?.conversationId || conversation?.id || conversation?.conversationKey || "");
   }
@@ -243,6 +271,7 @@
       input.disabled = true;
       sendButton.disabled = true;
       cancelButton.classList.remove("show");
+      autoResizeTextarea(input);
       return;
     }
 
@@ -253,6 +282,7 @@
       input.placeholder = "Mesaj yaz...";
       sendButton.textContent = "Gönder";
       cancelButton.classList.remove("show");
+      autoResizeTextarea(input);
       return;
     }
 
@@ -262,6 +292,7 @@
       input.placeholder = "Mesaj yaz...";
       sendButton.textContent = "Gönder";
       cancelButton.classList.remove("show");
+      autoResizeTextarea(input);
       return;
     }
 
@@ -269,6 +300,7 @@
     input.placeholder = "Mesajı düzenleyin...";
     sendButton.textContent = "Kaydet";
     cancelButton.classList.add("show");
+    autoResizeTextarea(input);
   }
 
   function renderAll(store) {
@@ -426,6 +458,7 @@
 
       syncActiveConversation(store);
       input.value = "";
+      resetTextarea(input);
       renderAll(store);
     } catch (error) {
       console.error("MESSAGE SEND ERROR", error);
@@ -506,7 +539,10 @@
   function cancelEditing(store) {
     store.editingMessageId = "";
     const input = document.getElementById("messageInput");
-    if (input) input.value = "";
+    if (input) {
+      input.value = "";
+      resetTextarea(input);
+    }
     renderAll(store);
   }
 
@@ -534,10 +570,27 @@
     });
 
     document.getElementById("messageInput")?.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
+      if (event.key === "Enter" && !event.shiftKey && !isMobileInputMode()) {
         void handleSend(store, event);
       }
     });
+
+    document.getElementById("messageInput")?.addEventListener("input", (event) => {
+      autoResizeTextarea(event.currentTarget);
+    });
+
+    document.getElementById("messageInput")?.addEventListener("focus", () => {
+      keepComposerVisible();
+    });
+
+    if (window.visualViewport) {
+      const viewportHandler = () => {
+        document.documentElement.style.setProperty("--viewport-offset-bottom", `${Math.max(0, window.innerHeight - window.visualViewport.height)}px`);
+        keepComposerVisible();
+      };
+      window.visualViewport.addEventListener("resize", viewportHandler);
+      window.visualViewport.addEventListener("scroll", viewportHandler);
+    }
 
     document.getElementById("conversationList")?.addEventListener("click", (event) => {
       const button = event.target.closest('[data-action="select-conversation"]');
@@ -582,6 +635,7 @@
 
     const store = ChatState.createStore();
     bindEvents(store);
+    autoResizeTextarea(document.getElementById("messageInput"));
 
     try {
       if (!hasSession(store)) {
