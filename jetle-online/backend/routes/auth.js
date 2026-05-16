@@ -121,6 +121,11 @@ router.post("/login", async (req, res) => {
   try {
     const email = String(req.body?.email || "").trim().toLowerCase();
     const password = String(req.body?.password || "");
+    console.log("LOGIN ATTEMPT:", {
+      email,
+      hasPassword: Boolean(password),
+      isProduction
+    });
 
     if (!isValidEmail(email) || !password) {
       return res.status(401).json({
@@ -138,9 +143,16 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    console.log("LOGIN STEP user_lookup_start:", { email: safeEmail });
     const user = await User.findOne({
       email: safeEmail
     }).lean(false);
+    console.log("LOGIN STEP user_lookup_ok:", {
+      found: Boolean(user),
+      role: user?.role || null,
+      banned: Boolean(user?.banned),
+      hasPassword: Boolean(user?.password)
+    });
 
     if (!user || !user.password) {
       return res.status(401).json({
@@ -158,20 +170,35 @@ router.post("/login", async (req, res) => {
 
     let ok = false;
     const storedPassword = String(user.password || "");
-    try {
-      ok = await bcrypt.compare(password, storedPassword);
-    } catch (compareErr) {
-      if (isProduction || isBcryptHash(storedPassword)) {
+    const hasBcryptPassword = isBcryptHash(storedPassword);
+    console.log("LOGIN STEP password_mode:", {
+      hasBcryptPassword,
+      storedLength: storedPassword.length
+    });
+
+    if (hasBcryptPassword) {
+      try {
+        ok = await bcrypt.compare(password, storedPassword);
+        console.log("LOGIN STEP bcrypt_compare_ok:", { ok });
+      } catch (compareErr) {
+        console.error("LOGIN STEP bcrypt_compare_fail:", compareErr);
         throw compareErr;
       }
     }
 
-    const isLegacyPlaintext = !isBcryptHash(storedPassword) && password === storedPassword;
+    const isLegacyPlaintext = !hasBcryptPassword && password === storedPassword;
 
     if (!ok && isLegacyPlaintext) {
       ok = true;
-      user.password = await bcrypt.hash(password, 10);
-      await user.save();
+      console.log("LOGIN STEP legacy_plaintext_upgrade_start:", { email: safeEmail });
+      try {
+        user.password = await bcrypt.hash(password, 10);
+        await user.save();
+        console.log("LOGIN STEP legacy_plaintext_upgrade_ok:", { email: safeEmail });
+      } catch (upgradeErr) {
+        console.error("LOGIN STEP legacy_plaintext_upgrade_fail:", upgradeErr);
+        throw upgradeErr;
+      }
     }
 
     if (!ok) {
@@ -182,14 +209,29 @@ router.post("/login", async (req, res) => {
     }
 
     const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
-    const token = jwt.sign(
-      {
-        id: String(user._id),
-        role: user.role || "user"
-      },
-      jwtSecret,
-      { expiresIn: "7d" }
-    );
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET missing during login");
+    }
+
+    console.log("LOGIN STEP token_sign_start:", {
+      userId: String(user._id),
+      role: user.role || "user"
+    });
+    let token = "";
+    try {
+      token = jwt.sign(
+        {
+          id: String(user._id),
+          role: user.role || "user"
+        },
+        jwtSecret,
+        { expiresIn: "7d" }
+      );
+      console.log("LOGIN STEP token_sign_ok:", { tokenLength: token.length });
+    } catch (tokenErr) {
+      console.error("LOGIN STEP token_sign_fail:", tokenErr);
+      throw tokenErr;
+    }
 
     res.json({
       success: true,
@@ -198,6 +240,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error("LOGIN ERROR REAL:", err);
+    console.error("LOGIN ERROR STACK:", err?.stack || "no_stack");
     res.status(500).json({
       success: false,
       message: "Server error",
