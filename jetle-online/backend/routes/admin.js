@@ -95,6 +95,14 @@ function firstValue(value, fallback = "") {
   return items[0] || fallback;
 }
 
+function normalizeAdminUser(user, fallbackEmail = "") {
+  return {
+    id: String(user?._id || ""),
+    name: String(user?.name || user?.email || fallbackEmail || "Kullanici"),
+    email: String(user?.email || fallbackEmail || "")
+  };
+}
+
 function normalizeCarSeries(series = []) {
   return series.map((item) => ({
     name: item.name,
@@ -331,10 +339,63 @@ router.get("/messages", async (req, res) => {
   logAdminStart(path);
   try {
     const messages = await withTimeout(
-      Message.find().sort({ createdAt: -1 }).limit(100).maxTimeMS(QUERY_TIMEOUT_MS),
+      Message.find({ isDeleted: { $ne: true } })
+        .sort({ createdAt: -1 })
+        .limit(250)
+        .populate("senderId", "_id name email")
+        .populate("receiverId", "_id name email")
+        .populate("listingId", "_id title price city")
+        .maxTimeMS(QUERY_TIMEOUT_MS)
+        .lean(),
       path
     );
-    res.json(messages);
+
+    const conversations = [];
+    const seen = new Set();
+
+    for (const message of Array.isArray(messages) ? messages : []) {
+      const listingId = String(message?.listingId?._id || message?.listingId || "");
+      const senderId = String(message?.senderId?._id || message?.senderId || "");
+      const receiverId = String(message?.receiverId?._id || message?.receiverId || "");
+      const conversationId = String(message?.conversationId || "").trim();
+      const fallbackKey = [listingId, senderId, receiverId].filter(Boolean).sort().join("__");
+      const key = conversationId || fallbackKey;
+
+      if (!key || seen.has(key)) {
+        continue;
+      }
+
+      seen.add(key);
+      const sender = normalizeAdminUser(message?.senderId, message?.senderEmail);
+      const receiver = normalizeAdminUser(message?.receiverId, message?.receiverEmail);
+      const listing = message?.listingId && typeof message.listingId === "object"
+        ? {
+            id: String(message.listingId._id || ""),
+            title: String(message.listingId.title || "Ilan"),
+            price: Number(message.listingId.price || 0),
+            city: String(message.listingId.city || "")
+          }
+        : null;
+
+      conversations.push({
+        id: key,
+        conversationId: conversationId || key,
+        listingId,
+        listing,
+        listingUrl: listingId ? `/listing-detail.html?id=${listingId}` : "",
+        users: [sender, receiver],
+        sender,
+        receiver,
+        lastMessage: {
+          id: String(message?._id || ""),
+          text: String(message?.text || ""),
+          createdAt: message?.createdAt || null
+        },
+        updatedAt: message?.updatedAt || message?.createdAt || null
+      });
+    }
+
+    res.json(conversations);
   } catch (err) {
     console.error("ADMIN MESSAGES ERROR:", err);
     res.status(200).json(emptyList());

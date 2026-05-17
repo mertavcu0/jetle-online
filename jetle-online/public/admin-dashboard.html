@@ -195,6 +195,77 @@
       font-size: 14px;
     }
 
+    .messages-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .messages-meta {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .message-admin-card {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-admin-row {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .message-admin-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .message-admin-main strong,
+    .message-admin-users strong {
+      margin-bottom: 6px;
+    }
+
+    .message-admin-users {
+      min-width: 220px;
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message-admin-users span {
+      display: block;
+    }
+
+    .message-admin-preview {
+      color: #111827;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .message-admin-subline {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .message-admin-link {
+      color: #2563eb;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .message-admin-link:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 620px) {
       .admin-layout { grid-template-columns: 1fr; }
       .topbar {
@@ -1040,6 +1111,43 @@
       `;
     }
 
+    function renderMessages(data) {
+      const container = contentContainer();
+      if (!container) return;
+
+      const conversations = Array.isArray(data) ? data : [];
+      container.innerHTML = `
+        <h2>Mesajlar</h2>
+        <div class="messages-toolbar">
+          <div>
+            <strong>Konusma Ozeti</strong>
+            <div class="messages-meta">Sadece okunur moderasyon gorunumu. En guncel konusmalar listelenir.</div>
+          </div>
+          <div class="messages-meta">${conversations.length} konusma</div>
+        </div>
+        ${conversations.map((item) => `
+          <div class="admin-card message-admin-card">
+            <div class="message-admin-row">
+              <div class="message-admin-main">
+                <strong>${escapeHtml(item.listing?.title || "Ilan baglantisi yok")}</strong>
+                <div class="message-admin-preview">${escapeHtml(item.lastMessage?.text || "Mesaj icerigi yok")}</div>
+                <div class="message-admin-subline">
+                  ${item.listingUrl ? `<a class="message-admin-link" href="${item.listingUrl}" target="_blank" rel="noopener">Ilani ac</a>` : "Ilan baglantisi yok"}
+                  ${item.updatedAt ? ` - ${new Date(item.updatedAt).toLocaleString("tr-TR")}` : ""}
+                  ${item.listing?.city ? ` - ${escapeHtml(item.listing.city)}` : ""}
+                </div>
+              </div>
+              <div class="message-admin-users">
+                <strong>Kullanicilar</strong>
+                <span>Gonderen: ${escapeHtml(item.sender?.name || item.sender?.email || "-")}</span>
+                <span>Alici: ${escapeHtml(item.receiver?.name || item.receiver?.email || "-")}</span>
+              </div>
+            </div>
+          </div>
+        `).join("") || `<div class="empty">Mesaj bulunamadi.</div>`}
+      `;
+    }
+
     function renderCars(data) {
       const container = contentContainer();
       if (!container) return;
@@ -1181,10 +1289,16 @@
       }
 
       if (type === "messages") {
-        container.innerHTML = `
-          <h2>Mesajlar</h2>
-          <div class="empty">Mesaj moderasyonu yak?nda aktif olacak.</div>
-        `;
+        renderLoadingSkeleton("Mesajlar");
+        authFetch("/api/admin/messages")
+          .then((res) => {
+            return ensureAdminResponse(res, "API HATA").json();
+          })
+          .then((data) => renderMessages(data))
+          .catch((err) => {
+            console.error("MESSAGES ERROR:", err);
+            container.innerHTML = `<h2>Mesajlar</h2><div class="empty">Veri alinamadi.</div>`;
+          });
       }
 
       if (type === "reports") {
