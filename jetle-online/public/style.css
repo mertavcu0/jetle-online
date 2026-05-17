@@ -94,6 +94,20 @@ a {
   box-shadow: 0 0 0 2px rgba(59,130,246,0.12);
 }
 
+.listing-card.featured-card,
+.listing-card.force-premium-card,
+.listing-card.doped-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 340px;
+  max-height: 420px;
+  padding: 0 !important;
+  grid-column: auto !important;
+  flex: 0 1 auto !important;
+  align-self: stretch;
+}
+
 .featured-container {
   display: flex;
   gap: 16px;
@@ -1711,8 +1725,8 @@ button.danger {
 .main .cards,
 .cards#cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
 }
 
 .card,
@@ -1918,8 +1932,8 @@ input[type="search"] {
 
 .listing-grid {
   display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  gap: 20px !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 18px !important;
   padding: 0 20px !important;
 }
 
@@ -1942,8 +1956,8 @@ input[type="search"] {
 }
 
 .listing-grid {
-  grid-template-columns: repeat(5, 1fr) !important;
-  gap: 12px !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 18px !important;
 }
 
 .listing-card {

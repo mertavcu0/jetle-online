@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jetle - Türkiye'nin ilan platformu</title>
   <meta name="description" content="Satılık, kiralık, ikinci el ilanlar">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css?v=2">
   <style>
     * {
       box-sizing: border-box;
@@ -1437,7 +1437,7 @@
       (window.location.protocol === "http:" || window.location.protocol === "https:")
         ? window.location.origin
         : "";
-    const DETAIL_PAGE = "listing-detail.html";
+    const DETAIL_PAGE = "listing.html";
     const state = { listings: [] };
 
     const els = {
@@ -1467,6 +1467,46 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function fixMojibakeText(value) {
+      const text = String(value ?? "");
+      if (!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(text)) return text;
+      try {
+        const bytes = Uint8Array.from(Array.from(text).map((ch) => ch.charCodeAt(0) & 255));
+        const decoded = new TextDecoder("utf-8").decode(bytes);
+        return decoded && decoded !== text ? decoded.replace(/\uFFFD/g, "") : text.replace(/\uFFFD/g, "");
+      } catch (_) {
+        return text.replace(/\uFFFD/g, "");
+      }
+    }
+
+    function normalizeTextValue(value) {
+      if (Array.isArray(value)) return value.map((item) => normalizeTextValue(item));
+      if (typeof value === "string") return fixMojibakeText(value).normalize("NFC");
+      return value;
+    }
+
+    function normalizeTextObject(value) {
+      if (Array.isArray(value)) return value.map((item) => normalizeTextObject(item));
+      if (value && typeof value === "object") {
+        const next = {};
+        Object.entries(value).forEach(([key, item]) => {
+          next[key] = normalizeTextObject(item);
+        });
+        return next;
+      }
+      return normalizeTextValue(value);
+    }
+
+    function cleanupStoredTextCache() {
+      ["user", "favs"].forEach((key) => {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return;
+          localStorage.setItem(key, JSON.stringify(normalizeTextObject(JSON.parse(raw))));
+        } catch (_) {}
+      });
     }
 
     function formatPrice(price) {
@@ -1760,7 +1800,7 @@
         const res = await fetch("/api/listings");
         if (!res.ok) throw new Error("İlanlar alınamadı");
         const data = await res.json();
-        state.listings = Array.isArray(data) ? data : [];
+        state.listings = Array.isArray(data) ? data.map((item) => normalizeTextObject(item)) : [];
       } catch (err) {
         state.listings = [];
       }
@@ -1842,8 +1882,10 @@
       }
     });
 
+    cleanupStoredTextCache();
     loadListings();
   </script>
-  <script src="/auth-global.js"></script>
+  <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>
+  <script src="/auth-global.js?v=2"></script>
 </body>
 </html>

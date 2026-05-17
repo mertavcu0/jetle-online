@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan Ver - Jetle</title>
+  <link rel="stylesheet" href="/style.css?v=2" />
+  <style>
+    .create-v2-body {
+      background: #f3f4f6;
+    }
+
+    .create-v2-topbar {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+    }
+
+    .create-v2-topbar .create-v2-logo {
+      max-width: 1280px;
+      margin: 0 auto;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .create-v2-topbar .jetle {
+      color: #2563eb;
+    }
+
+    .create-v2-topbar .online {
+      color: #111827;
+    }
+
+    .create-v2-page-bg {
+      min-height: 100vh;
+      padding: 24px 16px 52px;
+      background: #f3f4f6;
+    }
+
+    .create-v2-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .create-v2-container {
+      width: 100%;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    .create-v2-container > h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .create-v2-lead {
+      margin: 0 0 20px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .create-v2-preview-column {
+      position: sticky;
+      top: 24px;
+    }
+
+    .create-v2-preview-wrap {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    .create-v2-preview-wrap h4 {
+      margin: 0 0 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .create-v2-preview-card {
+      border: 1px solid #e8edf3;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .create-v2-preview-media {
+      width: 100%;
+      height: 140px;
+      background: #e8eaee;
+      overflow: hidden;
+    }
+
+    .create-v2-preview-media img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .create-v2-preview-body {
+      padding: 14px;
+    }
+
+    .create-v2-preview-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1.35;
+    }
+
+    .create-v2-preview-meta {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .create-v2-preview-price {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: #2563eb;
+      line-height: 1.2;
+    }
+
+    .create-v2-progress {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .create-v2-progress-item {
+      position: relative;
+      flex: 1;
+      z-index: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #e5e7eb;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .create-v2-progress-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 26px;
+      left: calc(50% + 22px);
+      width: calc(100% - 44px);
+      height: 2px;
+      background: #d1d5db;
+      z-index: -1;
+    }
+
+    .create-v2-progress-item span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .create-v2-progress-item small {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    .create-v2-progress-item.active {
+      background: #eff6ff;
+      border-color: #2563eb;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.14);
+      color: #1d4ed8;
+    }
+
+    .create-v2-progress-item.active span {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .create-v2-progress-item.done {
+      background: #ecfdf5;
+      border-color: #22c55e;
+      color: #15803d;
+    }
+
+    .create-v2-progress-item.done:not(:last-child)::after {
+      background: #22c55e;
+    }
+
+    .create-v2-progress-item.done span {
+      background: #22c55e;
+      color: #fff;
+      font-size: 0;
+    }
+
+    .create-v2-progress-item.done span::before {
+      content: "✓";
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    .step-panel h3 {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .create-v2-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .field-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      height: 44px;
+      width: 100%;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      color: #111827;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .field-group textarea {
+      height: auto;
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .field-group.field-error input,
+    .field-group.field-error select,
+    .field-group.field-error textarea {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+    }
+
+    .create-v2-photo-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .create-v2-photo-wrap.drag-over .create-v2-drop-label {
+      border-color: #2563eb;
+      background: #eff6ff;
+      border-style: solid;
+    }
+
+    .create-v2-drop-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      border: 2px dashed #c5cad3;
+      border-radius: 10px;
+      background: #fafbfc;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s ease, background 0.2s ease, border-style 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .create-v2-drop-label:hover {
+      border-color: #2563eb;
+      background: #f5f8ff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    }
+
+    .create-v2-drop-label strong {
+      font-size: 18px;
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    .create-v2-drop-label span {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .photo-input-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .create-v2-preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .preview-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      cursor: grab;
+      background: #f9fafb;
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .preview-item.dragging {
+      opacity: 0.55;
+      transform: scale(0.98);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-item button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 4px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .create-v2-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+      padding-top: 8px;
+    }
+
+    .create-v2-actions .btn-step {
+      flex: 1;
+      min-width: 140px;
+      min-height: 48px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-step-primary {
+      border: none;
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .btn-step-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+    }
+
+    .btn-step-secondary {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: #374151;
+    }
+
+    .btn-step-secondary:hover {
+      background: #eef2f7;
+      border-color: #9ca3af;
+    }
+
+    .create-v2-features {
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid #eef0f3;
+    }
+
+    .create-v2-features-title {
+      margin: 0 0 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .create-v2-feature-block {
+      background: #fffbeb;
+      border: 1px solid #e7e2d6;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .create-v2-feature-block > h3 {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .create-v2-damage-panel {
+      background: #f9fafb;
+      padding: 26px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .create-v2-damage-controls {
+      margin-bottom: 15px;
+    }
+
+    .damage-btn {
+      padding: 6px 12px;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      margin-right: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .damage-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+    }
+
+    .create-v2-car-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .car-svg {
+      width: 400px;
+      height: 200px;
+      background: #fff;
+      border-radius: 10px;
+    }
+
+    .car-body {
+      fill: #ddd;
+      pointer-events: none;
+    }
+
+    .part {
+      fill: #e5e7eb;
+      stroke: #374151;
+      stroke-width: 2;
+      cursor: pointer;
+    }
+
+    .part:hover {
+      fill: #93c5fd;
+      stroke: #2563eb;
+    }
+
+    .part.active {
+      fill: #3b82f6;
+    }
+
+    .part.boyali {
+      fill: #f59e0b;
+    }
+
+    .part.lokal {
+      fill: #22c55e;
+    }
+
+    .part.degisen {
+      fill: #ef4444;
+    }
+
+    .create-v2-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 16px;
+    }
+
+    .feature-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #374151;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .feature-check:hover {
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .feature-check input {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      flex-shrink: 0;
+      accent-color: #2563eb;
+      cursor: pointer;
+    }
+
+    .feature-check span {
+      line-height: 1.3;
+    }
+
+    @media (max-width: 960px) {
+      .create-v2-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .create-v2-preview-column {
+        position: static;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .create-v2-features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .create-v2-form-grid,
+      .create-v2-features-grid,
+      .create-v2-progress {
+        grid-template-columns: 1fr;
+      }
+
+      .create-v2-progress {
+        display: grid;
+        gap: 10px;
+      }
+
+      .create-v2-progress-item:not(:last-child)::after {
+        display: none;
+      }
+
+      .create-v2-actions .btn-step {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="create-v2-body">
+  <div class="create-v2-topbar">
+    <div class="create-v2-logo">
+      <span class="jetle">jetle</span><span class="online">.online</span>
+    </div>
+  </div>
+
+  <div class="create-v2-page-bg">
+    <div class="create-v2-layout">
+      <div class="create-v2-form-column">
+        <div class="create-v2-container">
+          <h2>İlan Ver</h2>
+          <p class="create-v2-lead">Adım adım ilerleyin; sağda ilanınız canlı güncellenir.</p>
+
+          <div class="create-v2-progress" role="tablist" aria-label="Form adımları">
+            <div class="create-v2-progress-item active" data-step-indicator="1">
+              <span>1</span>
+              <small>Kategori ve başlık</small>
+            </div>
+            <div class="create-v2-progress-item" data-step-indicator="2">
+              <span>2</span>
+              <small>Detaylar</small>
+            </div>
+            <div class="create-v2-progress-item" data-step-indicator="3">
+              <span>3</span>
+              <small>Fotoğraf ve fiyat</small>
+            </div>
+          </div>
+
+          <form id="createForm" enctype="multipart/form-data">
+            <div class="step-panel active" data-step="1">
+              <h3>Adım 1 - Kategori ve temel bilgiler</h3>
+              <div class="create-v2-form-grid">
+                <div class="field-group full-width">
+                  <label for="category">Kategori</label>
+                  <select id="category">
+                    <option value="Otomobil">Otomobil</option>
+                    <option value="Emlak">Emlak</option>
+                    <option value="Elektronik">Elektronik</option>
+                  </select>
+                </div>
+                <div class="field-group full-width">
+                  <label for="title">Başlık</label>
+                  <input type="text" id="title" placeholder="İlan başlığı" required />
+                </div>
+              </div>
+              <div class="create-v2-actions">
+                <button type="button" class="btn-step btn-step-primary" id="btnStep1Next">Devam Et</button>
+              </div>
+            </div>
+
+            <div class="step-panel" data-step="2" hidden>
+              <h3>Adım 2 - Detaylar</h3>
+              <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">Kategoriye göre alanlar aşağıda güncellenir.</p>
+              <div id="dynamicFields"></div>
+              <div class="create-v2-form-grid" style="margin-top: 16px;">
+                <div class="field-group full-width">
+                  <label for="description">Açıklama</label>
+                  <textarea id="description" placeholder="Detaylı açıklama"></textarea>
+                </div>
+              </div>
+              <div class="create-v2-actions">
+                <button type="button" class="btn-step btn-step-secondary" id="btnStep2Back">Geri</button>
+                <button type="button" class="btn-step btn-step-primary" id="btnStep2Next">Devam Et</button>
+              </div>
+            </div>
+
+            <div class="step-panel" data-step="3" hidden>
+              <h3>Adım 3 - Fotoğraf, fiyat ve konum</h3>
+              <div class="create-v2-photo-wrap" id="photoDropZone">
+                <label for="images" class="create-v2-drop-label">
+                  <strong>Fotoğraf ekle</strong>
+                  <span>Sürükleyip bırakın veya tıklayın - birden fazla seçebilirsiniz</span>
+                </label>
+                <input type="file" id="images" name="images" multiple accept="image/*" class="photo-input-hidden" />
+                <div id="imagePreview" class="create-v2-preview-grid"></div>
+              </div>
+              <div class="create-v2-form-grid" style="margin-top: 8px;">
+                <div class="field-group">
+                  <label for="price">Fiyat</label>
+                  <input type="text" id="price" inputmode="numeric" placeholder="Örn. 500000" autocomplete="off" />
+                </div>
+                <div class="field-group">
+                  <label for="city">Şehir</label>
+                  <input type="text" id="city" placeholder="İstanbul, Ankara..." />
+                </div>
+              </div>
+              <div class="create-v2-actions">
+                <button type="button" class="btn-step btn-step-secondary" id="btnStep3Back">Geri</button>
+                <button type="submit" class="btn-step btn-step-primary" id="btnSubmitListing">İlanı Yayınla</button>
+              </div>
+            </div>
+          </form>
+
+          <section class="create-v2-features" aria-labelledby="features-heading">
+            <h2 class="create-v2-features-title" id="features-heading">Özellikler</h2>
+
+            <div class="create-v2-feature-block">
+              <div class="create-v2-damage-panel">
+                <div class="create-v2-damage-controls">
+                  <button type="button" data-status="orijinal" class="damage-btn active">Orijinal</button>
+                  <button type="button" data-status="boyali" class="damage-btn">Boyalı</button>
+                  <button type="button" data-status="lokal" class="damage-btn">Lokal Boyalı</button>
+                  <button type="button" data-status="degisen" class="damage-btn">Değişen</button>
+                </div>
+
+                <div class="create-v2-car-wrapper">
+                  <svg viewBox="0 0 400 200" class="car-svg">
+                    <rect x="120" y="50" width="160" height="100" rx="12" class="car-body" />
+                    <rect x="140" y="25" width="120" height="40" rx="12" class="part" data-name="hood" />
+                    <rect x="140" y="75" width="120" height="40" rx="12" class="part" data-name="roof" />
+                    <rect x="140" y="125" width="120" height="40" rx="12" class="part" data-name="trunk" />
+                    <rect x="90" y="70" width="45" height="45" rx="12" class="part" data-name="leftFront" />
+                    <rect x="90" y="120" width="45" height="45" rx="12" class="part" data-name="leftRear" />
+                    <rect x="265" y="70" width="45" height="45" rx="12" class="part" data-name="rightFront" />
+                    <rect x="265" y="120" width="45" height="45" rx="12" class="part" data-name="rightRear" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="create-v2-feature-block">
+              <h3>Güvenlik</h3>
+              <div class="create-v2-features-grid">
+                <label class="feature-check"><input type="checkbox" id="feat_abs" /><span>ABS</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_esp" /><span>ESP</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_airbag" /><span>Hava Yastığı</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_lane" /><span>Şerit Takip</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_hill" /><span>Yokuş Kalkış</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_blind" /><span>Kör Nokta</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_child" /><span>Çocuk Kilidi</span></label>
+              </div>
+            </div>
+
+            <div class="create-v2-feature-block">
+              <h3>İç Donanım</h3>
+              <div class="create-v2-features-grid">
+                <label class="feature-check"><input type="checkbox" id="feat_leather" /><span>Deri Koltuk</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_heated" /><span>Isıtmalı Koltuk</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_ac" /><span>Klima</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_cam" /><span>Geri Görüş Kamerası</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_hud" /><span>Head-up Display</span></label>
+              </div>
+            </div>
+
+            <div class="create-v2-feature-block">
+              <h3>Dış Donanım</h3>
+              <div class="create-v2-features-grid">
+                <label class="feature-check"><input type="checkbox" id="feat_roof" /><span>Sunroof</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_park" /><span>Park Sensörü</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_led" /><span>LED Far</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_mirror" /><span>Aynalar Elektrikli</span></label>
+              </div>
+            </div>
+
+            <div class="create-v2-feature-block">
+              <h3>Multimedya</h3>
+              <div class="create-v2-features-grid">
+                <label class="feature-check"><input type="checkbox" id="feat_carplay" /><span>Apple CarPlay</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_auto" /><span>Android Auto</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_bt" /><span>Bluetooth</span></label>
+                <label class="feature-check"><input type="checkbox" id="feat_usb" /><span>USB</span></label>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <aside class="create-v2-preview-column" aria-label="Canlı ilan önizlemesi">
+        <div class="create-v2-preview-wrap">
+          <h4>İlan Önizleme</h4>
+          <div class="create-v2-preview-card">
+            <div class="create-v2-preview-media">
+              <img id="livePreviewImg" alt="" />
+            </div>
+            <div class="create-v2-preview-body">
+              <p class="create-v2-preview-title" id="livePreviewTitle">İlan başlığı</p>
+              <p class="create-v2-preview-meta" id="livePreviewMeta">Kategori - Şehir</p>
+              <p class="create-v2-preview-price" id="livePreviewPrice">-</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="/create-listing-v2.js?v=2"></script>
+</body>
+</html>
