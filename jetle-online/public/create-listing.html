@@ -3,195 +3,751 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>İlan Oluştur - Jetle</title>
-  <meta name="description" content="Jetle ilan oluşturma sayfası.">
-  <meta name="keywords" content="ilan oluştur, Jetle">
-  <meta property="og:title" content="İlan Oluştur - Jetle">
-  <meta property="og:description" content="Jetle ilan oluşturma sayfası.">
-  <link rel="stylesheet" href="/css/style.css">
+  <title>İlan Ver - Jetle</title>
+  <meta name="description" content="Jetle üzerinde ilan vermek için adım adım ilerleyin.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .create-page {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .create-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 24px;
+    }
+
+    .create-topbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .create-topbar-inner .jetle {
+      color: #2563eb;
+    }
+
+    .create-shell {
+      min-height: 100vh;
+      padding: 24px 16px 52px;
+    }
+
+    .create-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .create-form-card,
+    .create-preview-wrap {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .create-form-card {
+      padding: 28px;
+    }
+
+    .create-preview-column {
+      position: sticky;
+      top: 24px;
+    }
+
+    .create-preview-wrap {
+      padding: 18px;
+    }
+
+    .create-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .create-lead {
+      margin: 0 0 24px;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .step-progress {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .step-progress-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid #dbe1ea;
+      border-radius: 12px;
+      background: #f9fafb;
+      color: #6b7280;
+    }
+
+    .step-progress-item span {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #111827;
+      font-size: 13px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .step-progress-item small {
+      display: block;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .step-progress-item.active {
+      border-color: #93c5fd;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .step-progress-item.active span,
+    .step-progress-item.done span {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .step-progress-item.done {
+      border-color: #bfdbfe;
+      background: #f8fbff;
+      color: #1f2937;
+    }
+
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    .step-panel h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .step-panel-note {
+      margin: 0 0 14px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .field-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background: #fff;
+      color: #111827;
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    .field-group textarea {
+      min-height: 124px;
+      resize: vertical;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .btn-step {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-step-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .btn-step-secondary {
+      background: #eef2f7;
+      color: #111827;
+    }
+
+    .btn-step:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .step-message {
+      min-height: 20px;
+      margin: 12px 0 0;
+      color: #dc2626;
+      font-size: 13px;
+    }
+
+    .photo-upload-wrap {
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: 18px;
+    }
+
+    .photo-upload-wrap.drag-over {
+      border-color: #60a5fa;
+      background: #eff6ff;
+    }
+
+    .photo-drop-label {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .photo-drop-label strong {
+      font-size: 15px;
+    }
+
+    .photo-drop-label span {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .photo-input-hidden {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 12px;
+    }
+
+    .preview-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    .preview-item img {
+      display: block;
+      width: 100px;
+      height: 76px;
+      object-fit: cover;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      border: 0;
+      border-radius: 999px;
+      width: 24px;
+      height: 24px;
+      background: rgba(17, 24, 39, 0.78);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .features-root {
+      margin-top: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .features-root h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .features-block {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+      padding: 18px;
+    }
+
+    .features-block h3 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+
+    .features-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .feature-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .damage-panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .damage-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .damage-btn {
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      background: #fff;
+      color: #374151;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .damage-btn.active {
+      border-color: #93c5fd;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .car-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 6px 0;
+    }
+
+    .car-svg {
+      width: min(100%, 360px);
+      height: auto;
+    }
+
+    .car-body {
+      fill: #dbeafe;
+      stroke: #93c5fd;
+      stroke-width: 2;
+    }
+
+    .part {
+      fill: #f9fafb;
+      stroke: #9ca3af;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: fill 0.2s ease, stroke 0.2s ease;
+    }
+
+    .part:hover {
+      stroke: #2563eb;
+    }
+
+    .part.painted {
+      fill: #fef3c7;
+      stroke: #f59e0b;
+    }
+
+    .part.changed {
+      fill: #dbeafe;
+      stroke: #2563eb;
+    }
+
+    .part.damaged {
+      fill: #fee2e2;
+      stroke: #dc2626;
+    }
+
+    .damage-status-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      color: #4b5563;
+      font-size: 13px;
+    }
+
+    .damage-status-list span {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+    }
+
+    .damage-tooltip {
+      position: fixed;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .preview-listing-card {
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .preview-listing-media {
+      aspect-ratio: 16 / 9;
+      background: #e5e7eb;
+    }
+
+    .preview-listing-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-listing-body {
+      padding: 16px;
+    }
+
+    .preview-listing-title {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .preview-listing-meta {
+      margin: 0 0 8px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .preview-listing-price {
+      margin: 0;
+      color: #111827;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .visually-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1024px) {
+      .create-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .create-preview-column {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .create-topbar,
+      .create-shell {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .create-form-card {
+        padding: 18px;
+      }
+
+      .form-grid,
+      .features-grid-4,
+      .step-progress {
+        grid-template-columns: 1fr;
+      }
+
+      .step-actions {
+        flex-direction: column;
+      }
+
+      .step-actions .btn-step {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body class="create-page">
-  <header class="topbar">
-    <nav class="nav">
-      <a class="logo" href="/">jetle<span>.online</span></a>
-      <form class="search" action="/">
-        <input placeholder="İlan ara">
-        <button>Ara</button>
-      </form>
-      <div class="nav-actions" id="authArea"></div>
-    </nav>
+  <header class="create-topbar">
+    <div class="create-topbar-inner">
+      <span class="jetle">jetle</span><span>.online</span>
+    </div>
   </header>
 
-  <main class="create-container">
-    <div class="compact-stepbar">
-      <div class="step-pill active"><span>1</span> Bilgiler</div>
-      <div class="step-line"></div>
-      <div class="step-pill"><span>2</span> Fotoğraf</div>
-      <div class="step-line"></div>
-      <div class="step-pill"><span>3</span> Yayınla</div>
-    </div>
-
+  <main class="create-shell">
     <div class="create-layout">
-      <form class="create-form-card" id="listingForm">
-        <section class="create-section">
-          <h1>İlan Bilgileri</h1>
-          <div class="create-grid">
-            <label>
-              Başlık
-              <input name="title" placeholder="Örn. BMW 3.20d M Sport" required>
-            </label>
-            <label>
-              Fiyat
-              <input name="price" id="priceInput" inputmode="numeric" placeholder="Fiyat TL" required>
-            </label>
-            <label>
-              Kategori
-              <select name="category" required>
-                <option value="">Seçiniz</option>
-                <option>Otomobil</option>
-                <option>Emlak</option>
-                <option>Elektronik</option>
-              </select>
-            </label>
-            <label>
-              Şehir
-              <select name="city" id="citySelect" required>
-                <option value="">Şehir seç</option>
-                <option>İstanbul</option>
-                <option>Ankara</option>
-                <option>İzmir</option>
-                <option>Adana</option>
-                <option>Bursa</option>
-                <option>Antalya</option>
-                <option>Konya</option>
-                <option>Gaziantep</option>
-                <option>Kocaeli</option>
-                <option>Kayseri</option>
-              </select>
-            </label>
-            <label>
-              Marka
-              <select name="brand" id="brand" onchange="onBrandChange()">
-                <option value="">Marka seç</option>
-              </select>
-            </label>
-            <label>
-              Model
-              <select name="model" id="model" onchange="onModelChange()">
-                <option value="">Model seç</option>
-              </select>
-            </label>
-            <label>
-              Seri
-              <select name="series" id="series" onchange="onSeriesChange()">
-                <option value="">Seri seç</option>
-              </select>
-            </label>
-            <label>
-              Yıl
-              <input name="year" id="yearInput" type="number" min="1980" max="2025" placeholder="2020">
-              <small class="field-error" id="yearError"></small>
-            </label>
-            <label>
-              KM
-              <input name="km" id="kmInput" type="number" min="0" max="1000000" placeholder="120000">
-              <small class="field-error" id="kmError"></small>
-            </label>
-            <label>
-              Yakıt
-              <select name="fuel" id="fuel">
-                <option value="">Seçiniz</option>
-                <option>Benzin</option>
-                <option>Dizel</option>
-                <option>Hybrid</option>
-                <option>Elektrik</option>
-              </select>
-            </label>
-            <label>
-              Vites
-              <select name="transmission" id="transmission">
-                <option value="">Seçiniz</option>
-                <option>Otomatik</option>
-                <option>Manuel</option>
-              </select>
-            </label>
-            <label>
-              Kasa Tipi
-              <select name="body" id="body">
-                <option value="">Seçiniz</option>
-                <option>Sedan</option>
-                <option>Hatchback</option>
-                <option>SUV</option>
-                <option>Station Wagon</option>
-                <option>Coupe</option>
-              </select>
-            </label>
+      <section class="create-form-card">
+        <h1 class="create-title">İlan Ver</h1>
+        <p class="create-lead">Adım adım ilerleyin; sağda ilanınız canlı güncellenir.</p>
+
+        <div class="step-progress" role="tablist" aria-label="Form adımları">
+          <div class="step-progress-item active" data-step-indicator="1">
+            <span>1</span>
+            <small>Kategori ve başlık</small>
           </div>
-
-          <label class="full-field">
-            Açıklama
-            <textarea name="description" placeholder="İlan açıklamasını kısa ve net yazın" required></textarea>
-          </label>
-        </section>
-
-        <section class="create-section features-box">
-          <h2>Özellikler</h2>
-          <div class="feature-grid">
-            <label><input type="checkbox"> Takas olur</label>
-            <label><input type="checkbox"> Garantili</label>
-            <label><input type="checkbox"> Sahibinden</label>
-            <label><input type="checkbox"> Acil</label>
-            <label><input type="checkbox"> Ekspertizli</label>
-            <label><input type="checkbox"> Krediye uygun</label>
-            <label><input type="checkbox"> Faturalı</label>
-            <label><input type="checkbox"> Pazarlık payı</label>
+          <div class="step-progress-item" data-step-indicator="2">
+            <span>2</span>
+            <small>Detaylar</small>
           </div>
-        </section>
-
-        <section class="create-section">
-          <h2>Fotoğraflar</h2>
-          <input type="hidden" name="image" value="">
-          <label class="photo-drop">
-            <span>📷</span>
-            <strong>Fotoğraf ekle</strong>
-            <small>En iyi görsel kartta ilk görünür</small>
-            <input name="images" type="file" accept="image/*" multiple>
-          </label>
-          <div class="photo-preview-grid" id="miniPreviewList"></div>
-        </section>
-
-        <div class="create-actions">
-          <a href="/" class="ghost-btn">Vazgeç</a>
-          <button type="submit" id="publishBtn" disabled>İlanı Yayınla</button>
+          <div class="step-progress-item" data-step-indicator="3">
+            <span>3</span>
+            <small>Fotoğraf ve fiyat</small>
+          </div>
         </div>
-        <p class="muted" id="listingMessage"></p>
-      </form>
 
-      <aside class="create-preview-card">
-        <div class="preview-image" id="createPreviewImage">Görsel</div>
-        <div class="preview-body">
-          <h3 id="createPreviewTitle">İlan başlığı</h3>
-          <p class="preview-price" id="createPreviewPrice">0 TL</p>
-          <p class="muted" id="createPreviewMeta">Şehir / Kategori</p>
-          <p class="muted" id="createPreviewVehicle">Marka / Model</p>
+        <form id="createForm" enctype="multipart/form-data">
+          <div class="step-panel active" data-step="1">
+            <h2>Adım 1 - Kategori ve temel bilgiler</h2>
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="category">Kategori</label>
+                <select id="category" name="category">
+                  <option value="">Kategori seçin</option>
+                  <option value="Otomobil">Otomobil</option>
+                  <option value="Emlak">Emlak</option>
+                  <option value="Elektronik">Elektronik</option>
+                </select>
+              </div>
+              <div class="field-group full-width">
+                <label for="title">Başlık</label>
+                <input type="text" id="title" name="title" placeholder="İlan başlığı" required>
+              </div>
+              <div class="field-group">
+                <label for="city">Şehir</label>
+                <select id="city" name="city">
+                  <option value="">Şehir seçin</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="district">İlçe</label>
+                <select id="district" name="district" disabled>
+                  <option value="">Önce şehir seçin</option>
+                </select>
+              </div>
+            </div>
+            <p class="step-message" id="step1Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-primary" id="btnStep1Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="2" hidden>
+            <h2>Adım 2 - Detaylar</h2>
+            <p class="step-panel-note">Kategoriye göre alanlar aşağıda güncellenir.</p>
+            <div id="dynamicFields"></div>
+            <div class="form-grid" style="margin-top: 16px;">
+              <div class="field-group full-width">
+                <label for="description">Açıklama</label>
+                <textarea id="description" name="description" placeholder="Detaylı açıklama"></textarea>
+              </div>
+            </div>
+
+            <div id="vehicleFields" class="visually-hidden" aria-hidden="true"></div>
+
+            <div id="ekspertizSection" class="visually-hidden" aria-hidden="true" style="margin-top: 18px;">
+              <div class="features-block">
+                <h3>Ekspertiz Paneli</h3>
+                <div class="damage-panel">
+                  <div class="damage-controls">
+                    <button type="button" data-status="orijinal" class="damage-btn active">Orijinal</button>
+                    <button type="button" data-status="boyali" class="damage-btn">Boyalı</button>
+                    <button type="button" data-status="lokal" class="damage-btn">Lokal Boyalı</button>
+                    <button type="button" data-status="degisen" class="damage-btn">Değişen</button>
+                  </div>
+
+                  <div class="car-wrapper">
+                    <svg viewBox="0 0 400 200" class="car-svg">
+                      <rect x="120" y="50" width="160" height="100" rx="12" class="car-body"></rect>
+                      <rect x="140" y="25" width="120" height="40" rx="12" class="part" data-part="hood" data-label="Kaput"></rect>
+                      <rect x="140" y="75" width="120" height="40" rx="12" class="part" data-part="roof" data-label="Tavan"></rect>
+                      <rect x="140" y="125" width="120" height="40" rx="12" class="part" data-part="trunk" data-label="Bagaj"></rect>
+                      <rect x="90" y="70" width="45" height="45" rx="12" class="part" data-part="leftFrontFender" data-label="Sol Ön Çamurluk"></rect>
+                      <rect x="90" y="120" width="45" height="45" rx="12" class="part" data-part="leftRearFender" data-label="Sol Arka Çamurluk"></rect>
+                      <rect x="265" y="70" width="45" height="45" rx="12" class="part" data-part="rightFrontFender" data-label="Sağ Ön Çamurluk"></rect>
+                      <rect x="265" y="120" width="45" height="45" rx="12" class="part" data-part="rightRearFender" data-label="Sağ Arka Çamurluk"></rect>
+                    </svg>
+                  </div>
+
+                  <div id="damageStatusList" class="damage-status-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <p class="step-message" id="step2Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep2Back">Geri</button>
+              <button type="button" class="btn-step btn-step-primary" id="btnStep2Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="3" hidden>
+            <h2>Adım 3 - Fotoğraf, video ve fiyat</h2>
+            <div class="photo-upload-wrap" id="photoDropZone">
+              <label for="images" class="photo-drop-label">
+                <strong>Fotoğraf ekle</strong>
+                <span>Sürükleyip bırakın veya tıklayın - birden fazla seçebilirsiniz</span>
+              </label>
+              <input type="file" id="images" name="images" multiple accept="image/*" class="photo-input-hidden">
+              <div id="imagePreview" class="visually-hidden" aria-hidden="true"></div>
+              <div id="preview" class="preview-grid"></div>
+            </div>
+
+            <div class="form-grid" style="margin-top: 8px;">
+              <div class="field-group">
+                <label for="price">Fiyat</label>
+                <input type="text" id="price" name="price" inputmode="numeric" placeholder="Örn. 500000" autocomplete="off">
+              </div>
+              <div class="field-group">
+                <label for="subCategory">Alt kategori</label>
+                <input type="text" id="subCategory" name="subCategory" placeholder="Opsiyonel">
+              </div>
+              <div class="field-group full-width">
+                <label for="video">Video</label>
+                <input type="file" id="video" accept="video/*">
+              </div>
+            </div>
+
+            <div id="videoPreview"></div>
+
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep3Back">Geri</button>
+              <button type="submit" class="btn-step btn-step-primary" id="submitBtn">İlanı Yayınla</button>
+            </div>
+            <div id="btnSubmitListing" class="visually-hidden" aria-hidden="true"></div>
+          </div>
+        </form>
+
+        <section class="features-root" aria-labelledby="features-heading">
+          <h2 id="features-heading">Özellikler</h2>
+
+          <div class="features-block">
+            <h3>Güvenlik</h3>
+            <div class="features-grid-4">
+              <label class="feature-check"><input type="checkbox" id="feat_abs"><span>ABS</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_esp"><span>ESP</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_airbag"><span>Hava Yastığı</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_lane"><span>Şerit Takip</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_hill"><span>Yokuş Kalkış</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_blind"><span>Kör Nokta</span></label>
+            </div>
+          </div>
+
+          <div class="features-block">
+            <h3>İç Donanım</h3>
+            <div class="features-grid-4">
+              <label class="feature-check"><input type="checkbox" id="feat_leather"><span>Deri Koltuk</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_heated"><span>Isıtmalı Koltuk</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_ac"><span>Klima</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_cam"><span>Geri Görüş Kamerası</span></label>
+            </div>
+          </div>
+
+          <div class="features-block">
+            <h3>Dış Donanım</h3>
+            <div class="features-grid-4">
+              <label class="feature-check"><input type="checkbox" id="feat_roof"><span>Sunroof</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_park"><span>Park Sensörü</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_led"><span>LED Far</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_mirror"><span>Aynalar Elektrikli</span></label>
+            </div>
+          </div>
+
+          <div class="features-block">
+            <h3>Multimedya</h3>
+            <div class="features-grid-4">
+              <label class="feature-check"><input type="checkbox" id="feat_carplay"><span>Apple CarPlay</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_auto"><span>Android Auto</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_bt"><span>Bluetooth</span></label>
+              <label class="feature-check"><input type="checkbox" id="feat_usb"><span>USB</span></label>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <aside class="create-preview-column" aria-label="Canlı ilan önizlemesi">
+        <div class="create-preview-wrap">
+          <h3 style="margin: 0 0 14px;">İlan Önizleme</h3>
+          <div class="preview-listing-card">
+            <div class="preview-listing-media">
+              <img id="livePreviewImg" alt="">
+            </div>
+            <div class="preview-listing-body">
+              <p class="preview-listing-title" id="livePreviewTitle">İlan başlığı</p>
+              <p class="preview-listing-meta" id="livePreviewMeta">Kategori / Şehir</p>
+              <p class="preview-listing-price" id="livePreviewPrice">-</p>
+              <div class="visually-hidden" id="previewTitle"></div>
+              <div class="visually-hidden" id="previewLocation"></div>
+              <div class="visually-hidden" id="previewPrice"></div>
+            </div>
+          </div>
         </div>
       </aside>
     </div>
-
-    <section class="success-screen" id="successScreen" hidden>
-      <div class="success-card">
-        <h2>İlan başarıyla eklendi</h2>
-        <p>İlanınız Jetle üzerinde yayında. Dilerseniz ilan sayfasına gidebilir veya ana sayfaya dönebilirsiniz.</p>
-        <div>
-          <a class="post-link" id="successDetailLink" href="/">İlana Git</a>
-          <a class="ghost-btn" href="/">Ana Sayfa</a>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <script defer src="/js/main.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/listings.js"></script>
+  <div id="damageTooltip" class="damage-tooltip"></div>
+
+  <script src="/cities.js"></script>
+  <script src="/create-listing.js"></script>
 </body>
 </html>
