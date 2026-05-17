@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>İlan Detayı | jetle.online</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
   <style>
     * {
       box-sizing: border-box;
@@ -441,8 +441,6 @@
     .right-panel {
       width: 100%;
       align-self: start;
-      position: sticky;
-      top: 88px;
     }
 
     .info-card,
@@ -693,25 +691,22 @@
     .tabs {
       margin-top: 30px;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .tab {
       padding: 10px 16px;
-      border: 1px solid #d1d5db;
-      background: #f3f4f6;
-      color: #374151;
+      border: none;
+      background: #eee;
       cursor: pointer;
       border-radius: 8px;
-      font-weight: 700;
+      font-weight: 600;
       transition: all 0.2s ease;
     }
 
     .tab.active {
-      background: #fff;
-      color: #111827;
-      border-color: #d1d5db;
+      background: #2563eb;
+      color: white;
     }
 
     .tab-content {
@@ -776,56 +771,12 @@
     .tag-chip {
       display: inline-flex;
       align-items: center;
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      color: #374151;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
       font-size: 12px;
-      font-weight: 600;
-    }
-
-    .feature-groups {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .feature-group {
-      background: #fffdf7;
-      border: 1px solid #efe5c9;
-      border-radius: 6px;
-      padding: 12px 14px;
-    }
-
-    .feature-group h5 {
-      margin: 0 0 10px;
-      color: #1f2937;
-      font-size: 13px;
       font-weight: 700;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px 14px;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 7px;
-      min-width: 0;
-      color: #374151;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .feature-check {
-      color: #1f9d55;
-      font-weight: 800;
-      flex: 0 0 auto;
-      margin-top: 1px;
     }
 
     .details-box {
@@ -865,41 +816,30 @@
 
     .details-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
     .details-grid div {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid #eef0f3;
-      border-radius: 0;
-      padding: 10px 0;
+      background: #f9fafb;
+      border: 1px solid #eef0f3;
+      border-radius: 8px;
+      padding: 12px;
       font-size: 13px;
-      color: #111827;
-    }
-
-    .details-grid div:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
+      color: #444;
     }
 
     .details-grid strong {
       display: block;
-      margin-bottom: 0;
+      margin-bottom: 4px;
       color: #6b7280;
       font-size: 12px;
       font-weight: 700;
-      flex: 0 0 110px;
     }
 
     .details-grid span,
     .details-grid div {
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     .footer {
@@ -984,7 +924,6 @@
 
       .right-panel {
         width: 100%;
-        position: static;
       }
     }
 
@@ -1003,10 +942,6 @@
 
       .spec-grid {
         grid-template-columns: 1fr;
-      }
-
-      .feature-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .price {
@@ -1149,10 +1084,6 @@
         flex-direction: column;
         align-items: flex-start;
       }
-
-      .feature-grid {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
@@ -1203,22 +1134,11 @@
         <div class="info-box listing-info-box">
           <h4>İlan Detayları</h4>
           <div class="details-grid">
-            <div><strong>İlan No</strong><span id="listingNo"></span></div>
-            <div><strong>Yayın Tarihi</strong><span id="listingDate"></span></div>
-            <div><strong>Şehir</strong><span id="city"></span></div>
-            <div id="districtRow" hidden><strong>İlçe</strong><span id="district"></span></div>
-            <div><strong>Kategori</strong><span id="category"></span></div>
-            <div id="brandRow" hidden><strong>Marka</strong><span id="brand"></span></div>
-            <div id="seriesRow" hidden><strong>Seri</strong><span id="series"></span></div>
-            <div id="modelRow" hidden><strong>Model</strong><span id="model"></span></div>
-            <div id="yearRow" hidden><strong>Yıl</strong><span id="year"></span></div>
-            <div id="kmRow" hidden><strong>KM</strong><span id="km"></span></div>
-            <div id="fuelRow" hidden><strong>Yakıt</strong><span id="fuel"></span></div>
-            <div id="transmissionRow" hidden><strong>Vites</strong><span id="transmission"></span></div>
-            <div id="bodyTypeRow" hidden><strong>Kasa Tipi</strong><span id="bodyType"></span></div>
-            <div id="engineSizeRow" hidden><strong>Motor Hacmi</strong><span id="engineSize"></span></div>
-            <div id="colorRow" hidden><strong>Renk</strong><span id="color"></span></div>
-            <div><strong>Durum</strong><span id="condition">İkinci El</span></div>
+            <div><strong>İlan No:</strong> <span id="listingNo"></span></div>
+            <div><strong>Yayın Tarihi:</strong> <span id="listingDate"></span></div>
+            <div><strong>Şehir:</strong> <span id="city"></span></div>
+            <div><strong>Kategori:</strong> <span id="category"></span></div>
+            <div><strong>Durum:</strong> İkinci El</div>
           </div>
         </div>
       </div>
@@ -1226,20 +1146,15 @@
 
     <div class="tabs">
       <button class="tab active" data-tab="desc">Açıklama</button>
-      <button class="tab" data-tab="features">Özellikler</button>
-      <button class="tab" data-tab="expertise">Ekspertiz Durumu</button>
+      <button class="tab" data-tab="tech">Teknik Özellikler</button>
     </div>
 
     <div class="tab-content active" id="desc">
       <p id="descText"></p>
     </div>
 
-    <div class="tab-content" id="features">
-      <p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>
-    </div>
-
-    <div class="tab-content" id="expertise">
-      <p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>
+    <div class="tab-content" id="tech">
+      <p id="techText">Teknik özellikler buraya gelecek</p>
     </div>
   </div>
 
@@ -1299,7 +1214,7 @@
     <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
   </footer>
 
-  <script src="listing-detail.js"></script>
+  <script src="listing-detail.js?v=2"></script>
   <script>
     function formatDate(dateStr) {
       const date = new Date(dateStr);
@@ -1348,8 +1263,8 @@
         if (listingDate) listingDate.textContent = formatDate(listing.createdAt);
         const isVerifiedSeller = Boolean(
           listing.isVerifiedSeller === true ||
-          listing.seller?.isVerified === true ||
-          listing.user?.isVerified === true ||
+          listing.seller.isVerified === true ||
+          listing.user.isVerified === true ||
           user.isVerified === true
         );
         const imageCount = document.getElementById("imageCount");
@@ -1371,7 +1286,7 @@
             </div>
 
             <div class="seller-actions">
-              <button class="btn-primary" type="button" data-action="open-messages" data-listing-id="${listing._id || listing.id || ""}">Satıcıya Mesaj Gönder</button>
+              <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
               <button class="btn-secondary" type="button" data-action="show-phone">Telefonu Göster</button>
             </div>
             ${isOwner ? '<button class="btn-boost" type="button" data-action="buy-boost">İlanı Öne Çıkar</button>' : ''}
@@ -1488,26 +1403,13 @@
       const actionEl = event.target.closest("[data-action]");
       if (!actionEl) return;
 
-      if (actionEl.dataset.action === "open-messages") {
-        const id =
-          String(actionEl.dataset.listingId || "").trim() ||
-          String(new URLSearchParams(window.location.search).get("id") || "").trim() ||
-          String(window.listingData?._id || "").trim() ||
-          String(window.listingData?.id || "").trim();
-
-        if (!id) {
-          alert("İlan bilgisi bulunamadı.");
-          return;
-        }
-
-        window.location.href = `/messages.html?listingId=${encodeURIComponent(id)}`;
-        return;
-      }
+      if (actionEl.dataset.action === "open-messages") return openMessagesForListing();
       if (actionEl.dataset.action === "show-phone") return showPhoneInfo();
       if (actionEl.dataset.action === "buy-boost") return buyBoost();
     });
   </script>
-  <script src="/auth-global.js"></script>
+  <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>
+  <script src="/auth-global.js?v=2"></script>
 </div>
 </body>
 </html>

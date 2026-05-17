@@ -1,138 +1,90 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Giriş</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #f4f6f8;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #111827;
-    }
-    .login-card {
-      width: min(100%, 400px);
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 28px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 24px;
-    }
-    p {
-      margin: 0 0 20px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    input {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      padding: 12px 14px;
-      font: inherit;
-      margin-bottom: 14px;
-    }
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 14px;
-      background: #2563eb;
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .error {
-      min-height: 20px;
-      margin-top: 12px;
-      color: #dc2626;
-      font-size: 14px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Jetle</title>
+  <meta name="description" content="Jetle yönetim paneli.">
+  <meta name="keywords" content="Jetle admin">
+  <meta property="og:title" content="Admin Panel - Jetle">
+  <meta property="og:description" content="Jetle yönetim paneli.">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <main class="login-card">
-    <h1>Admin Giriş</h1>
-    <p>Yönetim paneline erişmek için giriş yapın.</p>
-    <form id="adminLoginForm" novalidate>
-      <label for="email">E-posta</label>
-      <input id="email" name="email" type="email" autocomplete="username" required />
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="/">jetle<span>.online</span></a>
+      <div></div>
+      <div class="nav-actions" id="authArea"></div>
+    </nav>
+  </header>
 
-      <label for="password">Şifre</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required />
+  <main class="container admin-page">
+    <section class="admin-login-card" id="adminLoginBox">
+      <h1>Jetle Admin</h1>
+      <p class="muted">Paneli yönetmek için admin hesabınla giriş yap.</p>
+      <form id="adminLoginForm">
+        <input name="username" type="text" placeholder="Kullanıcı adı" required>
+        <input name="password" type="password" placeholder="Şifre" required>
+        <button class="btn-primary" type="submit">Giriş Yap</button>
+      </form>
+      <p class="muted" id="adminLoginMessage"></p>
+    </section>
 
-      <button type="submit">Giriş Yap</button>
-      <div id="loginError" class="error"></div>
-    </form>
+    <section class="admin-shell" id="adminShell" hidden>
+      <div class="section-head">
+        <div>
+          <h1>Admin Panel</h1>
+          <p class="muted">İlan, kullanıcı ve istatistik yönetimi</p>
+        </div>
+        <button class="btn-primary admin-refresh" id="adminRefresh" type="button">Yenile</button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="active" data-admin-tab="listings" type="button">İlanlar</button>
+        <button data-admin-tab="users" type="button">Kullanıcılar</button>
+        <button data-admin-tab="stats" type="button">İstatistik</button>
+      </div>
+
+      <section class="admin-tab-panel active" id="adminTabListings">
+        <div class="detail-card admin-section">
+          <h2>İlanlar</h2>
+          <div class="admin-table" id="adminListingsPanel">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-tab-panel" id="adminTabUsers">
+        <div class="detail-card admin-section">
+          <h2>Kullanıcılar</h2>
+          <div class="admin-table" id="adminUsers">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-tab-panel" id="adminTabStats">
+        <div class="admin-stats">
+          <div class="detail-card">
+            <span>Toplam kullanıcı</span>
+            <strong id="statUsers">0</strong>
+          </div>
+          <div class="detail-card">
+            <span>Toplam ilan</span>
+            <strong id="statListings">0</strong>
+          </div>
+          <div class="detail-card">
+            <span>Bugünkü ilan</span>
+            <strong id="statTodayListings">0</strong>
+          </div>
+        </div>
+      </section>
+    </section>
   </main>
 
-  <script>
-    const existingToken = localStorage.getItem("token");
-    const existingAdmin = localStorage.getItem("admin");
-
-    if (existingToken && existingAdmin) {
-      window.location.href = "/admin-dashboard.html";
-    }
-
-    const form = document.getElementById("adminLoginForm");
-    const errorBox = document.getElementById("loginError");
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      errorBox.textContent = "";
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!email || !password) {
-        errorBox.textContent = "E-posta ve şifre zorunludur.";
-        return;
-      }
-
-      try {
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          errorBox.textContent = data.message || "Giriş başarısız.";
-          return;
-        }
-
-        if (!data.user || data.user.role !== "admin" || !data.token) {
-          errorBox.textContent = "Bu hesap admin yetkisine sahip değil.";
-          localStorage.removeItem("admin");
-          localStorage.removeItem("token");
-          return;
-        }
-
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("admin", JSON.stringify(data.user));
-        window.location.href = "/admin-dashboard.html";
-      } catch (err) {
-        console.error("ADMIN LOGIN ERROR:", err);
-        errorBox.textContent = "Sunucuya ulaşılamadı.";
-      }
-    });
-  </script>
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin.js"></script>
 </body>
 </html>

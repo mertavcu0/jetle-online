@@ -17,6 +17,7 @@ const userRoutes = require("./routes/users");
 const adminRoutes = require("./routes/admin");
 const paymentRoutes = require("./routes/payment");
 const carsRoute = require("./routes/cars");
+const adRoutes = require("./routes/adRoutes");
 const Listing = require("./models/Listing");
 const Message = require("./models/Message");
 const User = require("./models/User");
@@ -726,8 +727,10 @@ app.use("/api/listings", listingsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminApiLimiter, authMiddleware, adminRoutes);
+app.use("/api/admin/ads", adminApiLimiter, adRoutes.adminRouter);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cars", carsRoute);
+app.use("/api/ads", adRoutes);
 
 app.use((req, res, next) => {
   if (/\.(html|js|json|css)$/i.test(req.path)) {
