@@ -3,88 +3,343 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Jetle</title>
-  <meta name="description" content="Jetle yönetim paneli.">
-  <meta name="keywords" content="Jetle admin">
-  <meta property="og:title" content="Admin Panel - Jetle">
-  <meta property="og:description" content="Jetle yönetim paneli.">
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Admin Giriş | Jetle</title>
+  <meta name="description" content="Jetle yönetim paneli giriş ekranı.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f4f6;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d7e0ea;
+      --line-strong: #b7c4d4;
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.12);
+      --shadow: 0 24px 64px rgba(15, 23, 42, 0.12);
+      --radius-card: 22px;
+      --radius-control: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.09), transparent 24%),
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .admin-login-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-login-topbar {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 22px 0 0;
+    }
+
+    .admin-login-topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .admin-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .admin-brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+    }
+
+    .admin-brand-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .admin-brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .admin-brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .admin-login-wrapper {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 28px 20px 40px;
+    }
+
+    .admin-login-card {
+      width: min(420px, 100%);
+      background: var(--surface);
+      border: 1px solid rgba(215, 224, 234, 0.92);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      padding: 34px 32px 28px;
+    }
+
+    .admin-login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: var(--primary-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .admin-login-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .admin-login-card h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .admin-login-subtitle {
+      margin: 10px 0 28px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .admin-login-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .admin-login-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .admin-login-field label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #344054;
+    }
+
+    .admin-login-form input {
+      width: 100%;
+      height: 50px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-control);
+      background: #fff;
+      padding: 0 15px;
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .admin-login-form input::placeholder {
+      color: #98a2b3;
+    }
+
+    .admin-login-form input:hover {
+      border-color: var(--line-strong);
+    }
+
+    .admin-login-form input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .admin-login-button {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.24);
+    }
+
+    .admin-login-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgba(37, 99, 235, 0.28);
+      filter: saturate(1.03);
+    }
+
+    .admin-login-button:active {
+      transform: translateY(0);
+    }
+
+    .admin-login-button:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+      filter: none;
+    }
+
+    .admin-login-message {
+      min-height: 22px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .admin-login-message.error {
+      color: #b42318;
+    }
+
+    .admin-login-footer {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #eef2f7;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .admin-login-topbar {
+        width: calc(100% - 28px);
+        padding-top: 16px;
+      }
+
+      .admin-login-wrapper {
+        padding: 20px 14px 28px;
+      }
+
+      .admin-login-card {
+        border-radius: 18px;
+        padding: 26px 20px 22px;
+      }
+
+      .admin-login-card h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <nav class="nav">
-      <a class="logo" href="/">jetle<span>.online</span></a>
-      <div></div>
-      <div class="nav-actions" id="authArea"></div>
-    </nav>
-  </header>
-
-  <main class="container admin-page">
-    <section class="admin-login-card" id="adminLoginBox">
-      <h1>Jetle Admin</h1>
-      <p class="muted">Paneli yönetmek için admin hesabınla giriş yap.</p>
-      <form id="adminLoginForm">
-        <input name="username" type="text" placeholder="Kullanıcı adı" required>
-        <input name="password" type="password" placeholder="Şifre" required>
-        <button class="btn-primary" type="submit">Giriş Yap</button>
-      </form>
-      <p class="muted" id="adminLoginMessage"></p>
-    </section>
-
-    <section class="admin-shell" id="adminShell" hidden>
-      <div class="section-head">
-        <div>
-          <h1>Admin Panel</h1>
-          <p class="muted">İlan, kullanıcı ve istatistik yönetimi</p>
-        </div>
-        <button class="btn-primary admin-refresh" id="adminRefresh" type="button">Yenile</button>
+  <div class="admin-login-page">
+    <header class="admin-login-topbar">
+      <div class="admin-login-topbar-inner">
+        <a class="admin-brand" href="/" aria-label="Jetle ana sayfa">
+          <span class="admin-brand-mark">J</span>
+          <span class="admin-brand-copy">
+            <span class="admin-brand-title">Jetle Admin</span>
+            <span class="admin-brand-subtitle">Yönetim paneli erişimi</span>
+          </span>
+        </a>
       </div>
+    </header>
 
-      <div class="admin-tabs">
-        <button class="active" data-admin-tab="listings" type="button">İlanlar</button>
-        <button data-admin-tab="users" type="button">Kullanıcılar</button>
-        <button data-admin-tab="stats" type="button">İstatistik</button>
-      </div>
+    <main class="admin-login-wrapper">
+      <section class="admin-login-card" id="adminLoginBox" aria-labelledby="admin-login-title">
+        <div class="admin-login-badge">
+          <span class="admin-login-badge-dot"></span>
+          Güvenli yönetim girişi
+        </div>
 
-      <section class="admin-tab-panel active" id="adminTabListings">
-        <div class="detail-card admin-section">
-          <h2>İlanlar</h2>
-          <div class="admin-table" id="adminListingsPanel">
-            <div class="spinner"></div>
+        <h1 id="admin-login-title">Jetle Admin</h1>
+        <p class="admin-login-subtitle">Yönetim paneline giriş yapın</p>
+
+        <form class="admin-login-form" id="adminLoginForm">
+          <div class="admin-login-field">
+            <label for="admin-username">Kullanıcı adı</label>
+            <input id="admin-username" name="username" type="text" placeholder="Kullanıcı adınızı girin" required>
           </div>
+
+          <div class="admin-login-field">
+            <label for="admin-password">Şifre</label>
+            <input id="admin-password" name="password" type="password" placeholder="Şifrenizi girin" required>
+          </div>
+
+          <button class="admin-login-button" type="submit">Giriş Yap</button>
+        </form>
+
+        <p class="admin-login-message muted" id="adminLoginMessage"></p>
+
+        <div class="admin-login-footer">
+          Bu alan yalnızca yetkili yönetici kullanıcıları içindir.
         </div>
       </section>
+    </main>
+  </div>
 
-      <section class="admin-tab-panel" id="adminTabUsers">
-        <div class="detail-card admin-section">
-          <h2>Kullanıcılar</h2>
-          <div class="admin-table" id="adminUsers">
-            <div class="spinner"></div>
-          </div>
-        </div>
-      </section>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      const wrapper = document.querySelector(".admin-login-wrapper");
+      const card = document.querySelector(".admin-login-card");
+      const form = document.querySelector(".admin-login-form");
+      const formCount = document.querySelectorAll("#adminLoginForm").length;
+      const cardStyles = card ? window.getComputedStyle(card) : null;
 
-      <section class="admin-tab-panel" id="adminTabStats">
-        <div class="admin-stats">
-          <div class="detail-card">
-            <span>Toplam kullanıcı</span>
-            <strong id="statUsers">0</strong>
-          </div>
-          <div class="detail-card">
-            <span>Toplam ilan</span>
-            <strong id="statListings">0</strong>
-          </div>
-          <div class="detail-card">
-            <span>Bugünkü ilan</span>
-            <strong id="statTodayListings">0</strong>
-          </div>
-        </div>
-      </section>
-    </section>
-  </main>
+      console.log("ADMIN_LOGIN_UI_READY", {
+        wrapperFound: Boolean(wrapper),
+        cardFound: Boolean(card),
+        formCount
+      });
 
-  <script defer src="/js/main.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin.js"></script>
+      console.log("ADMIN_LOGIN_FORM_FOUND", {
+        formFound: Boolean(form),
+        formIdFound: Boolean(document.getElementById("adminLoginForm"))
+      });
+
+      console.log("ADMIN_LOGIN_STYLES_APPLIED", {
+        cardBackground: cardStyles?.backgroundColor || "",
+        cardRadius: cardStyles?.borderRadius || "",
+        cardShadow: cardStyles?.boxShadow || "",
+        pageBg: window.getComputedStyle(document.body).backgroundColor || ""
+      });
+    });
+  </script>
+  <script defer src="/admin.js"></script>
 </body>
 </html>

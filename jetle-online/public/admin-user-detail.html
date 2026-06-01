@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -299,7 +299,7 @@
     </section>
   </main>
 
-  <script>
+    <script>
     const API_BASE = "";
     const token = localStorage.getItem("token");
     const id = new URLSearchParams(window.location.search).get("id");
@@ -316,11 +316,11 @@
     }
 
     function escapeHtml(value) {
-      return String(value  "")
+      return String(value || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
+        .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
 
@@ -331,39 +331,98 @@
 
     function badgeLabel(badge) {
       return {
-        verified: "✓ Onaylı",
-        premium: "★ Premium",
+        verified: "Onaylı",
+        premium: "Premium",
         corporate: "Kurumsal"
       }[badge] || badge;
     }
 
     function renderBadges(badges) {
-      if (!badges.length) return `<span class="muted">Rozet yok</span>`;
+      if (!Array.isArray(badges) || !badges.length) return `<span class="muted">Rozet yok</span>`;
       return badges.map((badge) => `<span class="seller-badge ${badge}">${badgeLabel(badge)}</span>`).join("");
     }
 
     function statusPill(status) {
-      const value = status || "pending";
+      const value = String(status || "pending").trim().toLowerCase();
       const labels = {
         pending: "Onay bekliyor",
         approved: "Onaylı",
+        active: "Aktif",
         rejected: "Reddedildi"
       };
-      return `<span class="status-pill ${value}">${labels[value] || value}</span>`;
+      const className = value === "active" ? "approved" : value;
+      return `<span class="status-pill ${className}">${labels[value] || value}</span>`;
+    }
+
+    function normalizeMediaPath(value) {
+      const src = String(value || "").trim();
+      if (!src) return "";
+      if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:") || src.startsWith("blob:")) {
+        return src;
+      }
+      if (src.startsWith("/")) {
+        return src;
+      }
+      return "/" + src.replace(/^\/+/, "");
+    }
+
+    function toMediaArray(source) {
+      if (Array.isArray(source)) {
+        return source.map((item) => normalizeMediaPath(item)).filter(Boolean);
+      }
+      const normalized = normalizeMediaPath(source);
+      return normalized ? [normalized] : [];
+    }
+
+    function resolveListingMedia(item) {
+      const source = item && typeof item === "object" ? item : {};
+      const pools = [
+        toMediaArray(source.coverImage),
+        toMediaArray(source.mainImage),
+        toMediaArray(source.gallery),
+        toMediaArray(source.images),
+        toMediaArray(source.photos),
+        toMediaArray(source.image),
+        toMediaArray(source.media)
+      ];
+      return [...new Set(pools.flat().filter(Boolean))];
     }
 
     function listingImage(item) {
-      const raw =
-        (Array.isArray(item.images) && item.images[0]) ||
-        item.image ||
-        "https://picsum.photos/160/120";
-      const src = String(raw).trim();
+      const media = resolveListingMedia(item);
+      return media[0] || "";
+    }
 
-      if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) {
-        return src;
-      }
+    async function hydrateListingMedia(items) {
+      const listings = Array.isArray(items) ? items : [];
+      return Promise.all(listings.map(async (item) => {
+        if (resolveListingMedia(item).length) return item;
+        const listingId = String(item?._id || item?.id || "").trim();
+        if (!listingId) return item;
+        try {
+          const res = await fetch(`${API_BASE}/api/listings/${listingId}`, {
+            headers: authHeaders()
+          });
+          if (!res.ok) return item;
+          const detail = await res.json();
+          return {
+            ...item,
+            images: detail.images,
+            gallery: detail.gallery,
+            photos: detail.photos,
+            image: detail.image,
+            coverImage: detail.coverImage,
+            mainImage: detail.mainImage,
+            media: detail.media
+          };
+        } catch {
+          return item;
+        }
+      }));
+    }
 
-      return API_BASE + "/" + src.replace(/^\/+/, "");
+    function fallbackImage() {
+      return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Crect width='160' height='120' fill='%23eef2f7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%236b7280' font-family='Arial,sans-serif' font-size='14'%3EFoto%C4%9Fraf%20yok%3C/text%3E%3C/svg%3E";
     }
 
     async function loadUserDetail() {
@@ -388,29 +447,29 @@
       }
 
       const user = data.user || {};
-      document.getElementById("userTitle").textContent = user.name || user.username || "İsimsiz kullanıcı";
+      document.getElementById("userTitle").textContent = user.name || user.username || "Ä°simsiz kullanÄ±cÄ±";
       document.getElementById("userEmail").textContent = user.email || "-";
       document.getElementById("totalListings").textContent = data.totalListings || 0;
-      document.getElementById("registeredAt").textContent = data.registeredAt
-         new Date(data.registeredAt).toLocaleDateString("tr-TR")
+      document.getElementById("registeredAt").textContent = data.createdAt
+        ? new Date(data.createdAt).toLocaleDateString("tr-TR")
         : "-";
-      document.getElementById("banStatus").innerHTML = data.isBanned
-         `<span class="status-pill banned">Banlı</span>`
+      document.getElementById("banStatus").innerHTML = data.banned
+        ? `<span class="status-pill banned">BanlÄ±</span>`
         : `<span class="status-pill approved">Aktif</span>`;
       document.getElementById("badges").innerHTML = renderBadges(data.badges || []);
 
-      const listings = Array.isArray(data.listings) ? data.listings : [];
+      const listings = await hydrateListingMedia(Array.isArray(data.listings) ? data.listings : []);
 
       if (!listings.length) {
-        list.innerHTML = `<div class="empty-state">Bu kullanıcının ilanı yok.</div>`;
+        list.innerHTML = `<div class="empty-state">Bu kullanÄ±cÄ±nÄ±n ilanÄ± yok.</div>`;
         return;
       }
 
       list.innerHTML = listings.map((item) => `
         <article class="listing-card">
-          <img src="${listingImage(item)}" alt="${escapeHtml(item.title || "İlan görseli")}">
+          <img src="${listingImage(item) || fallbackImage()}" alt="${escapeHtml(item.title || "İlan görseli")}">
           <div>
-            <p class="title">${escapeHtml(item.title || "Başlıksız ilan")}</p>
+            <p class="title">${escapeHtml(item.title || "BaÅŸlÄ±ksÄ±z ilan")}</p>
             <div class="meta">
               <span>${escapeHtml(item.city || "Şehir yok")}</span>
               <span>${escapeHtml(item.category || "Kategori yok")}</span>
@@ -429,5 +488,6 @@
   <script src="/auth-global.js"></script>
 </body>
 </html>
+
 
 

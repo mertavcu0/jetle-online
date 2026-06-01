@@ -1,5 +1,11 @@
 let lastListings = [];
 
+function formatPrice(price) {
+  const num = Number(price || 0);
+  if (Number.isNaN(num)) return "-";
+  return new Intl.NumberFormat("tr-TR").format(num) + " TL";
+}
+
 function formatDate(dateStr) {
   const date = new Date(dateStr);
   const now = new Date();
@@ -96,7 +102,7 @@ function renderListings(data = lastListings) {
 
       <div class="card-body">
         <h3 class="title">${item.title}</h3>
-        <p class="price">${item.price} TL</p>
+        <p class="price">${formatPrice(item.price)}</p>
         <div class="meta">
           <span>${item.city || item.location || ""}</span>
           <span>${item.category || ""}</span>
@@ -211,7 +217,7 @@ async function loadListings() {
     </div>
     <div class="card-body">
       <h3 class="title">${item.title}</h3>
-      <p class="price">${item.price} TL</p>
+      <p class="price">${formatPrice(item.price)}</p>
       <div class="meta">
         <span>${item.city || item.location || ""}</span>
         <span>${item.category || ""}</span>
@@ -245,7 +251,7 @@ async function loadFeatured() {
   container.innerHTML = featured.map(item => `
     <div class="featured-card">
       <strong>${item.title}</strong>
-      <p>${item.city} - ${item.price} TL</p>
+      <p>${item.city} - ${formatPrice(item.price)}</p>
     </div>
   `).join("");
 }
@@ -398,4 +404,3 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAll();
   loadFeatured();
 });
-

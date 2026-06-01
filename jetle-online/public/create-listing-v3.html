@@ -1,0 +1,4223 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Ver - Jetle</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    html,
+    body.create-v3-page {
+      background: #f3f4f6 !important;
+      color: #0f172a !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    body.create-v3-page::before,
+    body.create-v3-page::after,
+    .create-v3-shell::before,
+    .create-v3-shell::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .create-v3-page {
+      margin: 0;
+      background: #f3f4f6;
+      color: #0f172a;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .create-v3-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+      backdrop-filter: blur(10px);
+    }
+
+    .create-v3-topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .create-v3-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      text-decoration: none;
+      color: #2563eb;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+
+    .create-v3-brand .jetle {
+      color: #2563eb;
+    }
+
+    .create-v3-brand span:last-child {
+      color: #111827;
+    }
+
+    .create-v3-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .create-v3-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 7px;
+      color: #334155;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .create-v3-nav a:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .create-v3-nav .primary-link {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: none;
+    }
+
+    .create-v3-nav .primary-link:hover {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .create-v3-shell {
+      min-height: 100vh;
+      padding: 4px 12px 14px;
+      position: relative;
+      z-index: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-layout {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 12px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-form-card,
+    .create-v3-preview-wrap {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+      position: relative;
+      z-index: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-form-card {
+      padding: 10px 10px 13px;
+    }
+
+    /* CATEGORY FLOW UPGRADE START */
+    .create-v3-layout.category-flow-pending {
+      grid-template-columns: minmax(0, 1fr) 300px;
+    }
+
+    .category-selection-screen {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fff;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .category-selection-screen[hidden] {
+      display: none;
+    }
+
+    .category-selection-head {
+      display: grid;
+      gap: 3px;
+    }
+
+    .category-selection-head h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .category-selection-head p {
+      margin: 0;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .category-flow-cards,
+    .category-flow-subcards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .category-flow-card,
+    .category-flow-subcard {
+      display: grid;
+      gap: 2px;
+      min-height: 62px;
+      padding: 8px 9px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fafafa;
+      color: #111827;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .category-flow-card:hover,
+    .category-flow-subcard:hover {
+      border-color: #d5dde7;
+      background: #fcfcfd;
+    }
+
+    .category-flow-card:focus-visible,
+    .category-flow-subcard:focus-visible {
+      outline: 2px solid #cbd5e1;
+      outline-offset: 1px;
+    }
+
+    .category-flow-card.is-active {
+      border-color: #cbd5e1;
+      background: #fff;
+    }
+
+    .category-flow-card.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.74;
+      background: #f8fafc;
+    }
+
+    .category-flow-icon {
+      display: none;
+    }
+
+    .category-flow-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .category-flow-copy {
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.3;
+    }
+
+    .category-flow-card.is-disabled .category-flow-copy {
+      display: none;
+    }
+
+    .category-flow-subsection {
+      display: grid;
+      gap: 8px;
+      border-top: 1px solid #eef2f7;
+      padding-top: 8px;
+    }
+
+    .category-flow-subsection[hidden] {
+      display: none;
+    }
+
+    .category-flow-subsection-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .category-flow-subsection-head strong {
+      font-size: 13px;
+      color: #111827;
+    }
+
+    .category-flow-back {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .listing-form-flow {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .listing-form-flow[hidden] {
+      display: none;
+    }
+
+    .create-v3-preview-column.is-compact .create-v3-preview-wrap {
+      padding: 8px;
+    }
+
+    .create-v3-preview-column.is-compact .preview-listing-media {
+      aspect-ratio: 16 / 9.35;
+      min-height: 156px;
+    }
+
+    .create-v3-preview-column.is-compact .preview-listing-body {
+      padding: 8px;
+    }
+
+    .create-v3-preview-column.is-compact .preview-listing-title {
+      font-size: 14px;
+    }
+    /* CATEGORY FLOW UPGRADE END */
+
+    .create-v3-progress {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .step-progress-item {
+      position: relative;
+      display: grid;
+      gap: 4px;
+      min-height: 50px;
+      padding: 7px 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #64748b;
+      opacity: 0.75;
+      transition: opacity 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .step-progress-item::after {
+      content: "";
+      position: absolute;
+      top: 23px;
+      left: calc(100% + 4px);
+      width: 4px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+
+    .step-progress-item:last-child::after {
+      display: none;
+    }
+
+    .step-progress-item span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #dbe2ea;
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .step-progress-item strong {
+      font-size: 10px;
+      line-height: 1.25;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .step-progress-item small {
+      display: none;
+    }
+
+    .step-progress-item.active {
+      opacity: 1;
+      border-color: #cbd5e1;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
+    }
+
+    .step-progress-item.active span,
+    .step-progress-item.done span {
+      background: #64748b;
+      color: #fff;
+    }
+
+    .step-progress-item.done {
+      opacity: 0.88;
+      border-color: #e2e8f0;
+      background: #fafafa;
+    }
+
+    .step-progress-item.done span {
+      font-size: 0;
+      position: relative;
+    }
+
+    .step-progress-item.done span::before {
+      content: "\2713";
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .step-panel {
+      display: none;
+      border: 1px solid #e8edf3;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .step-panel.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-panel[data-step="2"].active {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      justify-items: stretch;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .step-panel h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .step-panel-note {
+      margin: 0 0 8px;
+      color: #6b7280;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .step-panel-note:empty {
+      display: none;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .field-group label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #475569;
+      letter-spacing: 0.01em;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background: #fff;
+      color: #0f172a;
+      font: inherit;
+      font-size: 12.5px;
+      line-height: 1.35;
+      padding: 7px 9px;
+      box-sizing: border-box;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .field-group select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 32px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position:
+        calc(100% - 13px) calc(50% - 2px),
+        calc(100% - 8px) calc(50% - 2px);
+      background-size: 4px 4px, 4px 4px;
+      background-repeat: no-repeat;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .checkbox-field-group {
+      justify-content: end;
+    }
+
+    .inline-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 38px;
+      padding: 0 2px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .inline-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: #64748b;
+      cursor: pointer;
+    }
+
+    .field-group input,
+    .field-group select {
+      min-height: 38px;
+    }
+
+    .field-group textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .persistent-description-field {
+      margin-top: 12px;
+      visibility: visible;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      outline: none;
+      border-color: #94a3b8;
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.10);
+    }
+
+    .field-group input:hover,
+    .field-group select:hover,
+    .field-group textarea:hover {
+      border-color: #b8c4d0;
+    }
+
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    .field-group select:disabled,
+    .field-group input:disabled,
+    .field-group textarea:disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: #d7dee7;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    .field-hint {
+      font-size: 9px;
+      color: #6b7280;
+      line-height: 1.3;
+    }
+
+    .field-group.field-muted {
+      padding: 4px;
+      border: 1px solid #d9e1e8;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .field-group.field-muted label {
+      color: #64748b;
+    }
+
+    .field-group.field-muted .field-hint {
+      color: #475569;
+    }
+
+    .field-proxy {
+      display: none !important;
+    }
+
+    #dynamicFields {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      visibility: visible !important;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      margin-bottom: 6px;
+      align-items: start !important;
+      align-content: start !important;
+    }
+
+    #dynamicFields > * {
+      grid-column: 1 / -1;
+      min-width: 0;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    #dynamicFields .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .vehicle-dynamic-shell {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .vehicle-dynamic-primary,
+    .vehicle-dynamic-secondary {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .vehicle-dynamic-primary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vehicle-dynamic-secondary {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding-top: 6px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    #dynamicFields .field-group {
+      gap: 4px;
+      min-width: 0;
+    }
+
+    #dynamicFields .field-group label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    #dynamicFields .field-group input,
+    #dynamicFields .field-group select {
+      min-height: 36px;
+      font-size: 12.5px;
+    }
+
+    .field-group.is-vehicle-select-group {
+      padding: 7px 8px 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      background: #fcfcfd;
+    }
+
+    .field-group.is-vehicle-select-group label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .vehicle-select-caption {
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .vehicle-select-shell {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      position: relative;
+    }
+
+    .vehicle-select-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .vehicle-select-search {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid #d8e0ea;
+      border-radius: 4px;
+      background: #fff;
+      color: #0f172a;
+      font: inherit;
+      font-size: 12px;
+      line-height: 1.3;
+      box-shadow: none;
+    }
+
+    .vehicle-select-search.is-selected {
+      color: #111827;
+      font-weight: 600;
+      border-color: #cbd5e1;
+      background: #fff;
+    }
+
+    .vehicle-select-search::placeholder {
+      color: #94a3b8;
+    }
+
+    .vehicle-select-search:focus {
+      outline: none;
+      border-color: #94a3b8;
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.08);
+    }
+
+    .vehicle-select-search:disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .vehicle-select-count {
+      flex: 0 0 auto;
+      min-width: 48px;
+      padding: 0 8px;
+      height: 32px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      background: #fff;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .vehicle-select-native {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      inset: auto;
+    }
+
+    .vehicle-select-status {
+      min-height: 14px;
+      font-size: 10px;
+      color: #64748b;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .vehicle-select-status.is-hidden {
+      display: none;
+    }
+
+    .vehicle-select-panel {
+      display: none;
+      border: 1px solid #d8e0ea;
+      border-radius: 5px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .vehicle-select-shell.is-open .vehicle-select-panel {
+      display: block;
+    }
+
+    .vehicle-select-results {
+      position: relative;
+      max-height: 232px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .vehicle-select-results-spacer {
+      position: relative;
+      width: 100%;
+    }
+
+    .vehicle-select-results-viewport {
+      position: absolute;
+      inset: 0;
+    }
+
+    .vehicle-select-option {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 38px;
+      padding: 0 10px;
+      border: 0;
+      border-bottom: 1px solid #eef2f7;
+      background: #fff;
+      color: #0f172a;
+      font: inherit;
+      font-size: 12px;
+      line-height: 38px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .vehicle-select-option:hover,
+    .vehicle-select-option.is-selected {
+      background: #f8fafc;
+    }
+
+    .vehicle-select-empty {
+      padding: 12px 10px;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .field-group.is-vehicle-select-group.is-disabled {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    .field-group.is-vehicle-select-group.is-disabled .vehicle-select-status {
+      color: #94a3b8;
+    }
+
+    .field-group.is-vehicle-select-group.is-active,
+    .field-group.is-vehicle-select-group.has-value {
+      border-color: #d5dde7;
+      background: #fff;
+    }
+
+    .field-group.is-vehicle-select-group.has-query .vehicle-select-count {
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+
+    #dynamicFields .field-group textarea {
+      min-height: 96px;
+    }
+
+    #step2DescriptionField {
+      margin-top: 0 !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .auto-secondary-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .package-field.is-pending {
+      opacity: 0.58;
+    }
+
+    .package-field.is-pending input {
+      background: #f8fafc;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .step-message {
+      min-height: 18px;
+      margin: 8px 0 0;
+      color: #dc2626;
+      font-size: 12px;
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-step {
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .btn-step:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-step-primary {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: none;
+    }
+
+    .btn-step-primary:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+
+    .btn-step-secondary {
+      background: #eef2f7;
+      color: #0f172a;
+    }
+
+    .btn-step:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .create-v3-section-block {
+      margin-top: 6px;
+      padding: 5px;
+      border: 1px solid #e1e7ee;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .create-v3-section-block h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .create-v3-section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .create-v3-section-head p {
+      margin: 2px 0 0;
+      font-size: 10px;
+      line-height: 1.3;
+      color: #6b7280;
+    }
+
+    .category-surface,
+    .category-feature-group {
+      display: none;
+    }
+
+    .category-surface.is-active,
+    .category-feature-group.is-active {
+      display: block;
+    }
+
+    .electronic-type-hidden {
+      display: none !important;
+    }
+
+    .category-surface-stack {
+      display: grid;
+      gap: 6px;
+    }
+
+    .media-section-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .photo-upload-wrap,
+    .video-upload-panel {
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      background: #fff;
+      padding: 9px;
+      box-shadow: none;
+      transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    .photo-upload-wrap:hover,
+    .video-upload-panel:hover {
+      border-color: #d1d5db;
+      box-shadow: none;
+    }
+
+    .photo-upload-wrap.drag-over {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+      transform: scale(1.003);
+    }
+
+    .photo-upload-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .photo-drop-label {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 8px;
+      margin-bottom: 0;
+      cursor: pointer;
+      align-items: start;
+    }
+
+    .photo-drop-label::before {
+      content: "";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background:
+        linear-gradient(#cbd5e1, #cbd5e1) center 10px / 14px 2px no-repeat,
+        linear-gradient(135deg, transparent 48%, #cbd5e1 49%, #cbd5e1 53%, transparent 54%) center 18px / 18px 9px no-repeat,
+        linear-gradient(#e5e7eb, #e5e7eb) center / 20px 14px no-repeat,
+        #f3f4f6;
+      box-shadow: inset 0 0 0 1px #d1d5db;
+    }
+
+    .photo-drop-label strong {
+      display: block;
+      font-size: 14px;
+      color: #0f172a;
+      margin-bottom: 2px;
+      line-height: 1.25;
+    }
+
+    .photo-drop-meta {
+      display: grid;
+      gap: 1px;
+    }
+
+    .photo-drop-meta span {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .photo-upload-counter {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .photo-upload-note {
+      margin: 0 0 8px;
+      color: #64748b;
+      font-size: 10px;
+    }
+
+    .photo-input-hidden {
+      width: auto;
+      min-width: 130px;
+      margin-bottom: 8px;
+    }
+
+    .create-v3-gallery-placeholders {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .create-v3-gallery-slot {
+      min-height: 58px;
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      background: #f3f4f6;
+      display: grid;
+      place-items: center;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      gap: 4px;
+      padding: 7px;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .create-v3-gallery-slot:hover {
+      background: #f8fafc;
+      border-color: #d1d5db;
+      color: #64748b;
+    }
+
+    .create-v3-gallery-slot::before {
+      content: "";
+      width: 24px;
+      height: 18px;
+      border-radius: 4px;
+      background:
+        linear-gradient(135deg, transparent 48%, #cbd5e1 49%, #cbd5e1 53%, transparent 54%) center 11px / 18px 8px no-repeat,
+        linear-gradient(#d1d5db, #d1d5db) center / 100% 100% no-repeat;
+      display: block;
+    }
+
+    .create-v3-gallery-slot.cover-slot {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+      gap: 10px;
+      min-height: 12px;
+    }
+
+    .preview-item {
+      position: relative;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      box-shadow: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .preview-item:hover {
+      transform: translateY(-1px);
+      border-color: #d1d5db;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+    }
+
+    .preview-item:first-child::after {
+      content: "Kapak";
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.88);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .preview-item img {
+      display: block;
+      width: 100%;
+      height: 78px;
+      object-fit: cover;
+    }
+
+    .preview-item-overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      min-height: 24px;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.78) 100%);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border: 0;
+      border-radius: 999px;
+      width: 22px;
+      height: 22px;
+      background: rgba(17, 24, 39, 0.82);
+      color: #fff;
+      cursor: pointer;
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 700;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .preview-item:hover .remove-btn {
+      opacity: 1;
+    }
+
+    .preview-item.is-loading {
+      overflow: hidden;
+    }
+
+    .preview-item.is-loading::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.52) 50%, rgba(255,255,255,0) 100%);
+      transform: translateX(-100%);
+      animation: upload-shimmer 1.2s infinite;
+      z-index: 1;
+    }
+
+    .video-upload-panel {
+      display: grid;
+      gap: 7px;
+    }
+
+    .video-upload-head {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .video-upload-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      color: #334155;
+      font-size: 13px;
+      flex: 0 0 auto;
+      box-shadow: inset 0 0 0 1px #e5e7eb;
+    }
+
+    .video-upload-copy strong {
+      display: block;
+      font-size: 13px;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .video-upload-copy span {
+      display: block;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .video-upload-panel .form-grid {
+      margin-top: 0;
+    }
+
+    #videoPreview {
+      display: grid;
+      gap: 10px;
+    }
+
+    #videoPreview video {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 10px;
+      border: 1px solid #dbe3ee;
+      background: #0f172a;
+    }
+
+    .video-link-preview {
+      display: grid;
+      gap: 4px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #dbe3ee;
+    }
+
+    .video-link-preview strong {
+      font-size: 13px;
+      color: #0f172a;
+    }
+
+    .video-link-preview a {
+      color: #2563eb;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+      text-decoration: none;
+    }
+
+    @keyframes upload-shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .field-group.field-loading select,
+    .field-group.field-loading input {
+      border-color: #cbd5e1;
+      background-color: #f8fafc;
+    }
+
+    .field-group.field-loading label::after {
+      content: " • yükleniyor";
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .features-root {
+      margin-top: 8px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .features-page-title {
+      margin: 0;
+      font-size: 19px;
+      color: #0f172a;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .features-block {
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    .features-block > .damage-panel {
+      padding: 8px;
+    }
+
+    .features-block h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .features-block summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      background: #fafafa;
+      border-bottom: 1px solid #e5e7eb;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .features-block summary:hover {
+      background: #f8fafc;
+    }
+
+    .features-block summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .features-block summary::after {
+      content: "+";
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .features-block[open] summary::after {
+      content: "\2212";
+    }
+
+    .features-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .feature-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.25;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .feature-check:hover {
+      border-color: #d1d5db;
+      background: #fafafa;
+      box-shadow: none;
+    }
+
+    .feature-check:has(input:checked) {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
+    }
+
+    .feature-check input {
+      accent-color: #64748b;
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    .feature-label {
+      display: block;
+      min-width: 0;
+      color: #1e293b;
+    }
+
+    .category-feature-group.ev-hidden {
+      display: none !important;
+    }
+
+    .damage-panel {
+      display: grid;
+      gap: 6px;
+    }
+
+    .damage-header {
+      display: grid;
+      gap: 4px;
+    }
+
+    .damage-header p {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.35;
+      color: #6b7280;
+    }
+
+    .damage-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .damage-btn {
+      position: relative;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: #f8fafc;
+      color: #334155;
+      padding: 6px 10px 6px 9px;
+      font: inherit;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .damage-btn:hover {
+      border-color: #cbd5e1;
+      background: #f9fafb;
+    }
+
+    .damage-btn.active {
+      padding-left: 24px;
+      border-width: 2px;
+      color: #1f2937;
+    }
+
+    .damage-btn.active::before {
+      content: "✓";
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .damage-btn[data-status="orijinal"].active {
+      border-color: #bbd7c1;
+      background: #eef6f0;
+      color: #2f5d3a;
+    }
+
+    .damage-btn[data-status="boyali"].active {
+      border-color: #e6d7a7;
+      background: #fbf6e6;
+      color: #7a5d13;
+    }
+
+    .damage-btn[data-status="lokal"].active {
+      border-color: #e8c19a;
+      background: #fdf1e7;
+      color: #9a5120;
+    }
+
+    .damage-btn[data-status="degisen"].active {
+      border-color: #dfb4b4;
+      background: #fbefef;
+      color: #8b3b3b;
+    }
+
+    .car-wrapper {
+      padding: 6px;
+      border-radius: 5px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .damage-parts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .part {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 7px 6px;
+      border-radius: 5px;
+      border: 1px solid #d6dde5;
+      background: #f3f4f6;
+      color: #334155;
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .part:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .part.painted {
+      background: #fbf6e6;
+      border-color: #e6d7a7;
+      color: #7a5d13;
+    }
+
+    .part.local {
+      background: #fdf1e7;
+      border-color: #e8c19a;
+      color: #9a5120;
+    }
+
+    .part.changed {
+      background: #fbefef;
+      border-color: #dfb4b4;
+      color: #8b3b3b;
+    }
+
+    .damage-status-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .damage-status-list span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 19px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 8px;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .damage-status-list span.is-original {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #4b5563;
+    }
+
+    .damage-status-list span.is-painted {
+      background: #fbf6e6;
+      border-color: #e6d7a7;
+      color: #7a5d13;
+    }
+
+    .damage-status-list span.is-local {
+      background: #fdf1e7;
+      border-color: #e8c19a;
+      color: #9a5120;
+    }
+
+    .damage-status-list span.is-changed {
+      background: #fbefef;
+      border-color: #dfb4b4;
+      color: #8b3b3b;
+    }
+
+    .damage-tooltip {
+      position: fixed;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .create-v3-preview-column {
+      position: sticky;
+      top: 62px;
+      align-self: start;
+    }
+
+    .create-v3-preview-wrap {
+      padding: 8px;
+      margin-top: 0;
+    }
+
+    .create-v3-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .create-v3-preview-wrap h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .preview-listing-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .preview-listing-media {
+      position: relative;
+      aspect-ratio: 16 / 9.35;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.08)),
+        linear-gradient(135deg, #eff2f5 0%, #e5e7eb 55%, #dde2e7 100%);
+    }
+
+    .preview-listing-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-listing-media.is-placeholder img {
+      opacity: 0;
+    }
+
+    .preview-listing-media.is-placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%),
+        linear-gradient(135deg, #e7ebf0 0%, #f1f4f7 50%, #e5e7eb 100%);
+      animation: preview-sheen 2.2s linear infinite;
+    }
+
+    .preview-listing-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.74);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .preview-listing-media.is-placeholder::after {
+      content: "Fotoğraf yüklenmedi";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 20px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #475569;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 1;
+    }
+
+    .preview-listing-body {
+      padding: 7px;
+    }
+
+    .is-placeholder-text {
+      color: #94a3b8 !important;
+    }
+
+    @keyframes preview-sheen {
+      0% { background-position: -180px 0, 0 0; }
+      100% { background-position: 340px 0, 0 0; }
+    }
+
+    .preview-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .preview-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #334155;
+      font-size: 7.5px;
+      font-weight: 700;
+    }
+
+    .preview-chip.primary {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #334155;
+    }
+
+    .preview-listing-title {
+      margin: 0 0 3px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-listing-meta {
+      margin: 0 0 4px;
+      color: #6b7280;
+      font-size: 9px;
+      line-height: 1.35;
+    }
+
+    .preview-submeta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      margin: 0 0 4px;
+      color: #6b7280;
+      font-size: 9px;
+      line-height: 1.35;
+    }
+
+    .preview-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 5px;
+    }
+
+    .preview-status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 17px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #f6f7f8;
+      border: 1px solid #d9dee4;
+      color: #475569;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .preview-favorite {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid #d8e0e8;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .preview-listing-price {
+      margin: 0 0 6px;
+      font-size: 21px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-specs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      margin: 0 0 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .preview-spec {
+      min-width: 0;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+    }
+
+    .preview-spec strong {
+      display: block;
+      margin-bottom: 1px;
+      font-size: 7.5px;
+      color: #64748b;
+    }
+
+    .preview-spec span {
+      font-size: 9px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .preview-highlights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+    }
+
+    .preview-feature-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 0 0 6px;
+      min-height: 20px;
+    }
+
+    .preview-feature-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #0f172a;
+      font-size: 8.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .preview-feature-badge.is-placeholder {
+      color: #94a3b8;
+      border-style: solid;
+    }
+
+    .preview-highlight {
+      padding: 4px 5px;
+      border-radius: 4px;
+      background: #fbfbfb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .preview-highlight strong {
+      display: block;
+      margin-bottom: 1px;
+      font-size: 7.5px;
+      color: #475569;
+    }
+
+    .preview-highlight span {
+      font-size: 8.5px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    @media (max-width: 1200px) {
+      .create-v3-layout {
+        grid-template-columns: 1fr 310px;
+      }
+
+      .features-grid-4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .create-v3-layout {
+        grid-template-columns: 1fr;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .create-v3-preview-column {
+        position: static;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        top: auto !important;
+        order: 2;
+      }
+
+      .create-v3-preview-wrap {
+        max-width: 720px;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: relative !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .category-flow-cards,
+      .category-flow-subcards,
+      .create-v3-gallery-placeholders,
+      .features-grid-4,
+      .damage-parts-grid,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary,
+      .auto-secondary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .category-flow-cards,
+      .category-flow-subcards {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .create-v3-shell,
+      .create-v3-layout,
+      .create-v3-form-card,
+      .step-panel,
+      .step-panel.active,
+      #dynamicFields,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-shell,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .create-v3-layout {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        align-items: start !important;
+      }
+
+      .create-v3-preview-column {
+        position: relative !important;
+        top: auto !important;
+        align-self: auto !important;
+        order: 2;
+      }
+
+      .create-v3-form-card {
+        order: 1;
+        padding-bottom: 18px;
+      }
+
+      .create-v3-topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 14px;
+      }
+
+      .create-v3-nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .create-v3-progress,
+      .form-grid,
+      #dynamicFields,
+      .damage-parts-grid,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary,
+      .auto-secondary-grid,
+      .preview-highlights {
+        grid-template-columns: 1fr;
+      }
+
+      .create-v3-progress {
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .step-progress-item {
+        min-height: 54px;
+        padding: 8px 9px;
+      }
+
+      .preview-specs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .create-v3-form-card,
+      .step-panel,
+      .create-v3-preview-wrap {
+        padding: 12px;
+      }
+
+      .field-group.is-vehicle-select-group {
+        padding: 7px;
+      }
+
+      .vehicle-select-toolbar {
+        flex-wrap: wrap;
+      }
+
+      .vehicle-select-search,
+      .vehicle-select-count {
+        width: 100%;
+      }
+
+      .vehicle-select-count {
+        justify-content: flex-start;
+      }
+
+      .create-v3-preview-wrap {
+        margin-top: 10px;
+      }
+
+      .photo-drop-label {
+        grid-template-columns: 1fr;
+      }
+
+      .create-v3-gallery-placeholders,
+      .preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .video-upload-head {
+        flex-direction: column;
+      }
+
+      .step-actions {
+        flex-direction: column;
+      }
+
+      .step-actions .btn-step {
+        width: 100%;
+      }
+
+      .damage-controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body class="create-v3-page">
+  <header class="create-v3-topbar">
+    <div class="create-v3-topbar-inner">
+      <a class="create-v3-brand" href="/">
+        <span class="jetle">jetle</span><span>.online</span>
+      </a>
+      <nav class="create-v3-nav" aria-label="Hızlı bağlantılar">
+        <a href="/dashboard.html">Profilim</a>
+        <a href="/messages.html">Mesajlar</a>
+        <a href="/favorites.html">Favoriler</a>
+        <a class="primary-link" href="/create-listing-v3.html">Ücretsiz İlan Ver</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="create-v3-shell">
+    <div class="create-v3-layout">
+      <section class="create-v3-form-card">
+        <!-- CATEGORY FLOW UPGRADE START -->
+        <div id="categorySelectionScreen" class="category-selection-screen">
+          <div class="category-selection-head">
+            <h2>Kategori seçin</h2>
+            <p>İlanınıza en uygun alanı seçerek devam edin.</p>
+          </div>
+
+          <div class="category-flow-cards" id="categoryFlowCards">
+            <button type="button" class="category-flow-card" data-category-key="vasita">
+              <span class="category-flow-icon" aria-hidden="true">ğŸš—</span>
+              <span class="category-flow-title">Vasıta</span>
+              <span class="category-flow-copy">Otomobil ve ticari araç ilanları</span>
+            </button>
+            <button type="button" class="category-flow-card" data-category-key="emlak">
+              <span class="category-flow-icon" aria-hidden="true">ğŸ </span>
+              <span class="category-flow-title">Emlak</span>
+              <span class="category-flow-copy">Konut, arsa ve işyeri ilanları</span>
+            </button>
+            <button type="button" class="category-flow-card" data-category-key="elektronik">
+              <span class="category-flow-icon" aria-hidden="true">ğŸ“±</span>
+              <span class="category-flow-title">Elektronik</span>
+              <span class="category-flow-copy">Telefon, laptop ve diğer cihazlar</span>
+            </button>
+            <button type="button" class="category-flow-card is-disabled" disabled aria-disabled="true">
+              <span class="category-flow-icon" aria-hidden="true">ğŸ›µ</span>
+              <span class="category-flow-title">Motosiklet</span>
+              <span class="category-flow-copy"></span>
+            </button>
+            <button type="button" class="category-flow-card is-disabled" disabled aria-disabled="true">
+              <span class="category-flow-icon" aria-hidden="true">ğŸ§°</span>
+              <span class="category-flow-title">Yedek Parça</span>
+              <span class="category-flow-copy"></span>
+            </button>
+          </div>
+
+          <div id="categoryFlowSubsection" class="category-flow-subsection" hidden>
+            <div class="category-flow-subsection-head">
+              <strong id="categoryFlowSubheading">Alt kategori seçin</strong>
+              <button type="button" class="category-flow-back" id="categoryFlowBack">Kategoriye dön</button>
+            </div>
+            <div class="category-flow-subcards" id="categoryFlowSubcards"></div>
+          </div>
+        </div>
+        <!-- CATEGORY FLOW UPGRADE END -->
+        <div id="listingFormFlow" class="listing-form-flow" hidden>
+        <div class="create-v3-eyebrow">İlan ver</div>
+        <div class="create-v3-progress" role="tablist" aria-label="İlan verme adımları">
+          <div class="step-progress-item active" data-step-indicator="1">
+            <span>1</span>
+            <strong>Temel Bilgiler</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item active" data-step-indicator="1">
+            <span>2</span>
+            <strong>Detaylar</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="2">
+            <span>3</span>
+            <strong>Özellikler</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="2">
+            <span>4</span>
+            <strong>Medya</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="3">
+            <span>5</span>
+            <strong>Yayınla</strong>
+            <small></small>
+          </div>
+        </div>
+
+        <form id="createForm" enctype="multipart/form-data">
+          <div class="step-panel active" data-step="1">
+            <h2>Temel Bilgiler</h2>
+            <p class="step-panel-note"></p>
+
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="category">Kategori</label>
+                <select id="category" name="category">
+                  <option value="">Kategori seçin</option>
+                  <option value="Otomobil">Otomobil</option>
+                  <option value="Emlak">Emlak</option>
+                  <option value="Elektronik">Elektronik</option>
+                </select>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="title">Başlık</label>
+                <input type="text" id="title" name="title" required>
+              </div>
+
+              <div class="field-group">
+                <label for="city">Şehir</label>
+                <select id="city" name="city">
+                  <option value="">Şehir seçin</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="district">İlçe</label>
+                <select id="district" name="district" disabled>
+                  <option value="">Önce şehir seçin</option>
+                </select>
+              </div>
+            </div>
+
+            <p class="step-message" id="step1Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-primary" id="btnStep1Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="2" hidden>
+            <h2>Detaylar</h2>
+            <p class="step-panel-note"></p>
+
+            <div id="dynamicFields"></div>
+
+            <div id="vehicleFields" class="visually-hidden" aria-hidden="true"></div>
+            <div id="ekspertizSection" class="visually-hidden" aria-hidden="true"></div>
+
+            <p class="step-message" id="step2Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep2Back">Geri</button>
+              <button type="button" class="btn-step btn-step-primary" id="btnStep2Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="3" hidden>
+            <h2>Medya ve Yayın</h2>
+            <p class="step-panel-note"></p>
+
+            <section class="features-root" aria-labelledby="features-heading">
+              <h2 class="features-page-title" id="features-heading">Özellikler</h2>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockDamage" open>
+                <summary><h3>Ekspertiz ve Hasar Haritası</h3></summary>
+                <div class="damage-panel">
+                  <div class="damage-header">
+                    <p>Aracın ekspertiz durumunu seçebilirsiniz.</p>
+                  </div>
+
+                  <div class="damage-controls">
+                    <button type="button" data-status="orijinal" class="damage-btn active">Orijinal</button>
+                    <button type="button" data-status="boyali" class="damage-btn">Boyalı</button>
+                    <button type="button" data-status="lokal" class="damage-btn">Lokal Boyalı</button>
+                    <button type="button" data-status="degisen" class="damage-btn">Değişen</button>
+                  </div>
+
+                  <div class="car-wrapper">
+                    <div class="damage-parts-grid">
+                      <button type="button" class="part" data-part="hood" data-label="Kaput">Kaput</button>
+                      <button type="button" class="part" data-part="roof" data-label="Tavan">Tavan</button>
+                      <button type="button" class="part" data-part="trunk" data-label="Bagaj">Bagaj</button>
+                      <button type="button" class="part" data-part="leftFrontFender" data-label="Sol Ön Çamurluk">Sol Ön Çamurluk</button>
+                      <button type="button" class="part" data-part="rightFrontFender" data-label="Sağ Ön Çamurluk">Sağ Ön Çamurluk</button>
+                      <button type="button" class="part" data-part="leftRearFender" data-label="Sol Arka Çamurluk">Sol Arka Çamurluk</button>
+                      <button type="button" class="part" data-part="rightRearFender" data-label="Sağ Arka Çamurluk">Sağ Arka Çamurluk</button>
+                    </div>
+                  </div>
+
+                  <div id="damageStatusList" class="damage-status-list"></div>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockSafety" open>
+                <summary><h3>Güvenlik</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_abs"><span class="feature-label">ABS</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_esp"><span class="feature-label">ESP / ESC</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_asr"><span class="feature-label">ASR / Çekiş Kontrol</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hill"><span class="feature-label">Yokuş Kalkış Desteği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_lane"><span class="feature-label">Şerit Takip Asistanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_blind"><span class="feature-label">Kör Nokta Uyarı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_cruise_control"><span class="feature-label">Adaptif Cruise Control</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_collision_avoid"><span class="feature-label">Çarpışma Önleme Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_sign_recognition"><span class="feature-label">Trafik İşareti Tanıma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_tire_pressure"><span class="feature-label">Lastik Basınç Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_airbag"><span class="feature-label">Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_side_airbag"><span class="feature-label">Yan Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_knee_airbag"><span class="feature-label">Diz Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_isofix"><span class="feature-label">Isofix</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_night_vision"><span class="feature-label">Gece Görüş Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_camera_360"><span class="feature-label">360 Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_front_camera"><span class="feature-label">Ön Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_camera"><span class="feature-label">Arka Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_front_park_sensor"><span class="feature-label">Park Sensörü Ön</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_park_sensor"><span class="feature-label">Park Sensörü Arka</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_park"><span class="feature-label">Otomatik Park Asistanı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockInterior" open>
+                <summary><h3>İç Donanım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_leather"><span class="feature-label">Deri Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fabric_seat"><span class="feature-label">Kumaş Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_electric_seat"><span class="feature-label">Elektrikli Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_memory_seat"><span class="feature-label">Hafızalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_heated"><span class="feature-label">Isıtmalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cooled_seat"><span class="feature-label">Soğutmalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_massaging_seat"><span class="feature-label">Masajlı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fold_rear_seat"><span class="feature-label">Katlanır Arka Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_armrest"><span class="feature-label">Kol Dayama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_keyless"><span class="feature-label">Anahtarsız Giriş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_startstop"><span class="feature-label">Start/Stop</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hud"><span class="feature-label">Head-Up Display</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_digital_cluster"><span class="feature-label">Dijital Gösterge</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ambient"><span class="feature-label">Ambiyans Aydınlatma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_power_tailgate"><span class="feature-label">Elektrikli Bagaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_wireless_charge"><span class="feature-label">Kablosuz Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_power_windows"><span class="feature-label">Elektrikli Camlar</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_dimming_mirror"><span class="feature-label">Otomatik Kararan Dikiz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_panoramic_glass_roof"><span class="feature-label">Panoramik Cam Tavan</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockExterior" open>
+                <summary><h3>Dış Donanım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_led"><span class="feature-label">LED Far</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_matrix_led"><span class="feature-label">Matrix LED</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_xenon"><span class="feature-label">Xenon Far</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_foglamp"><span class="feature-label">Sis Farı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_roof"><span class="feature-label">Sunroof</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_panoramic_roof"><span class="feature-label">Panoramik Tavan</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_mirror"><span class="feature-label">Elektrikli Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fold_mirror"><span class="feature-label">Katlanır Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_heated_mirror"><span class="feature-label">Isıtmalı Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_roof_rail"><span class="feature-label">Tavan Rayı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_spoiler"><span class="feature-label">Spoiler</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_bodykit"><span class="feature-label">Body Kit</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_towbar"><span class="feature-label">Çeki Demiri</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_alloy_wheel"><span class="feature-label">Alaşım Jant</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_headlight"><span class="feature-label">Adaptif Far</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockMultimedia" open>
+                <summary><h3>Multimedya</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_carplay"><span class="feature-label">Apple CarPlay</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_android"><span class="feature-label">Android Auto</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_bluetooth"><span class="feature-label">Bluetooth</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_nav"><span class="feature-label">Navigasyon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_usb"><span class="feature-label">USB</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_aux"><span class="feature-label">AUX</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_premium_audio"><span class="feature-label">Premium Ses Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_touchscreen"><span class="feature-label">Dokunmatik Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_entertainment"><span class="feature-label">Arka Eğlence Paketi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_tv"><span class="feature-label">TV / Dijital Yayın</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hotspot"><span class="feature-label">WiFi Hotspot</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockComfort" open>
+                <summary><h3>Konfor</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_digital_climate"><span class="feature-label">Dijital Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_dual_zone_climate"><span class="feature-label">Çift Bölge Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_three_zone_climate"><span class="feature-label">Üç Bölge Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cruise"><span class="feature-label">Cruise Control</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_cruise"><span class="feature-label">Adaptif Cruise</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_steering_heat"><span class="feature-label">Direksiyon Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cooled_glovebox"><span class="feature-label">Soğutmalı Torpido</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rain_sensor"><span class="feature-label">Yağmur Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_light_sensor"><span class="feature-label">Far Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_trunk"><span class="feature-label">Otomatik Bagaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_electronic_handbrake"><span class="feature-label">Elektronik El Freni</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_drive_modes"><span class="feature-label">Sürüş Modları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_speed_limiter"><span class="feature-label">Hız Limitleyici</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockEv" open>
+                <summary><h3>Elektrikli Araç Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ac_charge"><span class="feature-label">AC Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_dc_fast"><span class="feature-label">DC Hızlı Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ccs2"><span class="feature-label">CCS2</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_type2"><span class="feature-label">Type2</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_battery_rental"><span class="feature-label">Batarya Kiralama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_heat_pump"><span class="feature-label">Isı Pompası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_regen"><span class="feature-label">Rejeneratif Fren</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_v2l"><span class="feature-label">V2L</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_v2g"><span class="feature-label">V2G</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_battery_preheat"><span class="feature-label">Batarya Ön Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_one_pedal"><span class="feature-label">Tek Pedal Sürüş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_autonomous"><span class="feature-label">Otonom Sürüş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_fsd"><span class="feature-label">FSD</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ota"><span class="feature-label">OTA Güncelleme</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateInterior" open>
+                <summary><h3>İç Özellikler</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_adsl"><span class="feature-label">ADSL</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_wifi"><span class="feature-label">WiFi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_built_in_kitchen"><span class="feature-label">Ankastre Mutfak</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_balcony"><span class="feature-label">Balkon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_barbecue"><span class="feature-label">Barbekü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_white_goods"><span class="feature-label">Beyaz Eşya</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_dishwasher"><span class="feature-label">Bulaşık Makinesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_washing_machine"><span class="feature-label">Çamaşır Makinesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_shower_cabin"><span class="feature-label">Duşakabin</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_parent_bathroom"><span class="feature-label">Ebeveyn Banyosu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_fiber"><span class="feature-label">Fiber İnternet</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_dressing_room"><span class="feature-label">Giyinme Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_video_intercom"><span class="feature-label">Görüntülü Diafon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_hilton_bathroom"><span class="feature-label">Hilton Banyo</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_intercom"><span class="feature-label">Intercom</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_double_glazing"><span class="feature-label">Isıcam</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_jacuzzi"><span class="feature-label">Jakuzi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_cellar"><span class="feature-label">Kiler</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_air_conditioning"><span class="feature-label">Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_laminate"><span class="feature-label">Laminat Zemin</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_marley"><span class="feature-label">Marley</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_furnished"><span class="feature-label">Mobilyalı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_panel_door"><span class="feature-label">Panel Kapı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_parquet"><span class="feature-label">Parke Zemin</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_pvc"><span class="feature-label">PVC Doğrama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_ceramic"><span class="feature-label">Seramik Zemin</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_stove"><span class="feature-label">Set Üstü Ocak</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_water_heater"><span class="feature-label">Şofben</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_spot_lighting"><span class="feature-label">Spot Aydınlatma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_terrace"><span class="feature-label">Teras</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_vestiyer"><span class="feature-label">Vestiyer</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_steel_door"><span class="feature-label">Çelik Kapı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateExterior" open>
+                <summary><h3>Dış Özellikler</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_lift"><span class="feature-label">Asansör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_playground"><span class="feature-label">Çocuk Parkı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_security"><span class="feature-label">Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_camera_security"><span class="feature-label">Güvenlik Kamerası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_cable_tv"><span class="feature-label">Kablo TV</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_nursery"><span class="feature-label">Kreş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_game_park"><span class="feature-label">Oyun Parkı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_parking"><span class="feature-label">Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_sports_area"><span class="feature-label">Spor Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_water_tank"><span class="feature-label">Su Deposu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_tennis_court"><span class="feature-label">Tenis Kortu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_satellite"><span class="feature-label">Uydu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_fire_escape"><span class="feature-label">Yangın Merdiveni</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_pool"><span class="feature-label">Yüzme Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_sound_insulation"><span class="feature-label">Ses Yalıtımı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_heat_insulation"><span class="feature-label">Isı Yalıtımı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateEnvironment" open>
+                <summary><h3>Muhit</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mall"><span class="feature-label">Alışveriş Merkezi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_municipality"><span class="feature-label">Belediye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mosque"><span class="feature-label">Cami</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_sea"><span class="feature-label">Deniz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_pharmacy"><span class="feature-label">Eczane</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_entertainment"><span class="feature-label">Eğlence Merkezi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_hospital"><span class="feature-label">Hastane</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_primary_school"><span class="feature-label">İlkokul</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_fire_department"><span class="feature-label">İtfaiye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_high_school"><span class="feature-label">Lise</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_market"><span class="feature-label">Market</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_highway"><span class="feature-label">Otoyol</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_park"><span class="feature-label">Park</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_police"><span class="feature-label">Polis Merkezi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_health_center"><span class="feature-label">Sağlık Ocağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_bazaar"><span class="feature-label">Semt Pazarı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_gym"><span class="feature-label">Spor Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_public_transport"><span class="feature-label">Toplu Ulaşım</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_university"><span class="feature-label">Üniversite</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateTransport" open>
+                <summary><h3>Ulaşım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_main_road"><span class="feature-label">Anayol</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_eurasia_tunnel"><span class="feature-label">Avrasya Tüneli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_bridge"><span class="feature-label">Boğaz Köprüsü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_street"><span class="feature-label">Cadde</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_sea_bus"><span class="feature-label">Deniz Otobüsü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_dolmus"><span class="feature-label">Dolmuş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_e5"><span class="feature-label">E-5</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_airport"><span class="feature-label">Havaalanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_marmaray"><span class="feature-label">Marmaray</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_metro"><span class="feature-label">Metro</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_metrobus"><span class="feature-label">Metrobüs</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_minibus"><span class="feature-label">Minibüs</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_bus_stop"><span class="feature-label">Otobüs Durağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coast"><span class="feature-label">Sahil</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_tem"><span class="feature-label">TEM</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_tram"><span class="feature-label">Tramvay</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateView" open>
+                <summary><h3>Manzara</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_bosporus"><span class="feature-label">Boğaz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_sea"><span class="feature-label">Deniz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_nature"><span class="feature-label">Doğa</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_lake"><span class="feature-label">Göl</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_pool"><span class="feature-label">Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_green"><span class="feature-label">Park & Yeşil Alan</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_city"><span class="feature-label">Şehir</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateResidence" open>
+                <summary><h3>Konut Tipi</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mid_floor"><span class="feature-label">Ara Kat</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_garden_duplex"><span class="feature-label">Bahçe Dubleksi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_garden_floor"><span class="feature-label">Bahçe Katı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_roof_duplex"><span class="feature-label">Çatı Dubleksi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_duplex"><span class="feature-label">Duplex</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_top_floor"><span class="feature-label">En Üst Kat</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_ground_floor"><span class="feature-label">Giriş Katı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_loft"><span class="feature-label">Loft</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_detached_house"><span class="feature-label">Müstakil Ev</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence"><span class="feature-label">Rezidans</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_triplex"><span class="feature-label">Tripleks</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_villa"><span class="feature-label">Villa</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-phone" id="featureBlockElectronicPhone" open>
+                <summary><h3>Telefon Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_faceid"><span class="feature-label">Face ID</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_touchid"><span class="feature-label">Touch ID</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_fastcharge"><span class="feature-label">Hızlı Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_wireless_charge"><span class="feature-label">Kablosuz Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_nfc"><span class="feature-label">NFC</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_5g"><span class="feature-label">5G</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_dualsim"><span class="feature-label">Çift SIM</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_esim"><span class="feature-label">eSIM</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_wifi"><span class="feature-label">Wi‑Fi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_bluetooth"><span class="feature-label">Bluetooth</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_gps"><span class="feature-label">GPS</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_water_resistant"><span class="feature-label">Suya Dayanıklılık</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_oled_display"><span class="feature-label">OLED Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_amoled_display"><span class="feature-label">AMOLED Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_dynamic_island"><span class="feature-label">Dynamic Island</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_120hz"><span class="feature-label">120Hz Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_aod"><span class="feature-label">Always On Display</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_stereo"><span class="feature-label">Stereo Hoparlör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_magsafe"><span class="feature-label">MagSafe</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_typec"><span class="feature-label">Type‑C</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_lightning"><span class="feature-label">Lightning</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_microsd"><span class="feature-label">MicroSD</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_headphone_jack"><span class="feature-label">Kulaklık Girişi</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-laptop" id="featureBlockElectronicLaptop" open>
+                <summary><h3>Bilgisayar / Laptop</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_ssd"><span class="feature-label">SSD</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_nvme"><span class="feature-label">NVMe SSD</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_rgb_keyboard"><span class="feature-label">RGB Klavye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_mechanical_keyboard"><span class="feature-label">Mekanik Klavye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_touchscreen"><span class="feature-label">Dokunmatik Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_ips"><span class="feature-label">IPS Panel</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_oled_panel"><span class="feature-label">OLED Panel</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_webcam"><span class="feature-label">Webcam</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_fingerprint"><span class="feature-label">Parmak İzi Okuyucu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_thunderbolt"><span class="feature-label">Thunderbolt</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_hdmi"><span class="feature-label">HDMI</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_displayport"><span class="feature-label">DisplayPort</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_usb30"><span class="feature-label">USB 3.0</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_usbc"><span class="feature-label">USB‑C</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_rtx"><span class="feature-label">RTX Ekran Kartı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_egpu"><span class="feature-label">Harici GPU</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_gaming_laptop"><span class="feature-label">Oyuncu Laptopu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_freedos"><span class="feature-label">FreeDOS</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_windows_licensed"><span class="feature-label">Windows Lisanslı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-gaming" id="featureBlockElectronicGaming" open>
+                <summary><h3>Gaming</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_g_rgb"><span class="feature-label">RGB</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_g_mouse"><span class="feature-label">Gaming Mouse</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_g_keyboard"><span class="feature-label">Gaming Klavye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_g_headset"><span class="feature-label">Oyuncu Kulaklığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_240hz"><span class="feature-label">240Hz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_360hz"><span class="feature-label">360Hz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_vr"><span class="feature-label">VR Destekli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_rgb_fan"><span class="feature-label">RGB Fan</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_liquid_cooling"><span class="feature-label">Sıvı Soğutma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_ps5"><span class="feature-label">PS5 Uyumlu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_xbox"><span class="feature-label">Xbox Uyumlu</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-tv" id="featureBlockElectronicTv" open>
+                <summary><h3>TV & Ses Sistemleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_smart_tv"><span class="feature-label">Smart TV</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_android_tv"><span class="feature-label">Android TV</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_oled_tv"><span class="feature-label">OLED TV</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_qled"><span class="feature-label">QLED</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_4k"><span class="feature-label">4K</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_8k"><span class="feature-label">8K</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_dolby_vision"><span class="feature-label">Dolby Vision</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_dolby_atmos"><span class="feature-label">Dolby Atmos</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_hdmi21"><span class="feature-label">HDMI 2.1</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_arc"><span class="feature-label">ARC/eARC</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_bluetooth_audio"><span class="feature-label">Bluetooth Audio</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_soundbar"><span class="feature-label">Soundbar</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_subwoofer"><span class="feature-label">Subwoofer</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_sat_receiver"><span class="feature-label">Uydu Alıcı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-camera" id="featureBlockElectronicCamera" open>
+                <summary><h3>Kamera & Fotoğraf</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_4k"><span class="feature-label">4K Video</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_8k"><span class="feature-label">8K Video</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_gimbal"><span class="feature-label">Gimbal</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_raw"><span class="feature-label">RAW Çekim</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_lens"><span class="feature-label">Lens Dahil</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_stabilization"><span class="feature-label">Stabilizasyon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_full_frame"><span class="feature-label">Full Frame</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_drone"><span class="feature-label">Drone Destekli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_wifi_transfer"><span class="feature-label">Wi‑Fi Transfer</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_cam_bt_transfer"><span class="feature-label">Bluetooth Transfer</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic electronic-feature-group electronic-type-all" id="featureBlockElectronicGeneral" open>
+                <summary><h3>Genel Durum</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_boxed"><span class="feature-label">Kutulu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_invoice"><span class="feature-label">Faturalı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_warranty"><span class="feature-label">Garantili</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_apple_warranty"><span class="feature-label">Apple Garantili</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_distributor_warranty"><span class="feature-label">Distribütör Garantili</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_abroad"><span class="feature-label">Yurtdışı Cihaz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_registered_imei"><span class="feature-label">Kayıtlı IMEI</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_no_parts_changed"><span class="feature-label">Değişensiz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_no_repair"><span class="feature-label">Tamir Görmedi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_trade"><span class="feature-label">Takas Olur</span></label>
+                </div>
+              </details>
+            </section>
+
+            <div class="media-section-stack">
+              <div class="photo-upload-wrap" id="photoDropZone">
+                <div class="photo-upload-head">
+                  <label for="images" class="photo-drop-label">
+                    <span class="photo-drop-meta">
+                      <strong>Fotoğraf Yükle</strong>
+                      <span>PNG, JPG, WEBP</span>
+                    </span>
+                  </label>
+                  <div class="photo-upload-counter" id="photoCountText">0/30 fotoğraf</div>
+                </div>
+
+                <p class="photo-upload-note">
+                  <span>Dosya seç veya sürükle bırak</span>
+                </p>
+                <input type="file" id="images" name="images" multiple accept="image/*" class="photo-input-hidden">
+                <div id="imagePreview" class="visually-hidden" aria-hidden="true"></div>
+                <div id="preview" class="preview-grid"></div>
+                <div class="create-v3-gallery-placeholders" aria-hidden="true">
+                  <div class="create-v3-gallery-slot cover-slot">Kapak Fotoğrafı</div>
+                  <div class="create-v3-gallery-slot">Galeri 2</div>
+                  <div class="create-v3-gallery-slot">Galeri 3</div>
+                  <div class="create-v3-gallery-slot">Galeri 4</div>
+                </div>
+              </div>
+
+              <div class="video-upload-panel">
+                <div class="video-upload-head">
+                  <span class="video-upload-icon" aria-hidden="true">▸</span>
+                  <div class="video-upload-copy">
+                    <strong>Video (Opsiyonel)</strong>
+                    <span>YouTube, MP4 veya MOV ekleyebilirsiniz.</span>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="field-group">
+                    <label for="video">Video Yükle</label>
+                    <input type="file" id="video" accept="video/mp4,video/quicktime,video/*">
+                  </div>
+                  <div class="field-group">
+                    <label for="videoUrl">YouTube Bağlantısı</label>
+                    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=">
+                  </div>
+                </div>
+                <div id="videoPreview"></div>
+              </div>
+            </div>
+
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field-group">
+                <label for="price">Fiyat</label>
+                <input type="text" id="price" name="price" inputmode="numeric" autocomplete="off">
+              </div>
+              <div class="field-group">
+                <label for="subCategory">Alt kategori</label>
+                <input type="text" id="subCategory" name="subCategory">
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep3Back">Geri</button>
+              <button type="submit" class="btn-step btn-step-primary" id="submitBtn">İlanı Yayınla</button>
+            </div>
+            <div id="btnSubmitListing" class="visually-hidden" aria-hidden="true"></div>
+          </div>
+          <div class="form-grid persistent-description-field" id="step2DescriptionField">
+            <div class="field-group full-width">
+              <label for="description">Açıklama</label>
+              <textarea
+                id="description"
+                name="description"
+                required
+                placeholder="İlan açıklamasını buraya yazın"
+              ></textarea>
+            </div>
+          </div>
+        </form>
+        </div>
+      </section>
+
+      <aside class="create-v3-preview-column" aria-label="Canlı ilan önizlemesi">
+        <div class="create-v3-preview-wrap">
+          <div class="create-v3-preview-head">
+            <h3>Canlı ilan kartı</h3>
+          </div>
+
+          <div class="preview-listing-card">
+            <div class="preview-listing-media">
+              <span class="preview-listing-badge">Vitrin</span>
+              <img id="livePreviewImg" alt="">
+            </div>
+            <div class="preview-listing-body">
+              <div class="preview-badge-row">
+                <span class="preview-chip primary">Vasıta</span>
+                <span class="preview-chip" id="previewListingType">İlan Tipi</span>
+                <span class="preview-chip" id="previewLocation"></span>
+                <span class="preview-chip">Bugün</span>
+              </div>
+
+              <p class="preview-listing-title" id="livePreviewTitle">Başlık</p>
+              <p class="preview-listing-meta" id="livePreviewMeta"></p>
+              <div class="preview-submeta">
+                <span id="previewSubLocation"></span>
+                <span id="previewDate">İlan tarihi: Bugün</span>
+              </div>
+              <div class="preview-status-row">
+                <span class="preview-status-pill">İlan hazır</span>
+                <span class="preview-favorite" aria-hidden="true">♡</span>
+              </div>
+              <p class="preview-listing-price" id="livePreviewPrice">Fiyat</p>
+
+              <div class="preview-specs">
+                <div class="preview-spec">
+                  <strong id="previewSpec1Label">KM</strong>
+                  <span id="previewKm">KM</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec2Label">Yıl</strong>
+                  <span id="previewYear">Yıl</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec3Label">Yakıt</strong>
+                  <span id="previewFuel">Yakıt</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec4Label">Vites</strong>
+                  <span id="previewTransmission">Vites</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec5Label">Çekiş</strong>
+                  <span id="previewDrivetrain">Çekiş</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec7Label">HP</strong>
+                  <span id="previewHp">HP</span>
+                </div>
+                <div class="preview-spec">
+                  <strong id="previewSpec6Label">Motor</strong>
+                  <span id="previewEngine">Motor</span>
+                </div>
+              </div>
+
+              <div class="preview-feature-strip" id="previewFeatureBadges">
+                <span class="preview-feature-badge is-placeholder">Seçilen özellikler burada görünür</span>
+              </div>
+
+              <div class="preview-highlights">
+                <div class="preview-highlight">
+                  <strong>Başlık</strong>
+                  <span id="previewTitle">Başlık</span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Konum</strong>
+                  <span id="previewLocationDetail"></span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Fiyat</strong>
+                  <span id="previewPrice">Fiyat</span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Durum</strong>
+                  <span>İlan Hazır</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="damageTooltip" class="damage-tooltip"></div>
+
+  <script src="/cities.js"></script>
+  <script src="/create-listing.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById("createForm");
+      if (!form) return;
+      form.addEventListener("submit", function () {
+        const descriptionField = document.getElementById("description");
+        const descriptionValue = String(descriptionField?.value || "");
+        console.log("DESCRIPTION_FORM_VALUE", descriptionValue);
+        console.log("DESCRIPTION_FORM_LENGTH", descriptionValue.length);
+      }, true);
+    })();
+  </script>
+  <script>
+    (function () {
+      const FEATURE_STATE_KEY = "jetle-create-listing-v3-feature-state";
+      const FEATURE_PANEL_KEY = "jetle-create-listing-v3-feature-panels";
+
+      function normalizedCategory() {
+        const category = (document.getElementById("category")?.value || "").trim();
+        if (category === "Otomobil") return "auto";
+        if (category === "Emlak") return "emlak";
+        if (category === "Elektronik") return "electronic";
+        return "";
+      }
+
+      function toggleCategorySurfacesLegacy() {
+        const current = normalizedCategory();
+
+        document.querySelectorAll(".category-surface").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+        });
+
+        document.querySelectorAll(".category-feature-group").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+              input.checked = false;
+            });
+          }
+        });
+
+        const categoryChip = document.querySelector(".preview-chip.primary");
+        if (categoryChip) {
+          categoryChip.textContent =
+            current === "auto" ? "Vasıta" :
+            current === "emlak" ? "Emlak" :
+            current === "electronic" ? "Elektronik" :
+            "İlan";
+        }
+
+        renderPreviewFeatureBadges();
+        persistFeatureState();
+      }
+
+      function text(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function setPlaceholderState(id, active) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle("is-placeholder-text", !!active);
+      }
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? String(el.value || "").trim() : "";
+      }
+
+      function formatPriceLegacy(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+        if (!digits) return "-";
+        return Number(digits).toLocaleString("tr-TR") + " TL";
+      }
+
+      function syncPreviewLegacy() {
+        const titleRaw = val("title");
+        const city = val("city");
+        const district = val("district");
+        const location = [city, district].filter(Boolean).join(" / ");
+        const brand = val("brand");
+        const series = val("series");
+        const model = val("model");
+        const vehicleLine = [brand, series, model].filter(Boolean).join(" ");
+        const title = titleRaw || "İlan başlığı";
+        const km = val("km") || "KM";
+        const year = val("year") || "Yıl";
+        const fuel = val("fuel") || "Yakıt";
+        const transmission = val("transmission") || "Vites";
+        const priceRaw = val("price");
+        const price = formatPrice(priceRaw);
+        const metaLine = [location, vehicleLine].filter(Boolean).join(" • ") || "Kategori / Şehir";
+
+        text("livePreviewTitle", title);
+        text("livePreviewMeta", metaLine);
+        text("livePreviewPrice", price);
+        text("previewTitle", title);
+        text("previewPrice", price);
+        text("previewLocation", location || "Konum");
+        text("previewSubLocation", location || "Şehir / İlçe");
+        text("previewKm", km);
+        text("previewYear", year);
+        text("previewFuel", fuel);
+        text("previewTransmission", transmission);
+
+        setPlaceholderState("livePreviewTitle", !titleRaw);
+        setPlaceholderState("previewTitle", !titleRaw);
+        setPlaceholderState("livePreviewMeta", !location && !vehicleLine);
+        setPlaceholderState("previewLocation", !location);
+        setPlaceholderState("previewSubLocation", !location);
+        setPlaceholderState("livePreviewPrice", !priceRaw);
+        setPlaceholderState("previewPrice", !priceRaw);
+        setPlaceholderState("previewKm", !val("km"));
+        setPlaceholderState("previewYear", !val("year"));
+        setPlaceholderState("previewFuel", !val("fuel"));
+        setPlaceholderState("previewTransmission", !val("transmission"));
+      }
+
+      function markLoading(group) {
+        if (!group) return;
+        group.classList.add("field-loading");
+        window.setTimeout(() => group.classList.remove("field-loading"), 450);
+      }
+
+      function bindLoadingState() {
+        const brand = document.getElementById("brand");
+        const series = document.getElementById("series");
+        const model = document.getElementById("model");
+        if (brand && series && !brand.dataset.loadingBound) {
+          brand.dataset.loadingBound = "true";
+          brand.addEventListener("change", () => {
+            markLoading(series.closest(".field-group"));
+            if (model) markLoading(model.closest(".field-group"));
+          });
+        }
+        if (series && model && !series.dataset.loadingBound) {
+          series.dataset.loadingBound = "true";
+          series.addEventListener("change", () => {
+            markLoading(model.closest(".field-group"));
+          });
+        }
+      }
+
+      function bindPreviewSync() {
+        document.addEventListener("input", (event) => {
+          if (event.target.closest("#createForm") || event.target.closest("#dynamicFields")) {
+            syncPreview();
+            syncElectricFeatureVisibility();
+            syncElectronicFeatureVisibility();
+            renderPreviewFeatureBadges();
+          }
+        });
+        document.addEventListener("change", (event) => {
+          if (event.target.closest("#createForm") || event.target.closest("#dynamicFields")) {
+            syncPreview();
+            bindLoadingState();
+            toggleCategorySurfaces();
+            syncElectricFeatureVisibility();
+            syncElectronicFeatureVisibility();
+            renderPreviewFeatureBadges();
+          }
+        });
+      }
+
+      function bindImageSync() {
+        const imageInput = document.getElementById("images");
+        const livePreviewImg = document.getElementById("livePreviewImg");
+        const mediaWrap = document.querySelector(".preview-listing-media");
+        if (!imageInput || !livePreviewImg) return;
+
+        if (mediaWrap) mediaWrap.classList.add("is-placeholder");
+
+        imageInput.addEventListener("change", () => {
+          const file = imageInput.files && imageInput.files[0];
+          if (!file || !file.type.startsWith("image/")) return;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            livePreviewImg.src = event.target.result;
+            mediaWrap?.classList.remove("is-placeholder");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function bindDamageHover() {
+        document.querySelectorAll(".damage-panel .part").forEach((part) => {
+          part.addEventListener("mouseenter", () => {
+            part.style.filter = "drop-shadow(0 0 4px rgba(148, 163, 184, 0.22))";
+          });
+          part.addEventListener("mouseleave", () => {
+            part.style.filter = "";
+          });
+        });
+      }
+
+      function decorateDamageStatusList() {
+        const list = document.getElementById("damageStatusList");
+        if (!list) return;
+
+        const apply = () => {
+          list.querySelectorAll("span").forEach((item) => {
+            const textValue = (item.textContent || "").toLowerCase();
+            item.classList.remove("is-original", "is-painted", "is-local", "is-changed");
+            if (textValue.includes("normal") || textValue.includes("orijinal")) item.classList.add("is-original");
+            else if (textValue.includes("lokal")) item.classList.add("is-local");
+            else if (textValue.includes("boyal")) item.classList.add("is-painted");
+            else if (textValue.includes("değiş") || textValue.includes("degis")) item.classList.add("is-changed");
+          });
+        };
+
+        apply();
+        const observer = new MutationObserver(apply);
+        observer.observe(list, { childList: true, subtree: true, characterData: true });
+      }
+
+      function toggleCategorySurfaces() {
+        const current = normalizedCategory();
+
+        document.querySelectorAll(".category-surface").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"]):not([type="file"]), select, textarea').forEach((field) => {
+              field.value = "";
+            });
+          }
+        });
+
+        document.querySelectorAll(".category-feature-group").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+              input.checked = false;
+            });
+          }
+        });
+
+        const categoryChip = document.querySelector(".preview-chip.primary");
+        if (categoryChip) {
+          categoryChip.textContent =
+            current === "auto" ? "Vasıta" :
+            current === "emlak" ? "Emlak" :
+            current === "electronic" ? "Elektronik" :
+            "İlan";
+        }
+      }
+
+      function formatPrice(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+        if (!digits) return "";
+        return Number(digits).toLocaleString("tr-TR") + " TL";
+      }
+
+      function readStoredList(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function activeFeatureCheckboxes() {
+        return Array.from(document.querySelectorAll(".features-root .category-feature-group.is-active input[type='checkbox']"));
+      }
+
+      function normalizedElectronicType() {
+        return (val("electronicType") || "").trim();
+      }
+
+      function isElectricVehicleSelection() {
+        return normalizedCategory() === "auto" && /elektr/i.test(val("fuel"));
+      }
+
+      function syncElectricFeatureVisibility() {
+        const block = document.getElementById("featureBlockEv");
+        if (!block) return;
+        const shouldShow = isElectricVehicleSelection();
+        block.classList.toggle("ev-hidden", !shouldShow);
+        block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+          input.disabled = !shouldShow;
+        });
+      }
+
+      function syncElectronicFeatureVisibility() {
+        const currentType = normalizedElectronicType();
+        document.querySelectorAll(".electronic-feature-group").forEach((block) => {
+          const show =
+            !currentType ||
+            block.classList.contains("electronic-type-all") ||
+            block.classList.contains(`electronic-type-${currentType}`);
+          block.classList.toggle("electronic-type-hidden", !show);
+          block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+            input.disabled = !show;
+          });
+        });
+      }
+
+      // CATEGORY FLOW UPGRADE START
+      const categoryFlowConfig = {
+        vasita: {
+          category: "Otomobil",
+          label: "Vasıta",
+          subcategories: ["Otomobil", "SUV", "Pickup", "Ticari"]
+        },
+        emlak: {
+          category: "Emlak",
+          label: "Emlak",
+          subcategories: ["Satılık Daire", "Kiralık Daire", "Arsa", "İşyeri"]
+        },
+        elektronik: {
+          category: "Elektronik",
+          label: "Elektronik",
+          subcategories: ["Telefon", "Laptop", "TV", "Kamera"]
+        }
+      };
+
+      const estateTypeMap = {
+        "Satılık Daire": "konut",
+        "Kiralık Daire": "konut",
+        "Arsa": "arsa",
+        "İşyeri": "isyeri"
+      };
+
+      const electronicTypeMap = {
+        "Telefon": "telefon",
+        "Laptop": "laptop",
+        "TV": "tv",
+        "Kamera": "kamera"
+      };
+
+      let pendingCategoryFlowSelection = null;
+
+      function applyPendingCategorySelection() {
+        if (!pendingCategoryFlowSelection) return;
+        const { category, subcategory } = pendingCategoryFlowSelection;
+
+        if (category === "Emlak") {
+          const estateField = document.getElementById("estateType");
+          const estateType = estateTypeMap[subcategory];
+          if (estateField && estateType) {
+            estateField.value = estateType;
+            estateField.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+
+        if (category === "Elektronik") {
+          const electronicField = document.getElementById("electronicType");
+          const electronicType = electronicTypeMap[subcategory];
+          if (electronicField && electronicType) {
+            electronicField.value = electronicType;
+            electronicField.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+      }
+
+      function initCategoryFlow() {
+        const selectionScreen = document.getElementById("categorySelectionScreen");
+        const formFlow = document.getElementById("listingFormFlow");
+        const layout = document.querySelector(".create-v3-layout");
+        const previewColumn = document.querySelector(".create-v3-preview-column");
+        const cardsWrap = document.getElementById("categoryFlowCards");
+        const subSection = document.getElementById("categoryFlowSubsection");
+        const subCardsWrap = document.getElementById("categoryFlowSubcards");
+        const subHeading = document.getElementById("categoryFlowSubheading");
+        const backButton = document.getElementById("categoryFlowBack");
+        const categoryField = document.getElementById("category");
+        const subCategoryField = document.getElementById("subCategory");
+        const step1Next = document.getElementById("btnStep1Next");
+
+        if (!selectionScreen || !formFlow || !layout || !previewColumn || !cardsWrap || !subSection || !subCardsWrap || !subHeading || !backButton || !categoryField || !subCategoryField) {
+          return;
+        }
+
+        layout.classList.add("category-flow-pending");
+        previewColumn.classList.add("is-compact");
+
+        const renderSubcategories = (categoryKey) => {
+          const config = categoryFlowConfig[categoryKey];
+          if (!config) return;
+          cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((card) => {
+            card.classList.toggle("is-active", card.dataset.categoryKey === categoryKey);
+          });
+          subHeading.textContent = `${config.label} için alt kategori seçin`;
+          subCardsWrap.innerHTML = config.subcategories.map((sub) => `
+            <button type="button" class="category-flow-subcard" data-subcategory="${sub.replace(/"/g, "&quot;")}">${sub}</button>
+          `).join("");
+          subSection.hidden = false;
+          subCardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
+            button.addEventListener("click", () => {
+              pendingCategoryFlowSelection = {
+                category: config.category,
+                subcategory: button.dataset.subcategory
+              };
+              categoryField.value = config.category;
+              categoryField.dispatchEvent(new Event("change", { bubbles: true }));
+              subCategoryField.value = button.dataset.subcategory;
+              selectionScreen.hidden = true;
+              formFlow.hidden = false;
+              layout.classList.remove("category-flow-pending");
+              previewColumn.classList.remove("is-compact");
+            });
+          });
+        };
+
+        cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((button) => {
+          button.addEventListener("click", () => renderSubcategories(button.dataset.categoryKey));
+        });
+
+        backButton.addEventListener("click", () => {
+          subSection.hidden = true;
+          subCardsWrap.innerHTML = "";
+          cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((card) => {
+            card.classList.remove("is-active");
+          });
+        });
+
+        step1Next?.addEventListener("click", () => {
+          if (!pendingCategoryFlowSelection) return;
+          window.setTimeout(() => {
+            applyPendingCategorySelection();
+          }, 0);
+        });
+      }
+      // CATEGORY FLOW UPGRADE END
+
+      function selectedPreviewFeatures() {
+        return activeFeatureCheckboxes()
+          .filter((input) => input.checked && !input.disabled)
+          .map((input) => input.closest("label")?.querySelector(".feature-label")?.textContent.trim() || input.closest("label")?.innerText.trim())
+          .filter(Boolean)
+          .slice(0, 4);
+      }
+
+      function hasDamageInfo() {
+        return Array.from(document.querySelectorAll(".damage-panel .part"))
+          .some((part) => (part.dataset.state || "original") !== "original");
+      }
+
+      function renderPreviewFeatureBadges() {
+        const wrap = document.getElementById("previewFeatureBadges");
+        if (!wrap) return;
+        const features = selectedPreviewFeatures();
+        if (normalizedCategory() === "auto" && hasDamageInfo()) {
+          features.unshift("Ekspertiz Bilgisi Var");
+        }
+        const visibleFeatures = features.slice(0, 4);
+        if (!visibleFeatures.length) {
+          wrap.innerHTML = '<span class="preview-feature-badge is-placeholder">Seçilen özellikler burada görünür</span>';
+          return;
+        }
+        wrap.innerHTML = visibleFeatures.map((feature) => `<span class="preview-feature-badge">${feature}</span>`).join("");
+      }
+
+      function persistFeatureState() {
+        const checkedIds = Array.from(document.querySelectorAll(".features-root .category-feature-group input[type='checkbox']"))
+          .filter((input) => input.checked)
+          .map((input) => input.id);
+        const openPanels = Array.from(document.querySelectorAll(".features-root details[id]"))
+          .filter((panel) => panel.open)
+          .map((panel) => panel.id);
+        localStorage.setItem(FEATURE_STATE_KEY, JSON.stringify(checkedIds));
+        localStorage.setItem(FEATURE_PANEL_KEY, JSON.stringify(openPanels));
+      }
+
+      function restoreFeatureState() {
+        const checkedIds = new Set(readStoredList(FEATURE_STATE_KEY));
+        const openPanels = new Set(readStoredList(FEATURE_PANEL_KEY));
+
+        Array.from(document.querySelectorAll(".features-root .category-feature-group input[type='checkbox']")).forEach((input) => {
+          input.checked = checkedIds.has(input.id);
+        });
+
+        document.querySelectorAll(".features-root details[id]").forEach((panel) => {
+          if (openPanels.size) panel.open = openPanels.has(panel.id);
+        });
+      }
+
+      function bindFeaturePersistence() {
+        document.addEventListener("change", (event) => {
+          if (event.target.matches(".features-root input[type='checkbox']")) {
+            persistFeatureState();
+            renderPreviewFeatureBadges();
+          }
+        });
+
+        document.querySelectorAll(".features-root details[id]").forEach((panel) => {
+          panel.addEventListener("toggle", persistFeatureState);
+        });
+      }
+
+      function syncPreview() {
+        const current = normalizedCategory();
+        const titleRaw = val("title");
+        const city = val("city");
+        const district = val("district");
+        const location = [city, district].filter(Boolean).join(" / ");
+        const brand = val("brand");
+        const series = val("series");
+        const model = val("model");
+        const vehicleLine = [brand, series, model].filter(Boolean).join(" ");
+        const estateType = val("estateType");
+        const electronicType = normalizedElectronicType();
+        const electronicTypeText =
+          electronicType === "telefon" ? "Telefon" :
+          electronicType === "laptop" ? "Laptop / Bilgisayar" :
+          electronicType === "gaming" ? "Gaming" :
+          electronicType === "tv" ? "TV / Ses Sistemi" :
+          electronicType === "kamera" ? "Kamera / Fotoğraf" :
+          electronicType === "aksesuar" ? "Aksesuar" :
+          "";
+        const estateTypeText =
+          estateType === "konut" ? "Konut" :
+          estateType === "arsa" ? "Arsa" :
+          estateType === "isyeri" ? "İşyeri" :
+          "";
+        const title = titleRaw || "Başlık";
+        const estatePreview =
+          estateType === "arsa"
+            ? {
+                labels: ["Ada", "Parsel", "İmar", "Tapu", "m²", ""],
+                values: [
+                  val("adaNo") || "Ada No",
+                  val("parselNo") || "Parsel No",
+                  val("zoningStatus") || "İmar Durumu",
+                  val("titleDeedStatus") || "Tapu Durumu",
+                  val("m2") ? `${val("m2")} m²` : "m²",
+                  "",
+                ],
+                states: [
+                  Boolean(val("adaNo")),
+                  Boolean(val("parselNo")),
+                  Boolean(val("zoningStatus")),
+                  Boolean(val("titleDeedStatus")),
+                  Boolean(val("m2")),
+                  false,
+                ],
+              }
+            : estateType === "isyeri"
+              ? {
+                  labels: ["Bölme", "WC", "Isıtma", "Aidat", "Durum", ""],
+                  values: [
+                    val("sectionCount") || "Bölme Sayısı",
+                    val("wcCount") || "WC Sayısı",
+                    val("heatingType") || "Isıtma",
+                    val("dues") ? `${Number(val("dues")).toLocaleString("tr-TR")} TL` : "Aidat",
+                    val("usageStatus") || "Kullanım Durumu",
+                    "",
+                  ],
+                  states: [
+                    Boolean(val("sectionCount")),
+                    Boolean(val("wcCount")),
+                    Boolean(val("heatingType")),
+                    Boolean(val("dues")),
+                    Boolean(val("usageStatus")),
+                    false,
+                  ],
+                }
+              : {
+                  labels: ["m²", "Oda", "Yaş", "Isıtma", "Aidat", "Durum"],
+                  values: [
+                    val("m2") ? `${val("m2")} m²` : "m²",
+                    val("rooms") || "Oda Sayısı",
+                    val("age") || "Bina Yaşı",
+                    val("heatingType") || "Isıtma",
+                    val("dues") ? `${Number(val("dues")).toLocaleString("tr-TR")} TL` : "Aidat",
+                    val("residenceUsageStatus") || "Kullanım Durumu",
+                  ],
+                  states: [
+                    Boolean(val("m2")),
+                    Boolean(val("rooms")),
+                    Boolean(val("age")),
+                    Boolean(val("heatingType")),
+                    Boolean(val("dues")),
+                    Boolean(val("residenceUsageStatus")),
+                  ],
+                };
+        const km =
+          current === "emlak" ? (val("m2") ? `${val("m2")} m²` : "m²") :
+          current === "electronic" ? (
+            electronicType === "telefon" ? (val("storage") || "Depolama") :
+            electronicType === "laptop" ? (val("processor") || "İşlemci") :
+            electronicType === "tv" ? (val("screenInch") || "İnç") :
+            electronicType === "kamera" ? (val("lens") || "Lens") :
+            (electronicTypeText || "Elektronik")
+          ) :
+          (val("km") || "KM");
+        const year =
+          current === "emlak" ? (val("rooms") || estateTypeText || "İlan Tipi") :
+          current === "electronic" ? (
+            electronicType === "telefon" ? (val("ram") || "RAM") :
+            electronicType === "laptop" ? (val("ssdCapacity") || val("ram") || "Donanım") :
+            electronicType === "tv" ? (val("panelType") || "Panel") :
+            electronicType === "kamera" ? (val("shutterCount") ? `${val("shutterCount")} shutter` : "Shutter") :
+            (val("condition") || "Durum")
+          ) :
+          (val("year") || "Yıl");
+        const fuel =
+          current === "emlak" ? (val("heatingType") || val("residenceUsageStatus") || val("zoningStatus") || val("usageStatus") || "Detay") :
+          current === "electronic" ? (
+            electronicType === "telefon" ? (val("condition") || "Durum") :
+            electronicType === "laptop" ? (val("gpu") || val("operatingSystem") || "GPU / OS") :
+            electronicType === "tv" ? (val("resolution") || "Çözünürlük") :
+            electronicType === "kamera" ? (val("sensorSize") || "Sensör") :
+            (val("condition") || "Durum")
+          ) :
+          (val("fuel") || "Yakıt");
+        const transmission =
+          current === "emlak" ? (val("dues") ? `${Number(val("dues")).toLocaleString("tr-TR")} TL Aidat` : "Özellik") :
+          current === "electronic" ? (
+            electronicType === "telefon" ? (val("imeiStatus") || "IMEI") :
+            electronicType === "laptop" ? (val("screenSize") || "Ekran") :
+            electronicType === "tv" ? (val("condition") || "Durum") :
+            electronicType === "kamera" ? (val("condition") || "Durum") :
+            (val("condition") || "Durum")
+          ) :
+          (val("transmission") || "Vites");
+        const priceRaw = val("price");
+        const price = formatPrice(priceRaw);
+        const metaLine = [
+          location,
+          current === "emlak" ? estateTypeText :
+          current === "electronic" ? [electronicTypeText, brand, model].filter(Boolean).join(" ") :
+          vehicleLine
+        ].filter(Boolean).join(" • ");
+        const listingTypeChip = document.getElementById("previewListingType");
+        const spec1Label = document.getElementById("previewSpec1Label");
+        const spec2Label = document.getElementById("previewSpec2Label");
+        const spec3Label = document.getElementById("previewSpec3Label");
+        const spec4Label = document.getElementById("previewSpec4Label");
+        const spec5Label = document.getElementById("previewSpec5Label");
+        const spec6Label = document.getElementById("previewSpec6Label");
+        const spec7Label = document.getElementById("previewSpec7Label");
+        const drivetrain = current === "auto" ? (val("drivetrain") || "Çekiş") : "";
+        const engine = current === "auto" ? (val("engine") || "Motor") : "";
+        const enginePower = current === "auto" ? (val("enginePower") || "HP") : "";
+
+        if (listingTypeChip) {
+          listingTypeChip.textContent =
+            current === "emlak" ? (estateTypeText || "Emlak Tipi") :
+            current === "electronic" ? (electronicTypeText || "Elektronik Türü") :
+            "Vitrin";
+        }
+
+        if (spec1Label) spec1Label.textContent = current === "emlak" ? "m²" : current === "electronic" ? "Öne Çıkan" : "KM";
+        if (spec2Label) spec2Label.textContent = current === "emlak" ? "Tip" : current === "electronic" ? "Donanım" : "Yıl";
+        if (spec3Label) spec3Label.textContent = current === "emlak" ? "Durum" : current === "electronic" ? "Durum / Teknik" : "Yakıt";
+        if (spec4Label) spec4Label.textContent = current === "emlak" ? "Aidat" : current === "electronic" ? "Ek Bilgi" : "Vites";
+        if (spec5Label) spec5Label.textContent = current === "auto" ? "Çekiş" : "";
+        if (spec7Label) spec7Label.textContent = current === "auto" ? "HP" : "";
+        if (spec6Label) spec6Label.textContent = current === "auto" ? "Motor" : "";
+
+        text("livePreviewTitle", title);
+        text("livePreviewMeta", metaLine);
+        text("livePreviewPrice", price || "Fiyat");
+        text("previewTitle", title);
+        text("previewPrice", price || "Fiyat");
+        text("previewLocation", location || "Konum");
+        text("previewLocationDetail", location || "Şehir / İlçe");
+        text("previewSubLocation", location || "Şehir / İlçe");
+        text("previewKm", km);
+        text("previewYear", year);
+        text("previewFuel", fuel);
+        text("previewTransmission", transmission);
+        text("previewDrivetrain", drivetrain);
+        text("previewHp", enginePower);
+        text("previewEngine", engine);
+
+        if (current === "emlak") {
+          if (spec1Label) spec1Label.textContent = estatePreview.labels[0];
+          if (spec2Label) spec2Label.textContent = estatePreview.labels[1];
+          if (spec3Label) spec3Label.textContent = estatePreview.labels[2];
+          if (spec4Label) spec4Label.textContent = estatePreview.labels[3];
+          if (spec5Label) spec5Label.textContent = estatePreview.labels[4];
+          if (spec6Label) spec6Label.textContent = estatePreview.labels[5];
+
+          text("previewKm", estatePreview.values[0]);
+          text("previewYear", estatePreview.values[1]);
+          text("previewFuel", estatePreview.values[2]);
+          text("previewTransmission", estatePreview.values[3]);
+          text("previewDrivetrain", estatePreview.values[4]);
+          text("previewEngine", estatePreview.values[5]);
+        }
+
+        const hasSpec1 =
+          current === "emlak" ? Boolean(val("m2")) :
+          current === "electronic" ? Boolean(
+            (electronicType === "telefon" && val("storage")) ||
+            (electronicType === "laptop" && val("processor")) ||
+            (electronicType === "tv" && val("screenInch")) ||
+            (electronicType === "kamera" && val("lens")) ||
+            electronicTypeText
+          ) :
+          Boolean(val("km"));
+        const hasSpec2 =
+          current === "emlak" ? Boolean(val("rooms") || estateTypeText) :
+          current === "electronic" ? Boolean(
+            (electronicType === "telefon" && val("ram")) ||
+            (electronicType === "laptop" && (val("ssdCapacity") || val("ram"))) ||
+            (electronicType === "tv" && val("panelType")) ||
+            (electronicType === "kamera" && val("shutterCount")) ||
+            val("condition")
+          ) :
+          Boolean(val("year"));
+        const hasSpec3 =
+          current === "emlak" ? Boolean(val("heatingType") || val("residenceUsageStatus") || val("zoningStatus") || val("usageStatus")) :
+          current === "electronic" ? Boolean(
+            (electronicType === "telefon" && val("condition")) ||
+            (electronicType === "laptop" && (val("gpu") || val("operatingSystem"))) ||
+            (electronicType === "tv" && val("resolution")) ||
+            (electronicType === "kamera" && val("sensorSize")) ||
+            val("condition")
+          ) :
+          Boolean(val("fuel"));
+        const hasSpec4 =
+          current === "emlak" ? Boolean(val("dues")) :
+          current === "electronic" ? Boolean(
+            (electronicType === "telefon" && val("imeiStatus")) ||
+            (electronicType === "laptop" && val("screenSize")) ||
+            val("condition")
+          ) :
+          Boolean(val("transmission"));
+        const hasSpec5 = current === "auto" ? Boolean(val("drivetrain")) : false;
+        const hasSpec7 = current === "auto" ? Boolean(val("enginePower")) : false;
+        const hasSpec6 = current === "auto" ? Boolean(val("engine")) : false;
+
+        setPlaceholderState("livePreviewTitle", !titleRaw);
+        setPlaceholderState("previewTitle", !titleRaw);
+        setPlaceholderState("livePreviewMeta", !metaLine);
+        setPlaceholderState("previewLocation", !location);
+        setPlaceholderState("previewLocationDetail", !location);
+        setPlaceholderState("previewSubLocation", !location);
+        setPlaceholderState("livePreviewPrice", !priceRaw);
+        setPlaceholderState("previewPrice", !priceRaw);
+        setPlaceholderState("previewKm", !hasSpec1);
+        setPlaceholderState("previewYear", !hasSpec2);
+        setPlaceholderState("previewFuel", !hasSpec3);
+        setPlaceholderState("previewTransmission", !hasSpec4);
+        setPlaceholderState("previewDrivetrain", !hasSpec5);
+        setPlaceholderState("previewHp", !hasSpec7);
+        setPlaceholderState("previewEngine", !hasSpec6);
+
+        if (current === "emlak") {
+          setPlaceholderState("previewKm", !estatePreview.states[0]);
+          setPlaceholderState("previewYear", !estatePreview.states[1]);
+          setPlaceholderState("previewFuel", !estatePreview.states[2]);
+          setPlaceholderState("previewTransmission", !estatePreview.states[3]);
+          setPlaceholderState("previewDrivetrain", !estatePreview.states[4]);
+          setPlaceholderState("previewHp", true);
+          setPlaceholderState("previewEngine", !estatePreview.states[5]);
+        }
+
+        const setSpecVisibility = (valueId, visible) => {
+          const el = document.getElementById(valueId);
+          const card = el?.closest(".preview-spec");
+          if (card) card.style.display = visible ? "" : "none";
+        };
+
+        if (current === "auto") {
+          setSpecVisibility("previewKm", hasSpec1);
+          setSpecVisibility("previewYear", hasSpec2);
+          setSpecVisibility("previewFuel", hasSpec3);
+          setSpecVisibility("previewTransmission", hasSpec4);
+          setSpecVisibility("previewDrivetrain", hasSpec5);
+          setSpecVisibility("previewHp", hasSpec7);
+          setSpecVisibility("previewEngine", hasSpec6);
+        } else if (current === "emlak") {
+          setSpecVisibility("previewKm", estatePreview.states[0]);
+          setSpecVisibility("previewYear", estatePreview.states[1]);
+          setSpecVisibility("previewFuel", estatePreview.states[2]);
+          setSpecVisibility("previewTransmission", estatePreview.states[3]);
+          setSpecVisibility("previewDrivetrain", estatePreview.states[4]);
+          setSpecVisibility("previewHp", false);
+          setSpecVisibility("previewEngine", estatePreview.states[5]);
+        } else {
+          setSpecVisibility("previewKm", hasSpec1);
+          setSpecVisibility("previewYear", hasSpec2);
+          setSpecVisibility("previewFuel", hasSpec3);
+          setSpecVisibility("previewTransmission", hasSpec4);
+          setSpecVisibility("previewDrivetrain", false);
+          setSpecVisibility("previewHp", false);
+          setSpecVisibility("previewEngine", false);
+        }
+      }
+
+      function initRealtimeSurface() {
+        restoreFeatureState();
+        initCategoryFlow();
+        toggleCategorySurfaces();
+        syncElectricFeatureVisibility();
+        syncElectronicFeatureVisibility();
+        syncPreview();
+        renderPreviewFeatureBadges();
+        bindLoadingState();
+        bindPreviewSync();
+        bindImageSync();
+        bindDamageHover();
+        decorateDamageStatusList();
+        bindFeaturePersistence();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initRealtimeSurface);
+      } else {
+        initRealtimeSurface();
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      const dynamicFields = document.getElementById("dynamicFields");
+      if (!dynamicFields) return;
+      const vehiclePerfMetrics = window.__vehiclePerfMetrics = window.__vehiclePerfMetrics || {
+        legacyEstimateMs: 0,
+        optimizedRenderMs: 0,
+        lastSelect: ""
+      };
+      const VEHICLE_SEARCH_DEBOUNCE_MS = 180;
+      const VEHICLE_VIRTUAL_ROW_HEIGHT = 38;
+      const VEHICLE_VIRTUAL_VIEWPORT_HEIGHT = 232;
+      const VEHICLE_INDEX_CHUNK_SIZE = 240;
+
+      const vehicleSelectConfig = {
+        brand: { searchPlaceholder: "Marka ara", waitingText: "Marka seçerek devam edin", caption: "Arama destekli" },
+        series: { searchPlaceholder: "Seri ara", waitingText: "Önce marka seçin", caption: "Markaya göre filtrelenir" },
+        model: { searchPlaceholder: "Model ara", waitingText: "Önce seri seçin", caption: "Seriye göre filtrelenir" }
+      };
+
+      function normalizeText(value) {
+        return String(value || "")
+          .toLowerCase()
+          .trim()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/ı/g, "i");
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;");
+      }
+
+      function getOptionData(select) {
+        if (Array.isArray(select?.__vehicleOptionSourceData)) {
+          return select.__vehicleOptionSourceData.slice();
+        }
+        return Array.from(select?.options || [])
+          .slice(1)
+          .filter((option) => option.value)
+          .map((option) => ({ value: option.value, text: option.textContent || option.value }));
+      }
+
+      function debounce(fn, wait) {
+        let timeoutId = 0;
+        return (...args) => {
+          window.clearTimeout(timeoutId);
+          timeoutId = window.setTimeout(() => fn(...args), wait);
+        };
+      }
+
+      function syncNativeSelect(select, selectedOption = null) {
+        const placeholder = select.dataset.placeholderText || "Seçin";
+        const fragment = document.createDocumentFragment();
+        const placeholderOption = document.createElement("option");
+        placeholderOption.value = "";
+        placeholderOption.textContent = placeholder;
+        fragment.appendChild(placeholderOption);
+
+        if (selectedOption?.value) {
+          const option = document.createElement("option");
+          option.value = selectedOption.value;
+          option.textContent = selectedOption.text || selectedOption.value;
+          fragment.appendChild(option);
+        }
+
+        select.__vehicleSearchMutating = true;
+        select.replaceChildren(fragment);
+        select.value = selectedOption?.value || "";
+        select.__vehicleSearchMutating = false;
+      }
+
+      function cancelVehicleIndexBuild(select) {
+        if (select?.__vehicleIndexFrame) {
+          window.cancelAnimationFrame(select.__vehicleIndexFrame);
+          select.__vehicleIndexFrame = 0;
+        }
+      }
+
+      function queueVehicleIndexBuild(select) {
+        const source = getOptionData(select);
+        cancelVehicleIndexBuild(select);
+        select.__vehicleIndexSource = source;
+        select.__vehicleIndexReady = false;
+        select.__vehicleNormalizedIndex = new Array(source.length);
+
+        let cursor = 0;
+        const pump = () => {
+          let count = 0;
+          while (cursor < source.length && count < VEHICLE_INDEX_CHUNK_SIZE) {
+            const option = source[cursor];
+            select.__vehicleNormalizedIndex[cursor] = {
+              option,
+              text: normalizeText(option.text),
+              value: normalizeText(option.value)
+            };
+            cursor += 1;
+            count += 1;
+          }
+
+          if (cursor < source.length) {
+            select.__vehicleIndexFrame = window.requestAnimationFrame(pump);
+            return;
+          }
+
+          select.__vehicleIndexReady = true;
+          select.__vehicleIndexFrame = 0;
+        };
+
+        if (!source.length) {
+          select.__vehicleIndexReady = true;
+          return;
+        }
+
+        select.__vehicleIndexFrame = window.requestAnimationFrame(pump);
+      }
+
+      function ensureVehicleIndex(select) {
+        const source = getOptionData(select);
+        if (select.__vehicleIndexSource !== source) {
+          queueVehicleIndexBuild(select);
+        }
+      }
+
+      function estimateLegacyRenderMs(options) {
+        const sample = options.slice(0, Math.min(options.length, 400));
+        if (!sample.length) return 0;
+
+        const startedAt = performance.now();
+        const fragment = document.createDocumentFragment();
+        sample.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.value;
+          option.textContent = item.text;
+          fragment.appendChild(option);
+        });
+        const elapsed = performance.now() - startedAt;
+        return Number(((elapsed / sample.length) * options.length).toFixed(2));
+      }
+
+      function openVehiclePanel(select) {
+        const shell = select.closest(".vehicle-select-shell");
+        if (!shell || select.disabled) return;
+        shell.classList.add("is-open");
+      }
+
+      function closeVehiclePanel(select) {
+        const shell = select.closest(".vehicle-select-shell");
+        if (!shell) return;
+        shell.classList.remove("is-open");
+      }
+
+      function syncVirtualViewport(select) {
+        const shell = select.closest(".vehicle-select-shell");
+        const results = shell?.querySelector(".vehicle-select-results");
+        const spacer = shell?.querySelector(".vehicle-select-results-spacer");
+        const viewport = shell?.querySelector(".vehicle-select-results-viewport");
+        if (!results || !spacer || !viewport) return;
+
+        const options = select.__vehicleFilteredOptions || [];
+        const total = options.length;
+        const visibleCount = Math.ceil(VEHICLE_VIRTUAL_VIEWPORT_HEIGHT / VEHICLE_VIRTUAL_ROW_HEIGHT) + 6;
+        const startIndex = Math.max(0, Math.floor(results.scrollTop / VEHICLE_VIRTUAL_ROW_HEIGHT) - 2);
+        const endIndex = Math.min(total, startIndex + visibleCount);
+        const currentValue = select.value;
+        const fragment = document.createDocumentFragment();
+
+        viewport.replaceChildren();
+        spacer.style.height = `${Math.max(total * VEHICLE_VIRTUAL_ROW_HEIGHT, total ? VEHICLE_VIRTUAL_VIEWPORT_HEIGHT : 0)}px`;
+
+        if (!total) {
+          const empty = document.createElement("div");
+          empty.className = "vehicle-select-empty";
+          empty.textContent = "Sonuç bulunamadı";
+          viewport.appendChild(empty);
+          return;
+        }
+
+        for (let index = startIndex; index < endIndex; index += 1) {
+          const option = options[index];
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "vehicle-select-option";
+          if (option.value === currentValue) button.classList.add("is-selected");
+          button.style.top = `${index * VEHICLE_VIRTUAL_ROW_HEIGHT}px`;
+          button.textContent = option.text;
+          button.title = option.text;
+          button.dataset.value = option.value;
+          button.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            syncNativeSelect(select, option);
+            select.__vehicleFilteredOptions = options;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            closeVehiclePanel(select);
+          });
+          fragment.appendChild(button);
+        }
+
+        viewport.appendChild(fragment);
+      }
+
+      function renderVirtualOptions(select, options, { resetScroll = true } = {}) {
+        const shell = select.closest(".vehicle-select-shell");
+        const results = shell?.querySelector(".vehicle-select-results");
+        if (!shell || !results) return;
+
+        const startedAt = performance.now();
+        select.__vehicleFilteredOptions = options;
+        if (resetScroll) results.scrollTop = 0;
+        syncVirtualViewport(select);
+        vehiclePerfMetrics.optimizedRenderMs = Number((performance.now() - startedAt).toFixed(2));
+        vehiclePerfMetrics.lastSelect = select.id;
+      }
+
+      function filteredVehicleOptions(select, query) {
+        const source = getOptionData(select);
+        const normalizedQuery = normalizeText(query);
+        if (!normalizedQuery) return source;
+
+        ensureVehicleIndex(select);
+        if (!select.__vehicleIndexReady) {
+          return source.filter((option) => normalizeText(option.text).includes(normalizedQuery) || normalizeText(option.value).includes(normalizedQuery));
+        }
+
+        return (select.__vehicleNormalizedIndex || [])
+          .filter((entry) => entry && (entry.text.includes(normalizedQuery) || entry.value.includes(normalizedQuery)))
+          .map((entry) => entry.option);
+      }
+
+      function syncSelectMeta(select) {
+        const shell = select.closest(".vehicle-select-shell");
+        const group = select.closest(".field-group");
+        if (!shell || !group) return;
+
+        const search = shell.querySelector(".vehicle-select-search");
+        const count = shell.querySelector(".vehicle-select-count");
+        const status = shell.querySelector(".vehicle-select-status");
+        const cfg = vehicleSelectConfig[select.id] || {};
+        const allOptions = select.__vehicleAllOptions || [];
+        const filteredOptions = select.__vehicleFilteredOptions || allOptions;
+        const selectedOption = allOptions.find((option) => option.value === select.value) || null;
+        const hasValue = !!select.value;
+        const hasQuery = !!(search?.value || "").trim();
+
+        group.classList.toggle("is-disabled", !!select.disabled);
+        group.classList.toggle("has-value", hasValue);
+        group.classList.toggle("has-query", hasQuery);
+        group.classList.toggle("is-active", !select.disabled);
+
+        if (search) {
+          search.disabled = !!select.disabled;
+          const emptyPlaceholder = select.disabled ? (cfg.waitingText || "Önce seçim yapın") : (cfg.searchPlaceholder || "Ara");
+          if (hasValue) {
+            search.value = selectedOption?.text || select.value;
+            search.placeholder = "";
+            search.classList.add("is-selected");
+          } else {
+            search.placeholder = emptyPlaceholder;
+            search.classList.remove("is-selected");
+          }
+        }
+
+        if (count) {
+          count.textContent = `${filteredOptions.length}`;
+          count.title = `${filteredOptions.length} seçenek`;
+        }
+
+        if (status) {
+          if (hasValue) {
+            status.textContent = "";
+            status.classList.add("is-hidden");
+          } else {
+            status.classList.remove("is-hidden");
+            if (select.disabled) status.textContent = cfg.waitingText || "Önce seçim yapın";
+            else if (hasQuery) status.textContent = `${filteredOptions.length} sonuç bulundu`;
+            else if (allOptions.length) status.textContent = `${allOptions.length} seçenek arasından seçim yapın`;
+            else status.textContent = "Uygun seçenek bulunamadı";
+          }
+        }
+
+        const label = group.querySelector("label");
+        if (label && !label.querySelector(".vehicle-select-caption")) {
+          const caption = document.createElement("span");
+          caption.className = "vehicle-select-caption";
+          caption.textContent = cfg.caption || "Seçim alanı";
+          label.appendChild(caption);
+        }
+      }
+
+      function renderFilteredOptions(select, options) {
+        const placeholder = select.dataset.placeholderText || "Seçin";
+        const currentValue = select.value;
+        select.__vehicleSearchMutating = true;
+        select.innerHTML = [`<option value="">${escapeHtml(placeholder)}</option>`, ...options.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.text)}</option>`)].join("");
+        if (options.some((option) => option.value === currentValue)) {
+          select.value = currentValue;
+        }
+        select.__vehicleSearchMutating = false;
+        select.__vehicleFilteredOptions = options;
+      }
+
+      function applyVehicleSearch(select, { autoPick = false } = {}) {
+        const shell = select.closest(".vehicle-select-shell");
+        const search = shell?.querySelector(".vehicle-select-search");
+        if (!shell || !search) return;
+
+        const filtered = filteredVehicleOptions(select, search.value.trim());
+        renderVirtualOptions(select, filtered);
+
+        if (autoPick && filtered.length === 1) {
+          syncNativeSelect(select, filtered[0]);
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        if (!select.disabled) openVehiclePanel(select);
+        syncSelectMeta(select);
+      }
+
+      function decorateVehicleSelect(select) {
+        if (!select || select.dataset.searchDecorated === "true") return;
+
+        const group = select.closest(".field-group");
+        if (!group) return;
+
+        group.classList.add("is-vehicle-select-group");
+        select.classList.add("vehicle-select-native");
+        select.dataset.searchDecorated = "true";
+        select.dataset.placeholderText = select.options[0]?.textContent || "Seçin";
+        select.__vehicleAllOptions = getOptionData(select);
+        select.__vehicleFilteredOptions = select.__vehicleAllOptions.slice();
+        vehiclePerfMetrics.legacyEstimateMs = estimateLegacyRenderMs(select.__vehicleAllOptions);
+        ensureVehicleIndex(select);
+
+        const shell = document.createElement("div");
+        shell.className = "vehicle-select-shell";
+
+        const toolbar = document.createElement("div");
+        toolbar.className = "vehicle-select-toolbar";
+
+        const search = document.createElement("input");
+        search.type = "search";
+        search.className = "vehicle-select-search";
+        search.autocomplete = "off";
+        search.spellcheck = false;
+
+        const count = document.createElement("span");
+        count.className = "vehicle-select-count";
+
+        const status = document.createElement("div");
+        status.className = "vehicle-select-status";
+
+        const panel = document.createElement("div");
+        panel.className = "vehicle-select-panel";
+
+        const results = document.createElement("div");
+        results.className = "vehicle-select-results";
+
+        const spacer = document.createElement("div");
+        spacer.className = "vehicle-select-results-spacer";
+
+        const viewport = document.createElement("div");
+        viewport.className = "vehicle-select-results-viewport";
+
+        toolbar.appendChild(search);
+        toolbar.appendChild(count);
+        shell.appendChild(toolbar);
+        group.insertBefore(shell, select);
+        shell.appendChild(select);
+        panel.appendChild(results);
+        results.appendChild(spacer);
+        spacer.appendChild(viewport);
+        shell.appendChild(panel);
+        shell.appendChild(status);
+
+        const runSearch = debounce(() => applyVehicleSearch(select), VEHICLE_SEARCH_DEBOUNCE_MS);
+        search.addEventListener("input", runSearch);
+        search.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            applyVehicleSearch(select, { autoPick: true });
+          }
+          if (event.key === "Escape") {
+            if (!select.value) search.value = "";
+            applyVehicleSearch(select);
+            closeVehiclePanel(select);
+          }
+        });
+        search.addEventListener("focus", () => {
+          if (select.value) {
+            search.select();
+            return;
+          }
+          openVehiclePanel(select);
+          applyVehicleSearch(select);
+          window.setTimeout(() => {
+            shell.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }, 80);
+        });
+        results.addEventListener("scroll", () => syncVirtualViewport(select));
+
+        select.addEventListener("change", () => {
+          const source = getOptionData(select);
+          const selected = source.find((option) => option.value === select.value) || null;
+          if (!selected) search.value = "";
+          syncNativeSelect(select, selected);
+          renderVirtualOptions(select, source);
+          console.log("VEHICLE_FLOW_OK", {
+            select: select.id,
+            value: select.value
+          });
+          console.log("DROPDOWN_PERFORMANCE_OK", {
+            select: select.id,
+            legacyEstimateMs: vehiclePerfMetrics.legacyEstimateMs,
+            optimizedRenderMs: vehiclePerfMetrics.optimizedRenderMs
+          });
+          syncSelectMeta(select);
+          closeVehiclePanel(select);
+        });
+
+        const observer = new MutationObserver(() => {
+          if (select.__vehicleSearchMutating) return;
+          select.dataset.placeholderText = select.options[0]?.textContent || select.dataset.placeholderText || "Seçin";
+          select.__vehicleAllOptions = getOptionData(select);
+          vehiclePerfMetrics.legacyEstimateMs = estimateLegacyRenderMs(select.__vehicleAllOptions);
+          ensureVehicleIndex(select);
+          if (!search.value.trim()) {
+            select.__vehicleFilteredOptions = select.__vehicleAllOptions.slice();
+          }
+          renderVirtualOptions(
+            select,
+            search.value.trim() ? filteredVehicleOptions(select, search.value.trim()) : select.__vehicleAllOptions.slice()
+          );
+          syncSelectMeta(select);
+        });
+
+        observer.observe(select, { childList: true, subtree: true, attributes: true, attributeFilter: ["disabled"] });
+        select.addEventListener("vehicle-source-change", () => {
+          select.__vehicleAllOptions = getOptionData(select);
+          applyVehicleSearch(select);
+        });
+        document.addEventListener("click", (event) => {
+          if (!shell.contains(event.target)) closeVehiclePanel(select);
+        });
+        renderVirtualOptions(select, select.__vehicleAllOptions.slice());
+        syncSelectMeta(select);
+        console.log("VEHICLE_RENDER_OPTIMIZED", { select: select.id });
+      }
+
+      function decorateVehicleSelects() {
+        ["brand", "series", "model"].forEach((id) => decorateVehicleSelect(document.getElementById(id)));
+      }
+
+      const dynamicObserver = new MutationObserver(() => {
+        decorateVehicleSelects();
+      });
+
+      dynamicObserver.observe(dynamicFields, { childList: true, subtree: true });
+      decorateVehicleSelects();
+      console.log("VEHICLE_SELECT_UI_READY");
+      console.log("VEHICLE_SEARCH_SELECT_READY");
+      console.log("LAZY_LOAD_ACTIVE");
+      console.log("SEARCH_DEBOUNCE_ACTIVE", VEHICLE_SEARCH_DEBOUNCE_MS);
+      console.log("VEHICLE_SELECTED_VISUAL_OK");
+      console.log("PLACEHOLDER_STATE_FIXED");
+      console.log("SELECTED_STATE_ACTIVE");
+    })();
+  </script>
+</body>
+</html>
+

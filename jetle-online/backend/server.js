@@ -18,6 +18,7 @@ const adminRoutes = require("./routes/admin");
 const paymentRoutes = require("./routes/payment");
 const carsRoute = require("./routes/cars");
 const adRoutes = require("./routes/adRoutes");
+const upload = require("./middleware/upload");
 const Listing = require("./models/Listing");
 const Message = require("./models/Message");
 const User = require("./models/User");
@@ -150,7 +151,7 @@ const generalApiLimiter = buildLimiter(15 * 60 * 1000, 300);
 const authLimiter = buildLimiter(10 * 60 * 1000, 20);
 const listingWriteLimiter = buildLimiter(5 * 60 * 1000, 25);
 const messageRouteLimiter = (_req, _res, next) => next();
-const adminApiLimiter = buildLimiter(15 * 60 * 1000, 180);
+const adminApiLimiter = buildLimiter(10 * 60 * 1000, 120);
 
 if (!isProduction) {
   console.log("START DEV SERVER");
@@ -386,7 +387,7 @@ async function getSocketUser(socket) {
     throw new Error("unauthorized");
   }
 
-  const user = await User.findById(decoded.id).select("_id name email banned isBanned");
+  const user = await User.findById(decoded.id).select("_id name email banned isBanned role");
   if (!user || user.banned || user.isBanned) {
     throw new Error("unauthorized");
   }
@@ -401,8 +402,10 @@ async function canAccessConversation(user, conversationId) {
   }
 
   const currentUserId = String(user?._id || "");
+  const userRole = String(user?.role || "").trim().toLowerCase();
+  const isAdmin = userRole === "admin" || userRole === "superadmin";
   if (!parsed.userIds.includes(currentUserId)) {
-    return false;
+    return isAdmin;
   }
 
   const listing = await Listing.findById(parsed.listingId).select("user");
@@ -411,31 +414,10 @@ async function canAccessConversation(user, conversationId) {
   }
 
   const listingOwnerId = String(listing.user);
-  const otherUserId = parsed.userIds.find((id) => id !== currentUserId) || "";
-  if (listingOwnerId === currentUserId || listingOwnerId === otherUserId) {
+  if (isAdmin) {
     return true;
   }
-
-  console.log("RAW currentUserId", currentUserId);
-  console.log("RAW otherUserId", otherUserId);
-  console.log("TYPE currentUserId", typeof currentUserId);
-  console.log("TYPE otherUserId", typeof otherUserId);
-  console.log("JSON currentUserId", JSON.stringify(currentUserId));
-  console.log("JSON otherUserId", JSON.stringify(otherUserId));
-
-  const safeCurrentUserId = normalizeSocketId(currentUserId);
-  const safeOtherUserId = normalizeSocketId(otherUserId);
-
-  const existingMessage = await Message.exists({
-    listingId: parsed.listingId,
-    isDeleted: { $ne: true },
-    $or: [
-      { senderId: asObjectId(safeCurrentUserId), receiverId: asObjectId(safeOtherUserId) },
-      { senderId: asObjectId(safeOtherUserId), receiverId: asObjectId(safeCurrentUserId) }
-    ]
-  });
-
-  return Boolean(existingMessage);
+  return parsed.userIds.includes(listingOwnerId);
 }
 
 const onlineUsers = new Map();
@@ -562,12 +544,22 @@ io.on("connection", (socket) => {
     try {
       const normalizedConversationId = String(conversationId || "").trim();
       if (!normalizedConversationId || !(await canAccessConversation(socket.user, normalizedConversationId))) {
+        console.log("UNAUTHORIZED_THREAD_BLOCKED", {
+          userId,
+          conversationId: normalizedConversationId,
+          source: "socket_join"
+        });
         callback?.({ success: false, error: "forbidden" });
         return;
       }
 
       await socket.join(normalizedConversationId);
       trackSocketRoom(socket.id, normalizedConversationId);
+      console.log("MESSAGE_PRIVACY_OK", {
+        userId,
+        conversationId: normalizedConversationId,
+        source: "socket_join"
+      });
       callback?.({ success: true });
     } catch (err) {
       console.error("SOCKET JOIN ERROR:", err);
@@ -591,6 +583,11 @@ io.on("connection", (socket) => {
 
       const normalizedConversationId = String(conversationId || "").trim();
       if (!normalizedConversationId || !(await canAccessConversation(socket.user, normalizedConversationId))) {
+        console.log("UNAUTHORIZED_THREAD_BLOCKED", {
+          userId,
+          conversationId: normalizedConversationId,
+          source: "typing_start"
+        });
         return;
       }
 
@@ -615,6 +612,11 @@ io.on("connection", (socket) => {
     try {
       const normalizedConversationId = String(conversationId || "").trim();
       if (!normalizedConversationId || !(await canAccessConversation(socket.user, normalizedConversationId))) {
+        console.log("UNAUTHORIZED_THREAD_BLOCKED", {
+          userId,
+          conversationId: normalizedConversationId,
+          source: "typing_stop"
+        });
         return;
       }
 
@@ -644,6 +646,11 @@ io.on("connection", (socket) => {
         parsed.userIds.some((id) => !isValidObjectId(id)) ||
         !(await canAccessConversation(socket.user, normalizedConversationId))
       ) {
+        console.log("UNAUTHORIZED_THREAD_BLOCKED", {
+          userId,
+          conversationId: normalizedConversationId,
+          source: "seen"
+        });
         callback?.({ success: false, error: "forbidden" });
         return;
       }
@@ -699,7 +706,9 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-  if (!isQuerySafe(req.query)) {
+  const isApiRequest = req.path.startsWith("/api/");
+
+  if (isApiRequest && !isQuerySafe(req.query)) {
     return res.status(400).json({
       success: false,
       error: "invalid_query"
@@ -719,10 +728,12 @@ app.use((req, res, next) => {
 
 // API Routes
 app.use("/api/auth", authLimiter);
+app.use("/auth", authLimiter);
 app.use("/api/messages", messageRouteLimiter);
 app.post("/api/listings/upload", listingWriteLimiter);
 app.post("/api/listings", listingWriteLimiter);
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/listings", listingsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/users", userRoutes);
@@ -752,7 +763,32 @@ app.get("/api/test-auth", (req, res) => {
   res.json({ ok: true });
 });
 
-app.use(express.static(path.join(__dirname, "../public"), {
+const publicDir = path.join(__dirname, "../public");
+
+app.use((req, res, next) => {
+  console.log("STATIC_REQUEST", req.url);
+  next();
+});
+
+app.use("/css", express.static(publicDir, {
+  setHeaders(res, filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".css") res.setHeader("Content-Type", "text/css; charset=utf-8");
+  }
+}));
+
+app.use("/js", express.static(publicDir, {
+  setHeaders(res, filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".js") res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+  }
+}));
+
+app.get("/js/auth.js", (req, res) => {
+  res.sendFile(path.join(publicDir, "js", "auth.js"));
+});
+
+app.use(express.static(publicDir, {
   setHeaders(res, filePath) {
     const ext = path.extname(filePath).toLowerCase();
     if (ext === ".html") res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -761,12 +797,34 @@ app.use(express.static(path.join(__dirname, "../public"), {
     if (ext === ".css") res.setHeader("Content-Type", "text/css; charset=utf-8");
   }
 }));
-app.use("/uploads", express.static("uploads", {
+app.use("/jetle-v2", express.static(path.join(__dirname, "../jetle-v2"), {
   setHeaders(res, filePath) {
     const ext = path.extname(filePath).toLowerCase();
+    if (ext === ".html") res.setHeader("Content-Type", "text/html; charset=utf-8");
+    if (ext === ".js") res.setHeader("Content-Type", "application/javascript; charset=utf-8");
     if (ext === ".json") res.setHeader("Content-Type", "application/json; charset=utf-8");
+    if (ext === ".css") res.setHeader("Content-Type", "text/css; charset=utf-8");
   }
 }));
+const uploadRoots = [
+  upload.uploadRoot,
+  upload.legacyUploadRoot
+].filter(Boolean);
+
+uploadRoots.forEach((uploadRootPath, index) => {
+  if (index === 0) {
+    console.log("UPLOAD_ROOT_FIXED", {
+      uploadRoot: uploadRootPath,
+      legacyFallbacks: uploadRoots.slice(1)
+    });
+  }
+  app.use("/uploads", express.static(uploadRootPath, {
+    setHeaders(res, filePath) {
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === ".json") res.setHeader("Content-Type", "application/json; charset=utf-8");
+    }
+  }));
+});
 
 // Test route
 app.get("/api/test", (req, res) => {
@@ -815,7 +873,6 @@ app.use((req, res, next) => {
     return next();
   }
 
-  const publicDir = path.join(__dirname, "../public");
   const htmlPath = path.join(publicDir, req.path.endsWith(".html") ? req.path : req.path + ".html");
 
   if (htmlPath.startsWith(publicDir) && fs.existsSync(htmlPath)) {
@@ -878,6 +935,7 @@ mongoose.connect(process.env.MONGO_URI)
       })
       .then(() => {
         server.listen(process.env.PORT || 3000, () => {
+          console.log("ACTIVE_SERVER_INSTANCE", Date.now());
           if (!isProduction) {
             console.log("START HTTP " + (process.env.PORT || 3000));
           }

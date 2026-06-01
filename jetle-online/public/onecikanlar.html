@@ -4,104 +4,247 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Öne Çıkan İlanlar - jetle.online</title>
+  <link rel="stylesheet" href="/style.css">
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background: #f3f4f6; color: #111827; }
-    a { color: inherit; text-decoration: none; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 15px 32px; background: #fff; border-bottom: 1px solid #e5e7eb; }
-    .logo { font-size: 24px; font-weight: 700; }
-    .logo .jetle { color: #2563eb; }
-    .menu { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-    .menu a { font-size: 14px; color: #374151; }
-    .menu a:hover { color: #2563eb; }
-    .page { max-width: 1320px; margin: 0 auto; padding: 28px 24px 48px; }
-    .page-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-    .page-head h1 { margin: 0 0 6px; font-size: 28px; }
-    .page-head p { margin: 0; color: #6b7280; font-size: 14px; }
-    .head-link { padding: 10px 14px; border-radius: 8px; background: #2563eb; color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap; }
-    .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; align-items: stretch; }
-    .listing-card { display: flex; flex-direction: column; min-height: 360px; max-height: 410px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; cursor: pointer; }
-    .listing-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(15, 23, 42, 0.09); }
-    .img-wrapper { position: relative; height: 182px; overflow: hidden; background: #e5e7eb; flex: 0 0 182px; }
-    .img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .badge-boost, .badge-featured, .badge-premium { position: absolute; top: 8px; left: 8px; display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; z-index: 1; }
-    .badge-boost { background: #2563eb; color: #fff; }
-    .badge-featured { background: #f59e0b; color: #fff; }
-    .badge-premium { background: #fef3c7; color: #92400e; border: 1px solid rgba(245,158,11,.28); }
-    .card-body { display: flex; flex-direction: column; gap: 8px; padding: 12px; min-height: 0; flex: 1 1 auto; }
-    .title { margin: 0; font-size: 15px; line-height: 1.35; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .price { margin: 0; color: #111827; font-size: 20px; font-weight: 800; }
-    .meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #6b7280; }
-    .card-footer { margin-top: auto; font-size: 11px; color: #9ca3af; }
-    .state-box { padding: 28px; border: 1px dashed #d1d5db; border-radius: 12px; background: #fff; color: #6b7280; text-align: center; }
-    .footer { margin-top: 24px; background: #111827; color: #e5e7eb; }
-    .footer-container { max-width: 1320px; margin: 0 auto; padding: 28px 24px 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-    .footer-col h4 { margin: 0 0 12px; font-size: 14px; }
-    .footer-col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-    .footer-col a { color: #d1d5db; font-size: 13px; }
-    .footer-col a:hover { color: #fff; }
-    .footer-bottom { max-width: 1320px; margin: 0 auto; padding: 0 24px 20px; font-size: 12px; color: #9ca3af; }
-    @media (max-width: 900px) { .topbar, .page-head { align-items: flex-start; flex-direction: column; } .footer-container { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 640px) { .topbar { padding: 14px 16px; } .page { padding: 20px 16px 40px; } .listing-grid { grid-template-columns: 1fr; gap: 14px; } .footer-container { grid-template-columns: 1fr; padding: 24px 16px 12px; } .footer-bottom { padding: 0 16px 18px; } }
+    .static-listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .static-listing-grid .listing-card {
+      min-height: 360px;
+      max-height: 410px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .static-listing-grid .img-wrapper {
+      position: relative;
+      height: 182px;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex: 0 0 182px;
+    }
+
+    .static-listing-grid .img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .static-listing-grid .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+
+    .static-listing-grid .title {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 700;
+      color: #111827;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .static-listing-grid .price {
+      margin: 0;
+      color: #111827;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .static-listing-grid .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .static-listing-grid .card-footer {
+      margin-top: auto;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .static-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .static-badge.is-featured {
+      background: #2563eb;
+    }
+
+    @media (max-width: 640px) {
+      .static-listing-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
   </style>
 </head>
-<body>
-  <header class="topbar">
-    <a href="/index.html" class="logo"><span class="jetle">jetle</span><span>.online</span></a>
-    <nav class="menu">
-      <a href="/index.html">Ana Sayfa</a>
-      <a href="/listings.html">Tüm İlanlar</a>
-      <a href="/create-listing.html">İlan Ver</a>
-      <a href="/messages.html">Mesajlar</a>
-    </nav>
+<body class="static-page">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="/index.html">jetle<span>.online</span></a>
+      <form class="search" action="/listings.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="/create-listing.html" class="post-btn">Ücretsiz İlan Ver</a>
+      </div>
+    </div>
   </header>
 
-  <main class="page">
-    <section class="page-head">
-      <div>
-        <h1>Öne Çıkan İlanlar</h1>
-        <p>Boost uygulanan ve öne taşınan ilanları burada inceleyin.</p>
-      </div>
-      <a class="head-link" href="/listings.html">Tüm İlanlar</a>
+  <main class="static-page-main static-grid-shell">
+    <section class="static-hero">
+      <p class="static-breadcrumb"><a href="/index.html">Ana Sayfa</a> / Öne Çıkanlar</p>
+      <h1 class="static-page-title">Öne Çıkanlar</h1>
+      <p class="static-page-subtitle">Anasayfa ile aynı tasarım dilinde, sade ve hızlı taranabilir öne çıkan ilan listesi.</p>
     </section>
 
-    <div id="listingGrid" class="listing-grid"></div>
+    <section class="static-surface static-empty-card" id="emptyState" hidden>
+      <strong>Henüz öne çıkan ilan bulunmuyor.</strong>
+      <span>Yeni ilanlar yayınlandığında burada görünecek.</span>
+    </section>
+
+    <section class="static-listing-grid" id="listingGrid"></section>
   </main>
 
   <footer class="footer">
     <div class="footer-container">
-      <div class="footer-col"><h4>Hizmetler</h4><ul><li><a href="/create-listing.html">İlan Ver</a></li><li><a href="/vitrin.html">Vitrin</a></li><li><a href="/onecikanlar.html">Öne Çıkanlar</a></li><li><a href="/kurumsal-premium.html">Doping</a></li></ul></div>
-      <div class="footer-col"><h4>Kurumsal</h4><ul><li><a href="/hakkimizda.html">Hakkımızda</a></li><li><a href="/iletisim.html">İletişim</a></li></ul></div>
-      <div class="footer-col"><h4>Yardım</h4><ul><li><a href="/yardim.html">Yardım Merkezi</a></li><li><a href="/guvenlik.html">Güvenlik</a></li></ul></div>
-      <div class="footer-col"><h4>Yasal</h4><ul><li><a href="/gizlilik.html">Gizlilik Politikası</a></li><li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li></ul></div>
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">Ücretsiz İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
     </div>
     <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
   </footer>
 
+  <script src="/auth-global.js"></script>
   <script>
     const grid = document.getElementById("listingGrid");
-    function escapeHtml(value = "") { return String(value).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
-    function formatPrice(price) { const number = Number(price || 0); return Number.isFinite(number) ? `${number.toLocaleString("tr-TR")} TL` : "Fiyat yok"; }
-    function imageOf(item) { return item?.image || item?.coverImage || item?.mainImage || item?.images?.[0] || item?.photos?.[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480'%3E%3Crect width='100%25' height='100%25' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-family='Arial' font-size='24'%3EGorsel Yok%3C/text%3E%3C/svg%3E"; }
-    function listingUrl(item) { return `/listing-detail.html?id=${encodeURIComponent(item?._id || item?.id || "")}`; }
-    function statusBadge(item) { if (item?.isBoosted) return '<span class="badge-boost">Öne Çıkan</span>'; if (item?.isFeatured || item?.featured || item?.vitrin) return '<span class="badge-featured">Vitrin</span>'; if (item?.isPremium) return '<span class="badge-premium">Premium</span>'; return ""; }
-    function cardTemplate(item) {
-      return `<article class="listing-card" data-url="${escapeHtml(listingUrl(item))}"><div class="img-wrapper"><img src="${escapeHtml(imageOf(item))}" alt="${escapeHtml(item?.title || "İlan")}" loading="lazy">${statusBadge(item)}</div><div class="card-body"><h3 class="title">${escapeHtml(item?.title || "Başlıksız ilan")}</h3><p class="price">${formatPrice(item?.price)}</p><div class="meta"><span>${escapeHtml(item?.city || item?.location || "Konum yok")}</span><span>${escapeHtml(item?.category || "Kategori yok")}</span></div><div class="card-footer">İlan No: ${escapeHtml(item?._id || item?.id || "-")}</div></div></article>`;
+    const emptyState = document.getElementById("emptyState");
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
+
+    function formatPrice(price) {
+      const number = Number(price || 0);
+      return Number.isFinite(number) ? `${number.toLocaleString("tr-TR")} TL` : "Fiyat yok";
+    }
+
+    function imageOf(item) {
+      return item?.image || item?.coverImage || item?.mainImage || item?.images?.[0] || item?.photos?.[0] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480'%3E%3Crect width='100%25' height='100%25' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-family='Arial' font-size='24'%3EGorsel Yok%3C/text%3E%3C/svg%3E";
+    }
+
+    function listingUrl(item) {
+      return `/listing-detail.html?id=${encodeURIComponent(item?._id || item?.id || "")}`;
+    }
+
+    function cardTemplate(item) {
+      return `
+        <article class="listing-card" data-url="${escapeHtml(listingUrl(item))}">
+          <div class="img-wrapper">
+            <img src="${escapeHtml(imageOf(item))}" alt="${escapeHtml(item?.title || "İlan")}" loading="lazy">
+            <span class="static-badge is-featured">Öne Çıkan</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">${escapeHtml(item?.title || "Başlıksız ilan")}</h3>
+            <p class="price">${formatPrice(item?.price)}</p>
+            <div class="meta">
+              <span>${escapeHtml(item?.city || item?.location || "Konum yok")}</span>
+              <span>${escapeHtml(item?.category || "Kategori yok")}</span>
+            </div>
+            <div class="card-footer">İlan No: ${escapeHtml(item?._id || item?.id || "-")}</div>
+          </div>
+        </article>
+      `;
+    }
+
     async function loadListings() {
-      grid.innerHTML = '<div class="state-box">İlanlar yükleniyor...</div>';
+      emptyState.hidden = true;
+      grid.innerHTML = "";
       try {
         const response = await fetch("/api/listings");
         if (!response.ok) throw new Error("listings_fetch_failed");
         const data = await response.json();
         const items = (Array.isArray(data) ? data : []).filter((item) => Boolean(item?.isBoosted));
-        grid.innerHTML = items.length ? items.map(cardTemplate).join("") : '<div class="state-box">Henüz öne çıkan ilan bulunmuyor.</div>';
+        if (!items.length) {
+          emptyState.hidden = false;
+          return;
+        }
+        grid.innerHTML = items.map(cardTemplate).join("");
       } catch (error) {
         console.error("ONECIKAN PAGE ERROR", error);
-        grid.innerHTML = '<div class="state-box">İlanlar şu anda yüklenemiyor.</div>';
+        emptyState.hidden = false;
+        emptyState.innerHTML = "<strong>İlanlar şu anda yüklenemiyor.</strong><span>Lütfen biraz sonra tekrar deneyin.</span>";
       }
     }
-    document.addEventListener("click", (event) => { const card = event.target.closest("[data-url]"); if (card?.dataset.url) window.location.href = card.dataset.url; });
+
+    document.addEventListener("click", (event) => {
+      const card = event.target.closest("[data-url]");
+      if (card?.dataset.url) window.location.href = card.dataset.url;
+    });
+
     loadListings();
   </script>
 </body>

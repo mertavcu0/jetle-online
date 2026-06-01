@@ -26,17 +26,23 @@ module.exports = async function authMiddleware(req, res, next) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    const normalizedRole = typeof User.normalizeUserRole === "function"
+      ? User.normalizeUserRole(user.role)
+      : String(user.role || "").trim().toLowerCase() || "user";
+
     req.user = {
       id: String(user._id),
       _id: String(user._id),
       name: user.name || "",
       email: user.email || "",
-      role: user.role || decoded.role || "user"
+      role: normalizedRole || "user"
     };
 
     next();
   } catch (err) {
-    console.error("AUTH TOKEN ERROR:", err?.name || err?.message || err);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("AUTH TOKEN ERROR:", err?.name || err?.message || err);
+    }
     return res.status(401).json({ error: "Unauthorized" });
   }
 };

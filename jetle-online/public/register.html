@@ -4,23 +4,337 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kayıt Ol - Jetle</title>
-  <meta name="description" content="Jetle hesabı oluşturun ve ilan vermeye başlayın.">
+  <meta name="description" content="Jetle hesabınızı oluşturun ve ilan vermeye başlayın.">
   <meta name="keywords" content="Jetle kayıt, hesap oluştur">
   <meta property="og:title" content="Kayıt Ol - Jetle">
-  <meta property="og:description" content="Jetle hesabı oluşturun ve ilan vermeye başlayın.">
-  <link rel="stylesheet" href="/css/style.css">
+  <meta property="og:description" content="Jetle hesabınızı oluşturun ve ilan vermeye başlayın.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f4f6;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d7e0ea;
+      --line-strong: #b7c4d4;
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.06);
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 24%),
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .register-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .register-topbar {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 22px 0 0;
+    }
+
+    .register-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+
+    .register-brand span {
+      color: #111827;
+    }
+
+    .register-stage {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 24px 18px 34px;
+    }
+
+    .register-card {
+      width: min(420px, 100%);
+      background: var(--surface);
+      border: 1px solid rgba(215, 224, 234, 0.92);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 28px 26px 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .register-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: var(--primary-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .register-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .register-subtitle {
+      margin: 8px 0 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .register-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .register-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .register-field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #344054;
+    }
+
+    .register-form input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 13px;
+      color: var(--text);
+      font-size: 13px;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .register-form input::placeholder {
+      color: #98a2b3;
+    }
+
+    .register-form input:hover {
+      border-color: var(--line-strong);
+    }
+
+    .register-form input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 1px var(--primary-soft);
+    }
+
+    .register-button {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.18s ease, opacity 0.18s ease;
+      box-shadow: none;
+    }
+
+    .register-button:hover {
+      background: #1d4ed8;
+    }
+
+    .register-button:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .register-button.is-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.86;
+    }
+
+    .register-button.is-loading::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 6px;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      border-top-color: #fff;
+      border-radius: 999px;
+      vertical-align: -2px;
+      animation: auth-spin 0.8s linear infinite;
+    }
+
+    .auth-message {
+      min-height: 18px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .register-login-row {
+      margin-top: 2px;
+      padding-top: 14px;
+      border-top: 1px solid #eef2f7;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .text-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--primary-strong);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .text-link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes auth-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .register-topbar {
+        width: calc(100% - 28px);
+        padding-top: 16px;
+      }
+
+      .register-stage {
+        padding: 20px 14px 28px;
+      }
+
+      .register-card {
+        border-radius: 12px;
+        padding: 22px 18px 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <form class="form-card form-container" id="registerForm">
-    <h1>Kayıt Ol</h1>
-    <input name="username" placeholder="Kullanıcı adı" required>
-    <input name="email" type="email" placeholder="E-posta" required>
-    <input name="password" type="password" placeholder="Şifre" required>
-    <input name="password2" type="password" placeholder="Şifre tekrar" required>
-    <button type="submit">Hesap Oluştur</button>
-    <p class="muted" id="authMessage"></p>
-    <a href="/login.html">Zaten hesabın var mı? Giriş yap</a>
-  </form>
+  <div class="register-page">
+    <header class="register-topbar">
+      <a class="register-brand" href="/" aria-label="Jetle ana sayfa">jetle<span>.online</span></a>
+    </header>
+
+    <main class="register-stage">
+      <form class="register-card register-form" id="registerForm">
+        <div class="register-badge">
+          <span class="register-badge-dot"></span>
+          Hesabınızı birkaç adımda oluşturun
+        </div>
+
+        <div>
+          <h1>Kayıt Ol</h1>
+          <p class="register-subtitle">Jetle hesabınızı oluşturun ve ilan vermeye hemen başlayın.</p>
+        </div>
+
+        <div class="register-field">
+          <label for="register-username">Kullanıcı adı</label>
+          <input id="register-username" name="username" type="text" placeholder="Kullanıcı adınızı girin" required>
+        </div>
+
+        <div class="register-field">
+          <label for="register-email">E-posta</label>
+          <input id="register-email" name="email" type="email" placeholder="E-posta adresinizi girin" required>
+        </div>
+
+        <div class="register-field">
+          <label for="register-password">Şifre</label>
+          <input id="register-password" name="password" type="password" placeholder="Şifrenizi oluşturun" required>
+        </div>
+
+        <div class="register-field">
+          <label for="register-password2">Şifre tekrar</label>
+          <input id="register-password2" name="password2" type="password" placeholder="Şifrenizi tekrar girin" required>
+        </div>
+
+        <button class="register-button" type="submit">Hesap Oluştur</button>
+
+        <p class="auth-message" id="authMessage"></p>
+
+        <div class="register-login-row">
+          Zaten hesabın var mı? <a class="text-link" href="/login.html">Giriş yap</a>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("registerForm");
+      const card = document.querySelector(".register-card");
+      const cardStyles = card ? window.getComputedStyle(card) : null;
+
+      console.log("REGISTER_UI_READY", {
+        formFound: Boolean(form),
+        messageFound: Boolean(document.getElementById("authMessage"))
+      });
+
+      console.log("REGISTER_RENDER_OK", {
+        cardFound: Boolean(card),
+        cardRadius: cardStyles?.borderRadius || "",
+        cardShadow: cardStyles?.boxShadow || ""
+      });
+    });
+  </script>
   <script defer src="/js/auth.js"></script>
 </body>
 </html>

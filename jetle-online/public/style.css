@@ -326,12 +326,14 @@ a {
 
 .logo {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 900;
+  color: #2563eb;
+  letter-spacing: -0.2px;
   white-space: nowrap;
 }
 
 .logo span {
-  color: #2563eb;
+  color: #111827;
 }
 
 .search {
@@ -612,14 +614,14 @@ a {
 }
 
 .logo {
-  font-size: 23px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 900;
   letter-spacing: -0.2px;
-  color: #111827;
+  color: #2563eb;
 }
 
 .logo span {
-  color: #3b82f6;
+  color: #111827;
 }
 
 .search {
@@ -1307,6 +1309,240 @@ footer a,
 footer a:hover,
 .footer a:hover {
   color: #2563eb;
+}
+
+.static-page {
+  background: #f3f4f6;
+  color: #111827;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.static-page .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.static-page .navbar-inner {
+  display: grid;
+  grid-template-columns: 150px minmax(420px, 1fr) auto;
+  align-items: center;
+  min-height: 64px;
+  padding: 10px 12px;
+  gap: 12px;
+}
+
+.static-page .nav-right,
+.static-page #authArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.static-page .post-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(37,99,235,0.26);
+}
+
+.static-page .post-btn:hover {
+  filter: brightness(0.96);
+}
+
+.static-page-main {
+  width: 100%;
+  max-width: var(--market-container);
+  margin: 0 auto;
+  flex: 1 0 auto;
+  padding: 24px 12px 48px;
+}
+
+.static-hero {
+  margin-bottom: 18px;
+}
+
+.static-breadcrumb {
+  margin: 0 0 8px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.static-breadcrumb a {
+  display: inline;
+  color: inherit;
+}
+
+.static-page-title {
+  margin: 0 0 8px;
+  font-size: 30px;
+  line-height: 1.15;
+  color: #111827;
+}
+
+.static-page-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.static-surface {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.static-policy-surface {
+  width: 100%;
+  max-width: var(--market-container);
+  margin: 0 auto;
+  padding: 28px 30px 32px;
+}
+
+.static-policy-surface h1 {
+  margin: 0 0 22px;
+  font-size: 28px;
+  line-height: 1.2;
+  color: #111827;
+}
+
+.static-policy-surface h2 {
+  margin: 28px 0 10px;
+  font-size: 19px;
+  line-height: 1.35;
+  color: #111827;
+}
+
+.static-policy-surface p,
+.static-policy-surface li {
+  color: #4b5563;
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+.static-policy-surface ul {
+  margin: 10px 0 14px;
+  padding-left: 20px;
+}
+
+.static-policy-surface li {
+  margin-bottom: 6px;
+}
+
+.static-grid-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.static-empty-card {
+  padding: 30px 28px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.static-empty-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #111827;
+  font-size: 16px;
+}
+
+.static-page .footer {
+  margin-top: auto;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.static-page .footer-container {
+  width: 100%;
+  max-width: var(--market-container);
+  margin: 0 auto;
+  padding: 26px 12px 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.static-page .footer-col h4 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 14px;
+}
+
+.static-page .footer-col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.static-page .footer-bottom {
+  width: 100%;
+  max-width: var(--market-container);
+  margin: 0 auto;
+  padding: 0 12px 20px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .static-page .navbar-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .static-page .search {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .static-page .nav-right,
+  .static-page #authArea {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    white-space: normal;
+  }
+
+  .static-page .post-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .static-page .footer-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .static-page-main {
+    padding: 20px 12px 36px;
+  }
+
+  .static-policy-surface {
+    padding: 22px 18px 24px;
+  }
+
+  .static-page-title {
+    font-size: 26px;
+  }
+
+  .static-page .footer-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .seller-box .seller-card {

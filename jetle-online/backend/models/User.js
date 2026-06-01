@@ -27,9 +27,33 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true
   },
+  googleId: {
+    type: String,
+    trim: true,
+    default: "",
+    index: true
+  },
+  authProvider: {
+    type: String,
+    trim: true,
+    default: "local"
+  },
+  avatarUrl: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   password: {
     type: String,
     default: ""
+  },
+  resetPasswordToken: {
+    type: String,
+    default: ""
+  },
+  resetPasswordExpire: {
+    type: Date,
+    default: null
   },
   city: {
     type: String,

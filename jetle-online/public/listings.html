@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -22,17 +22,19 @@
       width: 100%;
       background: white;
       border-bottom: 1px solid #e5e7eb;
-      padding: 14px 24px;
-      margin-bottom: 20px;
+      padding: 12px 24px;
+      margin-bottom: 14px;
     }
 
     .topbar-inner {
-      max-width: 1200px;
+      max-width: 1720px;
+      width: min(1720px, calc(100% - 72px));
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
+      padding: 0 8px;
     }
 
     .logo {
@@ -49,37 +51,89 @@
       color: #111827 !important;
     }
 
-    .page {
+    .page,
+    .full-listings-layout {
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      max-width: 1200px;
-      margin: 0 auto 36px;
-      gap: 20px;
-      padding: 0 16px;
+      grid-template-columns: 296px minmax(0, 1fr);
+      max-width: 1720px;
+      width: min(1720px, calc(100% - 72px));
+      margin: 0 auto 20px;
+      gap: 28px;
+      padding: 0 8px;
+      align-items: start;
     }
 
     .sidebar {
       background: #fff;
-      padding: 14px;
+      padding: 12px;
       border-radius: 8px;
       border: 1px solid #e5e7eb;
       height: fit-content;
       position: sticky;
       top: 18px;
-      width: 280px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      width: 296px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
     }
 
     .sidebar h3 {
-      margin: 0 0 12px;
-      font-size: 16px;
+      margin: 0 0 8px;
+      font-size: 15px;
       font-weight: 800;
+    }
+
+    .filter-stack {
+      display: grid;
+      gap: 6px;
+    }
+
+    .filter-section {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fcfcfd;
+      overflow: hidden;
+    }
+
+    .filter-section[open] {
+      background: #fff;
+      border-color: #dbe3f0;
+    }
+
+    .filter-summary {
+      list-style: none;
+      padding: 7px 9px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .filter-summary::after {
+      content: "+";
+      color: #64748b;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .filter-section[open] .filter-summary::after {
+      content: "−";
+    }
+
+    .filter-body {
+      padding: 0 9px 9px;
+      border-top: 1px solid #eef2f7;
     }
 
     .sidebar label {
       display: block;
-      margin-top: 10px;
-      font-size: 11px;
+      margin-top: 6px;
+      font-size: 9.5px;
       font-weight: 600;
       color: #374151;
     }
@@ -87,10 +141,10 @@
     .sidebar input,
     .sidebar select {
       width: 100%;
-      padding: 8px 10px;
-      margin-top: 4px;
-      min-height: 38px;
-      border-radius: 6px;
+      padding: 5px 8px;
+      margin-top: 3px;
+      min-height: 30px;
+      border-radius: 5px;
       border: 1px solid #d1d5db;
       outline: none;
       background: #fff;
@@ -108,15 +162,16 @@
     }
 
     .sidebar button {
-      margin-top: 12px;
+      margin-top: 8px;
       width: 100%;
-      padding: 9px 10px;
+      padding: 7px 10px;
       background: #2563eb;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 700;
+      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
     }
 
     .category-links {
@@ -153,25 +208,159 @@
       border-left-color: #2563eb;
     }
 
+    .subcategory-panel {
+      margin: 8px 0 12px;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+
+    .subcategory-panel[hidden] {
+      display: none;
+    }
+
+    .subcategory-title {
+      margin: 0 0 8px;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .subcategory-links {
+      display: grid;
+      gap: 4px;
+    }
+
+    .subcategory-links a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .subcategory-links a:hover {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+
+    .subcategory-links a.active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #93c5fd;
+    }
+
+    .subcategory-count,
+    .category-count {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .subcategory-empty {
+      padding: 4px 2px 0;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .content {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      align-self: start;
+    }
+
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 18px 0 0;
+      flex-wrap: wrap;
+    }
+
+    .pagination-bar[hidden] {
+      display: none;
+    }
+
+    .pagination-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #374151;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      transition: all 0.18s ease;
+    }
+
+    .pagination-button:hover {
+      border-color: #93c5fd;
+      color: #1d4ed8;
+      background: #f8fbff;
+    }
+
+    .pagination-button.active {
+      border-color: #2563eb;
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+    }
+
+    .pagination-button.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .pagination-summary {
+      width: 100%;
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
     .content-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 3px;
     }
 
     .content-head h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 800;
     }
 
     .results-tabs {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin: 0 0 8px;
-      padding: 0 2px;
+      gap: 5px;
+      margin: 0 0 7px;
+      padding: 0;
       flex-wrap: wrap;
     }
 
@@ -180,34 +369,54 @@
       border: 1px solid #d1d5db;
       background: #fff;
       color: #4b5563;
-      padding: 6px 10px;
-      border-radius: 4px;
+      padding: 6px 11px;
+      border-radius: 999px;
       font-size: 12px;
       font-weight: 700;
       line-height: 1;
-      cursor: default;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .results-tab:hover {
+      border-color: #93c5fd;
+      color: #1d4ed8;
+      background: #f8fbff;
     }
 
     .results-tab.active {
-      color: #1d4ed8;
-      border-color: #93c5fd;
-      background: #f8fbff;
-      box-shadow: inset 0 -2px 0 #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+      background: #2563eb;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
     }
 
     .listing-grid {
       display: flex !important;
       flex-direction: column !important;
-      gap: 8px;
+      gap: 4px;
       width: 100%;
+      align-items: stretch;
+    }
+
+    .listing-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 1px;
+      max-width: 100%;
     }
 
     .listing-table {
       width: 100%;
+      max-width: 100%;
+      table-layout: fixed;
       background: #fff;
       border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      border-radius: 4px;
       overflow: hidden;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+      min-width: 0;
     }
 
     .listing-table-header,
@@ -219,65 +428,99 @@
 
     .listing-table.vasita .listing-table-header,
     .listing-table.vasita .listing-row {
-      grid-template-columns: 120px 110px minmax(240px, 1.6fr) 72px 96px 84px 130px 96px 120px;
+      grid-template-columns: 182px 138px minmax(360px, 1fr) 58px 78px 68px 146px 96px 116px;
     }
 
     .listing-table.emlak .listing-table-header,
     .listing-table.emlak .listing-row {
-      grid-template-columns: 120px minmax(260px, 1.8fr) 84px 84px 130px 96px 120px;
+      grid-template-columns: 182px minmax(400px, 1fr) 76px 76px 146px 96px 116px;
     }
 
     .listing-table.diger .listing-table-header,
     .listing-table.diger .listing-row {
-      grid-template-columns: 120px minmax(280px, 1.9fr) 130px 130px 96px 120px;
+      grid-template-columns: 182px minmax(420px, 1fr) 112px 146px 96px 116px;
     }
 
     .listing-table-header {
-      background: #f9fafb;
+      background: #f5f6f7;
       border-bottom: 1px solid #e5e7eb;
       color: #6b7280;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      min-height: 40px;
-      padding: 0 10px;
+      min-height: 34px;
+      padding: 0 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .listing-row {
       background: #fff;
-      min-height: 125px;
-      padding: 8px 10px;
-      border-bottom: 1px solid #e5e7eb;
+      min-height: 124px;
+      padding: 7px 7px;
+      border-bottom: 1px solid #d7dee8;
       cursor: pointer;
-      transition: background-color 0.15s ease;
+      transition: background-color 0.15s ease, transform 0.15s ease;
     }
 
     .listing-row:nth-child(even) {
-      background: #fcfcfd;
+      background: #fff;
     }
 
     .listing-row:hover {
-      background: #f8fbff;
+      background: #f6f7f8;
+      transform: none;
     }
 
     .listing-cell {
       min-width: 0;
-      padding: 0 8px;
+      padding: 0 4px;
       font-size: 12px;
       color: #374151;
+      overflow: hidden;
+    }
+
+    .listing-table-header .listing-cell,
+    .listing-year,
+    .listing-km,
+    .listing-color,
+    .listing-size,
+    .listing-room,
+    .listing-category,
+    .listing-date,
+    .listing-location {
+      text-align: center;
     }
 
     .listing-cell.photo {
       padding-left: 0;
     }
 
+    .listing-thumb-wrap {
+      position: relative;
+      width: 170px;
+      height: 120px;
+      overflow: hidden;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      background: #eef2f7;
+    }
+
     .listing-photo,
     .listing-photo-placeholder {
-      width: 120px;
-      height: 90px;
+      width: 170px;
+      height: 118px;
       border-radius: 4px;
       object-fit: cover;
       display: block;
       background: #eef2f7;
+    }
+
+    .listing-photo {
+      transition: transform 0.22s ease;
+    }
+
+    .listing-row:hover .listing-photo {
+      transform: scale(1.04);
     }
 
     .listing-photo-placeholder {
@@ -305,39 +548,48 @@
     }
 
     .listing-title {
-      color: #2563eb;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.35;
-      margin: 0 0 4px;
+      color: #1f2937;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.28;
+      margin: 0 0 3px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .listing-row:hover .listing-title {
+      color: #1d4ed8;
     }
 
     .listing-submeta {
-      color: #6b7280;
-      font-size: 11px;
-      line-height: 1.45;
+      color: #7b8794;
+      font-size: 10px;
+      line-height: 1.22;
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 3px;
     }
 
     .listing-price {
       color: #1d4ed8;
-      font-size: 16px;
+      font-size: 24px;
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.05;
       white-space: nowrap;
+      width: 100%;
+      text-align: right;
     }
 
     .listing-side-stack {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      align-items: flex-start;
+      gap: 5px;
+      align-items: flex-end;
+      width: 100%;
+      justify-content: center;
     }
 
     .listing-card {
@@ -459,21 +711,47 @@
     }
 
     .badge-row {
-      grid-area: badges;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 4px;
+      margin-top: 4px;
     }
 
     .seller-badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 3px 6px;
-      border-radius: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .status-badge.new {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-badge.showcase {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .status-badge.featured {
+      background: #fef3c7;
+      color: #92400e;
     }
 
     .listing-side {
@@ -481,10 +759,10 @@
       flex-direction: column;
       align-items: flex-end;
       justify-content: center;
-      gap: 5px;
-      width: 150px;
-      min-width: 150px;
-      padding-right: 28px;
+      gap: 6px;
+      width: 146px;
+      min-width: 146px;
+      padding-right: 0;
     }
 
     .listing-price {
@@ -500,9 +778,9 @@
     .listing-date,
     .listing-location {
       color: #6b7280;
-      font-size: 11.5px;
-      line-height: 1.35;
-      text-align: right;
+      font-size: 10.5px;
+      line-height: 1.25;
+      text-align: center;
       white-space: nowrap;
       width: 100%;
     }
@@ -549,6 +827,19 @@
       text-align: center;
       color: #6b7280;
       box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+    }
+
+    .empty-state-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 24px;
+      font-weight: 800;
     }
 
     .spinner {
@@ -633,8 +924,10 @@
     }
 
     @media (max-width: 920px) {
-      .page {
+      .page,
+      .full-listings-layout {
         grid-template-columns: 1fr;
+        width: min(100%, calc(100% - 28px));
       }
 
       .sidebar {
@@ -643,9 +936,15 @@
         width: 100%;
       }
 
+      .listing-table-wrap {
+        overflow: visible;
+      }
+
       .listing-table {
+        min-width: 0;
         border: none;
         background: transparent;
+        box-shadow: none;
       }
 
       .listing-table-header {
@@ -659,7 +958,7 @@
       .listing-table.vasita .listing-row,
       .listing-table.emlak .listing-row,
       .listing-table.diger .listing-row {
-        grid-template-columns: 120px minmax(0, 1fr);
+        grid-template-columns: 132px minmax(0, 1fr);
         gap: 10px;
         padding: 10px;
         border: 1px solid #e5e7eb;
@@ -677,8 +976,10 @@
     }
 
     @media (max-width: 560px) {
-      .page {
+      .page,
+      .full-listings-layout {
         padding: 0 12px 20px;
+        width: calc(100% - 24px);
       }
 
       .listing-table.vasita .listing-row,
@@ -702,6 +1003,11 @@
         height: 190px;
       }
 
+      .listing-thumb-wrap {
+        width: 100%;
+        height: 190px;
+      }
+
       .jl-footer-grid {
         grid-template-columns: 1fr;
       }
@@ -720,10 +1026,14 @@
       .topbar-inner {
         flex-direction: column;
         align-items: flex-start;
+        width: min(100%, calc(100% - 28px));
+        padding: 0;
       }
 
-      .page {
+      .page,
+      .full-listings-layout {
         padding: 0 12px 24px;
+        gap: 16px;
       }
 
       .content-head {
@@ -767,36 +1077,79 @@
     </div>
   </div>
 
-  <div class="page">
+  <div class="page full-listings-layout">
     <aside class="sidebar">
       <h3>Filtrele</h3>
+      <div class="filter-stack">
+        <details class="filter-section" open>
+          <summary class="filter-summary">Kategori</summary>
+          <div class="filter-body">
+            <div class="category-links">
+              <a href="listings.html?category=emlak" data-category-link="emlak">Emlak (0)</a>
+              <a href="listings.html?category=vasita" data-category-link="vasita">Vasıta (0)</a>
+              <a href="listings.html?category=is-makineleri" data-category-link="is-makineleri">İş Makineleri (0)</a>
+              <a href="listings.html?category=yedek-parca" data-category-link="yedek-parca">Yedek Parça (0)</a>
+            </div>
+            <div id="subcategoryPanel" class="subcategory-panel" hidden>
+              <div id="subcategoryTitle" class="subcategory-title">Alt Kategoriler</div>
+              <div id="subcategoryLinks" class="subcategory-links"></div>
+              <div id="subcategoryEmpty" class="subcategory-empty" hidden>Bu kategoride henüz alt kategori ilanı yok.</div>
+            </div>
+            <label>Kategori</label>
+            <select id="filterCategory">
+              <option value="">Tümü</option>
+              <option value="emlak">Emlak</option>
+              <option value="vasita">Vasıta</option>
+              <option value="is-makineleri">İş Makineleri</option>
+              <option value="yedek-parca">Yedek Parça</option>
+            </select>
+          </div>
+        </details>
 
-      <div class="category-links">
-        <a href="listings.htmlcategory=emlak">Emlak İlanları</a>
-        <a href="listings.htmlcategory=vasita">Vasıta İlanları</a>
-        <a href="listings.htmlcategory=is-makineleri">İş Makineleri İlanları</a>
-        <a href="listings.htmlcategory=yedek-parca">Yedek Parça İlanları</a>
-      </div>
+        <details class="filter-section" open>
+          <summary class="filter-summary">Şehir ve Fiyat</summary>
+          <div class="filter-body">
+            <label>Şehir</label>
+            <input type="text" id="filterCity" placeholder="Şehir yaz">
 
-      <label>Arama</label>
-      <input type="text" id="searchInput" placeholder="Ne arıyorsun">
+            <label>Fiyat</label>
+            <div class="price-row">
+              <input type="number" id="minPrice" placeholder="Min">
+              <input type="number" id="maxPrice" placeholder="Max">
+            </div>
+          </div>
+        </details>
 
-      <label>Kategori</label>
-      <select id="filterCategory">
-        <option value="">Tümü</option>
-        <option value="emlak">Emlak</option>
-        <option value="vasita">Vasıta</option>
-        <option value="is-makineleri">İş Makineleri</option>
-        <option value="yedek-parca">Yedek Parça</option>
-      </select>
+        <details class="filter-section" open>
+          <summary class="filter-summary">Arama</summary>
+          <div class="filter-body">
+            <label>Anahtar Kelime</label>
+            <input type="text" id="searchInput" placeholder="Ne arıyorsun">
+          </div>
+        </details>
 
-      <label>Şehir</label>
-      <input type="text" id="filterCity" placeholder="Şehir yaz">
+        <details class="filter-section">
+          <summary class="filter-summary">Satıcı Tipi</summary>
+          <div class="filter-body">
+            <label>Satıcı Türü</label>
+            <select disabled>
+              <option>Tümü</option>
+              <option>Sahibinden</option>
+              <option>Galeriden</option>
+              <option>Yetkili Bayiden</option>
+            </select>
+          </div>
+        </details>
 
-      <label>Fiyat</label>
-      <div class="price-row">
-        <input type="number" id="minPrice" placeholder="Min">
-        <input type="number" id="maxPrice" placeholder="Max">
+        <details class="filter-section">
+          <summary class="filter-summary">Marka ve Model</summary>
+          <div class="filter-body">
+            <label>Marka</label>
+            <input type="text" placeholder="Örn. Volkswagen" disabled>
+            <label>Model</label>
+            <input type="text" placeholder="Örn. Golf" disabled>
+          </div>
+        </details>
       </div>
 
       <button id="applyFilter">Filtrele</button>
@@ -813,6 +1166,7 @@
         <button type="button" class="results-tab" data-tab="yetkili-bayi">Yetkili Bayiden</button>
       </div>
       <div id="listingContainer" class="listing-grid"></div>
+      <div id="paginationContainer" class="pagination-bar" hidden></div>
     </main>
   </div>
 
@@ -831,8 +1185,8 @@
           <h4>Hizmetlerimiz</h4>
           <div class="jl-footer-links">
             <a href="/create-listing.html">İlan Ver</a>
-            <a href="/listings.htmlcategory=vasita">Vasıta İlanları</a>
-            <a href="/listings.htmlcategory=emlak">Emlak İlanları</a>
+            <a href="/listings.html?category=vasita">Vasıta İlanları</a>
+            <a href="/listings.html?category=emlak">Emlak İlanları</a>
           </div>
         </div>
         <div class="jl-footer-col">
@@ -862,10 +1216,13 @@
   <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>
   <script src="/auth-global.js?v=2"></script>
   <script src="/listings.js?v=2"></script>
-  <script>
+    <script>
     (function () {
-      const params = new URLSearchParams(window.location.search);
-      const category = (params.get("category") || "").trim().toLowerCase();
+      const container = document.getElementById("listingContainer");
+      const paginationContainer = document.getElementById("paginationContainer");
+      const title = document.getElementById("pageTitle");
+      const tabButtons = Array.from(document.querySelectorAll(".results-tab"));
+      const categoryLinks = Array.from(document.querySelectorAll(".category-links a"));
       const titleMap = {
         emlak: "Emlak İlanları",
         vasita: "Vasıta İlanları",
@@ -873,55 +1230,73 @@
         "yedek-parca": "Yedek Parça İlanları"
       };
 
-      document.querySelectorAll(".category-links a").forEach((link) => {
-        const url = new URL(link.getAttribute("href"), window.location.origin);
-        const linkCategory = (url.searchParams.get("category") || "").trim().toLowerCase();
-        link.classList.toggle("active", !!category && category === linkCategory);
-      });
-
-      const title = document.getElementById("pageTitle");
-      if (title && titleMap[category]) {
-        title.textContent = titleMap[category];
-      }
-
-      const container = document.getElementById("listingContainer");
-      const tabButtons = Array.from(document.querySelectorAll(".results-tab"));
       let currentSellerTab = "all";
       let lastRenderedListings = [];
+      const pageSize = typeof PAGE_SIZE === "number" ? PAGE_SIZE : 20;
+
+      const getActiveCategory = () => {
+        const params = new URLSearchParams(window.location.search);
+        return (params.get("category") || "").trim().toLowerCase();
+      };
+
+      const getActivePage = () => {
+        if (typeof getPageFromUrl === "function") return getPageFromUrl();
+        const params = new URLSearchParams(window.location.search);
+        const value = Number.parseInt(params.get("page") || "1", 10);
+        return Number.isFinite(value) && value > 0 ? value : 1;
+      };
+
+      const updatePageInUrl = (page, { replace = false } = {}) => {
+        const params = new URLSearchParams(window.location.search);
+        if (page <= 1) params.delete("page");
+        else params.set("page", String(page));
+        const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+        window.history[replace ? "replaceState" : "pushState"]({}, "", nextUrl);
+      };
+
+      const syncCategoryUi = () => {
+        const activeCategory = getActiveCategory();
+
+        categoryLinks.forEach((link) => {
+          const url = new URL(link.getAttribute("href"), window.location.origin);
+          const linkCategory = (url.searchParams.get("category") || "").trim().toLowerCase();
+          link.classList.toggle("active", !!activeCategory && activeCategory === linkCategory);
+        });
+
+        if (title) {
+          title.textContent = titleMap[activeCategory] || "Tüm İlanlar";
+        }
+
+        if (typeof setFormFromUrl === "function") {
+          setFormFromUrl();
+        }
+      };
 
       const normalizeSellerValue = (value) => {
-        return String(value || "")
+        const normalized = String(value || "")
           .trim()
           .toLowerCase()
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "")
           .replace(/ı/g, "i");
+
+        if (!normalized) return "";
+        if (["user", "sahibinden", "bireysel", "owner"].includes(normalized)) return "user";
+        if (["gallery", "galeri", "galeriden"].includes(normalized)) return "gallery";
+        if (["dealer", "bayi", "yetkili bayi", "yetkili-bayi", "yetkili-bayiden"].includes(normalized)) return "dealer";
+        return normalized;
       };
 
       const getSellerTypeValue = (listing) => {
-        return listing.sellerType
-          || listing.seller_type
-          || listing.from
-          || listing.kimden
-          || "";
+        return listing.sellerType || listing.seller_type || listing.from || listing.kimden || "";
       };
 
       const matchesSellerTab = (listing, tab) => {
         if (tab === "all") return true;
         const sellerValue = normalizeSellerValue(getSellerTypeValue(listing));
-
-        if (tab === "sahibinden") {
-          return sellerValue === "sahibinden" || sellerValue === "bireysel";
-        }
-
-        if (tab === "galeriden") {
-          return sellerValue === "galeriden" || sellerValue === "galeri";
-        }
-
-        if (tab === "yetkili-bayi") {
-          return sellerValue === "yetkili bayiden" || sellerValue === "yetkili bayi";
-        }
-
+        if (tab === "sahibinden") return sellerValue === "user";
+        if (tab === "galeriden") return sellerValue === "gallery";
+        if (tab === "yetkili-bayi") return sellerValue === "dealer";
         return true;
       };
 
@@ -933,13 +1308,19 @@
 
       const renderTabEmptyState = () => {
         if (!container) return;
+        if (paginationContainer) {
+          paginationContainer.hidden = true;
+          paginationContainer.innerHTML = "";
+        }
         container.innerHTML = `
           <div class="empty-state">
+            <div class="empty-state-icon">∅</div>
             <h3>İlan bulunamadı</h3>
             <p>Bu filtrede ilan bulunamadı.</p>
           </div>
         `;
       };
+
       const formatListingDate = (value) => {
         if (!value) return "";
         const date = new Date(value);
@@ -953,9 +1334,9 @@
 
       const buildMetaLine = (listing) => {
         const parts = [];
-        const category = (listing.category || "").toString().trim();
+        const category = String(listing.category || "").trim().toLowerCase();
 
-        if (category.toLowerCase().includes("vas")) {
+        if (category.includes("vas")) {
           if (listing.year) parts.push(String(listing.year));
           if (listing.fuel || listing.fuelType) parts.push(String(listing.fuel || listing.fuelType));
           if (listing.transmission || listing.gear) parts.push(String(listing.transmission || listing.gear));
@@ -967,13 +1348,14 @@
           if (listing.roomCount) parts.push(String(listing.roomCount));
         }
 
-        if (!parts.length && category) parts.push(category);
+        if (!parts.length && listing.category) parts.push(String(listing.category));
         return parts;
       };
 
       const getViewType = () => {
-        if (category === "vasita") return "vasita";
-        if (category === "emlak") return "emlak";
+        const activeCategory = getActiveCategory();
+        if (activeCategory === "vasita") return "vasita";
+        if (activeCategory === "emlak") return "emlak";
         return "diger";
       };
 
@@ -981,6 +1363,18 @@
         const num = Number(value);
         if (!Number.isFinite(num)) return "";
         return new Intl.NumberFormat("tr-TR").format(num);
+      };
+
+      const buildStatusBadges = (listing) => {
+        const badges = [];
+        const createdAt = listing?.createdAt ? new Date(listing.createdAt) : null;
+        const isRecent = createdAt && !Number.isNaN(createdAt.getTime()) && (Date.now() - createdAt.getTime()) < 7 * 24 * 60 * 60 * 1000;
+
+        if (isRecent) badges.push('<span class="status-badge new">Yeni</span>');
+        if (listing?.isShowcase === true) badges.push('<span class="status-badge showcase">Vitrin</span>');
+        if (listing?.isFeatured === true) badges.push('<span class="status-badge featured">Öne Çıkan</span>');
+
+        return badges.join("");
       };
 
       const buildHeaderRow = (viewType) => {
@@ -1029,33 +1423,27 @@
       const renderVehicleRow = (listing, user, src, dateText, id) => {
         const location = [listing.city, listing.district].filter(Boolean).join(" / ");
         const model = [listing.brand, listing.series, listing.model].filter(Boolean).join(" ");
-        const metaLine = [
-          listing.fuel || listing.fuelType,
-          listing.transmission || listing.gear,
-          listing.bodyType || listing.body,
-          location
-        ].filter(Boolean);
+        const metaLine = [listing.fuel || listing.fuelType, listing.transmission || listing.gear, listing.bodyType || listing.body, location].filter(Boolean);
+        const statusBadges = buildStatusBadges(listing);
 
         return `
           <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
-                : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              <div class="listing-thumb-wrap">
+                ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">` : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              </div>
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell listing-model mobile-hide">${escapeHtml(model || "-")}</div>
             <div class="listing-cell">
               <div class="listing-title">${escapeHtml(listing.title || "")}</div>
-              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">•</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              ${statusBadges ? `<div class="badge-row">${statusBadges}</div>` : ""}
             </div>
             <div class="listing-cell listing-year mobile-hide">${escapeHtml(String(listing.year || "-"))}</div>
             <div class="listing-cell listing-km mobile-hide">${listing.km ? `${formatNumber(listing.km)} km` : "-"}</div>
             <div class="listing-cell listing-color mobile-hide">${escapeHtml(String(listing.color || "-"))}</div>
-            <div class="listing-cell">
-              <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
-              </div>
-            </div>
+            <div class="listing-cell"><div class="listing-side-stack"><div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div></div></div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
             <div class="listing-cell listing-location mobile-hide">${escapeHtml(location || "-")}</div>
           </div>
@@ -1066,31 +1454,25 @@
         const location = [listing.city, listing.district].filter(Boolean).join(" / ");
         const room = listing.roomCount || listing.rooms || "";
         const size = listing.grossArea || listing.brutM2 || listing.size || "";
-        const metaLine = [
-          listing.subCategory,
-          listing.estateType,
-          listing.heating,
-          location
-        ].filter(Boolean);
+        const metaLine = [listing.subCategory, listing.estateType, listing.heating, location].filter(Boolean);
+        const statusBadges = buildStatusBadges(listing);
 
         return `
           <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
-                : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              <div class="listing-thumb-wrap">
+                ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">` : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              </div>
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell">
               <div class="listing-title">${escapeHtml(listing.title || "")}</div>
-              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">•</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              ${statusBadges ? `<div class="badge-row">${statusBadges}</div>` : ""}
             </div>
             <div class="listing-cell listing-size mobile-hide">${size ? `${escapeHtml(String(size))} m²` : "-"}</div>
             <div class="listing-cell listing-room mobile-hide">${escapeHtml(String(room || "-"))}</div>
-            <div class="listing-cell">
-              <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
-              </div>
-            </div>
+            <div class="listing-cell"><div class="listing-side-stack"><div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div></div></div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
             <div class="listing-cell listing-location mobile-hide">${escapeHtml(location || "-")}</div>
           </div>
@@ -1100,98 +1482,179 @@
       const renderGenericRow = (listing, user, src, dateText, id) => {
         const location = [listing.city, listing.district].filter(Boolean).join(" / ");
         const displayCategory = listing.subCategory || listing.category || "";
-        const metaLine = [
-          listing.brand,
-          listing.model,
-          location
-        ].filter(Boolean);
+        const metaLine = [listing.brand, listing.model, location].filter(Boolean);
+        const statusBadges = buildStatusBadges(listing);
 
         return `
           <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
             <div class="listing-cell photo">
-              ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">`
-                : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              <div class="listing-thumb-wrap">
+                ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">` : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              </div>
               ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
             </div>
             <div class="listing-cell">
               <div class="listing-title">${escapeHtml(listing.title || "")}</div>
-              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">"</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">•</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              ${statusBadges ? `<div class="badge-row">${statusBadges}</div>` : ""}
             </div>
             <div class="listing-cell listing-category mobile-hide">${escapeHtml(String(displayCategory || "-"))}</div>
-            <div class="listing-cell">
-              <div class="listing-side-stack">
-                <div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div>
-              </div>
-            </div>
+            <div class="listing-cell"><div class="listing-side-stack"><div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div></div></div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
             <div class="listing-cell listing-location mobile-hide">${escapeHtml(location || "-")}</div>
           </div>
         `;
       };
 
+      const renderPagination = (totalItems, currentPage, totalPages) => {
+        if (!paginationContainer) return;
+
+        if (totalItems <= pageSize || totalPages <= 1) {
+          paginationContainer.hidden = true;
+          paginationContainer.innerHTML = "";
+          return;
+        }
+
+        const pageModel = typeof buildPaginationModel === "function"
+          ? buildPaginationModel(totalPages, currentPage, 5)
+          : Array.from({ length: totalPages }, (_, index) => index + 1);
+
+        const makeHref = (page) => {
+          const params = new URLSearchParams(window.location.search);
+          if (page <= 1) params.delete("page");
+          else params.set("page", String(page));
+          return `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+        };
+
+        const previousDisabled = currentPage <= 1 ? " disabled" : "";
+        const nextDisabled = currentPage >= totalPages ? " disabled" : "";
+
+        paginationContainer.hidden = false;
+        paginationContainer.innerHTML = `
+          <div class="pagination-summary">${totalItems} ilanın ${Math.min((currentPage - 1) * pageSize + 1, totalItems)}-${Math.min(currentPage * pageSize, totalItems)} arası gösteriliyor</div>
+          <a href="${escapeHtml(makeHref(currentPage - 1))}" class="pagination-button${previousDisabled}" data-page-link="${Math.max(1, currentPage - 1)}">« Önceki</a>
+          ${pageModel.map((page) => `<a href="${escapeHtml(makeHref(page))}" class="pagination-button${page === currentPage ? " active" : ""}" data-page-link="${page}">${page}</a>`).join("")}
+          <a href="${escapeHtml(makeHref(currentPage + 1))}" class="pagination-button${nextDisabled}" data-page-link="${Math.min(totalPages, currentPage + 1)}">Sonraki »</a>
+        `;
+      };
+
       const originalRenderListings = typeof renderListings === "function" ? renderListings : null;
       if (originalRenderListings) {
-        renderListings = function (listings) {
-          if (!container) return;
-          lastRenderedListings = Array.isArray(listings) ? listings.slice() : [];
-
-          const filteredByTab = lastRenderedListings.filter((listing) => matchesSellerTab(listing, currentSellerTab));
-
-          if (!Array.isArray(lastRenderedListings) || !lastRenderedListings.length) {
-            return originalRenderListings(lastRenderedListings);
-          }
-
-          if (!filteredByTab.length) {
-            renderTabEmptyState();
-            return;
-          }
-
+        const renderListingRows = (filteredListings) => {
           const user = typeof currentUser === "function" ? currentUser() : {};
           const viewType = getViewType();
-          const rows = filteredByTab.map((listing) => {
+          const seenIds = new Set();
+          let renderCount = 0;
+          const rows = filteredListings.map((listing) => {
+            const id = String(listing._id || listing.id || "").trim();
+            if (id && seenIds.has(id)) {
+              console.error("ROW_RENDER_DUPLICATE_BLOCKED", id);
+              return "";
+            }
+            if (id) seenIds.add(id);
+
             const src = typeof listingImage === "function" ? listingImage(listing) : "";
             const dateText = formatListingDate(listing.createdAt);
-            const id = listing._id || listing.id || "";
+            renderCount += 1;
+            console.log("ROW_RENDER_SUCCESS", id || `row-${renderCount}`);
 
             if (viewType === "vasita") return renderVehicleRow(listing, user, src, dateText, id);
             if (viewType === "emlak") return renderEstateRow(listing, user, src, dateText, id);
             return renderGenericRow(listing, user, src, dateText, id);
-          }).join("");
+          }).filter(Boolean).join("");
+
+          console.log("LISTINGS_RENDER_COUNT", renderCount);
+
+          if (!rows) {
+            renderTabEmptyState();
+            return;
+          }
 
           container.innerHTML = `
-            <div class="listing-table ${viewType}">
-              ${buildHeaderRow(viewType)}
-              ${rows}
+            <div class="listing-table-wrap">
+              <div class="listing-table ${viewType}">
+                ${buildHeaderRow(viewType)}
+                ${rows}
+              </div>
             </div>
           `;
         };
+
+        renderListings = function (listings) {
+          if (!container) return;
+
+          lastRenderedListings = Array.isArray(listings) ? listings.slice() : [];
+          const filteredByTab = lastRenderedListings.filter((listing) => matchesSellerTab(listing, currentSellerTab));
+          const pagination = typeof paginateItems === "function"
+            ? paginateItems(filteredByTab, getActivePage(), pageSize)
+            : { items: filteredByTab, page: 1, totalPages: 1, totalItems: filteredByTab.length };
+
+          if (pagination.page !== getActivePage()) {
+            updatePageInUrl(pagination.page, { replace: true });
+          }
+
+          console.log("SELLER_FILTER_RESULT", currentSellerTab, filteredByTab.length);
+
+          if (!lastRenderedListings.length || !filteredByTab.length) {
+            console.log("FINAL_LISTINGS_RENDER", 0);
+            renderTabEmptyState();
+            return;
+          }
+
+          renderListingRows(pagination.items);
+          renderPagination(filteredByTab.length, pagination.page, pagination.totalPages);
+
+          console.log("FINAL_LISTINGS_RENDER", pagination.items.length);
+        };
       }
 
-      const applyCategoryLabels = () => {
-        return;
-      };
-
-      applyCategoryLabels();
+      syncCategoryUi();
       updateActiveTab();
+
+      categoryLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const nextUrl = new URL(link.href, window.location.origin);
+          window.history.pushState({}, "", `${nextUrl.pathname}${nextUrl.search}`);
+          syncCategoryUi();
+          if (typeof loadListings === "function") loadListings();
+        });
+      });
+
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
           const nextTab = button.dataset.tab || "all";
           if (nextTab === currentSellerTab) return;
           currentSellerTab = nextTab;
+          updatePageInUrl(1, { replace: false });
           updateActiveTab();
           renderListings(lastRenderedListings);
         });
       });
+
+      window.addEventListener("popstate", () => {
+        syncCategoryUi();
+      });
+
       document.addEventListener("click", (event) => {
+        const pageLink = event.target.closest("[data-page-link]");
+        if (pageLink && !pageLink.classList.contains("disabled")) {
+          event.preventDefault();
+          const nextPage = Number.parseInt(pageLink.dataset.pageLink || "1", 10);
+          updatePageInUrl(Number.isFinite(nextPage) && nextPage > 0 ? nextPage : 1, { replace: false });
+          renderListings(lastRenderedListings);
+          return;
+        }
+
         const detailRow = event.target.closest('.listing-row[data-action="detail"]');
         if (detailRow) {
           goDetail(detailRow.dataset.id || "");
         }
       });
-      if (container) {
-        new MutationObserver(applyCategoryLabels).observe(container, { childList: true, subtree: true });
-      }
     })();
   </script>
 </body>
 </html>
+
+
+

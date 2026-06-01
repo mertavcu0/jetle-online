@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -180,7 +180,7 @@
     .ad-box {
       min-height: 90px;
       height: 90px;
-      margin: 16px auto;
+      margin: 10px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,9 +191,14 @@
       font-weight: 800;
     }
 
+    .ad-box:empty {
+      display: none;
+    }
+
     .top-ad {
       width: 100%;
       max-width: 970px;
+      margin: 8px auto 4px;
       border-radius: 8px;
       box-shadow: none;
     }
@@ -202,14 +207,6 @@
       min-height: 60px;
       height: 60px;
       margin: 10px 0 16px;
-    }
-
-    .ad-box.medium {
-      width: 100%;
-      max-width: 728px;
-      min-height: 90px;
-      height: 90px;
-      margin: 12px 0 16px;
     }
 
     .ad-box.vertical {
@@ -1191,11 +1188,11 @@
     }
 
     .home-section {
-      margin-top: 28px;
+      margin-top: 18px;
     }
 
     .home-section .section-head {
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .listing-grid,
@@ -1315,7 +1312,11 @@
     <a class="hero-cta" href="create-listing.html">Ücretsiz ilan ver</a>
   </section>
 
-  <section class="home-hero">
+  <div class="page">
+    <div class="ad-box top-ad" aria-label="Reklam Alanı"></div>
+  </div>
+
+  <section class="home-hero" hidden aria-hidden="true">
     <form class="hero-search" id="homeSearchForm">
       <input id="homeSearchInput" type="text" placeholder="Ne arıyorsun">
       <select id="homeCategorySelect">
@@ -1335,17 +1336,17 @@
       <h2>Kategoriler</h2>
       <div class="category-grid">
         <a class="category-card" href="/listings.htmlcategory=emlak">Emlak</a>
-        <a class="category-card" href="/listings.htmlcategory=vasita">Vasıta</a>
-        <a class="category-card" href="/listings.htmlcategory=is-makineleri">İş Makineleri</a>
-        <a class="category-card" href="/listings.htmlcategory=yedek-parca">Yedek Parça</a>
+        <a class="category-card" href="/listings.html?category=vasita">Vasıta</a>
+        <a class="category-card" href="/listings.html?category=is-makineleri">İş Makineleri</a>
+        <a class="category-card" href="/listings.html?category=yedek-parca">Yedek Parça</a>
       </div>
     </aside>
 
     <div class="content">
-      <section class="home-section section-block">
+      <section id="showcase-section" class="home-section section-block">
         <div class="section-head">
           <h2>Vitrin İlanlar</h2>
-          <a href="listings.htmlfeatured=true">Tüm vitrin ilanları</a>
+          <a href="listings.html?showcase=true">Tüm vitrin ilanları</a>
         </div>
         <div id="featured-slider" class="listing-slider"></div>
         <div id="featuredListings" class="featured-container hidden-compat"></div>
@@ -1353,18 +1354,18 @@
         <div id="showcaseSlider" class="hidden-compat"></div>
       </section>
 
-      <section class="home-section section-block">
+      <section id="latest-section" class="home-section section-block">
         <div class="section-head">
           <h2>Son Eklenen İlanlar</h2>
-          <a href="listings.htmlsort=new">Yeni ilanlar</a>
+          <a href="listings.html?sort=new">Yeni ilanlar</a>
         </div>
         <div id="latestGrid" class="listing-grid"></div>
       </section>
 
-      <section class="home-section section-block">
+      <section id="featured-section" class="home-section section-block">
         <div class="section-head">
           <h2>Öne Çıkan İlanlar</h2>
-          <a href="listings.html">Tümünü gör</a>
+          <a href="listings.html?featured=true">Tümünü gör</a>
         </div>
         <div id="featuredGrid" class="listing-grid"></div>
       </section>
@@ -1397,7 +1398,7 @@
       <div class="footer-col">
         <h4>Hizmetler</h4>
         <ul>
-          <li><a href="/ilan-ver.html">İlan Ver</a></li>
+          <li><a href="/ilan-ver.html">Ücretsiz İlan Ver</a></li>
           <li><a href="/vitrin.html">Vitrin</a></li>
           <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
         </ul>
@@ -1437,10 +1438,19 @@
       (window.location.protocol === "http:" || window.location.protocol === "https:")
         ? window.location.origin
         : "";
-    const DETAIL_PAGE = "listing.html";
-    const state = { listings: [] };
+    const DETAIL_PAGE = "listing-detail.html";
+    const state = {
+      listings: [],
+      showcaseListings: [],
+      featuredOnlyListings: [],
+      normalListings: [],
+      normalListings: []
+    };
 
     const els = {
+      showcaseSection: document.getElementById("showcase-section"),
+      latestSection: document.getElementById("latest-section"),
+      featuredSection: document.getElementById("featured-section"),
       featuredListingsTop: document.getElementById("featured-listings"),
       showcase: document.getElementById("featured-slider"),
       featuredListings: document.getElementById("featuredListings"),
@@ -1459,6 +1469,30 @@
       topSearch: document.getElementById("topSearch"),
       topSearchInput: document.getElementById("topSearchInput")
     };
+
+    function updateSectionVisibility(showcaseListings, featuredListings, normalListings) {
+      const showcaseVisible = Array.isArray(showcaseListings) && showcaseListings.length > 0;
+      const featuredVisible = Array.isArray(featuredListings) && featuredListings.length > 0;
+      const normalVisible = Array.isArray(normalListings) && normalListings.length > 0;
+
+      if (els.showcaseSection) {
+        els.showcaseSection.style.display = showcaseVisible ? "" : "none";
+      }
+
+      if (els.featuredSection) {
+        els.featuredSection.style.display = featuredVisible ? "" : "none";
+      }
+
+      if (els.latestSection) {
+        els.latestSection.style.display = normalVisible ? "" : "none";
+      }
+
+      console.log("SECTION_VISIBILITY_STATE", {
+        showcaseVisible,
+        featuredVisible,
+        normalVisible
+      });
+    }
 
     function escapeHtml(value) {
       return String(value || "")
@@ -1512,11 +1546,12 @@
     function formatPrice(price) {
       const num = Number(price);
       if (Number.isNaN(num)) return "-";
-      return new Intl.NumberFormat("tr-TR").format(num) + " ₺";
+      return new Intl.NumberFormat("tr-TR").format(num) + " TL";
     }
 
     function listingUrl(listing) {
       const id = listing._id || listing.id || "";
+      console.log("CARD_LINK_ID", id);
       return `${DETAIL_PAGE}?id=${encodeURIComponent(id)}`;
     }
 
@@ -1528,6 +1563,9 @@
 
     function getListingImages(listing) {
       const values = [];
+      if (listing.coverImage) values.push(listing.coverImage);
+      if (listing.mainImage) values.push(listing.mainImage);
+      if (Array.isArray(listing.gallery)) values.push(...listing.gallery);
       if (Array.isArray(listing.images)) values.push(...listing.images);
       if (Array.isArray(listing.photos)) values.push(...listing.photos);
       if (listing.image) values.push(listing.image);
@@ -1568,7 +1606,7 @@
     function badgeTemplate(listing) {
       const labels = {
         verified: "✔ Onaylı",
-        premium: "⭐ Premium",
+        premium: "★ Premium",
         corporate: "🏢 Kurumsal"
       };
       const badges = listingBadges(listing);
@@ -1577,7 +1615,8 @@
     }
 
     function listingTag(listing) {
-      if (listing.isFeatured) return "Vitrin";
+      if (listing.isShowcase) return "Vitrin";
+      if (listing.isFeatured) return "Öne Çıkan";
       if (listing.isUrgent || listing.urgent) return "Acil";
       const created = new Date(listing.createdAt || Date.now()).getTime();
       const threeDays = 3 * 24 * 60 * 60 * 1000;
@@ -1586,7 +1625,8 @@
     }
 
     function listingStatusBadge(listing) {
-      if (listing.isFeatured) return `<span class="badge-featured">Vitrin</span>`;
+      if (listing.isShowcase) return `<span class="badge-featured">Vitrin</span>`;
+      if (listing.isFeatured) return `<span class="badge-premium">Öne Çıkan</span>`;
       if (listing.isBoosted) return `<span class="badge-boost">Boost</span>`;
       if (listing.isPremium) return `<span class="badge-premium">Premium</span>`;
       return "";
@@ -1632,7 +1672,7 @@
           </div>
           <div class="card-body">
             <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
-            <p class="price">${escapeHtml(item.price || 0)} TL</p>
+            <p class="price">${formatPrice(item.price)}</p>
             <div class="meta">
               <span class="city-meta">${escapeHtml(item.city || item.location || "Konum yok")}</span>
               <span class="category-meta">${escapeHtml(item.category || "Kategori yok")}</span>
@@ -1655,7 +1695,7 @@
       }
 
       localStorage.setItem("favs", JSON.stringify(favs));
-      renderHome(state.listings);
+      renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
     }
 
     function renderApiGrid(container, listings) {
@@ -1666,18 +1706,82 @@
       });
     }
 
-    function renderApiListings(data) {
-      const listings = Array.isArray(data) ? data : [];
-      const vehicles = listings.filter((item) => normalizeCategory(item.category) === "Araç");
-      const featured = listings.filter((item) => item.isFeatured);
-      const latest = [...listings].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      const highlighted = listings.filter((item) => item.isFeatured || item.isBoosted || item.isPremium);
+    function logSectionIds(label, listings) {
+      const ids = (Array.isArray(listings) ? listings : [])
+        .map((item) => String(item?._id || item?.id || "").trim())
+        .filter(Boolean);
+      console.log(label, ids);
+      return ids;
+    }
 
-      renderApiGrid(els.showcase, featured.length ? featured.slice(0, 8) : listings.slice(0, 8));
-      renderApiGrid(els.latest, latest.slice(0, 8));
-      renderApiGrid(els.featured, (highlighted.length ? highlighted : listings).slice(0, 8));
-      renderFeatured(featured);
-      renderApiGrid(els.vehicle, vehicles.length ? vehicles : listings);
+    function detectDuplicateSections(showcase, featured, normal) {
+      const showcaseIds = logSectionIds("INDEX_RENDER_SHOWCASE_IDS", showcase);
+      const featuredIds = logSectionIds("INDEX_RENDER_FEATURED_IDS", featured);
+      const normalIds = logSectionIds("INDEX_RENDER_NORMAL_IDS", normal);
+      const seen = new Map();
+
+      [["showcase", showcaseIds], ["featured", featuredIds], ["normal", normalIds]].forEach(([section, ids]) => {
+        ids.forEach((id) => {
+          const sections = seen.get(id) || [];
+          sections.push(section);
+          seen.set(id, sections);
+        });
+      });
+
+      seen.forEach((sections, id) => {
+        if (sections.length > 1) {
+          console.error("DUPLICATE_RENDER_DETECTED", { id, sections });
+        }
+      });
+    }
+
+    function renderShowcaseListings(showcaseListings) {
+      console.log("RENDER_SOURCE_NAME", "showcaseListings");
+      const finalListings = (Array.isArray(showcaseListings) ? showcaseListings : [])
+        .filter((item) => item && item.isShowcase === true && item.isFeatured !== true)
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      console.log("SHOWCASE_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
+      renderApiGrid(els.showcase, finalListings.slice(0, 8));
+      renderFeatured(finalListings);
+      return finalListings;
+    }
+
+    function renderFeaturedListings(featuredListings) {
+      console.log("RENDER_SOURCE_NAME", "featuredListings");
+      const finalListings = (Array.isArray(featuredListings) ? featuredListings : [])
+        .filter((item) => item && item.isFeatured === true && item.isShowcase !== true)
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      console.log("FEATURED_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
+      renderApiGrid(els.featured, finalListings.slice(0, 8));
+      return finalListings;
+    }
+
+    function renderNormalListings(normalListings) {
+      console.log("RENDER_SOURCE_NAME", "normalListings");
+      const finalListings = (Array.isArray(normalListings) ? normalListings : [])
+        .filter((item) => item && item.isShowcase !== true && item.isFeatured !== true)
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      console.log("NORMAL_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
+      renderApiGrid(els.latest, finalListings.slice(0, 8));
+      return finalListings;
+    }
+
+    function renderApiListings(normalData, showcaseData, featuredData) {
+      const normalListings = renderNormalListings(normalData);
+      const showcaseListings = renderShowcaseListings(showcaseData);
+      const featuredListings = renderFeaturedListings(featuredData);
+      const vehicles = normalListings.filter((item) => normalizeCategory(item.category) === "Araç");
+
+      console.log("SHOWCASE_LIST_COUNT", showcaseListings.length);
+      console.log("FEATURED_LIST_COUNT", featuredListings.length);
+      console.log("PUBLIC_NORMAL_LIST_COUNT", normalListings.length);
+      detectDuplicateSections(showcaseListings, featuredListings, normalListings);
+      updateSectionVisibility(showcaseListings, featuredListings, normalListings);
+
+      renderApiGrid(els.vehicle, vehicles.length ? vehicles : normalListings);
+      renderGrid(els.realEstate, normalListings.filter((item) => normalizeCategory(item.category) === "Emlak"), 4);
+      renderGrid(els.electronics, normalListings.filter((item) => normalizeCategory(item.category) === "Elektronik"), 4);
+      renderSidebars(normalListings);
     }
 
     function rightCardTemplate(listing) {
@@ -1712,7 +1816,7 @@
       els.featuredListings.innerHTML = listings.length ? listings.slice(0, 8).map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
       if (els.featuredListingsTop) {
         els.featuredListingsTop.innerHTML = `
-          <h2>🔥 Vitrin İlanlar</h2>
+          <h2>Vitrin İlanlar</h2>
           <div class="featured-row">
             ${listings.map(item => `
               <div class="featured-card">
@@ -1776,20 +1880,25 @@
       });
     }
 
-    function renderHome(listings) {
-      const filtered = applyFilters(listings);
-      const featured = filtered.filter((item) => item.isFeatured);
-      const latest = [...filtered].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      const highlighted = filtered.filter((item) => item.isFeatured || item.isBoosted || item.isPremium);
-      const showcase = featured.length ? featured.slice(0, 8) : filtered.slice(0, 8);
-      els.showcase.innerHTML = showcase.length ? showcase.map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
-      renderFeatured(featured);
-      renderGrid(els.latest, latest, 8);
-      renderGrid(els.featured, highlighted.length ? highlighted : filtered, 8);
-      renderGrid(els.realEstate, filtered.filter((item) => normalizeCategory(item.category) === "Emlak"), 4);
-      renderGrid(els.vehicle, filtered.filter((item) => normalizeCategory(item.category) === "Araç"), 4);
-      renderGrid(els.electronics, filtered.filter((item) => normalizeCategory(item.category) === "Elektronik"), 4);
-      renderSidebars(filtered);
+    function renderHome(normalListings, showcaseListings, featuredListings) {
+      const filteredNormal = applyFilters(Array.isArray(normalListings) ? normalListings : []);
+      const filteredShowcase = applyFilters(Array.isArray(showcaseListings) ? showcaseListings : []);
+      const filteredFeatured = applyFilters(Array.isArray(featuredListings) ? featuredListings : []);
+
+      const finalShowcase = renderShowcaseListings(filteredShowcase);
+      const finalFeatured = renderFeaturedListings(filteredFeatured);
+      const finalNormal = renderNormalListings(filteredNormal);
+
+      console.log("SHOWCASE_LIST_COUNT", finalShowcase.length);
+      console.log("FEATURED_LIST_COUNT", finalFeatured.length);
+      console.log("PUBLIC_NORMAL_LIST_COUNT", finalNormal.length);
+      detectDuplicateSections(finalShowcase, finalFeatured, finalNormal);
+      updateSectionVisibility(finalShowcase, finalFeatured, finalNormal);
+
+      renderGrid(els.realEstate, finalNormal.filter((item) => normalizeCategory(item.category) === "Emlak"), 4);
+      renderGrid(els.vehicle, finalNormal.filter((item) => normalizeCategory(item.category) === "Araç"), 4);
+      renderGrid(els.electronics, finalNormal.filter((item) => normalizeCategory(item.category) === "Elektronik"), 4);
+      renderSidebars(finalNormal);
     }
 
     async function loadListings() {
@@ -1797,14 +1906,48 @@
         el.innerHTML = loadingTemplate("İlanlar yükleniyor...");
       });
       try {
-        const res = await fetch("/api/listings");
-        if (!res.ok) throw new Error("İlanlar alınamadı");
-        const data = await res.json();
-        state.listings = Array.isArray(data) ? data.map((item) => normalizeTextObject(item)) : [];
+        const requestOptions = { cache: "no-store" };
+        const [allRes, showcaseRes, featuredRes, normalRes] = await Promise.all([
+          fetch("/api/listings", requestOptions),
+          fetch("/api/listings?showcase=true", requestOptions),
+          fetch("/api/listings?featured=true", requestOptions),
+          fetch("/api/listings?normal=true", requestOptions)
+        ]);
+
+        if (!allRes.ok) throw new Error("İlanlar alınamadı");
+        if (!showcaseRes.ok) throw new Error("Vitrin ilanlar alınamadı");
+        if (!featuredRes.ok) throw new Error("Öne çıkan ilanlar alınamadı");
+        if (!normalRes.ok) throw new Error("Normal ilanlar alınamadı");
+
+        const [allData, showcaseData, featuredData, normalData] = await Promise.all([
+          allRes.json(),
+          showcaseRes.json(),
+          featuredRes.json(),
+          normalRes.json()
+        ]);
+
+        state.listings = Array.isArray(allData) ? allData.map((item) => normalizeTextObject(item)) : [];
+        state.showcaseListings = Array.isArray(showcaseData) ? showcaseData.map((item) => normalizeTextObject(item)) : [];
+        state.featuredOnlyListings = Array.isArray(featuredData) ? featuredData.map((item) => normalizeTextObject(item)) : [];
+        state.normalListings = Array.isArray(normalData) ? normalData.map((item) => normalizeTextObject(item)) : [];
       } catch (err) {
         state.listings = [];
+        state.showcaseListings = [];
+        state.featuredOnlyListings = [];
+        state.normalListings = [];
       }
-      renderApiListings(state.listings);
+      renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
+      console.log("HOME_FEED_UPDATED", JSON.stringify({
+        all: state.listings.length,
+        showcase: state.showcaseListings.length,
+        featured: state.featuredOnlyListings.length,
+        normal: state.normalListings.length
+      }));
+      console.log("SHOWCASE_RENDER_OK", JSON.stringify({
+        showcase: state.showcaseListings.length,
+        featured: state.featuredOnlyListings.length,
+        latest: state.normalListings.length
+      }));
     }
 
     document.querySelectorAll(".category-link").forEach((link) => {
@@ -1814,7 +1957,7 @@
         link.classList.add("active");
         els.filterCategory.value = link.dataset.category || "";
         closeSidebar();
-        renderHome(state.listings);
+        renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
       });
     });
 
@@ -1834,9 +1977,9 @@
 
     sidebarBackdrop.addEventListener("click", closeSidebar);
 
-    document.getElementById("filterBtn").addEventListener("click", () => renderHome(state.listings));
+    document.getElementById("filterBtn").addEventListener("click", () => renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings));
     [els.filterCategory, els.filterCity, els.filterMin, els.filterMax].forEach((input) => {
-      input.addEventListener("change", () => renderHome(state.listings));
+      input.addEventListener("change", () => renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings));
     });
 
     els.topSearch.addEventListener("submit", (event) => {
@@ -1882,6 +2025,8 @@
       }
     });
 
+    console.log("HOME_DUPLICATE_SEARCH_REMOVED");
+
     cleanupStoredTextCache();
     loadListings();
   </script>
@@ -1889,3 +2034,4 @@
   <script src="/auth-global.js?v=2"></script>
 </body>
 </html>
+

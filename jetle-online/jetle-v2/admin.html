@@ -3,8 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Giriş | jetle.online</title>
+  <title>Admin Giriş | Jetle</title>
   <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8dee8;
+      --line-strong: #bfc9d9;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -12,73 +25,268 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #f3f4f6;
-      color: #111827;
-      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+        linear-gradient(180deg, #f7f8fb 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 22px 0 0;
+    }
+
+    .topbar-inner {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .login-stage {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 28px 20px 40px;
     }
 
     .login-card {
-      width: 380px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      padding: 28px;
+      width: min(420px, 100%);
+      background: var(--card);
+      border: 1px solid rgba(216, 222, 232, 0.92);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 34px 32px 30px;
     }
 
-    h2 {
-      margin: 0 0 20px;
-      text-align: center;
-      font-size: 24px;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      margin: 10px 0 28px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #344054;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
+      height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 0 15px;
       font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    input::placeholder {
+      color: #98a2b3;
+    }
+
+    input:hover {
+      border-color: var(--line-strong);
     }
 
     input:focus {
-      border-color: #2563eb;
+      border-color: var(--primary);
       outline: none;
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.16);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      background: #2563eb;
-      color: white;
+      height: 52px;
       border: none;
-      border-radius: 8px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
-      font-weight: 700;
-      transition: all 0.2s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.24);
     }
 
     button:hover {
-      background: #1e40af;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+      box-shadow: 0 18px 34px rgba(37, 99, 235, 0.28);
+      filter: saturate(1.02);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .card-footer {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #eef2f7;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        width: calc(100% - 28px);
+        padding-top: 16px;
+      }
+
+      .login-stage {
+        padding: 20px 14px 28px;
+      }
+
+      .login-card {
+        border-radius: 18px;
+        padding: 26px 20px 22px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="login-card">
-    <h2>Admin Panel</h2>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/" aria-label="Jetle ana sayfa">
+          <span class="brand-mark">J</span>
+          <span class="brand-copy">
+            <span class="brand-title">Jetle Admin</span>
+            <span class="brand-subtitle">Yönetim paneli erişimi</span>
+          </span>
+        </a>
+      </div>
+    </header>
 
-    <form>
-      <input type="text" placeholder="Kullanıcı" required>
-      <input type="password" placeholder="Şifre" required>
-      <button type="submit">Giriş</button>
-    </form>
-  </main>
+    <main class="login-stage">
+      <section class="login-card" aria-labelledby="admin-login-title">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Güvenli yönetim girişi
+        </div>
+
+        <h1 id="admin-login-title">Jetle Admin</h1>
+        <p class="intro">Yönetim paneline giriş yapın</p>
+
+        <form>
+          <div class="field">
+            <label for="admin-username">Kullanıcı adı</label>
+            <input id="admin-username" type="text" placeholder="Kullanıcı adınızı girin" required>
+          </div>
+
+          <div class="field">
+            <label for="admin-password">Şifre</label>
+            <input id="admin-password" type="password" placeholder="Şifrenizi girin" required>
+          </div>
+
+          <button type="submit">Giriş Yap</button>
+        </form>
+
+        <div class="card-footer">
+          Bu alan yalnızca yetkili yönetici kullanıcıları içindir.
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="admin.js"></script>
 </body>

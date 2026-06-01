@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
@@ -12,9 +12,17 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #f6f7fb;
+      background: #f3f4f6;
       color: #172033;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body.admin-auth-pending {
+      visibility: hidden;
+    }
+
+    body.admin-auth-ready {
+      visibility: visible;
     }
 
     button,
@@ -34,7 +42,7 @@
       width: 42px;
       height: 42px;
       border: 1px solid #edf0f5;
-      border-radius: 12px;
+      border-radius: 10px;
       background: #fff;
       color: #172033;
       cursor: pointer;
@@ -71,7 +79,7 @@
       width: 100%;
       padding: 13px 15px;
       border: 0;
-      border-radius: 12px;
+      border-radius: 10px;
       background: transparent;
       color: #d7dde8;
       cursor: pointer;
@@ -82,7 +90,7 @@
 
     .menu-btn:hover,
     .menu-btn.active {
-      background: #3b6fd8;
+      background: #2f5fae;
       color: #fff;
     }
 
@@ -94,9 +102,9 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(255,255,255,0.94);
+      background: rgba(255,255,255,0.96);
       border-bottom: 1px solid #edf0f5;
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(10px);
     }
 
     .topbar-inner {
@@ -253,12 +261,12 @@
     .modal {
       background: #fff;
       border: 1px solid #edf0f5;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
     }
 
     .card {
-      padding: 22px;
+      padding: 18px;
     }
 
     .stat-label {
@@ -275,8 +283,8 @@
     }
 
     .panel {
-      padding: 22px;
-      margin-bottom: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
     }
 
     .panel-head {
@@ -284,7 +292,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .panel-head h2 {
@@ -302,9 +310,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #f8f9fc;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: #f9fafb;
       color: #3f4a5f;
       font-size: 13px;
       font-weight: 800;
@@ -315,10 +323,10 @@
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
       align-items: end;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #f8f9fc;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #f9fafb;
     }
 
     .bar-item {
@@ -334,8 +342,8 @@
       width: 100%;
       min-height: 8px;
       border-radius: 999px 999px 6px 6px;
-      background: linear-gradient(180deg, #7aa7e8, #3b6fd8);
-      box-shadow: 0 8px 18px rgba(59,111,216,0.14);
+      background: linear-gradient(180deg, #94a3b8, #64748b);
+      box-shadow: none;
     }
 
     .bar-label {
@@ -348,26 +356,32 @@
     .filters {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .filters input,
     .filters select,
     .password-form input {
       width: 100%;
-      padding: 11px 12px;
+      padding: 10px 12px;
       border: 1px solid #d1d5db;
-      border-radius: 12px;
+      border-radius: 10px;
       background: #fff;
       outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #6b7280 50%), linear-gradient(135deg, #6b7280 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
     }
 
     .filters input:focus,
     .filters select:focus,
     .password-form input:focus {
-      border-color: #6e91d8;
-      box-shadow: 0 0 0 3px rgba(110,145,216,0.14);
+      border-color: #cbd5e1;
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.12);
     }
 
     .table-wrap {
@@ -409,11 +423,11 @@
     .report-card {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 18px;
+      gap: 10px;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
       border: 1px solid #edf0f5;
-      border-radius: 12px;
+      border-radius: 10px;
       background: #fff;
       transition: all 0.2s ease;
     }
@@ -421,38 +435,37 @@
     .listing-card {
       display: grid;
       grid-template-columns: 112px 1fr 180px;
-      gap: 20px;
+      gap: 16px;
       align-items: center;
-      padding: 18px;
-      border: 1px solid #edf0f5;
-      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
       background: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
     .listing-card:hover,
     .report-card:hover {
-      transform: translateY(-2px) scale(1.01);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      border-color: #dce6f7;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      border-color: #d1d5db;
     }
 
     .listing-card.featured {
-      border-color: #facc15;
-      box-shadow: 0 4px 20px rgba(180,138,0,0.12);
-      background: linear-gradient(90deg, #fff9db 0%, #fff 42%);
+      border-color: #dbe4f0;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.05);
+      background: #fff;
     }
 
     .listing-thumb {
       width: 112px;
       height: 84px;
-      border-radius: 10px;
+      border-radius: 8px;
       object-fit: cover;
       background: #f3f4f6;
     }
 
     .title {
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       font-weight: 800;
     }
 
@@ -465,14 +478,14 @@
     .meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     .actions {
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 6px;
     }
 
     .listing-side {
@@ -485,49 +498,68 @@
 
     .listing-price {
       margin: 0;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       color: #111827;
     }
 
     .btn {
-      padding: 9px 12px;
-      border: none;
-      border-radius: 12px;
+      padding: 8px 11px;
+      border: 1px solid transparent;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 800;
-      font-size: 13px;
-      transition: all 0.2s ease;
+      font-weight: 700;
+      font-size: 12px;
+      transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
     }
 
     .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
     }
 
     .btn-primary {
-      background: #3b6fd8;
+      background: #2563eb;
       color: #fff;
     }
 
     .btn-success {
-      background: #16a34a;
-      color: #fff;
+      background: #e8f5ec;
+      border-color: #c7e8d1;
+      color: #166534;
+    }
+
+    .btn-success:hover {
+      background: #dff0e5;
     }
 
     .btn-warning {
-      background: #f59e0b;
-      color: #111827;
+      background: #fef3c7;
+      border-color: #f6d28b;
+      color: #92400e;
+    }
+
+    .btn-warning:hover {
+      background: #fde9b1;
     }
 
     .btn-danger {
-      background: #ef4444;
-      color: #fff;
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
     }
 
     .btn-soft {
-      background: #eef2ff;
-      color: #3b6fd8;
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #475569;
+    }
+
+    .btn-soft:hover {
+      background: #eef2f7;
     }
 
     .btn-ghost {
@@ -539,7 +571,7 @@
     .badge-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 4px;
     }
 
     .seller-badge,
@@ -547,33 +579,34 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 8px;
+      padding: 3px 7px;
       border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 10px;
+      font-weight: 700;
       white-space: nowrap;
     }
 
     .seller-badge.verified,
-    .status-pill.approved {
-      background: #dcfce7;
-      color: #1d6b45;
+    .status-pill.approved,
+    .status-pill.active {
+      background: #eaf7ee;
+      color: #2f6d45;
     }
 
     .seller-badge.premium,
     .status-pill.pending {
-      background: #fef3c7;
-      color: #7a4b12;
+      background: #eef2ff;
+      color: #475569;
     }
 
     .seller-badge.corporate {
-      background: #dbeafe;
-      color: #2d5598;
+      background: #eff6ff;
+      color: #355a8c;
     }
 
     .status-pill.rejected {
-      background: #fee2e2;
-      color: #983434;
+      background: #fef2f2;
+      color: #9f1239;
     }
 
     .badge-tools {
@@ -583,17 +616,17 @@
     }
 
     .badge-tools select {
-      padding: 8px;
+      padding: 8px 10px;
       border: 1px solid #d9dee8;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     .empty-state {
-      padding: 32px 16px;
+      padding: 24px 16px;
       text-align: center;
       color: #6b7280;
       background: #f8f9fc;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     .empty-icon {
@@ -603,8 +636,8 @@
       display: grid;
       place-items: center;
       border-radius: 999px;
-      background: #eef2ff;
-      color: #3b6fd8;
+      background: #f3f4f6;
+      color: #64748b;
       font-size: 22px;
     }
 
@@ -620,20 +653,20 @@
     }
 
     .loading-state {
-      padding: 34px 16px;
+      padding: 24px 16px;
       display: grid;
       justify-items: center;
       gap: 10px;
       color: #6b7280;
       background: #f9fafb;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     .spinner {
       width: 28px;
       height: 28px;
-      border: 3px solid #dbeafe;
-      border-top-color: #3b6fd8;
+      border: 3px solid #e5e7eb;
+      border-top-color: #94a3b8;
       border-radius: 999px;
       animation: spin 0.8s linear infinite;
     }
@@ -649,11 +682,11 @@
     }
 
     .toast {
-      padding: 13px 14px;
-      border-radius: 12px;
+      padding: 12px 13px;
+      border-radius: 10px;
       color: #fff;
       background: #172033;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
       font-size: 14px;
       font-weight: 700;
       animation: toastIn 0.2s ease;
@@ -845,7 +878,7 @@
     }
   </style>
 </head>
-<body>
+<body class="admin-auth-pending">
   <div class="admin-shell">
     <aside class="sidebar">
       <h1 class="brand"><span>Jetle</span> Admin</h1>
@@ -917,7 +950,7 @@
               </div>
               <div class="analytics-list">
                 <div class="analytics-row">
-                  <span>En çok ilan kategori</span>
+                  <span>En çok ilan kategorisi</span>
                   <strong id="topCategory">-</strong>
                 </div>
                 <div class="analytics-row">
@@ -977,9 +1010,9 @@
 
             <div class="filters">
               <select id="filterStatus">
+                <option value="" selected>Tüm durumlar</option>
                 <option value="pending">Onay Bekleyen</option>
-                <option value="">Tüm durumlar</option>
-                <option value="approved">Onaylı</option>
+                <option value="active">Onaylı / Yayında</option>
                 <option value="rejected">Reddedildi</option>
               </select>
               <input id="filterSearch" type="text" placeholder="Başlık ara">
@@ -1077,11 +1110,12 @@
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
   <script>
     const API_BASE = "";
     const token = localStorage.getItem("token");
-    const currentRole = token ? parseJwt(token)?.role : null;
+    const currentPayload = token ? parseJwt(token) : null;
+    const currentRole = currentPayload?.role || null;
+    const DEBUG_ADMIN = location.hostname === "localhost" || location.hostname === "127.0.0.1";
     const state = {
       users: [],
       listings: [],
@@ -1090,6 +1124,13 @@
       payments: [],
       activities: [],
       notifications: [],
+      notificationStats: {
+        total: 0,
+        unread: 0
+      },
+      bootstrapStats: null,
+      dashboardRequest: null,
+      notificationsRequest: null,
       confirmHandler: null,
       chart: null
     };
@@ -1125,10 +1166,6 @@
       }
     };
 
-    if (!token) {
-      window.location.href = "/jetle-v2/admin.html";
-    }
-
     function parseJwt(value) {
       try {
         const payload = value.split(".")[1];
@@ -1141,8 +1178,47 @@
       }
     }
 
+    function adminLog(...args) {
+      if (DEBUG_ADMIN) {
+        console.log(...args);
+      }
+    }
+
+    function isTokenExpired(payload) {
+      if (!payload?.exp) return false;
+      return Date.now() >= Number(payload.exp) * 1000;
+    }
+
     function isAdmin() {
       return currentRole === "admin";
+    }
+
+    function redirectToAdminLogin(reason) {
+      adminLog("Admin redirect reason:", reason);
+      window.location.href = "/admin.html";
+    }
+
+    if (!token) {
+      redirectToAdminLogin("missing_token");
+    }
+
+    if (token && !currentRole) {
+      localStorage.removeItem("token");
+      redirectToAdminLogin("invalid_token_payload");
+    }
+
+    if (currentRole && !isAdmin()) {
+      localStorage.removeItem("token");
+      redirectToAdminLogin("role_not_admin");
+    }
+
+    if (currentPayload && isTokenExpired(currentPayload)) {
+      localStorage.removeItem("token");
+      redirectToAdminLogin("token_expired");
+    }
+
+    if (token && isAdmin()) {
+      adminLog("Admin auth success");
     }
 
     function authHeaders(extra = {}) {
@@ -1152,9 +1228,44 @@
       };
     }
 
+    async function validateAdminSession() {
+      if (!token || !currentPayload || !isAdmin()) {
+        return false;
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(`${API_BASE}/api/admin/stats`, {
+          headers: authHeaders(),
+          cache: "no-store",
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem("token");
+          redirectToAdminLogin(`admin_api_denied_${response.status}`);
+          return false;
+        }
+
+        if (response.ok) {
+          state.bootstrapStats = await response.json().catch(() => null);
+        } else {
+          adminLog("Admin session check skipped due to non-auth response:", response.status);
+        }
+      } catch (err) {
+        adminLog("Admin session validation warning:", err?.message || err);
+      }
+
+      document.body.classList.remove("admin-auth-pending");
+      document.body.classList.add("admin-auth-ready");
+      return true;
+    }
+
     function logout() {
       localStorage.removeItem("token");
-      window.location.href = "/jetle-v2/admin.html";
+      redirectToAdminLogin("manual_logout");
     }
 
     function showToast(message, type = "success") {
@@ -1189,10 +1300,13 @@
     }
 
     async function api(path, options = {}) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       const res = await fetch(API_BASE + path, {
         ...options,
-        headers: authHeaders(options.headers || {})
-      });
+        headers: authHeaders(options.headers || {}),
+        signal: controller.signal
+      }).finally(() => clearTimeout(timeoutId));
 
       if (res.status === 401) {
         logout();
@@ -1224,8 +1338,8 @@
 
     function badgeLabel(badge) {
       return {
-        verified: "✔ Onaylı",
-        premium: "⭐ Premium",
+        verified: "✓ Onaylı",
+        premium: "★ Premium",
         corporate: "🏢 Kurumsal"
       }[badge] || badge;
     }
@@ -1242,7 +1356,21 @@
 
     function statusPill(status) {
       const value = status || "pending";
-      return `<span class="status-pill ${value}">${value}</span>`;
+      const labels = {
+        pending: "Onay bekliyor",
+        active: "Yayında",
+        approved: "Onaylı",
+        rejected: "Reddedildi"
+      };
+      return `<span class="status-pill ${value}">${labels[value] || value}</span>`;
+    }
+
+    function listingTypeBadges(item) {
+      const badges = [];
+      if (item.isShowcase) badges.push('<span class="status-pill approved">Vitrin</span>');
+      if (item.isFeatured) badges.push('<span class="status-pill active">Öne Çıkan</span>');
+      if (!item.isShowcase && !item.isFeatured) badges.push('<span class="status-pill pending">Normal İlan</span>');
+      return badges.join("");
     }
 
     function notificationTypeLabel(type) {
@@ -1254,10 +1382,14 @@
 
     function listingImage(item) {
       const raw =
+        item.coverImage ||
+        item.mainImage ||
         (Array.isArray(item.images) && item.images[0]) ||
+        (Array.isArray(item.photos) && item.photos[0]) ||
         item.image ||
-        "https://picsum.photos/160/120";
+        "";
       const src = String(raw).trim();
+      if (!src) return "";
 
       if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) {
         return src;
@@ -1339,7 +1471,21 @@
     function renderAnalytics(analytics) {
       const topCategory = analytics?.topCategory;
       const mostActiveCity = analytics?.mostActiveCity;
-      const daily = Array.isArray(analytics?.dailyListings) ? analytics.dailyListings : [];
+      const daily = Array.isArray(analytics?.dailyListings)
+        ? analytics.dailyListings.map((item) => ({
+            date: item?.date || "",
+            count: Number(item?.count || 0)
+          }))
+        : [];
+      const dailyUsers = Array.isArray(analytics?.dailyUsers)
+        ? analytics.dailyUsers.map((item) => Number(item?.count || 0))
+        : [];
+
+      console.log("ADMIN_CHART_DATASET", {
+        dailyListings: daily,
+        dailyUsers,
+        hasChartJs: typeof Chart === "function"
+      });
 
       document.getElementById("topCategory").textContent = topCategory
         ? `${topCategory.category} (${topCategory.count})`
@@ -1348,15 +1494,18 @@
         ? `${mostActiveCity.city} (${mostActiveCity.count})`
         : "-";
 
-      const max = Math.max(...daily.map((item) => item.count), 1);
+      const max = Math.max(...daily.map((item) => Number(item.count || 0)), 1);
       document.getElementById("dailyChart").innerHTML = daily.map((item) => {
-        const height = Math.max((item.count / max) * 100, item.count ? 10 : 4);
-        const label = new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" });
+        const safeCount = Number(item.count || 0);
+        const height = Math.max((safeCount / max) * 100, safeCount ? 10 : 4);
+        const label = item.date
+          ? new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" })
+          : "-";
 
         return `
-          <div class="bar-item" title="${item.count} ilan">
+          <div class="bar-item" title="${safeCount} ilan">
             <div class="bar" style="height:${height}%"></div>
-            <div class="bar-label">${label}<br>${item.count}</div>
+            <div class="bar-label">${label}<br>${safeCount}</div>
           </div>
         `;
       }).join("");
@@ -1365,15 +1514,26 @@
 
       if (typeof Chart === "function") {
         const ctx = document.getElementById("analyticsChart");
-        if (state.chart) state.chart.destroy();
+        if (state.chart) {
+          state.chart.destroy();
+          state.chart = null;
+        }
+        console.log("ADMIN_CHART_RENDER", {
+          labels: daily.map((item) => item.date),
+          listingPoints: daily.map((item) => item.count),
+          userPoints: dailyUsers,
+          chartCanvasReady: Boolean(ctx)
+        });
         state.chart = new Chart(ctx, {
           type: "line",
           data: {
-            labels: daily.map((item) => new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" })),
+            labels: daily.map((item) => item.date
+              ? new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" })
+              : "-"),
             datasets: [
               {
                 label: "İlan trendi",
-                data: daily.map((item) => item.count),
+                data: daily.map((item) => Number(item.count || 0)),
                 borderColor: "#3b6fd8",
                 backgroundColor: "rgba(59,111,216,0.12)",
                 tension: 0.35,
@@ -1381,7 +1541,7 @@
               },
               {
                 label: "Günlük kullanıcı",
-                data: (analytics?.dailyUsers || []).map((item) => item.count),
+                data: dailyUsers,
                 borderColor: "#2f9461",
                 backgroundColor: "rgba(47,148,97,0.10)",
                 tension: 0.35,
@@ -1399,21 +1559,47 @@
     }
 
     async function loadDashboard() {
+      if (state.dashboardRequest) {
+        return state.dashboardRequest;
+      }
+
       document.getElementById("dashboardPendingList").innerHTML = loadingState("Panel yükleniyor...");
       document.getElementById("dailyChart").innerHTML = loadingState("Grafik yükleniyor...");
-      const [stats, analytics, pending] = await Promise.all([
-        api("/api/admin/stats"),
-        api("/api/admin/analytics"),
-        api("/api/admin/listings?status=pending"),
-      ]);
+      state.dashboardRequest = (async () => {
+        try {
+          const cachedStats = state.bootstrapStats;
+          state.bootstrapStats = null;
 
-      document.getElementById("totalUsers").textContent = stats.totalUsers || 0;
-      document.getElementById("totalListings").textContent = stats.totalListings || 0;
-      document.getElementById("todayListings").textContent = stats.todayListings || 0;
-      document.getElementById("weeklyGrowth").textContent = (stats.weeklyGrowth || 0) + "%";
-      renderAnalytics(analytics || {});
+          const [stats, analytics, pending] = await Promise.all([
+            cachedStats ? Promise.resolve(cachedStats) : api("/api/admin/stats"),
+            api("/api/admin/analytics"),
+            api("/api/admin/listings?status=pending"),
+          ]);
 
-      renderListingCards(Array.isArray(pending) ? pending.slice(0, 5) : [], document.getElementById("dashboardPendingList"));
+          console.log("ADMIN_DASHBOARD_STATS", {
+            stats: stats || {},
+            analytics: analytics || {},
+            pendingCount: Array.isArray(pending) ? pending.length : 0
+          });
+
+          document.getElementById("totalUsers").textContent = stats?.totalUsers || 0;
+          document.getElementById("totalListings").textContent = stats?.totalListings || 0;
+          document.getElementById("todayListings").textContent = stats?.todayListings || 0;
+          document.getElementById("weeklyGrowth").textContent = (stats?.weeklyGrowth || 0) + "%";
+          renderAnalytics(analytics || {});
+
+          console.log("ADMIN_PENDING_COUNT", Array.isArray(pending) ? pending.length : 0);
+          renderListingCards(Array.isArray(pending) ? pending.slice(0, 5) : [], document.getElementById("dashboardPendingList"));
+        } catch (err) {
+          document.getElementById("dashboardPendingList").innerHTML = emptyState("•", "Veri bulunamadı", "Panel verileri şu anda alınamıyor.");
+          document.getElementById("dailyChart").innerHTML = emptyState("•", "Grafik yüklenemedi", "Tekrar deneyin.");
+          showToast(err.message, "error");
+        } finally {
+          state.dashboardRequest = null;
+        }
+      })();
+
+      return state.dashboardRequest;
     }
 
     async function loadUsers() {
@@ -1423,6 +1609,8 @@
         state.users = Array.isArray(users) ? users : [];
         renderUsers();
       } catch (err) {
+        state.users = [];
+        renderUsers();
         showToast(err.message, "error");
       }
     }
@@ -1431,7 +1619,7 @@
       const body = document.getElementById("usersBody");
 
       if (!state.users.length) {
-        body.innerHTML = `<tr><td colspan="5">${emptyState("👤", "Kullanıcı yok", "Henüz kayıtlı kullanıcı bulunmuyor.")}</td></tr>`;
+        body.innerHTML = `<tr><td colspan="5">${emptyState("•", "Kullanıcı yok", "Henüz kayıtlı kullanıcı bulunmuyor.")}</td></tr>`;
         return;
       }
 
@@ -1539,26 +1727,28 @@
         state.listings = Array.isArray(listings) ? listings : [];
         renderListingCards(state.listings, document.getElementById("listingsList"));
       } catch (err) {
+        state.listings = [];
+        renderListingCards([], document.getElementById("listingsList"));
         showToast(err.message, "error");
       }
     }
 
     function renderListingCards(items, container) {
       if (!items.length) {
-        container.innerHTML = emptyState("📄", "Gösterilecek ilan yok", "Filtreye uygun ilan bulunamadı.");
+        container.innerHTML = emptyState("•", "Gösterilecek ilan yok", "Filtreye uygun ilan bulunamadı.");
         return;
       }
 
       container.innerHTML = items.map((item) => `
-        <article class="listing-card ${item.isFeatured ? "featured" : ""}">
-          <img class="listing-thumb" src="${listingImage(item)}" alt="${escapeHtml(item.title || "İlan görseli")}">
+        <article class="listing-card ${item.isFeatured || item.isShowcase ? "featured" : ""}">
+          ${listingImage(item) ? `<img class="listing-thumb" src="${listingImage(item)}" alt="${escapeHtml(item.title || "İlan görseli")}">` : `<div class="listing-thumb" style="display:flex;align-items:center;justify-content:center;color:#6b7280;background:#f3f4f6;">Görsel yok</div>`}
           <div>
             <p class="title">${escapeHtml(item.title || "Başlıksız ilan")}</p>
             <div class="meta">
               <span>${escapeHtml(item.city || "Şehir yok")}</span>
               <span>${escapeHtml(item.category || "Kategori yok")}</span>
               ${statusPill(item.status)}
-              ${item.isFeatured ? `<span class="status-pill pending">Öne çıkan</span>` : ""}
+              ${listingTypeBadges(item)}
               <span>${escapeHtml(item.user?.name || item.user?.email || "Kullanıcı yok")}</span>
             </div>
           </div>
@@ -1568,6 +1758,7 @@
             <div class="actions">
             <button class="btn btn-success" type="button" data-approve="${item._id}">Onayla</button>
             <button class="btn btn-warning" type="button" data-reject="${item._id}">Reddet</button>
+            ${isAdmin() ? `<button class="btn btn-soft" type="button" data-showcase="${item._id}">${item.isShowcase ? "Vitrinden çıkar" : "Vitrine al"}</button>` : ""}
             ${isAdmin() ? `<button class="btn btn-soft" type="button" data-feature="${item._id}">${item.isFeatured ? "Öne çıkarmayı kaldır" : "Öne çıkar"}</button>` : ""}
             ${isAdmin() ? `<button class="btn btn-soft" type="button" data-republish="${item._id}">Yeniden yayınla</button>` : ""}
             ${isAdmin() ? `<button class="btn btn-danger" type="button" data-delete-listing="${item._id}">Sil</button>` : ""}
@@ -1582,6 +1773,10 @@
 
       container.querySelectorAll("[data-reject]").forEach((btn) => {
         btn.addEventListener("click", () => moderateListing(btn.dataset.reject, "reject"));
+      });
+
+      container.querySelectorAll("[data-showcase]").forEach((btn) => {
+        btn.addEventListener("click", () => showcaseListing(btn.dataset.showcase));
       });
 
       container.querySelectorAll("[data-feature]").forEach((btn) => {
@@ -1606,6 +1801,7 @@
 
     async function moderateListing(id, action) {
       try {
+        console.log(action === "approve" ? "ADMIN_APPROVE_ACTION" : "ADMIN_REJECT_ACTION", { id, action });
         await api(`/api/admin/listings/${id}/${action}`, { method: "PUT" });
         showToast(action === "approve" ? "İlan onaylandı" : "İlan reddedildi");
         await loadListings();
@@ -1615,10 +1811,23 @@
       }
     }
 
+    async function showcaseListing(id) {
+      try {
+        console.log("ADMIN_SET_SHOWCASE", { id });
+        const listing = await api(`/api/admin/listings/${id}/showcase`, { method: "PUT" });
+        showToast(listing.isShowcase ? "İlan vitrine alındı" : "İlan vitrinden çıkarıldı");
+        await loadListings();
+        if (isAdmin()) await loadDashboard();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
     async function featureListing(id) {
       try {
+        console.log("ADMIN_SET_FEATURED", { id });
         const listing = await api(`/api/admin/listings/${id}/feature`, { method: "PUT" });
-        showToast(listing.isFeatured ? "İlan öne çıkarıldı" : "İlan öne çıkarmadan kaldırıldı");
+        showToast(listing.isFeatured ? "İlan öne çıkarıldı" : "İlan öne çıkarma alanından kaldırıldı");
         await loadListings();
         if (isAdmin()) await loadDashboard();
       } catch (err) {
@@ -1656,6 +1865,8 @@
         state.reports = Array.isArray(reports) ? reports : [];
         renderReports();
       } catch (err) {
+        state.reports = [];
+        renderReports();
         showToast(err.message, "error");
       }
     }
@@ -1667,6 +1878,8 @@
         state.payments = Array.isArray(payments) ? payments : [];
         renderPayments();
       } catch (err) {
+        state.payments = [];
+        renderPayments();
         showToast(err.message, "error");
       }
     }
@@ -1674,7 +1887,7 @@
     function renderPayments() {
       const container = document.getElementById("paymentsList");
       if (!state.payments.length) {
-        container.innerHTML = emptyState("₺", "Ödeme yok", "Yeni ödeme kayıtları burada görünecek.");
+        container.innerHTML = emptyState("•", "Ödeme yok", "Yeni ödeme kayıtları burada görünecek.");
         return;
       }
 
@@ -1724,6 +1937,8 @@
         state.activities = Array.isArray(activities) ? activities : [];
         renderActivities();
       } catch (err) {
+        state.activities = [];
+        renderActivities();
         showToast(err.message, "error");
       }
     }
@@ -1731,7 +1946,7 @@
     function renderActivities() {
       const container = document.getElementById("activitiesList");
       if (!state.activities.length) {
-        container.innerHTML = emptyState("↻", "Hareket yok", "Kullanıcı aktiviteleri burada listelenecek.");
+        container.innerHTML = emptyState("•", "Hareket yok", "Kullanıcı aktiviteleri burada listelenecek.");
         return;
       }
 
@@ -1779,7 +1994,7 @@
       container.querySelectorAll("[data-review-report]").forEach((btn) => {
         btn.addEventListener("click", () => {
           if (!btn.dataset.reviewReport) return;
-          window.open(`/jetle-v2/listing.html?id=${btn.dataset.reviewReport}`, "_blank");
+          window.open(`/listing-detail.html?id=${btn.dataset.reviewReport}`, "_blank");
         });
       });
 
@@ -1815,6 +2030,8 @@
         state.logs = Array.isArray(logs) ? logs : [];
         renderLogs();
       } catch (err) {
+        state.logs = [];
+        renderLogs();
         showToast(err.message, "error");
       }
     }
@@ -1823,7 +2040,7 @@
       const container = document.getElementById("logsList");
 
       if (!state.logs.length) {
-        container.innerHTML = emptyState("↺", "Henüz log yok", "Admin aksiyonu oluştuğunda burada görünecek.");
+        container.innerHTML = emptyState("•", "Henüz log yok", "Admin aksiyonu oluştuğunda burada görünecek.");
         return;
       }
 
@@ -1843,25 +2060,63 @@
     }
 
     async function loadNotifications() {
+      if (state.notificationsRequest) {
+        return state.notificationsRequest;
+      }
+
+      state.notificationsRequest = (async () => {
       try {
-        const notifications = await api("/api/admin/notifications");
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(API_BASE + "/api/admin/notifications", {
+          headers: authHeaders({}),
+          signal: controller.signal
+        }).finally(() => clearTimeout(timeoutId));
+
+        if (res.status === 401) {
+          logout();
+          return;
+        }
+
+        const notifications = await res.json().catch(() => []);
+        if (!res.ok) {
+          const message = notifications?.error || "Bildirimler alınamadı";
+          throw new Error(message);
+        }
+
         state.notifications = Array.isArray(notifications) ? notifications : [];
+        state.notificationStats = {
+          total: Number(res.headers.get("X-Notification-Total-Count") || state.notifications.length || 0),
+          unread: Number(
+            res.headers.get("X-Notification-Unread-Count") ||
+            state.notifications.filter((item) => item && item.isRead !== true).length ||
+            0
+          )
+        };
         renderNotifications();
       } catch (err) {
+        state.notifications = [];
+        state.notificationStats = { total: 0, unread: 0 };
+        renderNotifications();
         showToast(err.message, "error");
+      } finally {
+        state.notificationsRequest = null;
       }
+      })();
+
+      return state.notificationsRequest;
     }
 
     function renderNotifications() {
       const badge = document.getElementById("notificationBadge");
       const list = document.getElementById("notificationList");
-      const unreadCount = state.notifications.filter((item) => !item.isRead).length;
+      const unreadCount = Number(state.notificationStats?.unread || 0);
 
       badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
       badge.classList.toggle("active", unreadCount > 0);
 
       if (!state.notifications.length) {
-        list.innerHTML = emptyState("🔔", "Bildirim yok", "Yeni ilan ve şikayetler burada görünecek.");
+        list.innerHTML = emptyState("•", "Bildirim yok", "Yeni ilan ve şikayetler burada görünecek.");
         return;
       }
 
@@ -1879,14 +2134,22 @@
 
     function setupRealtime() {
       if (typeof io !== "function") {
-        showToast("Real-time bağlantı kurulamadı", "error");
+        adminLog("Socket disabled: client not loaded");
         return;
       }
 
-      const socket = io(API_BASE);
+      const socket = io(API_BASE, {
+        transports: ["websocket"],
+        timeout: 2500
+      });
 
       socket.on("connect", () => {
-        console.log("Socket bağlı:", socket.id);
+        adminLog("Socket connected:", socket.id);
+      });
+
+      socket.on("connect_error", (err) => {
+        adminLog("Socket disabled:", err?.message || "connect_error");
+        socket.disconnect();
       });
 
       socket.on("new_listing", async (data) => {
@@ -1928,6 +2191,10 @@
       try {
         await api(`/api/admin/notifications/${id}/read`, { method: "PUT" });
         item.isRead = true;
+        state.notificationStats = {
+          total: Number(state.notificationStats?.total || state.notifications.length || 0),
+          unread: Math.max(0, Number(state.notificationStats?.unread || 0) - 1)
+        };
         renderNotifications();
       } catch (err) {
         showToast(err.message, "error");
@@ -1951,8 +2218,12 @@
     });
     document.getElementById("notificationBell").addEventListener("click", (e) => {
       e.stopPropagation();
-      document.getElementById("notificationDropdown").classList.toggle("active");
-      loadNotifications();
+      const dropdown = document.getElementById("notificationDropdown");
+      const willOpen = !dropdown.classList.contains("active");
+      dropdown.classList.toggle("active");
+      if (willOpen) {
+        loadNotifications();
+      }
     });
     document.getElementById("refreshUsersBtn").addEventListener("click", loadUsers);
     document.getElementById("refreshListingsBtn").addEventListener("click", loadListings);
@@ -2025,17 +2296,31 @@
       }
     });
 
-    applyRoleUi();
-    setupRealtime();
-    loadNotifications();
-    setInterval(loadNotifications, 60000);
+    (async function bootstrapAdminPanel() {
+      if (window.__JETLE_ADMIN_BOOTSTRAPPED) return;
+      window.__JETLE_ADMIN_BOOTSTRAPPED = true;
 
-    if (isAdmin()) {
-      loadDashboard().catch((err) => showToast(err.message, "error"));
-    } else {
-      switchSection("listings");
-    }
+      const accessGranted = await validateAdminSession();
+      if (!accessGranted) return;
+
+      applyRoleUi();
+      setupRealtime();
+      await loadNotifications();
+      setInterval(() => {
+        if (!document.hidden) {
+          loadNotifications();
+        }
+      }, 60000);
+
+      if (isAdmin()) {
+        loadDashboard().catch((err) => showToast(err.message, "error"));
+      } else {
+        switchSection("listings");
+      }
+    })();
   </script>
 </body>
 </html>
+
+
 

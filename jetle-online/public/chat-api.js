@@ -62,6 +62,7 @@
   }
 
   async function sendMessage(payload) {
+    console.log("MESSAGE_POST_PAYLOAD", payload);
     return request("/api/messages", {
       method: "POST",
       body: JSON.stringify(payload)

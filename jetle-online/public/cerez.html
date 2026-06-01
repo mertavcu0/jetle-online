@@ -4,54 +4,78 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Çerez Politikası - jetle.online</title>
-  <style>
-    body {
-      background-color: #f2f3f5;
-    }
-
-    .container {
-      max-width: 750px;
-      margin: 50px auto;
-      background: #fff;
-      padding: 35px 45px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    h1 {
-      font-size: 26px;
-      margin-bottom: 20px;
-      color: #222;
-    }
-
-    p {
-      font-size: 15px;
-      line-height: 1.7;
-      color: #555;
-      margin-bottom: 12px;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 15px;
-      font-size: 14px;
-      color: #007bff;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <main class="container">
-    <h1>Çerez Politikası</h1>
-    <p>Bu web sitesi, kullanıcı deneyimini geliştirmek amacıyla çerezler kullanır.</p>
-    <p>Çerezler, site kullanımınızı analiz etmek ve size daha iyi hizmet sunmak için kullanılmaktadır.</p>
-    <p>Tarayıcı ayarlarınızdan çerezleri kontrol edebilir veya silebilirsiniz.</p>
-    <a href="/index.html">Ana sayfaya dön</a>
+<body class="static-page">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="/index.html">jetle<span>.online</span></a>
+      <form class="search" action="/listings.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="/create-listing.html" class="post-btn">Ücretsiz İlan Ver</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="static-page-main">
+    <section class="static-hero">
+      <p class="static-breadcrumb"><a href="/index.html">Ana Sayfa</a> / Çerez Politikası</p>
+      <h1 class="static-page-title">Çerez Politikası</h1>
+      <p class="static-page-subtitle">Anasayfa ile aynı kap içinde, daha sakin ve düzenli bir yasal sayfa görünümü.</p>
+    </section>
+
+    <article class="static-surface static-policy-surface">
+      <h1>Çerez Politikası</h1>
+      <p>Bu web sitesi, kullanıcı deneyimini geliştirmek amacıyla çerezler kullanır.</p>
+      <p>Çerezler, site kullanımınızı analiz etmek ve size daha iyi hizmet sunmak için kullanılmaktadır.</p>
+      <p>Tarayıcı ayarlarınızdan çerezleri kontrol edebilir veya silebilirsiniz.</p>
+      <p><a href="/index.html">Ana sayfaya dön</a></p>
+    </article>
   </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">Ücretsiz İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
+  </footer>
   <script src="/auth-global.js"></script>
 </body>
 </html>

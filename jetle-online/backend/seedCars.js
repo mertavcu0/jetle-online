@@ -98,7 +98,7 @@ const brandSeedNames = [
   "SsangYong",
   "Suzuki",
   "Tata",
-  "Tofaş",
+  "Tofa�",
   "Togg",
   "UAZ",
   "Vauxhall",
@@ -202,12 +202,12 @@ const detailedSeedData = [
       ] },
       { name: "4C", models: [
         model("1.750 TBi", ["Benzin"], ["Otomatik"], ["Coupe", "Spider"], ["1.75"], ["240 hp"]),
-        model("Coupé", ["Benzin"], ["Otomatik"], ["Coupe"], ["1.75"], ["240 hp"]),
+        model("Coup�", ["Benzin"], ["Otomatik"], ["Coupe"], ["1.75"], ["240 hp"]),
         model("Spider", ["Benzin"], ["Otomatik"], ["Roadster"], ["1.75"], ["240 hp"])
       ] },
       { name: "8C Competizione", models: [
         model("4.7 V8", ["Benzin"], ["Otomatik"], ["Coupe", "Roadster"], ["4.7"], ["450 hp"]),
-        model("Coupé", ["Benzin"], ["Otomatik"], ["Coupe"], ["4.7"], ["450 hp"]),
+        model("Coup�", ["Benzin"], ["Otomatik"], ["Coupe"], ["4.7"], ["450 hp"]),
         model("Spider", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.7"], ["450 hp"])
       ] },
       { name: "GT", models: [
@@ -219,7 +219,7 @@ const detailedSeedData = [
         model("2.2 JTS", ["Benzin"], ["Manuel"], ["Coupe"], ["2.2"], ["185 hp"]),
         model("2.4 JTDm", ["Dizel"], ["Manuel", "Otomatik"], ["Coupe"], ["2.4"], ["200 hp"]),
         model("3.2 JTS", ["Benzin"], ["Manuel", "Otomatik"], ["Coupe"], ["3.2"], ["260 hp"]),
-        model("Coupé", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Coupe"], ["2.2", "2.4", "3.2"], ["185 hp", "260 hp"])
+        model("Coup�", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Coupe"], ["2.2", "2.4", "3.2"], ["185 hp", "260 hp"])
       ] },
       { name: "Spider", models: [
         model("2.2 JTS", ["Benzin"], ["Manuel"], ["Roadster"], ["2.2"], ["185 hp"]),
@@ -228,7 +228,7 @@ const detailedSeedData = [
         model("Roadster", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Roadster"], ["2.2", "2.4", "3.2"], ["185 hp", "260 hp"])
       ] },
       { name: "33 Stradale", models: [
-        model("Sınırlı Üretim", ["Benzin", "Elektrik"], ["Otomatik"], ["Coupe"], ["3.0", "0"], ["620 hp", "750 hp"])
+        model("S�n�rl� �retim", ["Benzin", "Elektrik"], ["Otomatik"], ["Coupe"], ["3.0", "0"], ["620 hp", "750 hp"])
       ] },
       { name: "145 / 146", models: [
         model("145", ["Benzin"], ["Manuel"], ["Hatchback"], ["1.4", "1.6", "2.0"], ["90 hp", "150 hp"]),
@@ -276,13 +276,13 @@ const detailedSeedData = [
         model("Quattro", ["Benzin", "Dizel"], ["Otomatik"], ["Sedan", "Avant", "Allroad"], ["2.0", "3.0"], ["204 hp", "265 hp"])
       ] },
       { name: "A5", models: [
-        model("Coupé", ["Benzin", "Dizel"], ["Otomatik"], ["Coupe"], ["2.0"], ["150 hp", "265 hp"]),
+        model("Coup�", ["Benzin", "Dizel"], ["Otomatik"], ["Coupe"], ["2.0"], ["150 hp", "265 hp"]),
         model("Sportback", ["Benzin", "Dizel"], ["Otomatik"], ["Liftback"], ["2.0"], ["150 hp", "265 hp"]),
         model("Cabrio", ["Benzin"], ["Otomatik"], ["Cabrio"], ["2.0"], ["265 hp"]),
-        model("35 TFSI", ["Benzin"], ["Otomatik"], ["Coupé", "Sportback"], ["2.0"], ["150 hp"]),
-        model("40 TDI", ["Dizel"], ["Otomatik"], ["Coupé", "Sportback"], ["2.0"], ["204 hp"]),
-        model("45 TFSI", ["Benzin"], ["Otomatik"], ["Coupé", "Sportback", "Cabrio"], ["2.0"], ["265 hp"]),
-        model("Quattro", ["Benzin", "Dizel"], ["Otomatik"], ["Coupé", "Sportback", "Cabrio"], ["2.0", "3.0"], ["204 hp", "265 hp"])
+        model("35 TFSI", ["Benzin"], ["Otomatik"], ["Coup�", "Sportback"], ["2.0"], ["150 hp"]),
+        model("40 TDI", ["Dizel"], ["Otomatik"], ["Coup�", "Sportback"], ["2.0"], ["204 hp"]),
+        model("45 TFSI", ["Benzin"], ["Otomatik"], ["Coup�", "Sportback", "Cabrio"], ["2.0"], ["265 hp"]),
+        model("Quattro", ["Benzin", "Dizel"], ["Otomatik"], ["Coup�", "Sportback", "Cabrio"], ["2.0", "3.0"], ["204 hp", "265 hp"])
       ] },
       { name: "A6", models: [
         model("Sedan", ["Benzin", "Dizel"], ["Otomatik"], ["Sedan"], ["2.0", "3.0"], ["204 hp", "340 hp"]),
@@ -355,7 +355,7 @@ const detailedSeedData = [
       { name: "S Modelleri", models: [
         model("S3", ["Benzin"], ["Otomatik"], ["Sedan", "Sportback"], ["2.0"], ["310 hp"]),
         model("S4", ["Dizel", "Benzin"], ["Otomatik"], ["Sedan", "Avant"], ["3.0"], ["347 hp"]),
-        model("S5", ["Dizel", "Benzin"], ["Otomatik"], ["Coupé", "Sportback", "Cabrio"], ["3.0"], ["347 hp"]),
+        model("S5", ["Dizel", "Benzin"], ["Otomatik"], ["Coup�", "Sportback", "Cabrio"], ["3.0"], ["347 hp"]),
         model("S6", ["Dizel", "Benzin"], ["Otomatik"], ["Sedan", "Avant"], ["3.0"], ["344 hp"]),
         model("S7", ["Dizel", "Benzin"], ["Otomatik"], ["Sportback"], ["3.0"], ["344 hp"]),
         model("S8", ["Benzin"], ["Otomatik"], ["Sedan"], ["4.0"], ["571 hp"]),
@@ -367,7 +367,7 @@ const detailedSeedData = [
       { name: "RS Modelleri", models: [
         model("RS3", ["Benzin"], ["Otomatik"], ["Sedan", "Sportback"], ["2.5"], ["400 hp"]),
         model("RS4", ["Benzin"], ["Otomatik"], ["Avant"], ["2.9"], ["450 hp"]),
-        model("RS5", ["Benzin"], ["Otomatik"], ["Coupé", "Sportback"], ["2.9"], ["450 hp"]),
+        model("RS5", ["Benzin"], ["Otomatik"], ["Coup�", "Sportback"], ["2.9"], ["450 hp"]),
         model("RS6", ["Benzin"], ["Otomatik"], ["Avant"], ["4.0"], ["600 hp"]),
         model("RS7", ["Benzin"], ["Otomatik"], ["Sportback"], ["4.0"], ["600 hp"]),
         model("RS Q3", ["Benzin"], ["Otomatik"], ["SUV", "SUV Coupe"], ["2.5"], ["400 hp"]),
@@ -390,12 +390,12 @@ const detailedSeedData = [
         model("SQ8", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["503 hp"])
       ] },
       { name: "TT", models: [
-        model("Coupé", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.0", "2.5"], ["197 hp", "400 hp"]),
+        model("Coup�", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.0", "2.5"], ["197 hp", "400 hp"]),
         model("Roadster", ["Benzin"], ["Otomatik"], ["Roadster"], ["2.0"], ["197 hp"]),
-        model("40 TFSI", ["Benzin"], ["Otomatik"], ["Coupé", "Roadster"], ["2.0"], ["197 hp"]),
-        model("45 TFSI", ["Benzin"], ["Otomatik"], ["Coupé", "Roadster"], ["2.0"], ["245 hp"]),
-        model("TTS", ["Benzin"], ["Otomatik"], ["Coupé", "Roadster"], ["2.0"], ["306 hp"]),
-        model("TT RS", ["Benzin"], ["Otomatik"], ["Coupé"], ["2.5"], ["400 hp"])
+        model("40 TFSI", ["Benzin"], ["Otomatik"], ["Coup�", "Roadster"], ["2.0"], ["197 hp"]),
+        model("45 TFSI", ["Benzin"], ["Otomatik"], ["Coup�", "Roadster"], ["2.0"], ["245 hp"]),
+        model("TTS", ["Benzin"], ["Otomatik"], ["Coup�", "Roadster"], ["2.0"], ["306 hp"]),
+        model("TT RS", ["Benzin"], ["Otomatik"], ["Coup�"], ["2.5"], ["400 hp"])
       ] },
       { name: "R8", models: [
         model("V10 Performance", ["Benzin"], ["Otomatik"], ["Coupe"], ["5.2"], ["620 hp"]),
@@ -508,7 +508,7 @@ const detailedSeedData = [
       ] },
       { name: "ATS", models: [
         model("Sedan", ["Benzin"], ["Otomatik", "Manuel"], ["Sedan"], ["2.0", "2.5", "3.6"], ["202 hp", "335 hp"]),
-        model("Coupé", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.0", "3.6"], ["272 hp", "470 hp"]),
+        model("Coup�", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.0", "3.6"], ["272 hp", "470 hp"]),
         model("2.0T", ["Benzin"], ["Otomatik", "Manuel"], ["Sedan", "Coupe"], ["2.0"], ["272 hp"]),
         model("2.5", ["Benzin"], ["Otomatik"], ["Sedan"], ["2.5"], ["202 hp"]),
         model("3.6 V6", ["Benzin"], ["Otomatik"], ["Sedan", "Coupe"], ["3.6"], ["321 hp"])
@@ -612,8 +612,8 @@ const detailedSeedData = [
       { name: "Brougham", models: [
         model("Brougham", ["Benzin"], ["Otomatik"], ["Sedan"], ["5.0", "5.7"], ["140 hp", "180 hp"])
       ] },
-      { name: "Allanté / XLR", models: [
-        model("Allanté", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.5", "4.6"], ["200 hp", "295 hp"]),
+      { name: "Allant� / XLR", models: [
+        model("Allant�", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.5", "4.6"], ["200 hp", "295 hp"]),
         model("XLR", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.6"], ["320 hp"])
       ] },
       { name: "STS / SRX", models: [
@@ -696,7 +696,7 @@ const detailedSeedData = [
         model("1.6", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["119 hp"])
       ] },
       { name: "Tiggo", models: [
-        model("İlk Nesil", ["Benzin"], ["Manuel", "Otomatik"], ["SUV"], ["1.6", "2.0"], ["119 hp", "139 hp"]),
+        model("�lk Nesil", ["Benzin"], ["Manuel", "Otomatik"], ["SUV"], ["1.6", "2.0"], ["119 hp", "139 hp"]),
         model("2008-2015", ["Benzin"], ["Manuel", "Otomatik"], ["SUV"], ["1.6", "2.0"], ["119 hp", "139 hp"])
       ] }
     ]
@@ -937,7 +937,7 @@ const detailedSeedData = [
         model("Shine", ["Benzin", "Hibrit"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.2"], ["100 hp", "110 hp"]),
         model("Max", ["Benzin", "Hibrit"], ["Otomatik"], ["Hatchback"], ["1.2"], ["110 hp"])
       ] },
-      { name: "ë-C3", models: [
+      { name: "�-C3", models: [
         model("113 HP", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["113 hp"])
       ] },
       { name: "C4", models: [
@@ -948,7 +948,7 @@ const detailedSeedData = [
         model("Shine", ["Benzin", "Dizel", "Hibrit"], ["Otomatik", "Manuel"], ["Hatchback"], ["1.2", "1.5"], ["130 hp", "136 hp"]),
         model("E-Series", ["Benzin", "Hibrit"], ["Otomatik"], ["Hatchback"], ["1.2"], ["130 hp", "136 hp"])
       ] },
-      { name: "ë-C4", models: [
+      { name: "�-C4", models: [
         model("136 HP", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["136 hp"]),
         model("156 HP", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["156 hp"]),
         model("Feel Bold", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["136 hp"]),
@@ -959,7 +959,7 @@ const detailedSeedData = [
         model("1.5 BlueHDi", ["Dizel"], ["Otomatik"], ["Fastback"], ["1.5"], ["130 hp"]),
         model("1.2 Hybrid", ["Hibrit"], ["Otomatik"], ["Fastback"], ["1.2"], ["136 hp"])
       ] },
-      { name: "ë-C4 X", models: [
+      { name: "�-C4 X", models: [
         model("136 HP", ["Elektrik"], ["Otomatik"], ["Fastback"], ["0"], ["136 hp"]),
         model("156 HP", ["Elektrik"], ["Otomatik"], ["Fastback"], ["0"], ["156 hp"])
       ] },
@@ -974,7 +974,7 @@ const detailedSeedData = [
         model("Hybrid 136", ["Hibrit"], ["Otomatik"], ["SUV"], ["1.2"], ["136 hp"]),
         model("7 Koltuklu", ["Benzin", "Dizel", "Hibrit"], ["Manuel", "Otomatik"], ["SUV"], ["1.2", "1.5"], ["110 hp", "136 hp"])
       ] },
-      { name: "ë-C3 Aircross", models: [
+      { name: "�-C3 Aircross", models: [
         model("Elektrikli", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["113 hp"])
       ] },
       { name: "C5 Aircross", models: [
@@ -984,7 +984,7 @@ const detailedSeedData = [
         model("Shine Bold", ["Dizel", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "1.6"], ["130 hp", "225 hp"]),
         model("Max", ["Dizel", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "1.6"], ["130 hp", "225 hp"])
       ] },
-      { name: "ë-C5 Aircross", models: [
+      { name: "�-C5 Aircross", models: [
         model("Elektrikli", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["210 hp"])
       ] },
       { name: "Berlingo", models: [
@@ -994,7 +994,7 @@ const detailedSeedData = [
         model("Shine", ["Dizel"], ["Otomatik"], ["MPV"], ["1.5"], ["130 hp"]),
         model("XTR", ["Dizel"], ["Manuel", "Otomatik"], ["MPV"], ["1.5"], ["130 hp"])
       ] },
-      { name: "ë-Berlingo", models: [
+      { name: "�-Berlingo", models: [
         model("50 kWh", ["Elektrik"], ["Otomatik"], ["MPV", "Van"], ["0"], ["136 hp"]),
         model("136 HP", ["Elektrik"], ["Otomatik"], ["MPV", "Van"], ["0"], ["136 hp"])
       ] },
@@ -1004,7 +1004,7 @@ const detailedSeedData = [
         model("Cityvan", ["Dizel"], ["Manuel", "Otomatik"], ["Van"], ["2.0"], ["145 hp"]),
         model("8+1", ["Dizel"], ["Otomatik"], ["Minibus"], ["2.0"], ["180 hp"])
       ] },
-      { name: "ë-Jumpy", models: [
+      { name: "�-Jumpy", models: [
         model("Elektrikli Panelvan", ["Elektrik"], ["Otomatik"], ["Van"], ["0"], ["136 hp"])
       ] },
       { name: "Jumper", models: [
@@ -1014,7 +1014,7 @@ const detailedSeedData = [
         model("L3H2", ["Dizel"], ["Manuel"], ["Van"], ["2.2"], ["140 hp", "165 hp"]),
         model("L4H3", ["Dizel"], ["Manuel"], ["Van"], ["2.2"], ["165 hp"])
       ] },
-      { name: "ë-Jumper", models: [
+      { name: "�-Jumper", models: [
         model("Elektrikli Ticari", ["Elektrik"], ["Otomatik"], ["Van"], ["0"], ["122 hp"])
       ] },
       { name: "C-Elysee", models: [
@@ -1029,7 +1029,7 @@ const detailedSeedData = [
         model("Airbump", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Crossover"], ["1.2", "1.6"], ["82 hp", "100 hp"])
       ] },
       { name: "C1", models: [
-        model("Şehir içi Mini", ["Benzin"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.0"], ["68 hp", "72 hp"])
+        model("�ehir i�i Mini", ["Benzin"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.0"], ["68 hp", "72 hp"])
       ] },
       { name: "C5", models: [
         model("Sedan", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Sedan"], ["1.6", "2.0"], ["110 hp", "180 hp"]),
@@ -1097,7 +1097,7 @@ const detailedSeedData = [
         model("e-Boost", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["231 hp"])
       ] },
       { name: "Raval", models: [
-        model("Elektrikli Şehir Otomobili", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["226 hp"])
+        model("Elektrikli �ehir Otomobili", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["226 hp"])
       ] },
       { name: "VZ", models: [
         model("Veloz Performans Paketi", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5", "2.0"], ["204 hp", "340 hp"])
@@ -1107,19 +1107,19 @@ const detailedSeedData = [
         model("Formentor VZ5", ["Benzin"], ["Otomatik"], ["SUV Coupe"], ["2.5"], ["390 hp"])
       ] },
       { name: "VZ Extreme", models: [
-        model("Pist Odaklı Performans", ["Benzin"], ["Otomatik"], ["SUV Coupe", "Hatchback"], ["2.0", "2.5"], ["333 hp", "390 hp"])
+        model("Pist Odakl� Performans", ["Benzin"], ["Otomatik"], ["SUV Coupe", "Hatchback"], ["2.0", "2.5"], ["333 hp", "390 hp"])
       ] },
       { name: "Impulse / V1", models: [
-        model("Giriş Donanım", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik", "Manuel"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5"], ["150 hp", "204 hp"])
+        model("Giri� Donan�m", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik", "Manuel"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5"], ["150 hp", "204 hp"])
       ] },
       { name: "Supreme / V2", models: [
         model("Konfor ve Teknoloji", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik", "Manuel"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5", "2.0"], ["150 hp", "231 hp"])
       ] },
       { name: "VZ-Line / VZ3", models: [
-        model("Spor Donanım", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5", "2.0"], ["204 hp", "340 hp"])
+        model("Spor Donan�m", ["Benzin", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "SUV Coupe"], ["0", "1.5", "2.0"], ["204 hp", "340 hp"])
       ] },
       { name: "Tribe Edition", models: [
-        model("Özel Tasarım", ["Benzin", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV Coupe"], ["1.5", "2.0"], ["150 hp", "204 hp"])
+        model("�zel Tasar�m", ["Benzin", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV Coupe"], ["1.5", "2.0"], ["150 hp", "204 hp"])
       ] }
     ]
   },
@@ -1355,7 +1355,7 @@ const detailedSeedData = [
       { name: "GLS", models: [
         model("450", ["Benzin"], ["Otomatik"], ["SUV"], ["3.0"], ["381 hp"]),
         model("580", ["Benzin"], ["Otomatik"], ["SUV"], ["4.0"], ["517 hp"]),
-        model("7 Kişilik", ["Benzin"], ["Otomatik"], ["SUV"], ["3.0", "4.0"], ["381 hp", "517 hp"])
+        model("7 Ki�ilik", ["Benzin"], ["Otomatik"], ["SUV"], ["3.0", "4.0"], ["381 hp", "517 hp"])
       ] },
       { name: "G-Serisi", models: [
         model("G 450 d", ["Dizel"], ["Otomatik"], ["SUV"], ["3.0"], ["367 hp"]),
@@ -1373,8 +1373,8 @@ const detailedSeedData = [
         model("GT 43", ["Benzin"], ["Otomatik"], ["Coupe", "Sedan"], ["2.0"], ["421 hp"]),
         model("GT 53", ["Benzin"], ["Otomatik"], ["Coupe", "Sedan"], ["3.0"], ["435 hp"]),
         model("GT 63 S E Performance", ["Hibrit"], ["Otomatik"], ["Coupe", "Sedan"], ["4.0"], ["843 hp"]),
-        model("4-Kapı", ["Benzin", "Hibrit"], ["Otomatik"], ["Sedan"], ["2.0", "3.0", "4.0"], ["421 hp", "843 hp"]),
-        model("2-Kapı", ["Benzin"], ["Otomatik"], ["Coupe"], ["4.0"], ["585 hp"])
+        model("4-Kap�", ["Benzin", "Hibrit"], ["Otomatik"], ["Sedan"], ["2.0", "3.0", "4.0"], ["421 hp", "843 hp"]),
+        model("2-Kap�", ["Benzin"], ["Otomatik"], ["Coupe"], ["4.0"], ["585 hp"])
       ] },
       { name: "SL Roadster", models: [
         model("SL 43", ["Benzin"], ["Otomatik"], ["Roadster"], ["2.0"], ["381 hp"]),
@@ -1576,7 +1576,7 @@ const detailedSeedData = [
         model("2.0 TDI BlueMotion", ["Dizel"], ["Manuel", "Otomatik"], ["Station Wagon"], ["2.0"], ["150 hp"]),
         model("2.5 TDI", ["Dizel"], ["Manuel", "Otomatik"], ["Station Wagon"], ["2.5"], ["150 hp"])
       ] },
-      { name: "Diğer Seriler", models: [
+      { name: "Di�er Seriler", models: [
         model("Phaeton", ["Benzin", "Dizel"], ["Otomatik"], ["Sedan"], ["3.0", "3.2", "4.2", "6.0"], ["224 hp", "420 hp"]),
         model("Polo", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.0", "1.2", "1.4", "1.6", "1.9"], ["60 hp", "110 hp"]),
         model("Scirocco", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["Coupe"], ["1.4", "2.0"], ["122 hp", "280 hp"]),
@@ -2230,7 +2230,7 @@ const detailedSeedData = [
         model("Cross", ["Hibrit"], ["Manuel"], ["Hatchback"], ["1.0"], ["70 hp"]),
         model("Cross 4x4", ["Hibrit"], ["Manuel"], ["Hatchback"], ["1.0"], ["70 hp"])
       ] },
-      { name: "Doblo / ë-Doblo", models: [
+      { name: "Doblo / �-Doblo", models: [
         model("1.5 BlueHDi 100 HP", ["Dizel"], ["Manuel"], ["Van", "Kombi"], ["1.5"], ["100 hp"]),
         model("1.5 BlueHDi 130 HP", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kombi"], ["1.5"], ["130 hp"]),
         model("100 kW Elektrikli", ["Elektrik"], ["Otomatik"], ["Van", "Kombi"], ["0"], ["136 hp"]),
@@ -2256,12 +2256,12 @@ const detailedSeedData = [
         model("8+1", ["Dizel"], ["Otomatik"], ["Minibus"], ["2.0"], ["180 hp"]),
         model("9+1", ["Dizel"], ["Otomatik"], ["Minibus"], ["2.0"], ["180 hp"])
       ] },
-      { name: "Ducato / ë-Ducato", models: [
-        model("2.2 MultiJet 140 HP", ["Dizel"], ["Manuel"], ["Van", "Kamyonet", "Minibüs"], ["2.2"], ["140 hp"]),
-        model("2.2 MultiJet 180 HP", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet", "Minibüs"], ["2.2"], ["180 hp"]),
+      { name: "Ducato / �-Ducato", models: [
+        model("2.2 MultiJet 140 HP", ["Dizel"], ["Manuel"], ["Van", "Kamyonet", "Minib�s"], ["2.2"], ["140 hp"]),
+        model("2.2 MultiJet 180 HP", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet", "Minib�s"], ["2.2"], ["180 hp"]),
         model("Van", ["Dizel", "Elektrik"], ["Manuel", "Otomatik"], ["Van"], ["0", "2.2"], ["122 hp", "180 hp"]),
         model("Kamyonet", ["Dizel", "Elektrik"], ["Manuel", "Otomatik"], ["Kamyonet"], ["0", "2.2"], ["122 hp", "180 hp"]),
-        model("Minibüs", ["Dizel", "Elektrik"], ["Manuel", "Otomatik"], ["Minibüs"], ["0", "2.2"], ["122 hp", "180 hp"])
+        model("Minib�s", ["Dizel", "Elektrik"], ["Manuel", "Otomatik"], ["Minib�s"], ["0", "2.2"], ["122 hp", "180 hp"])
       ] },
       { name: "Linea", models: [
         model("1.3 MultiJet", ["Dizel"], ["Manuel"], ["Sedan"], ["1.3"], ["95 hp"]),
@@ -2310,7 +2310,7 @@ const detailedSeedData = [
         model("EcoBoost", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe", "Cabrio"], ["2.3"], ["315 hp"]),
         model("GT V8", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe", "Cabrio"], ["5.0"], ["446 hp", "454 hp"]),
         model("Dark Horse", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["5.0"], ["453 hp"]),
-        model("Coupé", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.3", "5.0"], ["315 hp", "454 hp"]),
+        model("Coup�", ["Benzin"], ["Otomatik", "Manuel"], ["Coupe"], ["2.3", "5.0"], ["315 hp", "454 hp"]),
         model("Convertible", ["Benzin"], ["Otomatik", "Manuel"], ["Cabrio"], ["2.3", "5.0"], ["315 hp", "446 hp"])
       ] },
       { name: "Mustang GTD", models: [
@@ -2442,17 +2442,17 @@ const detailedSeedData = [
       { name: "Transit", models: [
         model("Van", ["Dizel"], ["Manuel", "Otomatik"], ["Van"], ["2.0"], ["130 hp", "165 hp"]),
         model("Kamyonet", ["Dizel"], ["Manuel", "Otomatik"], ["Kamyonet"], ["2.0"], ["130 hp", "165 hp"]),
-        model("Minibüs", ["Dizel"], ["Manuel", "Otomatik"], ["Minibüs"], ["2.0"], ["130 hp", "165 hp"]),
+        model("Minib�s", ["Dizel"], ["Manuel", "Otomatik"], ["Minib�s"], ["2.0"], ["130 hp", "165 hp"]),
         model("L2H2", ["Dizel"], ["Manuel", "Otomatik"], ["Van"], ["2.0"], ["130 hp", "165 hp"]),
         model("L3H2", ["Dizel"], ["Manuel", "Otomatik"], ["Van"], ["2.0"], ["130 hp", "165 hp"]),
         model("L4H3", ["Dizel"], ["Manuel", "Otomatik"], ["Van"], ["2.0"], ["130 hp", "165 hp"]),
-        model("Önden Çekiş", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet"], ["2.0"], ["130 hp", "165 hp"]),
-        model("Arkadan İtiş", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet", "Minibüs"], ["2.0"], ["130 hp", "165 hp"])
+        model("�nden �eki�", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet"], ["2.0"], ["130 hp", "165 hp"]),
+        model("Arkadan �ti�", ["Dizel"], ["Manuel", "Otomatik"], ["Van", "Kamyonet", "Minib�s"], ["2.0"], ["130 hp", "165 hp"])
       ] },
       { name: "E-Transit / E-Tourneo", models: [
         model("E-Transit Custom", ["Elektrik"], ["Otomatik"], ["Van"], ["0"], ["218 hp"]),
         model("E-Tourneo Custom", ["Elektrik"], ["Otomatik"], ["MPV"], ["0"], ["218 hp"]),
-        model("E-Transit", ["Elektrik"], ["Otomatik"], ["Van", "Kamyonet", "Minibüs"], ["0"], ["184 hp", "269 hp"])
+        model("E-Transit", ["Elektrik"], ["Otomatik"], ["Van", "Kamyonet", "Minib�s"], ["0"], ["184 hp", "269 hp"])
       ] }
     ]
   },
@@ -3019,7 +3019,7 @@ const detailedSeedData = [
         model("Elektrikli B-SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["204 hp"])
       ] },
       { name: "CR-V e:FCEV", models: [
-        model("Hidrojen Yakıt Hücreli", ["Hidrojen"], ["Otomatik"], ["SUV"], ["0"], ["174 hp"]),
+        model("Hidrojen Yak�t H�creli", ["Hidrojen"], ["Otomatik"], ["SUV"], ["0"], ["174 hp"]),
         model("Plug-in Hibrit", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.0"], ["184 hp"])
       ] },
       { name: "Jazz e:HEV / Fit", models: [
@@ -3038,7 +3038,7 @@ const detailedSeedData = [
         model("Roadster", ["Benzin"], ["Manuel"], ["Roadster"], ["2.0", "2.2"], ["240 hp"])
       ] },
       { name: "Legend", models: [
-        model("V6 Lüks Sedan", ["Benzin"], ["Otomatik"], ["Sedan"], ["3.5"], ["295 hp"])
+        model("V6 L�ks Sedan", ["Benzin"], ["Otomatik"], ["Sedan"], ["3.5"], ["295 hp"])
       ] },
       { name: "CR-Z", models: [
         model("Hibrit Spor Hatchback", ["Hibrit"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.5"], ["124 hp"])
@@ -3160,7 +3160,7 @@ const detailedSeedData = [
         model("239 kW", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["325 hp"])
       ] },
       { name: "IONIQ 9", models: [
-        model("3 Sıralı Elektrikli SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["308 hp"])
+        model("3 S�ral� Elektrikli SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["308 hp"])
       ] },
       { name: "i20 N", models: [
         model("1.6 T-GDI 204 HP", ["Benzin"], ["Manuel"], ["Hatchback"], ["1.6"], ["204 hp"])
@@ -3187,7 +3187,7 @@ const detailedSeedData = [
         model("2.5 CRDi", ["Dizel"], ["Manuel"], ["Kamyonet", "Panelvan"], ["2.5"], ["130 hp"])
       ] },
       { name: "XCIENT", models: [
-        model("Ağır Ticari", ["Dizel", "Hidrojen"], ["Otomatik", "Manuel"], ["Kamyon"], ["10.0", "12.7"], ["350 hp", "540 hp"])
+        model("A��r Ticari", ["Dizel", "Hidrojen"], ["Otomatik", "Manuel"], ["Kamyon"], ["10.0", "12.7"], ["350 hp", "540 hp"])
       ] }
     ]
   },
@@ -3244,15 +3244,15 @@ const detailedSeedData = [
         model("1.7L XU7+", ["Benzin"], ["Manuel"], ["Pickup"], ["1.7"], ["98 hp"])
       ] },
       { name: "Ataman", models: [
-        model("Ağır Ticari", ["Dizel"], ["Manuel"], ["Kamyon"], ["11.9"], ["420 hp"]),
+        model("A��r Ticari", ["Dizel"], ["Manuel"], ["Kamyon"], ["11.9"], ["420 hp"]),
         model("Mercedes-Benz OM457", ["Dizel"], ["Manuel"], ["Kamyon"], ["11.9"], ["420 hp"])
       ] },
       { name: "Arna", models: [
         model("Hafif Ticari Kamyonet", ["Benzin"], ["Manuel"], ["Kamyonet"], ["1.7"], ["86 hp"])
       ] },
       { name: "Atros", models: [
-        model("Belediye Otobüsü", ["Dizel"], ["Otomatik", "Manuel"], ["Otobüs"], ["11.9"], ["360 hp"]),
-        model("Şehirler Arası Otobüs", ["Dizel"], ["Otomatik", "Manuel"], ["Otobüs"], ["11.9"], ["420 hp"])
+        model("Belediye Otob�s�", ["Dizel"], ["Otomatik", "Manuel"], ["Otob�s"], ["11.9"], ["360 hp"]),
+        model("�ehirler Aras� Otob�s", ["Dizel"], ["Otomatik", "Manuel"], ["Otob�s"], ["11.9"], ["420 hp"])
       ] },
       { name: "Haima Serisi", models: [
         model("S5", ["Benzin"], ["Otomatik"], ["SUV"], ["1.5"], ["161 hp"]),
@@ -3265,7 +3265,7 @@ const detailedSeedData = [
         model("405 SLX", ["Benzin"], ["Manuel"], ["Sedan"], ["1.8"], ["100 hp"])
       ] },
       { name: "Tondar 90", models: [
-        model("Dacia Logan Tabanlı", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["105 hp"])
+        model("Dacia Logan Tabanl�", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["105 hp"])
       ] }
     ]
   },
@@ -3301,25 +3301,25 @@ const detailedSeedData = [
         model("2.0L VC-Turbo", ["Benzin"], ["Otomatik"], ["SUV"], ["2.0"], ["268 hp"])
       ] },
       { name: "QX65", models: [
-        model("SUV Coupé", ["Benzin"], ["Otomatik"], ["SUV Coupe"], ["2.0"], ["268 hp"])
+        model("SUV Coup�", ["Benzin"], ["Otomatik"], ["SUV Coupe"], ["2.0"], ["268 hp"])
       ] },
       { name: "Vision Qe", models: [
-        model("Elektrikli Lüks Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["402 hp"])
+        model("Elektrikli L�ks Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["402 hp"])
       ] },
       { name: "Vision QXe", models: [
         model("Elektrikli SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["408 hp"])
       ] },
       { name: "PURE", models: [
-        model("Giriş Donanım", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
+        model("Giri� Donan�m", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
       ] },
       { name: "LUXE", models: [
-        model("Konfor ve Güvenlik", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
+        model("Konfor ve G�venlik", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
       ] },
       { name: "SPORT", models: [
-        model("Sportif Tasarım", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
+        model("Sportif Tasar�m", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
       ] },
       { name: "AUTOGRAPH", models: [
-        model("Üst Seviye Lüks", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
+        model("�st Seviye L�ks", ["Benzin"], ["Otomatik"], ["SUV", "Sedan"], ["2.0", "3.5"], ["268 hp", "450 hp"])
       ] },
       { name: "Q50", models: [
         model("Spor Sedan", ["Benzin", "Hibrit"], ["Otomatik"], ["Sedan"], ["2.0", "3.0", "3.5"], ["208 hp", "400 hp"])
@@ -3327,7 +3327,7 @@ const detailedSeedData = [
       { name: "Q60", models: [
         model("2.0t", ["Benzin"], ["Otomatik"], ["Coupe"], ["2.0"], ["208 hp"]),
         model("3.0t Red Sport", ["Benzin"], ["Otomatik"], ["Coupe"], ["3.0"], ["400 hp"]),
-        model("Spor Coupé", ["Benzin"], ["Otomatik"], ["Coupe"], ["2.0", "3.0"], ["208 hp", "400 hp"])
+        model("Spor Coup�", ["Benzin"], ["Otomatik"], ["Coupe"], ["2.0", "3.0"], ["208 hp", "400 hp"])
       ] },
       { name: "QX70 / FX", models: [
         model("3.0d", ["Dizel"], ["Otomatik"], ["SUV"], ["3.0"], ["238 hp"]),
@@ -3350,11 +3350,11 @@ const detailedSeedData = [
         model("Elektrikli", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["800 hp", "1000 hp"]),
         model("800 HP", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["800 hp"]),
         model("1000 HP", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["1000 hp"]),
-        model("4 Kapılı Grand Tourer", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["800 hp", "1000 hp"]),
+        model("4 Kap�l� Grand Tourer", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["800 hp", "1000 hp"]),
         model("700 km+ Menzil", ["Elektrik"], ["Otomatik"], ["Grand Tourer"], ["0"], ["800 hp", "1000 hp"])
       ] },
       { name: "Jaguar Luxury SUV", models: [
-        model("Elektrikli Lüks SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["600 hp"])
+        model("Elektrikli L�ks SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["600 hp"])
       ] },
       { name: "Jaguar I-Type", models: [
         model("Elektrikli Spor Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["400 hp"])
@@ -3396,16 +3396,16 @@ const detailedSeedData = [
         model("V8", ["Benzin"], ["Otomatik"], ["Coupe", "Roadster"], ["5.0"], ["450 hp", "575 hp"])
       ] },
       { name: "XJ Serisi", models: [
-        model("Lüks Sedan", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Sedan"], ["2.0", "3.0", "5.0"], ["180 hp", "510 hp"])
+        model("L�ks Sedan", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Sedan"], ["2.0", "3.0", "5.0"], ["180 hp", "510 hp"])
       ] },
       { name: "SVR", models: [
         model("SVO Performans", ["Benzin"], ["Otomatik"], ["SUV", "Coupe"], ["5.0"], ["575 hp"])
       ] },
       { name: "R-Dynamic", models: [
-        model("Sportif Donanım", ["Benzin", "Dizel"], ["Otomatik"], ["SUV", "Sedan", "Coupe"], ["2.0", "3.0"], ["180 hp", "400 hp"])
+        model("Sportif Donan�m", ["Benzin", "Dizel"], ["Otomatik"], ["SUV", "Sedan", "Coupe"], ["2.0", "3.0"], ["180 hp", "400 hp"])
       ] },
       { name: "Chequered Flag", models: [
-        model("Özel Seri", ["Benzin"], ["Otomatik"], ["Coupe", "Roadster"], ["2.0", "3.0"], ["300 hp", "380 hp"])
+        model("�zel Seri", ["Benzin"], ["Otomatik"], ["Coupe", "Roadster"], ["2.0", "3.0"], ["300 hp", "380 hp"])
       ] }
     ]
   },
@@ -3496,7 +3496,7 @@ const detailedSeedData = [
       { name: "EV6 / EV6 GT", models: [
         model("170 HP", ["Elektrik"], ["Otomatik"], ["Crossover"], ["0"], ["170 hp"]),
         model("585 HP", ["Elektrik"], ["Otomatik"], ["Crossover"], ["0"], ["585 hp"]),
-        model("Hızlı Şarj", ["Elektrik"], ["Otomatik"], ["Crossover"], ["0"], ["170 hp", "585 hp"])
+        model("H�zl� �arj", ["Elektrik"], ["Otomatik"], ["Crossover"], ["0"], ["170 hp", "585 hp"])
       ] },
       { name: "EV9", models: [
         model("6 Koltuklu", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["204 hp", "385 hp"]),
@@ -3546,8 +3546,8 @@ const detailedSeedData = [
         model("Retro Modern", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["90 hp"])
       ] },
       { name: "Niva Legend", models: [
-        model("3 Kapı", ["Benzin"], ["Manuel"], ["SUV"], ["1.7"], ["83 hp"]),
-        model("5 Kapı", ["Benzin"], ["Manuel"], ["SUV"], ["1.7"], ["83 hp"]),
+        model("3 Kap�", ["Benzin"], ["Manuel"], ["SUV"], ["1.7"], ["83 hp"]),
+        model("5 Kap�", ["Benzin"], ["Manuel"], ["SUV"], ["1.7"], ["83 hp"]),
         model("Bronto", ["Benzin"], ["Manuel"], ["SUV"], ["1.7"], ["83 hp"])
       ] },
       { name: "Niva Travel", models: [
@@ -3586,7 +3586,7 @@ const detailedSeedData = [
         model("Liftback", ["Benzin"], ["Manuel", "Otomatik"], ["Liftback"], ["1.6"], ["90 hp", "106 hp"])
       ] },
       { name: "Granta Cross", models: [
-        model("Yükseltilmiş Süspansiyon", ["Benzin"], ["Manuel"], ["Crossover"], ["1.6"], ["90 hp", "106 hp"])
+        model("Y�kseltilmi� S�spansiyon", ["Benzin"], ["Manuel"], ["Crossover"], ["1.6"], ["90 hp", "106 hp"])
       ] },
       { name: "Granta Sportline", models: [
         model("Sportline", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["118 hp"])
@@ -3596,7 +3596,7 @@ const detailedSeedData = [
         model("7 Koltuklu", ["Benzin"], ["Manuel"], ["Station Wagon"], ["1.6"], ["90 hp", "106 hp"])
       ] },
       { name: "Largus Cross", models: [
-        model("Yükseltilmiş Şasi", ["Benzin"], ["Manuel"], ["Crossover"], ["1.6"], ["106 hp"])
+        model("Y�kseltilmi� �asi", ["Benzin"], ["Manuel"], ["Crossover"], ["1.6"], ["106 hp"])
       ] },
       { name: "e-Largus", models: [
         model("Elektrikli Ticari", ["Elektrik"], ["Otomatik"], ["Panelvan"], ["0"], ["163 hp"])
@@ -3622,7 +3622,7 @@ const detailedSeedData = [
         model("Sedan", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["98 hp", "106 hp"]),
         model("Hatchback", ["Benzin"], ["Manuel"], ["Hatchback"], ["1.6"], ["98 hp", "106 hp"])
       ] },
-      { name: "Zhiguli / Kuş Serisi", models: [
+      { name: "Zhiguli / Ku� Serisi", models: [
         model("2101", ["Benzin"], ["Manuel"], ["Sedan"], ["1.2"], ["64 hp"]),
         model("2105", ["Benzin"], ["Manuel"], ["Sedan"], ["1.3", "1.5"], ["65 hp", "71 hp"]),
         model("2107", ["Benzin"], ["Manuel"], ["Sedan"], ["1.5"], ["71 hp"])
@@ -3634,7 +3634,7 @@ const detailedSeedData = [
     series: [
       { name: "Aventador Serisi", models: [
         model("LP 700-4", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["700 hp"]),
-        model("LP 720-4 50° Anniversario", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["720 hp"]),
+        model("LP 720-4 50� Anniversario", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["720 hp"]),
         model("LP 750-4 SV", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["750 hp"]),
         model("LP 770-4 SVJ", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["770 hp"]),
         model("Aventador S", ["Benzin"], ["Otomatik"], ["Coupe"], ["6.5"], ["740 hp"]),
@@ -3749,7 +3749,7 @@ const detailedSeedData = [
         model("MPV", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["MPV"], ["2.0", "2.2", "3.0"], ["120 hp", "204 hp"])
       ] },
       { name: "Voyager", models: [
-        model("Lüks MPV", ["Dizel"], ["Otomatik"], ["MPV"], ["2.8"], ["163 hp"])
+        model("L�ks MPV", ["Dizel"], ["Otomatik"], ["MPV"], ["2.8"], ["163 hp"])
       ] },
       { name: "Flavia", models: [
         model("Cabrio", ["Benzin"], ["Otomatik"], ["Roadster"], ["2.4"], ["175 hp"])
@@ -3797,10 +3797,10 @@ const detailedSeedData = [
         model("Extended Range Electric", ["Hibrit"], ["Otomatik"], ["SUV", "Sedan"], ["1.5"], ["218 hp", "272 hp"])
       ] },
       { name: "Performance", models: [
-        model("Yüksek Performans", ["Elektrik"], ["Otomatik"], ["SUV", "Sedan"], ["0"], ["544 hp"])
+        model("Y�ksek Performans", ["Elektrik"], ["Otomatik"], ["SUV", "Sedan"], ["0"], ["544 hp"])
       ] },
       { name: "Intelligent", models: [
-        model("Akıllı Sürüş Paketleri", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["231 hp", "292 hp"])
+        model("Ak�ll� S�r�� Paketleri", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["231 hp", "292 hp"])
       ] }
     ]
   },
@@ -3928,7 +3928,7 @@ const detailedSeedData = [
         model("TX 350", ["Benzin"], ["Otomatik"], ["SUV"], ["2.4"], ["275 hp"]),
         model("TX 500h", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.4"], ["366 hp"]),
         model("TX 550h+", ["Hibrit"], ["Otomatik"], ["SUV"], ["3.5"], ["406 hp"]),
-        model("3 Sıra Koltuklu", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.4", "3.5"], ["275 hp", "406 hp"])
+        model("3 S�ra Koltuklu", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.4", "3.5"], ["275 hp", "406 hp"])
       ] },
       { name: "GX Serisi", models: [
         model("GX 550", ["Benzin"], ["Otomatik"], ["SUV"], ["3.4"], ["349 hp"]),
@@ -3949,7 +3949,7 @@ const detailedSeedData = [
       { name: "Navigator", models: [
         model("Navigator", ["Benzin"], ["Otomatik"], ["SUV"], ["3.5"], ["440 hp"]),
         model("Navigator L", ["Benzin"], ["Otomatik"], ["SUV"], ["3.5"], ["440 hp"]),
-        model("Uzun Şasi", ["Benzin"], ["Otomatik"], ["SUV"], ["3.5"], ["440 hp"])
+        model("Uzun �asi", ["Benzin"], ["Otomatik"], ["SUV"], ["3.5"], ["440 hp"])
       ] },
       { name: "Aviator", models: [
         model("Aviator", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["3.0"], ["400 hp", "494 hp"])
@@ -3961,20 +3961,20 @@ const detailedSeedData = [
         model("Corsair", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5"], ["250 hp", "266 hp"])
       ] },
       { name: "Premiere", models: [
-        model("Giriş Seviyesi Modern Lüks", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
+        model("Giri� Seviyesi Modern L�ks", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
       ] },
       { name: "Reserve", models: [
         model("Konfor ve Teknoloji", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
       ] },
       { name: "Black Label", models: [
-        model("Ultra Lüks Özel Tasarım", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
+        model("Ultra L�ks �zel Tasar�m", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
       ] },
       { name: "Grand Touring", models: [
         model("PHEV", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.5", "3.0"], ["266 hp", "494 hp"]),
         model("Plug-in Hybrid", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.5", "3.0"], ["266 hp", "494 hp"])
       ] },
       { name: "Jet Appearance Package", models: [
-        model("Siyah Detaylı Sportif Paket", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
+        model("Siyah Detayl� Sportif Paket", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0", "2.5", "3.0", "3.5"], ["250 hp", "494 hp"])
       ] }
     ]
   },
@@ -4056,7 +4056,7 @@ const detailedSeedData = [
         model("GranCabrio Folgore", ["Elektrik"], ["Otomatik"], ["Roadster"], ["0"], ["761 hp"])
       ] },
       { name: "Quattroporte Folgore", models: [
-        model("Elektrikli Lüks Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["761 hp"])
+        model("Elektrikli L�ks Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["761 hp"])
       ] },
       { name: "Ghibli", models: [
         model("V6", ["Benzin"], ["Otomatik"], ["Sedan"], ["3.0"], ["350 hp", "430 hp"]),
@@ -4079,7 +4079,7 @@ const detailedSeedData = [
       { name: "GranSport", models: [
         model("GranSport", ["Benzin"], ["Otomatik"], ["Coupe"], ["4.2"], ["400 hp"])
       ] },
-      { name: "GranCabrio klasik versiyonları", models: [
+      { name: "GranCabrio klasik versiyonlar�", models: [
         model("GranCabrio Sport", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.7"], ["460 hp"]),
         model("GranCabrio MC", ["Benzin"], ["Otomatik"], ["Roadster"], ["4.7"], ["460 hp"])
       ] }
@@ -4297,7 +4297,7 @@ const detailedSeedData = [
         model("PHEV", ["Hibrit"], ["Otomatik"], ["Sedan"], ["1.5"], ["305 hp"])
       ] },
       { name: "MG 07", models: [
-        model("Lüks Coupe-Sedan", ["Hibrit"], ["Otomatik"], ["Coupe", "Sedan"], ["1.5"], ["257 hp"]),
+        model("L�ks Coupe-Sedan", ["Hibrit"], ["Otomatik"], ["Coupe", "Sedan"], ["1.5"], ["257 hp"]),
         model("AI destekli", ["Hibrit"], ["Otomatik"], ["Coupe", "Sedan"], ["1.5"], ["257 hp"])
       ] },
       { name: "Cyberster", models: [
@@ -4313,7 +4313,7 @@ const detailedSeedData = [
         model("Hibrit Teknoloji", ["Hibrit"], ["Otomatik"], ["Hatchback", "SUV"], ["1.5"], ["194 hp", "224 PS"])
       ] },
       { name: "MG Pilot", models: [
-        model("Sürüş Destek Sistemi", ["Benzin", "Elektrik", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["0", "1.5"], ["136 hp", "257 hp"])
+        model("S�r�� Destek Sistemi", ["Benzin", "Elektrik", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["0", "1.5"], ["136 hp", "257 hp"])
       ] },
       { name: "Vibe / Excite / Essence", models: [
         model("Vibe", ["Benzin", "Hibrit"], ["Manuel", "Otomatik"], ["Hatchback"], ["1.5"], ["115 hp", "194 hp"]),
@@ -4345,13 +4345,13 @@ const detailedSeedData = [
     name: "Mini",
     series: [
       { name: "Cooper Serisi", models: [
-        model("Cooper 2 Door / 3 Kapı", ["Benzin"], ["Otomatik"], ["Hatchback"], ["1.5", "2.0"], ["156 HP", "204 HP"]),
+        model("Cooper 2 Door / 3 Kap�", ["Benzin"], ["Otomatik"], ["Hatchback"], ["1.5", "2.0"], ["156 HP", "204 HP"]),
         model("Cooper C", ["Benzin"], ["Otomatik"], ["Hatchback"], ["1.5"], ["156 HP"]),
         model("Cooper S", ["Benzin"], ["Otomatik"], ["Hatchback"], ["2.0"], ["204 HP"]),
         model("156 HP", ["Benzin"], ["Otomatik"], ["Hatchback"], ["1.5"], ["156 HP"]),
         model("204 HP", ["Benzin"], ["Otomatik"], ["Hatchback"], ["2.0"], ["204 HP"])
       ] },
-      { name: "Cooper 4 Door / 5 Kapı", models: [
+      { name: "Cooper 4 Door / 5 Kap�", models: [
         model("Cooper C", ["Benzin"], ["Otomatik"], ["Hatchback"], ["1.5"], ["156 HP"]),
         model("Cooper S", ["Benzin"], ["Otomatik"], ["Hatchback"], ["2.0"], ["204 HP"])
       ] },
@@ -4469,13 +4469,13 @@ const detailedSeedData = [
         model("Sportif Paket", ["Benzin", "Dizel"], ["Manuel", "Otomatik"], ["SUV", "Pickup"], ["1.5", "2.4"], ["105 hp", "220 hp"])
       ] },
       { name: "Black Edition", models: [
-        model("Siyah Tasarım Paketi", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.4"], ["248 hp"])
+        model("Siyah Tasar�m Paketi", ["Hibrit"], ["Otomatik"], ["SUV"], ["2.4"], ["248 hp"])
       ] },
       { name: "S-AWC", models: [
         model("Super All-Wheel Control", ["Benzin", "Hibrit", "Dizel"], ["Otomatik"], ["SUV", "Pickup"], ["1.5", "2.4"], ["152 hp", "248 hp"])
       ] },
       { name: "MIVEC", models: [
-        model("Değişken Valf Zamanlama", ["Benzin"], ["Manuel", "Otomatik"], ["SUV", "Sedan", "Hatchback"], ["1.5", "1.6", "2.0"], ["105 hp", "152 hp"])
+        model("De�i�ken Valf Zamanlama", ["Benzin"], ["Manuel", "Otomatik"], ["SUV", "Sedan", "Hatchback"], ["1.5", "1.6", "2.0"], ["105 hp", "152 hp"])
       ] },
       { name: "Lancer", models: [
         model("Lancer", ["Benzin"], ["Manuel", "Otomatik"], ["Sedan"], ["1.6", "1.8", "2.0"], ["117 hp", "150 hp"])
@@ -4791,16 +4791,16 @@ const detailedSeedData = [
         model("Kombi", ["Benzin", "Dizel"], ["Manuel"], ["Van"], ["1.3", "1.5"], ["95 hp", "115 hp"])
       ] },
       { name: "Lodgy", models: [
-        model("7 Kişilik MPV", ["Benzin", "Dizel"], ["Manuel"], ["MPV"], ["1.3", "1.5"], ["110 hp", "115 hp"])
+        model("7 Ki�ilik MPV", ["Benzin", "Dizel"], ["Manuel"], ["MPV"], ["1.3", "1.5"], ["110 hp", "115 hp"])
       ] },
       { name: "Extreme", models: [
-        model("Outdoor Donanım", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "SUV", "MPV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
+        model("Outdoor Donan�m", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "SUV", "MPV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
       ] },
       { name: "Journey", models: [
-        model("Konfor ve Teknoloji Donanımı", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "SUV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
+        model("Konfor ve Teknoloji Donan�m�", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "SUV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
       ] },
       { name: "Expression", models: [
-        model("Orta Seviye Donanım", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "Sedan", "SUV", "MPV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
+        model("Orta Seviye Donan�m", ["Benzin", "Hibrit", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "Sedan", "SUV", "MPV"], ["1.0", "1.2", "1.6"], ["100 hp", "150 hp"])
       ] },
       { name: "Eco-G", models: [
         model("LPG Motor", ["Benzin", "LPG"], ["Manuel", "Otomatik"], ["Hatchback", "Sedan", "SUV", "MPV"], ["1.0"], ["100 hp", "120 hp"])
@@ -5048,7 +5048,7 @@ const detailedSeedData = [
         model("Etoile", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Hatchback"], ["1.2", "1.5"], ["130 hp", "136 hp"]),
         model("Esprit de Voyage", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Hatchback"], ["1.2", "1.5"], ["130 hp", "136 hp"])
       ] },
-      { name: "DS N°4", models: [
+      { name: "DS N�4", models: [
         model("Elektrikli 213 HP", ["Elektrik"], ["Otomatik"], ["Hatchback"], ["0"], ["213 hp"]),
         model("Plug-in Hybrid 225 HP", ["Hibrit"], ["Otomatik"], ["Hatchback"], ["1.6"], ["225 hp"]),
         model("Plug-in Hybrid 240 HP", ["Hibrit"], ["Otomatik"], ["Hatchback"], ["1.6"], ["240 hp"]),
@@ -5076,12 +5076,12 @@ const detailedSeedData = [
         model("Etoile", ["Dizel", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "1.6"], ["130 hp", "360 hp"]),
         model("Esprit de Voyage", ["Dizel", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "1.6"], ["130 hp", "360 hp"])
       ] },
-      { name: "DS N°7", models: [
+      { name: "DS N�7", models: [
         model("Elektrikli 260 HP", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["260 hp"]),
         model("Elektrikli 375 HP", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["375 hp"]),
         model("Mild-Hybrid 145", ["Hibrit"], ["Otomatik"], ["SUV"], ["1.2"], ["145 hp"])
       ] },
-      { name: "DS N°8", models: [
+      { name: "DS N�8", models: [
         model("Elektrikli AWD", ["Elektrik"], ["Otomatik"], ["SUV Coupe"], ["0"], ["350 hp"]),
         model("Elektrikli FWD", ["Elektrik"], ["Otomatik"], ["SUV Coupe"], ["0"], ["245 hp"]),
         model("740 km Menzil", ["Elektrik"], ["Otomatik"], ["SUV Coupe"], ["0"], ["245 hp"])
@@ -5090,10 +5090,10 @@ const detailedSeedData = [
         model("Rafine Teknolojik Paket", ["Benzin", "Dizel", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["0", "1.2", "1.5", "1.6"], ["130 hp", "260 hp"])
       ] },
       { name: "Etoile", models: [
-        model("Lüks Alcantara Nappa Paket", ["Benzin", "Dizel", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["0", "1.2", "1.5", "1.6"], ["130 hp", "375 hp"])
+        model("L�ks Alcantara Nappa Paket", ["Benzin", "Dizel", "Hibrit", "Elektrik"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["0", "1.2", "1.5", "1.6"], ["130 hp", "375 hp"])
       ] },
       { name: "Esprit de Voyage", models: [
-        model("Özel Tasarım", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["1.2", "1.5", "1.6"], ["130 hp", "360 hp"])
+        model("�zel Tasar�m", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV", "Sedan"], ["1.2", "1.5", "1.6"], ["130 hp", "360 hp"])
       ] },
       { name: "Performance Line", models: [
         model("Sportif Seri", ["Benzin", "Dizel", "Hibrit"], ["Otomatik"], ["Hatchback", "SUV"], ["1.2", "1.5", "1.6"], ["130 hp", "360 hp"])
@@ -5166,7 +5166,7 @@ const detailedSeedData = [
         model("AWD", ["Benzin"], ["Manuel", "Otomatik"], ["Station Wagon"], ["1.5"], ["92 hp"])
       ] },
       { name: "Vista Wagon", models: [
-        model("Mitsubishi Chariot Tabanlı", ["Benzin"], ["Manuel", "Otomatik"], ["Station Wagon"], ["1.8", "2.0"], ["110 hp", "136 hp"])
+        model("Mitsubishi Chariot Tabanl�", ["Benzin"], ["Manuel", "Otomatik"], ["Station Wagon"], ["1.8", "2.0"], ["110 hp", "136 hp"])
       ] },
       { name: "AMC Eagle", models: [
         model("Wagon", ["Benzin"], ["Manuel", "Otomatik"], ["Station Wagon"], ["4.2"], ["110 hp"]),
@@ -5175,8 +5175,8 @@ const detailedSeedData = [
         model("4x4", ["Benzin"], ["Manuel", "Otomatik"], ["Station Wagon", "Sedan", "Coupe"], ["4.2"], ["110 hp"])
       ] },
       { name: "Jeep Eagle", models: [
-        model("CJ-5", ["Benzin"], ["Manuel"], ["Arazi Aracı"], ["4.2"], ["112 hp"]),
-        model("CJ-7", ["Benzin"], ["Manuel"], ["Arazi Aracı"], ["4.2"], ["112 hp"])
+        model("CJ-5", ["Benzin"], ["Manuel"], ["Arazi Arac�"], ["4.2"], ["112 hp"]),
+        model("CJ-7", ["Benzin"], ["Manuel"], ["Arazi Arac�"], ["4.2"], ["112 hp"])
       ] }
     ]
   },
@@ -5231,15 +5231,15 @@ const detailedSeedData = [
         model("7 Koltuklu SUV", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "2.0"], ["190 hp", "218 hp"])
       ] },
       { name: "Monjaro / Xingyue L", models: [
-        model("Lüks D-SUV", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "2.0"], ["218 hp", "245 hp"]),
+        model("L�ks D-SUV", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "2.0"], ["218 hp", "245 hp"]),
         model("CMA Platformu", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["1.5", "2.0"], ["218 hp", "245 hp"])
       ] },
       { name: "Tugella / Xingyue S", models: [
-        model("SUV Coupé", ["Benzin"], ["Otomatik"], ["SUV Coupe"], ["2.0"], ["238 hp"])
+        model("SUV Coup�", ["Benzin"], ["Otomatik"], ["SUV Coupe"], ["2.0"], ["238 hp"])
       ] },
       { name: "Zeekr 001", models: [
         model("Shooting Brake", ["Elektrik"], ["Otomatik"], ["Station Wagon"], ["0"], ["272 hp", "544 hp"]),
-        model("Yüksek Performans", ["Elektrik"], ["Otomatik"], ["Station Wagon"], ["0"], ["544 hp"])
+        model("Y�ksek Performans", ["Elektrik"], ["Otomatik"], ["Station Wagon"], ["0"], ["544 hp"])
       ] },
       { name: "Zeekr 007", models: [
         model("Premium Sedan", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["421 hp", "646 hp"])
@@ -5248,7 +5248,7 @@ const detailedSeedData = [
         model("Elektrikli MPV", ["Elektrik"], ["Otomatik"], ["MPV"], ["0"], ["544 hp"])
       ] },
       { name: "Zeekr X", models: [
-        model("Kompakt Lüks SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["272 hp", "428 hp"])
+        model("Kompakt L�ks SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["272 hp", "428 hp"])
       ] },
       { name: "Zeekr 7X", models: [
         model("Aile SUV", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["421 hp"])
@@ -5276,7 +5276,7 @@ const detailedSeedData = [
         model("Orta Boy SUV", ["Hibrit"], ["Otomatik"], ["SUV"], ["1.5"], ["245 hp", "593 hp"])
       ] },
       { name: "Lynk & Co 09", models: [
-        model("Lüks SUV", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0"], ["254 hp", "519 hp"])
+        model("L�ks SUV", ["Benzin", "Hibrit"], ["Otomatik"], ["SUV"], ["2.0"], ["254 hp", "519 hp"])
       ] },
       { name: "Lynk & Co Z10 / Z20", models: [
         model("Z10", ["Elektrik"], ["Otomatik"], ["Sedan"], ["0"], ["272 hp", "789 hp"]),
@@ -5552,11 +5552,11 @@ const detailedSeedData = [
         model("Plug-in Hybrid e-Hybrid", ["Hibrit"], ["Otomatik"], ["Hatchback", "Station Wagon"], ["1.4"], ["204 hp"]),
         model("Sportstourer", ["Benzin", "Hibrit"], ["Otomatik"], ["Station Wagon"], ["1.5", "1.4"], ["150 hp", "204 hp"])
       ] },
-      { name: "MÓ 125", models: [
+      { name: "M� 125", models: [
         model("7 kW", ["Elektrik"], ["Otomatik"], ["Scooter"], ["0"], ["7 kW"]),
         model("137 km Menzil", ["Elektrik"], ["Otomatik"], ["Scooter"], ["0"], ["7 kW"])
       ] },
-      { name: "MÓ 125 Performance", models: [
+      { name: "M� 125 Performance", models: [
         model("105 km/s", ["Elektrik"], ["Otomatik"], ["Scooter"], ["0"], ["9 kW"]),
         model("Ohlins Suspansiyon", ["Elektrik"], ["Otomatik"], ["Scooter"], ["0"], ["9 kW"]),
         model("Galfer Fren", ["Elektrik"], ["Otomatik"], ["Scooter"], ["0"], ["9 kW"])
@@ -6048,10 +6048,10 @@ const detailedSeedData = [
         model("Intra V70", ["Dizel"], ["Manuel"], ["Kamyonet"], ["1.5"], ["80 hp"])
       ] },
       { name: "Prima / Signa", models: [
-        model("Prima", ["Dizel"], ["Manuel"], ["Agir Vasıta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
-        model("Signa", ["Dizel"], ["Manuel"], ["Agir Vasıta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
-        model("Agir Vasita", ["Dizel"], ["Manuel"], ["Agir Vasıta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
-        model("Cekici", ["Dizel"], ["Manuel"], ["Agir Vasıta"], ["5.0", "6.7"], ["180 hp", "300 hp"])
+        model("Prima", ["Dizel"], ["Manuel"], ["Agir Vas�ta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
+        model("Signa", ["Dizel"], ["Manuel"], ["Agir Vas�ta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
+        model("Agir Vasita", ["Dizel"], ["Manuel"], ["Agir Vas�ta"], ["5.0", "6.7"], ["180 hp", "300 hp"]),
+        model("Cekici", ["Dizel"], ["Manuel"], ["Agir Vas�ta"], ["5.0", "6.7"], ["180 hp", "300 hp"])
       ] },
       { name: "Nano", models: [
         model("Nano", ["Benzin"], ["Manuel"], ["Hatchback"], ["0.624"], ["38 hp"])
@@ -6077,7 +6077,7 @@ const detailedSeedData = [
     ]
   },
   {
-    name: "TofaÅŸ",
+    name: "Tofaş",
     series: [
       { name: "Egea Sedan / Cross / Wagon", models: [
         model("Easy", ["Benzin", "Dizel", "Hibrit"], ["Manuel", "Otomatik"], ["Sedan", "Crossover", "Station Wagon"], ["1.4", "1.5", "1.6"], ["95 hp", "130 hp"]),
@@ -6100,30 +6100,30 @@ const detailedSeedData = [
         model("SUV", ["Elektrik", "Hibrit"], ["Otomatik"], ["SUV"], ["0", "1.2"], ["113 hp", "156 hp"]),
         model("Crossover", ["Elektrik", "Hibrit"], ["Otomatik"], ["Crossover"], ["0", "1.2"], ["113 hp", "156 hp"])
       ] },
-      { name: "Åžahin", models: [
-        model("Åžahin 1.4", ["Benzin"], ["Manuel"], ["Sedan"], ["1.4"], ["71 hp"]),
-        model("Åžahin 1.6", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
-        model("Åžahin S", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"])
+      { name: "�zahin", models: [
+        model("�zahin 1.4", ["Benzin"], ["Manuel"], ["Sedan"], ["1.4"], ["71 hp"]),
+        model("�zahin 1.6", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
+        model("�zahin S", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"])
       ] },
-      { name: "DoÄŸan", models: [
-        model("DoÄŸan L", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
-        model("DoÄŸan SL", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
-        model("DoÄŸan SLX", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["90 hp"]),
-        model("DoÄŸan 1.6 ie", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["95 hp"])
+      { name: "Doğan", models: [
+        model("Doğan L", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
+        model("Doğan SL", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["82 hp"]),
+        model("Doğan SLX", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["90 hp"]),
+        model("Doğan 1.6 ie", ["Benzin"], ["Manuel"], ["Sedan"], ["1.6"], ["95 hp"])
       ] },
       { name: "Kartal", models: [
         model("Kartal L", ["Benzin"], ["Manuel"], ["Station Wagon"], ["1.6"], ["82 hp"]),
         model("Kartal SLX", ["Benzin"], ["Manuel"], ["Station Wagon"], ["1.6"], ["90 hp"]),
         model("Kartal Cargo", ["Benzin"], ["Manuel"], ["Station Wagon"], ["1.6"], ["90 hp"])
       ] },
-      { name: "Murat 124 / HacÄ± Murat", models: [
+      { name: "Murat 124 / Hacı Murat", models: [
         model("Murat 124", ["Benzin"], ["Manuel"], ["Sedan"], ["1.2"], ["65 hp"]),
-        model("HacÄ± Murat", ["Benzin"], ["Manuel"], ["Sedan"], ["1.2"], ["65 hp"])
+        model("Hacı Murat", ["Benzin"], ["Manuel"], ["Sedan"], ["1.2"], ["65 hp"])
       ] },
       { name: "Murat 131", models: [
         model("Murat 131", ["Benzin"], ["Manuel"], ["Sedan"], ["1.3", "1.6"], ["70 hp", "82 hp"])
       ] },
-      { name: "SerÃ§e", models: [
+      { name: "Serçe", models: [
         model("1.3 Motor", ["Benzin"], ["Manuel"], ["Sedan"], ["1.3"], ["70 hp"])
       ] },
       { name: "Linea", models: [
@@ -6155,7 +6155,7 @@ const detailedSeedData = [
         model("Uno", ["Benzin"], ["Manuel"], ["Hatchback"], ["1.0", "1.4"], ["50 hp", "70 hp"]),
         model("Palio Go", ["Benzin"], ["Manuel"], ["Hatchback"], ["1.4"], ["77 hp"])
       ] },
-      { name: "Doblo Bursa Ãœretimi", models: [
+      { name: "Doblo Bursa Üretimi", models: [
         model("1. Nesil", ["Dizel", "Benzin"], ["Manuel"], ["Hafif Ticari"], ["1.3", "1.4", "1.9"], ["75 hp", "77 hp", "105 hp"]),
         model("2. Nesil", ["Dizel", "Benzin"], ["Manuel"], ["Hafif Ticari"], ["1.3", "1.6"], ["90 hp", "105 hp"]),
         model("3. Nesil", ["Dizel"], ["Manuel"], ["Hafif Ticari"], ["1.6"], ["105 hp", "120 hp"]),
@@ -6306,7 +6306,7 @@ const detailedSeedData = [
         model("Isi Pompasi", ["Elektrik"], ["Otomatik"], ["Sedan", "SUV", "Pickup"], ["0"], ["283 hp", "845 hp"])
       ] },
       { name: "Semi", models: [
-        model("Semi", ["Elektrik"], ["Otomatik"], ["Agir Vasıta"], ["0"], ["1000+ hp"])
+        model("Semi", ["Elektrik"], ["Otomatik"], ["Agir Vas�ta"], ["0"], ["1000+ hp"])
       ] },
       { name: "Model Y RWD", models: [
         model("Model Y RWD", ["Elektrik"], ["Otomatik"], ["SUV"], ["0"], ["299 hp"])
@@ -6538,14 +6538,14 @@ async function applyDiff(additions) {
 
 async function run() {
   const plan = countPlan(seedData);
-  console.log("Seed kapsamÄ±:");
+  console.log("Seed kapsamı:");
   console.log(`- Marka: ${plan.brands}`);
   console.log(`- Seri: ${plan.series}`);
   console.log(`- Model: ${plan.models}`);
   console.log("");
 
   if (!process.env.MONGO_URI) {
-    throw new Error("MONGO_URI bulunamadÄ±");
+    throw new Error("MONGO_URI bulunamadı");
   }
 
   await mongoose.connect(process.env.MONGO_URI);
@@ -6558,13 +6558,13 @@ async function run() {
   console.log(`- Yeni model: ${summary.models}`);
 
   if (!summary.brands && !summary.series && !summary.models) {
-    console.log("Eklenecek yeni araÃ§ verisi yok.");
+    console.log("Eklenecek yeni araç verisi yok.");
     await mongoose.disconnect();
     return;
   }
 
   await applyDiff(additions);
-  console.log("Seed tamamlandÄ±.");
+  console.log("Seed tamamlandı.");
 
   await mongoose.disconnect();
 }

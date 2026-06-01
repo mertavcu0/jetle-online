@@ -70,11 +70,15 @@ function normalizeId(value) {
   if (!value) return "";
 
   if (typeof value === "object") {
-    if (value.$ne) return String(value.$ne);
-    if (value._id) return String(value._id);
+    if (value.$ne) value = value.$ne;
+    else if (value._id) value = value._id;
   }
 
-  return String(value);
+  return String(value || "")
+    .trim()
+    .replace(/^users:/, "")
+    .replace(/^_+/, "")
+    .replace(/_+$/, "");
 }
 
 function makeConversationId(listingId, senderId, receiverId) {
@@ -90,7 +94,10 @@ function parseConversationId(value) {
   }
 
   const listingId = parts[0].slice("listing:".length);
-  const users = parts[1].split("__").filter(Boolean);
+  const users = parts[1]
+    .split("__")
+    .map(normalizeId)
+    .filter(Boolean);
   if (users.length !== 2) {
     return null;
   }
@@ -110,7 +117,7 @@ async function getUserFromToken(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "jetle-dev-secret");
     if (!decoded?.id || !isValidObjectId(decoded.id)) return null;
 
-    return await User.findById(decoded.id).select("_id name email");
+    return await User.findById(decoded.id).select("_id name email role username");
   } catch (_) {
     return null;
   }
@@ -124,6 +131,11 @@ async function requireAuth(req, res, next) {
     }
 
     req.user = tokenUser;
+    console.log("SERVER_AFTER_AUTH", {
+      reqUser: req.user,
+      authUser: req.auth,
+      body: req.body
+    });
     next();
   } catch (err) {
     console.error("MESSAGES AUTH ERROR:", err);
@@ -179,6 +191,71 @@ function normalizeUser(user) {
   };
 }
 
+function extractOwnerIdCandidates(listing) {
+  return [
+    listing?.owner?._id,
+    listing?.owner,
+    listing?.user?._id,
+    listing?.user,
+    listing?.userId?._id,
+    listing?.userId,
+    listing?.createdBy?._id,
+    listing?.createdBy
+  ]
+    .map((value) => normalizeId(value))
+    .filter(Boolean);
+}
+
+function resolveListingOwnerId(listing, currentUserId = "") {
+  const safeCurrentUserId = normalizeId(currentUserId);
+  const rawCandidates = extractOwnerIdCandidates(listing);
+  const uniqueCandidates = [...new Set(rawCandidates)];
+  const validCandidates = uniqueCandidates.filter((value) => isValidObjectId(value));
+  const nonCurrentCandidates = validCandidates.filter((value) => value !== safeCurrentUserId);
+  const ownerId = nonCurrentCandidates[0] || validCandidates[0] || "";
+
+  console.log("CONVERSATION_CURRENT_USER", safeCurrentUserId);
+  console.log("CONVERSATION_LISTING_OWNER", {
+    ownerId,
+    candidates: uniqueCandidates,
+    validCandidates,
+    nonCurrentCandidates
+  });
+  console.log("CONVERSATION_USERS_ARRAY", [safeCurrentUserId, ownerId].filter(Boolean));
+
+  return ownerId;
+}
+
+function resolveReceiverIdFromConversationId(conversationId, currentUserId = "") {
+  const safeCurrentUserId = normalizeId(currentUserId);
+  const rawUsers = String(conversationId || "").split("users:")[1] || "";
+  console.log("RAW_USERS_STRING", rawUsers);
+  const userIds = rawUsers
+    .split("_")
+    .map(normalizeId)
+    .filter(Boolean);
+  console.log("PARSED_USERS_FINAL", userIds);
+  console.log("CURRENT_USER_FINAL", safeCurrentUserId);
+  const otherUserId = userIds.find((id) => {
+    const normalizedId = String(id).trim();
+    const normalizedCurrent = String(safeCurrentUserId).trim();
+    console.log("COMPARE_DEBUG", {
+      rawId: id,
+      rawCurrent: safeCurrentUserId,
+      normalizedId,
+      normalizedCurrent,
+      equal: normalizedId === normalizedCurrent
+    });
+    return normalizedId !== normalizedCurrent;
+  }) || "";
+  console.log("RECEIVER_FROM_USERS", otherUserId);
+
+  return {
+    userIds,
+    otherUserId
+  };
+}
+
 function normalizeMessage(doc) {
   return {
     id: String(doc._id),
@@ -197,16 +274,134 @@ function normalizeMessage(doc) {
   };
 }
 
+function isAdminUser(user) {
+  const role = String(user?.role || "").trim().toLowerCase();
+  return role === "admin" || role === "superadmin";
+}
+
+function logPrivacyEvent(eventName, payload = {}) {
+  console.log(eventName, payload);
+}
+
+async function resolvePrivateThreadAccess({
+  currentUser,
+  listingId,
+  requestedConversationId = "",
+  requestedReceiverId = ""
+}) {
+  const currentUserId = normalizeId(currentUser?._id);
+  const admin = isAdminUser(currentUser);
+
+  if (!currentUserId || !isValidObjectId(currentUserId)) {
+    return { error: "unauthorized", status: 401 };
+  }
+
+  if (!isValidObjectId(listingId)) {
+    return { error: "invalid_listing_id", status: 400 };
+  }
+
+  const listing = await Listing.findById(listingId).populate("user", "_id name email username");
+  if (!listing) {
+    return { error: "listing_not_found", status: 404 };
+  }
+
+  const listingOwnerId = normalizeId(resolveListingOwnerId(listing, currentUserId));
+  if (!listingOwnerId || !isValidObjectId(listingOwnerId)) {
+    return { error: "listing_owner_not_found", status: 400 };
+  }
+
+  let participantIds = [];
+  let otherUserId = "";
+
+  if (requestedConversationId) {
+    const parsed = parseConversationId(requestedConversationId);
+    if (
+      !parsed ||
+      !isValidObjectId(parsed.listingId) ||
+      normalizeId(parsed.listingId) !== normalizeId(listingId) ||
+      parsed.userIds.some((id) => !isValidObjectId(id))
+    ) {
+      return { error: "invalid_conversation", status: 400 };
+    }
+
+    participantIds = parsed.userIds.map(normalizeId);
+    if (!admin && !participantIds.includes(currentUserId)) {
+      logPrivacyEvent("UNAUTHORIZED_THREAD_BLOCKED", {
+        reason: "current_user_not_participant",
+        listingId,
+        currentUserId,
+        conversationId: requestedConversationId
+      });
+      return { error: "forbidden", status: 403 };
+    }
+
+    if (!admin && !participantIds.includes(listingOwnerId)) {
+      logPrivacyEvent("UNAUTHORIZED_THREAD_BLOCKED", {
+        reason: "listing_owner_not_in_thread",
+        listingId,
+        listingOwnerId,
+        conversationId: requestedConversationId
+      });
+      return { error: "forbidden", status: 403 };
+    }
+
+    otherUserId = participantIds.find((id) => id !== currentUserId) || "";
+  } else {
+    const normalizedRequestedReceiverId = normalizeId(requestedReceiverId);
+
+    if (currentUserId === listingOwnerId) {
+      otherUserId = normalizedRequestedReceiverId;
+    } else {
+      otherUserId = listingOwnerId;
+    }
+
+    if (!otherUserId || !isValidObjectId(otherUserId)) {
+      return { error: "receiver_not_found", status: 400 };
+    }
+
+    if (otherUserId === currentUserId) {
+      return { error: "same_user", status: 400 };
+    }
+
+    participantIds = [currentUserId, otherUserId].sort();
+
+    if (!admin && !participantIds.includes(listingOwnerId)) {
+      logPrivacyEvent("UNAUTHORIZED_THREAD_BLOCKED", {
+        reason: "listing_owner_not_in_thread",
+        listingId,
+        listingOwnerId,
+        currentUserId,
+        otherUserId
+      });
+      return { error: "forbidden", status: 403 };
+    }
+  }
+
+  return {
+    success: true,
+    admin,
+    listing,
+    listingOwnerId,
+    currentUserId,
+    otherUserId,
+    participantIds,
+    conversationId: makeConversationId(listingId, participantIds[0], participantIds[1])
+  };
+}
+
 router.use(requireAuth);
 
 async function resolveReceiverFromListing(listing, currentUserId, fallbackReceiverEmail = "") {
   const receiverEmail = String(
+    listing?.owner?.email ||
     listing?.user?.email ||
+    listing?.userId?.email ||
+    listing?.createdBy?.email ||
     listing?.email ||
     fallbackReceiverEmail ||
     ""
   ).trim().toLowerCase();
-  const receiverId = listing?.user?._id ? String(listing.user._id) : "";
+  const receiverId = resolveListingOwnerId(listing, currentUserId);
 
   if (!receiverEmail || !receiverId || String(receiverId) === String(currentUserId)) {
     return null;
@@ -223,7 +418,7 @@ router.get("/conversations", async (req, res) => {
       return res.json({ success: true, conversations: [] });
     }
 
-    const query = {};
+    const query = { isDeleted: false };
     const safeCurrentUserId = normalizeId(currentUserId);
     const userObjectId = asObjectId(safeCurrentUserId);
     query.$or = [
@@ -291,9 +486,20 @@ router.get("/conversations", async (req, res) => {
         if (!isSenderCurrent && !isReceiverCurrent) continue;
 
         const listing = listingMap.get(listingId);
+        if (!listing) continue;
         const otherUserEmail = isSenderCurrent ? receiverEmail : senderEmail;
         const otherUserId = isSenderCurrent ? receiverId : senderId;
         const listingOwnerId = String(listing?.user?._id || "").trim();
+        if (!listingOwnerId || ![senderId, receiverId].includes(listingOwnerId)) {
+          logPrivacyEvent("UNAUTHORIZED_THREAD_BLOCKED", {
+            reason: "conversation_without_listing_owner",
+            listingId,
+            senderId,
+            receiverId,
+            currentUserId
+          });
+          continue;
+        }
         const listingOwnerEmail = String(listing?.user?.email || "").trim().toLowerCase();
         const listingOwnerName = String(
           listing?.user?.name ||
@@ -311,6 +517,11 @@ router.get("/conversations", async (req, res) => {
             : "";
 
         if (!canonicalConversationId) continue;
+        logPrivacyEvent("THREAD_ISOLATION_OK", {
+          currentUserId,
+          listingId,
+          conversationId: canonicalConversationId
+        });
 
         if (!conversationMap.has(canonicalConversationId)) {
           conversationMap.set(canonicalConversationId, {
@@ -369,8 +580,8 @@ router.get("/listing/:listingId", async (req, res) => {
       });
     }
 
-    const listing = await Listing.findById(listingId).populate("user", "_id name email");
-    if (!listing || !listing.user?._id) {
+    const access = await resolvePrivateThreadAccess({ currentUser, listingId });
+    if (!access.success) {
       return res.status(200).json({
         success: false,
         message: "Konuşma bulunamadı",
@@ -378,11 +589,8 @@ router.get("/listing/:listingId", async (req, res) => {
       });
     }
 
-    const currentUserId = String(currentUser._id);
-    const otherUserId = String(listing.user._id);
-    const safeCurrentUserId = normalizeId(currentUserId);
-    const safeOtherUserId = normalizeId(otherUserId);
-    if (!currentUserId || !otherUserId || currentUserId === otherUserId) {
+    const { listing, currentUserId, otherUserId, conversationId } = access;
+    if (!otherUserId || !isValidObjectId(otherUserId) || currentUserId === otherUserId) {
       return res.status(200).json({
         success: false,
         message: "Konuşma bulunamadı",
@@ -390,13 +598,14 @@ router.get("/listing/:listingId", async (req, res) => {
       });
     }
 
+    const otherUser = await User.findById(otherUserId).select("_id name email");
     const listingObjectId = asObjectId(listingId);
     const messages = await Message.find({
       listingId: listingObjectId,
       isDeleted: false,
       $or: [
-        { senderId: asObjectId(safeCurrentUserId), receiverId: asObjectId(safeOtherUserId) },
-        { senderId: asObjectId(safeOtherUserId), receiverId: asObjectId(safeCurrentUserId) }
+        { senderId: asObjectId(currentUserId), receiverId: asObjectId(otherUserId) },
+        { senderId: asObjectId(otherUserId), receiverId: asObjectId(currentUserId) }
       ]
     })
       .sort({ createdAt: 1 })
@@ -411,12 +620,17 @@ router.get("/listing/:listingId", async (req, res) => {
         message: "Konuşma bulunamadı",
         conversation: null,
         listing: normalizeListing(listing),
-        otherUser: normalizeUser(listing.user)
+        otherUser: normalizeUser(otherUser)
       });
     }
 
     const orderedMessages = messages;
-    const conversationId = makeConversationId(listingId, currentUserId, otherUserId);
+    logPrivacyEvent("PRIVATE_CONVERSATION_ACTIVE", {
+      currentUserId,
+      otherUserId,
+      listingId,
+      conversationId
+    });
 
     return res.status(200).json({
       success: true,
@@ -429,11 +643,11 @@ router.get("/listing/:listingId", async (req, res) => {
           orderedMessages[orderedMessages.length - 1]?.createdAt ||
           null,
         otherUserId,
-        otherUserName: listing.user?.name || listing.user?.email || "Kullanıcı",
-        otherUserEmail: listing.user?.email || ""
+        otherUserName: otherUser?.name || otherUser?.email || "Kullanıcı",
+        otherUserEmail: otherUser?.email || ""
       },
       listing: normalizeListing(listing),
-      otherUser: normalizeUser(listing.user),
+      otherUser: normalizeUser(otherUser),
       messages: orderedMessages.map(normalizeMessage),
       pageInfo: {
         limit: 50,
@@ -450,7 +664,6 @@ router.get("/listing/:listingId", async (req, res) => {
     });
   }
 });
-
 router.get("/:conversationId", async (req, res) => {
   try {
     const currentUser = req.user;
@@ -458,65 +671,30 @@ router.get("/:conversationId", async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const legacyUserId = String(req.params.conversationId || "").trim();
-    const safeLegacyUserId = normalizeId(legacyUserId);
-    if (isValidObjectId(safeLegacyUserId) && safeLegacyUserId === String(currentUser._id)) {
-      const legacyMessages = await Message.find({
-        isDeleted: false,
-        $or: [
-          { senderId: asObjectId(safeLegacyUserId) },
-          { receiverId: asObjectId(safeLegacyUserId) }
-        ]
-      })
-        .sort({ createdAt: 1 })
-        .limit(100)
-        .populate("listingId", "title")
-        .populate("senderId", "email name")
-        .populate("receiverId", "email name")
-        .lean();
-
-      return res.json(
-        legacyMessages.map((message) => ({
-          _id: String(message._id),
-          sender: String(message.senderId?.email || message.senderId?._id || ""),
-          receiver: String(message.receiverId?.email || message.receiverId?._id || ""),
-          message: message.text || "",
-          createdAt: message.createdAt,
-          listingId: message.listingId
-            ? {
-                _id: String(message.listingId._id),
-                title: message.listingId.title || "İlan"
-              }
-            : null
-        }))
-      );
-    }
-
     const parsed = parseConversationId(req.params.conversationId);
     if (!parsed || !isValidObjectId(parsed.listingId) || parsed.userIds.some((id) => !isValidObjectId(id))) {
       return res.status(400).json({ error: "invalid_conversation" });
     }
 
-    const currentUserId = String(currentUser._id);
-    if (!parsed.userIds.includes(currentUserId)) {
-      return res.status(403).json({ error: "forbidden" });
+    const access = await resolvePrivateThreadAccess({
+      currentUser,
+      listingId: parsed.listingId,
+      requestedConversationId: req.params.conversationId
+    });
+    if (!access.success) {
+      return res.status(access.status || 403).json({ error: access.error || "forbidden" });
     }
 
-    const [userA, userB] = parsed.userIds;
-    const safeUserA = normalizeId(userA);
-    const safeUserB = normalizeId(userB);
-    const conversationId = makeConversationId(parsed.listingId, safeUserA, safeUserB);
+    const { listing, currentUserId, otherUserId, conversationId, participantIds } = access;
+    const [userA, userB] = participantIds;
     const limit = Math.min(Math.max(Number(req.query.limit) || 30, 1), 100);
     const before = String(req.query.before || "").trim();
-    const listing = await Listing.findById(parsed.listingId).populate("user", "name email");
-
-    const parsedListingObjectId = asObjectId(parsed.listingId);
     const messageQuery = {
-      listingId: parsedListingObjectId,
+      listingId: asObjectId(parsed.listingId),
       isDeleted: false,
       $or: [
-        { senderId: asObjectId(safeUserA), receiverId: asObjectId(safeUserB) },
-        { senderId: asObjectId(safeUserB), receiverId: asObjectId(safeUserA) }
+        { senderId: asObjectId(userA), receiverId: asObjectId(userB) },
+        { senderId: asObjectId(userB), receiverId: asObjectId(userA) }
       ]
     };
 
@@ -537,7 +715,7 @@ router.get("/:conversationId", async (req, res) => {
 
     await Message.updateMany(
       {
-        conversationId: conversationId,
+        conversationId,
         receiverId: currentUser._id,
         isDeleted: false,
         isRead: false
@@ -547,9 +725,7 @@ router.get("/:conversationId", async (req, res) => {
       }
     );
 
-    const otherUserId = parsed.userIds.find((id) => id !== currentUserId) || currentUserId;
     const otherUser = await User.findById(otherUserId).select("_id name email");
-
     const io = req.app.get("io");
     if (io) {
       io.to(conversationId).emit("messages_seen", {
@@ -558,6 +734,12 @@ router.get("/:conversationId", async (req, res) => {
         seenAt: new Date().toISOString()
       });
     }
+
+    logPrivacyEvent("MESSAGE_PRIVACY_OK", {
+      currentUserId,
+      listingId: parsed.listingId,
+      conversationId
+    });
 
     res.json({
       id: conversationId,
@@ -577,20 +759,17 @@ router.get("/:conversationId", async (req, res) => {
     res.status(500).json({ error: "server_error" });
   }
 });
-
 router.post("/", async (req, res) => {
   try {
-    const text = sanitizeText(req.body.text);
-    const listingId = String(req.body.listingId || "").trim();
+    const rawBody = req.body || {};
+    const text = sanitizeText(rawBody.text || rawBody.message || rawBody.content);
+    const listingId = String(rawBody.listingId || "").trim();
+    const requestedConversationId = String(rawBody.conversationId || "").trim();
+    const receiverIdFromBody = String(rawBody.receiverId || "").trim();
     const currentUser = req.user;
-    const currentUserId = String(currentUser?._id || "");
-    console.log("SEND MESSAGE HIT", {
-      userId: req.user?._id,
-      body: req.body
-    });
+    const currentUserId = normalizeId(currentUser?._id);
 
     const missing = [];
-
     if (!listingId) missing.push("listingId");
     if (!text) missing.push("text");
     if (text.length > 2000) missing.push("text_too_long");
@@ -603,90 +782,43 @@ router.post("/", async (req, res) => {
       });
     }
 
-    if (!isValidObjectId(listingId)) {
-      return res.status(400).json({
+    const access = await resolvePrivateThreadAccess({
+      currentUser,
+      listingId,
+      requestedConversationId,
+      requestedReceiverId: receiverIdFromBody
+    });
+    if (!access.success) {
+      return res.status(access.status || 403).json({
         success: false,
-        error: "invalid_payload",
-        missing: ["listingId"]
+        error: access.error || "forbidden"
       });
     }
 
-    let listingDoc;
-    try {
-      console.log("[STEP 1 START] Listing.findById populate user");
-      listingDoc = await Listing.findById(listingId).populate({
-        path: "user",
-        select: "_id name email username"
-      });
-      console.log("LISTING USER:", listingDoc?.user);
-      console.log("[STEP 1 OK] Listing.findById populate user");
-    } catch (err) {
-      console.error("[STEP 1 FAIL]", err);
-      throw err;
-    }
-    if (!listingDoc) {
-      return res.status(404).json({ success: false, error: "listing_not_found" });
-    }
-
-    const receiverId =
-      listingDoc?.user?._id ||
-      listingDoc?.user ||
-      null;
-
-    if (!receiverId) {
-      return res.status(400).json({
-        success: false,
-        error: "receiver_not_found"
-      });
-    }
-
-    let receiver;
-    try {
-      console.log("[STEP 2 START] resolveReceiverFromListing");
-      receiver = await User.findById(receiverId)
-        .select("_id name email username");
-      console.log("RECEIVER:", receiver);
-      console.log("[STEP 2 OK] resolveReceiverFromListing");
-    } catch (err) {
-      console.error("[STEP 2 FAIL]", err);
-      throw err;
-    }
+    const { listing, otherUserId, conversationId } = access;
+    const receiver = await User.findById(otherUserId).select("_id name email username");
     if (!receiver) {
       return res.status(400).json({ success: false, error: "receiver_not_found" });
     }
 
     const senderEmail = String(currentUser.email || "").trim().toLowerCase();
-
-    if (String(receiver._id) === String(currentUser._id)) {
-      return res.status(400).json({ success: false, error: "same_user" });
-    }
-
-    let message;
-    try {
-      console.log("[STEP 3 START] Message.create");
-      message = await Message.create({
-        senderId: currentUser._id,
-        receiverId: receiver._id,
-        senderEmail,
-        receiverEmail: String(receiver?.email || "").trim().toLowerCase(),
-        conversationId: makeConversationId(listingId, currentUser._id, receiver._id),
-        listingId: listingDoc._id,
-        text,
-        isRead: false,
-        isDeleted: false,
-        edited: false
-      });
-      console.log("[STEP 3 OK] Message.create");
-    } catch (err) {
-      console.error("[STEP 3 FAIL]", err);
-      throw err;
-    }
+    const message = await Message.create({
+      senderId: currentUser._id,
+      receiverId: asObjectId(otherUserId),
+      senderEmail,
+      receiverEmail: String(receiver?.email || "").trim().toLowerCase(),
+      conversationId,
+      listingId: listing._id,
+      text,
+      isRead: false,
+      isDeleted: false,
+      edited: false
+    });
 
     const savedMessage = await Message.findById(message._id)
       .populate("senderId", "name email")
       .populate("receiverId", "name email");
     const normalizedMessage = normalizeMessage(savedMessage);
-    const conversationId = makeConversationId(listingId, currentUser._id, receiver._id);
 
     const io = req.app.get("io");
     if (io) {
@@ -695,6 +827,19 @@ router.post("/", async (req, res) => {
         conversationId
       });
     }
+
+    logPrivacyEvent("PRIVATE_CONVERSATION_ACTIVE", {
+      currentUserId,
+      otherUserId,
+      listingId,
+      conversationId
+    });
+    logPrivacyEvent("THREAD_ISOLATION_OK", {
+      currentUserId,
+      otherUserId,
+      listingId,
+      conversationId
+    });
 
     res.json({
       success: true,
@@ -715,7 +860,6 @@ router.post("/", async (req, res) => {
     return res.status(500).json(payload);
   }
 });
-
 router.patch("/:id", async (req, res) => {
   try {
     const currentUser = req.user;
@@ -772,19 +916,24 @@ router.delete("/:id", async (req, res) => {
         return res.status(400).json({ error: "invalid_conversation" });
       }
 
-      if (!parsed.userIds.includes(String(currentUser._id))) {
-        return res.status(403).json({ error: "forbidden" });
+      const access = await resolvePrivateThreadAccess({
+        currentUser,
+        listingId: parsed.listingId,
+        requestedConversationId: req.params.id
+      });
+      if (!access.success) {
+        return res.status(access.status || 403).json({ error: access.error || "forbidden" });
       }
 
-      const parsedListingObjectId = asObjectId(parsed.listingId);
+      const [userA, userB] = access.participantIds;
 
       await Message.updateMany(
         {
-          listingId: parsedListingObjectId,
+          listingId: asObjectId(parsed.listingId),
           isDeleted: false,
           $or: [
-            { senderId: asObjectId(normalizeId(parsed.userIds[0])), receiverId: asObjectId(normalizeId(parsed.userIds[1])) },
-            { senderId: asObjectId(normalizeId(parsed.userIds[1])), receiverId: asObjectId(normalizeId(parsed.userIds[0])) }
+            { senderId: asObjectId(userA), receiverId: asObjectId(userB) },
+            { senderId: asObjectId(userB), receiverId: asObjectId(userA) }
           ]
         },
         {
@@ -819,3 +968,5 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+

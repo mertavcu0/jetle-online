@@ -1,5 +1,6 @@
-﻿const express = require("express");
+const express = require("express");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
@@ -9,6 +10,9 @@ const Notification = require("../models/Notification");
 const AdminLog = require("../models/AdminLog");
 const CarBrand = require("../models/CarBrand");
 const Message = require("../models/Message");
+const Payment = require("../models/Payment");
+const Report = require("../models/Report");
+const Activity = require("../models/Activity");
 const QUERY_TIMEOUT_MS = Number(process.env.ADMIN_QUERY_TIMEOUT_MS || 4000);
 router.use(authMiddleware, authAdmin);
 
@@ -37,8 +41,21 @@ function emptyStats() {
     totalListings: 0,
     activeListings: 0,
     featuredListings: 0,
-    todayListings: 0
+    todayListings: 0,
+    pendingListings: 0,
+    topCategory: "-",
+    topCity: "-",
+    weeklyGrowth: 0
   };
+}
+
+function normalizeStatLabel(value) {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i");
 }
 
 function emptyAnalytics() {
@@ -98,7 +115,7 @@ function firstValue(value, fallback = "") {
 function normalizeAdminUser(user, fallbackEmail = "") {
   return {
     id: String(user?._id || ""),
-    name: String(user?.name || user?.email || fallbackEmail || "Kullanici"),
+    name: String(user?.name || user?.email || fallbackEmail || "Kullanıcı"),
     email: String(user?.email || fallbackEmail || "")
   };
 }
@@ -116,6 +133,212 @@ function logAdminStart(path) {
 
 function logAdminEnd(path) {
   return path;
+}
+
+async function findListingOr404(id, res) {
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    res.status(404).json({ error: "İlan bulunamadı" });
+    return null;
+  }
+  return listing;
+}
+
+async function approveListing(req, res) {
+  try {
+    console.log("ADMIN_APPROVE_ACTION", JSON.stringify({
+      listingId: String(req.params.id || ""),
+      adminId: String(req.user?._id || req.user?.id || "")
+    }, null, 2));
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { approved: true, status: "approved", isActive: true },
+      { new: true }
+    );
+
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
+
+    await Notification.create({
+      message: "İlan onaylandı",
+      type: "admin"
+    });
+
+    console.log("MODERATION_APPROVED", JSON.stringify({
+      id: String(listing._id || ""),
+      approved: listing.approved,
+      status: listing.status,
+      isActive: listing.isActive
+    }, null, 2));
+
+    console.log("MODERATION_PUBLIC_VISIBLE", JSON.stringify({
+      id: String(listing._id || ""),
+      publicVisible: Boolean(
+        listing.approved === true &&
+        ["approved", "active"].includes(String(listing.status || "").trim().toLowerCase()) &&
+        listing.isActive === true
+      )
+    }, null, 2));
+
+    await logAdminAction(req, "approve", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true, listing });
+  } catch (err) {
+    console.error("APPROVE ERROR:", err);
+    return res.status(500).json({ error: "İlan onaylanamadı" });
+  }
+}
+
+async function rejectListing(req, res) {
+  try {
+    console.log("ADMIN_REJECT_ACTION", JSON.stringify({
+      listingId: String(req.params.id || ""),
+      adminId: String(req.user?._id || req.user?.id || "")
+    }, null, 2));
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { approved: false, status: "rejected", isActive: false },
+      { new: true }
+    );
+
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
+
+    await Notification.create({
+      message: "İlan reddedildi",
+      type: "admin"
+    });
+
+    await logAdminAction(req, "reject", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true, listing });
+  } catch (err) {
+    console.error("REJECT ERROR:", err);
+    return res.status(500).json({ error: "İlan reddedilemedi" });
+  }
+}
+
+async function featureListing(req, res) {
+  try {
+    const listing = await findListingOr404(req.params.id, res);
+    if (!listing) return;
+
+    listing.isFeatured = !listing.isFeatured;
+    if (listing.isFeatured) {
+      listing.isShowcase = false;
+    }
+    listing.featuredUntil = listing.isFeatured
+      ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      : null;
+
+    await listing.save();
+
+    console.log("ADMIN_SET_FEATURED", JSON.stringify({
+      listingId: String(listing._id || ""),
+      isFeatured: listing.isFeatured,
+      isShowcase: listing.isShowcase,
+      approved: listing.approved,
+      status: listing.status,
+      isActive: listing.isActive
+    }, null, 2));
+
+    await Notification.create({
+      message: listing.isFeatured ? "İlan öne çıkarıldı" : "İlan öne çıkarma alanından kaldırıldı",
+      type: "feature"
+    });
+
+    await logAdminAction(req, "feature", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true, listing });
+  } catch (err) {
+    console.error("FEATURE ERROR:", err);
+    return res.status(500).json({ error: "Feature başarısız" });
+  }
+}
+
+async function showcaseListing(req, res) {
+  try {
+    const listing = await findListingOr404(req.params.id, res);
+    if (!listing) return;
+
+    listing.isShowcase = !listing.isShowcase;
+    if (listing.isShowcase) {
+      listing.isFeatured = false;
+      listing.featuredUntil = null;
+    }
+    await listing.save();
+
+    console.log("ADMIN_SET_SHOWCASE", JSON.stringify({
+      listingId: String(listing._id || ""),
+      isShowcase: listing.isShowcase,
+      isFeatured: listing.isFeatured,
+      approved: listing.approved,
+      status: listing.status,
+      isActive: listing.isActive
+    }, null, 2));
+
+    await Notification.create({
+      message: listing.isShowcase ? "İlan vitrine alındı" : "İlan vitrinden çıkarıldı",
+      type: "showcase"
+    });
+
+    await logAdminAction(req, "showcase", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true, listing });
+  } catch (err) {
+    console.error("SHOWCASE ERROR:", err);
+    return res.status(500).json({ error: "Vitrin işlemi başarısız" });
+  }
+}
+
+async function republishListing(req, res) {
+  try {
+    const listing = await findListingOr404(req.params.id, res);
+    if (!listing) return;
+
+    listing.isDeleted = false;
+    listing.isActive = true;
+    listing.approved = true;
+    listing.status = "active";
+    listing.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    await listing.save();
+
+    await Notification.create({
+      message: "İlan yeniden yayına alındı",
+      type: "admin"
+    });
+
+    await logAdminAction(req, "republish", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true, listing });
+  } catch (err) {
+    console.error("REPUBLISH ERROR:", err);
+    return res.status(500).json({ error: "İlan yeniden yayınlanamadı" });
+  }
+}
+
+async function softDeleteListing(req, res) {
+  try {
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true, isActive: false },
+      { new: true }
+    );
+
+    if (!listing) {
+      return res.status(404).json({ error: "İlan bulunamadı" });
+    }
+
+    await logAdminAction(req, "delete", listing._id, { listingId: listing._id });
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error("DELETE LISTING ERROR:", err);
+    return res.status(500).json({ error: "İlan silinemedi" });
+  }
 }
 
 function withTimeout(promise, label) {
@@ -144,10 +367,60 @@ router.get("/listings", async (req, res) => {
   const path = "/api/admin/listings";
   logAdminStart(path);
   try {
+    const status = String(req.query.status || "").trim().toLowerCase();
+    const search = String(req.query.search || "").trim();
+    const city = String(req.query.city || "").trim();
+    const category = String(req.query.category || "").trim();
+    const minPrice = Number(req.query.minPrice);
+    const maxPrice = Number(req.query.maxPrice);
+    const query = { isDeleted: false };
+
+    if (status) {
+      if (status === "approved") {
+        query.$or = [
+          { status: "approved" },
+          { status: "active" }
+        ];
+      } else {
+        query.status = status;
+      }
+    }
+
+    if (search) {
+      const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+      query.$or = [
+        { title: regex },
+        { description: regex },
+        { desc: regex },
+        { listingNo: regex }
+      ];
+    }
+
+    if (city) {
+      query.city = new RegExp(city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    }
+
+    if (category) {
+      query.category = new RegExp("^" + category.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$", "i");
+    }
+
+    if (!Number.isNaN(minPrice) || !Number.isNaN(maxPrice)) {
+      query.price = {};
+      if (!Number.isNaN(minPrice)) query.price.$gte = minPrice;
+      if (!Number.isNaN(maxPrice)) query.price.$lte = maxPrice;
+    }
+
     const listings = await withTimeout(
-      Listing.find({ isDeleted: false }).sort({ createdAt: -1 }).maxTimeMS(QUERY_TIMEOUT_MS),
+      Listing.find(query).sort({ createdAt: -1 }).populate("user", "name email role").maxTimeMS(QUERY_TIMEOUT_MS),
       path
     );
+    if (status === "pending") {
+      console.log("ADMIN_PENDING_COUNT", Array.isArray(listings) ? listings.length : 0);
+      console.log("MODERATION_PENDING_VISIBLE", JSON.stringify({
+        count: Array.isArray(listings) ? listings.length : 0,
+        ids: Array.isArray(listings) ? listings.map((item) => String(item?._id || "")).filter(Boolean) : []
+      }, null, 2));
+    }
     res.json(listings);
   } catch (err) {
     console.error("ADMIN LISTINGS ERROR:", err);
@@ -179,15 +452,22 @@ router.get("/users/:id", async (req, res) => {
     const user = await User.findById(req.params.id).select("-password");
 
     if (!user) {
-      return res.status(404).json({ error: "KullanÄ±cÄ± bulunamadÄ±" });
+      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
     }
 
-    const totalListings = await Listing.countDocuments({ user: user._id, isDeleted: false });
-    const activeListings = await Listing.countDocuments({
-      user: user._id,
-      isDeleted: false,
-      isActive: true
-    });
+    const listings = await Listing.find({ user: user._id, isDeleted: false })
+      .sort({ createdAt: -1 })
+      .select("title listingNo city category mainCategory subCategory price status approved isActive createdAt")
+      .lean();
+    const totalListings = listings.length;
+    const activeListings = listings.filter((item) => {
+      const normalizedStatus = String(item?.status || "").trim().toLowerCase();
+      return Boolean(
+        item?.approved === true &&
+        item?.isActive === true &&
+        ["approved", "active"].includes(normalizedStatus)
+      );
+    }).length;
     const favoriteCount = await Listing.countDocuments({
       favorites: user._id,
       isDeleted: false
@@ -199,11 +479,12 @@ router.get("/users/:id", async (req, res) => {
       activeListings,
       favoriteCount,
       banned: Boolean(user.banned),
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      listings
     });
   } catch (err) {
     console.error("ADMIN USER DETAIL ERROR:", err);
-    res.status(500).json({ error: "KullanÄ±cÄ± bilgileri alÄ±namadÄ±" });
+    res.status(500).json({ error: "Kullanıcı bilgileri alınamadı" });
   }
 });
 
@@ -212,7 +493,7 @@ router.get("/suspicious", async (req, res) => {
     const listings = await Listing.find({ isSuspicious: true, isDeleted: false });
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ error: "ÅÃ¼pheli ilanlar alÄ±namadÄ±" });
+    res.status(500).json({ error: "Şüpheli ilanlar alınamadı" });
   }
 });
 
@@ -233,7 +514,9 @@ router.get("/stats", async (req, res) => {
       featuredListings,
       totalMessages,
       suspiciousListings,
-      todayListings
+      todayListings,
+      pendingListings,
+      listingsSnapshot
     ] = await withTimeout(
       Promise.all([
         User.countDocuments({ banned: { $ne: true } }).maxTimeMS(QUERY_TIMEOUT_MS),
@@ -244,11 +527,67 @@ router.get("/stats", async (req, res) => {
         Listing.countDocuments({ isDeleted: false, isSuspicious: true }).maxTimeMS(QUERY_TIMEOUT_MS),
         Listing.countDocuments({
           isDeleted: false,
-          createdAt: { $gte: today }
-        }).maxTimeMS(QUERY_TIMEOUT_MS)
+          createdAt: mongoose.trusted({ $gte: today })
+        }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.countDocuments({
+          isDeleted: false,
+          status: "pending"
+        }).maxTimeMS(QUERY_TIMEOUT_MS),
+        Listing.find({ isDeleted: false })
+          .select("createdAt city mainCategory category subCategory")
+          .lean()
+          .maxTimeMS(QUERY_TIMEOUT_MS)
       ]),
       path
     );
+
+    const safeListings = Array.isArray(listingsSnapshot) ? listingsSnapshot : [];
+    const categoryMap = new Map();
+    const cityMap = new Map();
+    const nowMs = Date.now();
+    const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+    let currentWeek = 0;
+    let previousWeek = 0;
+
+    safeListings.forEach((item) => {
+      const categoryLabel = String(item?.mainCategory || item?.category || item?.subCategory || "").trim();
+      const cityLabel = String(item?.city || "").trim();
+
+      if (categoryLabel) {
+        const key = normalizeStatLabel(categoryLabel);
+        const current = categoryMap.get(key) || { label: categoryLabel, count: 0 };
+        current.count += 1;
+        if (!current.label || current.label.length < categoryLabel.length) {
+          current.label = categoryLabel;
+        }
+        categoryMap.set(key, current);
+      }
+
+      if (cityLabel) {
+        const key = normalizeStatLabel(cityLabel);
+        const current = cityMap.get(key) || { label: cityLabel, count: 0 };
+        current.count += 1;
+        if (!current.label || current.label.length < cityLabel.length) {
+          current.label = cityLabel;
+        }
+        cityMap.set(key, current);
+      }
+
+      const createdAtMs = item?.createdAt ? new Date(item.createdAt).getTime() : 0;
+      if (!createdAtMs || Number.isNaN(createdAtMs)) return;
+      const ageMs = nowMs - createdAtMs;
+      if (ageMs <= oneWeekMs) {
+        currentWeek += 1;
+      } else if (ageMs <= oneWeekMs * 2) {
+        previousWeek += 1;
+      }
+    });
+
+    const topCategory = Array.from(categoryMap.values()).sort((a, b) => b.count - a.count)[0]?.label || "-";
+    const topCity = Array.from(cityMap.values()).sort((a, b) => b.count - a.count)[0]?.label || "-";
+    const weeklyGrowth = previousWeek > 0
+      ? Math.round(((currentWeek - previousWeek) / previousWeek) * 100)
+      : (currentWeek > 0 ? 100 : 0);
 
     res.json({
       total: totalListings,
@@ -263,7 +602,11 @@ router.get("/stats", async (req, res) => {
       totalListings,
       activeListings,
       featuredListings,
-      todayListings
+      todayListings,
+      pendingListings,
+      topCategory,
+      topCity,
+      weeklyGrowth
     });
   } catch (err) {
     console.error("STATS ERROR:", err);
@@ -284,7 +627,7 @@ router.get("/analytics", async (req, res) => {
     const listings = await withTimeout(
       Listing.find({
         isDeleted: false,
-        createdAt: { $gte: start }
+        createdAt: mongoose.trusted({ $gte: start })
       }).select("createdAt views").maxTimeMS(QUERY_TIMEOUT_MS),
       path
     );
@@ -424,7 +767,7 @@ router.get("/cars", async (req, res) => {
 router.post("/car-brand", async (req, res) => {
   try {
     const { name, series } = req.body;
-    if (!name) return res.status(400).json({ error: "Marka adÄ± zorunlu" });
+    if (!name) return res.status(400).json({ error: "Marka adı zorunlu" });
 
     const brand = await CarBrand.findOneAndUpdate(
       { name },
@@ -523,7 +866,7 @@ router.patch("/car-brand", async (req, res) => {
   try {
     const oldName = req.body.oldName || req.body.brandName || req.body.brand;
     const name = req.body.name;
-    if (!oldName || !name) return res.status(400).json({ error: "Marka adÃ„Â± zorunlu" });
+    if (!oldName || !name) return res.status(400).json({ error: "Marka adı zorunlu" });
 
     const brand = await CarBrand.findOneAndUpdate(
       { name: oldName },
@@ -531,12 +874,12 @@ router.patch("/car-brand", async (req, res) => {
       { new: true }
     );
 
-    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadı" });
 
     res.json({ success: true, brand });
   } catch (err) {
     console.error("CAR BRAND UPDATE ERROR:", err);
-    res.status(500).json({ error: "Marka gÃƒÂ¼ncellenemedi" });
+    res.status(500).json({ error: "Marka güncellenemedi" });
   }
 });
 
@@ -550,10 +893,10 @@ router.patch("/car-series", async (req, res) => {
     }
 
     const brand = await CarBrand.findOne({ name: brandName });
-    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadı" });
 
     const series = brand.series.find((item) => item.name === oldName);
-    if (!series) return res.status(404).json({ error: "Seri bulunamadÃ„Â±" });
+    if (!series) return res.status(404).json({ error: "Seri bulunamadı" });
 
     series.name = name;
     await brand.save();
@@ -561,7 +904,7 @@ router.patch("/car-series", async (req, res) => {
     res.json({ success: true, brand });
   } catch (err) {
     console.error("CAR SERIES UPDATE ERROR:", err);
-    res.status(500).json({ error: "Seri gÃƒÂ¼ncellenemedi" });
+    res.status(500).json({ error: "Seri güncellenemedi" });
   }
 });
 
@@ -576,13 +919,13 @@ router.patch("/car-model", async (req, res) => {
     }
 
     const brand = await CarBrand.findOne({ name: brandName });
-    if (!brand) return res.status(404).json({ error: "Marka bulunamadÃ„Â±" });
+    if (!brand) return res.status(404).json({ error: "Marka bulunamadı" });
 
     const series = brand.series.find((item) => item.name === seriesName);
-    if (!series) return res.status(404).json({ error: "Seri bulunamadÃ„Â±" });
+    if (!series) return res.status(404).json({ error: "Seri bulunamadı" });
 
     const model = series.models.find((item) => item.name === oldName);
-    if (!model) return res.status(404).json({ error: "Model bulunamadÃ„Â±" });
+    if (!model) return res.status(404).json({ error: "Model bulunamadı" });
 
     model.name = name;
     model.fuel = asArray(req.body.fuel);
@@ -598,44 +941,19 @@ router.patch("/car-model", async (req, res) => {
     res.json({ success: true, brand });
   } catch (err) {
     console.error("CAR MODEL UPDATE ERROR:", err);
-    res.status(500).json({ error: "Model gÃƒÂ¼ncellenemedi" });
+    res.status(500).json({ error: "Model güncellenemedi" });
   }
 });
 
-router.patch("/listings/:id/feature", async (req, res) => {
-  try {
-    const listing = await Listing.findById(req.params.id);
-
-    if (!listing) {
-      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
-    }
-
-    listing.isFeatured = !listing.isFeatured;
-    listing.featuredUntil = listing.isFeatured
-      ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-      : null;
-
-    await listing.save();
-
-    await Notification.create({
-      message: "Ä°lan vitrine alÄ±ndÄ±",
-      type: "feature"
-    });
-
-    await logAdminAction(req, "feature", listing._id, { listingId: listing._id });
-
-    res.json({ success: true, listing });
-
-  } catch (err) {
-    console.error("FEATURE ERROR:", err);
-    res.status(500).json({ error: "Feature baÅŸarÄ±sÄ±z" });
-  }
-});
+router.patch("/listings/:id/feature", featureListing);
+router.put("/listings/:id/feature", featureListing);
+router.patch("/listings/:id/showcase", showcaseListing);
+router.put("/listings/:id/showcase", showcaseListing);
 
 router.patch("/listings/:id/boost", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ error: "Ä°lan yok" });
+    if (!listing) return res.status(404).json({ error: "İlan yok" });
 
     listing.isBoosted = true;
     listing.boostUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
@@ -643,7 +961,7 @@ router.patch("/listings/:id/boost", async (req, res) => {
     await listing.save();
 
     await Notification.create({
-      message: "Ä°lan boost yapÄ±ldÄ±",
+      message: "İlan boost yapıldı",
       type: "boost"
     });
 
@@ -659,7 +977,7 @@ router.patch("/listings/:id/toggle", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
     if (!listing) {
-      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
+      return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
     listing.isActive = !listing.isActive;
@@ -676,61 +994,15 @@ router.patch("/listings/:id/toggle", async (req, res) => {
     });
   } catch (err) {
     console.error("TOGGLE ERROR:", err);
-    res.status(500).json({ error: "Toggle baÅŸarÄ±sÄ±z" });
+    res.status(500).json({ error: "Durum değiştirilemedi" });
   }
 });
 
-router.patch("/listings/:id/approve", async (req, res) => {
-  try {
-    const listing = await Listing.findByIdAndUpdate(
-      req.params.id,
-      { status: "approved" },
-      { new: true }
-    );
+router.patch("/listings/:id/approve", approveListing);
+router.put("/listings/:id/approve", approveListing);
 
-    if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
-    }
-
-    await Notification.create({
-      message: "Ä°lan onaylandÄ±",
-      type: "admin"
-    });
-
-    await logAdminAction(req, "approve", listing._id, { listingId: listing._id });
-
-    res.json({ success: true, listing });
-  } catch (err) {
-    console.error("APPROVE ERROR:", err);
-    res.status(500).json({ error: "İlan onaylanamadı" });
-  }
-});
-
-router.patch("/listings/:id/reject", async (req, res) => {
-  try {
-    const listing = await Listing.findByIdAndUpdate(
-      req.params.id,
-      { status: "rejected" },
-      { new: true }
-    );
-
-    if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
-    }
-
-    await Notification.create({
-      message: "Ä°lan reddedildi",
-      type: "admin"
-    });
-
-    await logAdminAction(req, "reject", listing._id, { listingId: listing._id });
-
-    res.json({ success: true, listing });
-  } catch (err) {
-    console.error("REJECT ERROR:", err);
-    res.status(500).json({ error: "İlan reddedilemedi" });
-  }
-});
+router.patch("/listings/:id/reject", rejectListing);
+router.put("/listings/:id/reject", rejectListing);
 
 router.patch("/listings/:id/edit", async (req, res) => {
   try {
@@ -770,7 +1042,7 @@ router.patch("/listings/:id/edit", async (req, res) => {
     );
 
     if (!listing) {
-      return res.status(404).json({ error: "Ä°lan bulunamadÄ±" });
+      return res.status(404).json({ error: "İlan bulunamadı" });
     }
 
     await logAdminAction(req, "edit", listing._id, { listingId: listing._id });
@@ -778,7 +1050,7 @@ router.patch("/listings/:id/edit", async (req, res) => {
     res.json({ success: true, listing });
   } catch (err) {
     console.error("ADMIN LISTING EDIT ERROR:", err);
-    res.status(500).json({ error: "Ä°lan gÃ¼ncellenemedi" });
+    res.status(500).json({ error: "İlan güncellenemedi" });
   }
 });
 
@@ -810,24 +1082,27 @@ router.patch("/users/:id/ban", async (req, res) => {
   }
 });
 
-router.delete("/listings/:id", async (req, res) => {
-  try {
-    const listing = await Listing.findByIdAndUpdate(
-      req.params.id,
-      { isDeleted: true },
-      { new: true }
-    );
+router.delete("/listings/:id", softDeleteListing);
+router.delete("/delete/:id", softDeleteListing);
 
-    if (!listing) {
-      return res.status(404).json({ error: "İlan bulunamadı" });
+router.delete("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
     }
 
-    await logAdminAction(req, "delete", listing._id, { listingId: listing._id });
+    if (user.role === "admin") {
+      return res.status(400).json({ error: "admin_user_protected" });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    await logAdminAction(req, "delete_user", req.params.id, { userId: req.params.id });
 
     res.json({ success: true });
   } catch (err) {
-    console.error("DELETE LISTING ERROR:", err);
-    res.status(500).json({ error: "İlan silinemedi" });
+    console.error("DELETE USER ERROR:", err);
+    res.status(500).json({ error: "Kullanıcı silinemedi" });
   }
 });
 
@@ -850,18 +1125,150 @@ router.patch("/listings/:id", async (req, res) => {
   res.json({ success: true, isActive: listing.isActive, isSuspicious: listing.isSuspicious });
 });
 
+router.put("/listings/:id/republish", republishListing);
+router.patch("/listings/:id/republish", republishListing);
+
+router.get("/reports", async (req, res) => {
+  const path = "/api/admin/reports";
+  logAdminStart(path);
+  try {
+    const reports = await withTimeout(
+      Report.find()
+        .sort({ createdAt: -1 })
+        .limit(200)
+        .populate("listingId", "title")
+        .populate("listing", "title")
+        .populate("userId", "name email")
+        .populate("user", "name email")
+        .lean(),
+      path
+    );
+    res.json(Array.isArray(reports) ? reports : emptyList());
+  } catch (err) {
+    console.error("ADMIN REPORTS ERROR:", err);
+    res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
+  }
+});
+
+router.get("/payments", async (req, res) => {
+  const path = "/api/admin/payments";
+  logAdminStart(path);
+  try {
+    const payments = await withTimeout(
+      Payment.find()
+        .sort({ createdAt: -1 })
+        .limit(200)
+        .populate("listingId", "title")
+        .populate("userId", "name email")
+        .lean(),
+      path
+    );
+    res.json(Array.isArray(payments) ? payments : emptyList());
+  } catch (err) {
+    console.error("ADMIN PAYMENTS ERROR:", err);
+    res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
+  }
+});
+
+router.get("/activities", async (req, res) => {
+  const path = "/api/admin/activities";
+  logAdminStart(path);
+  try {
+    const activities = await withTimeout(
+      Activity.find()
+        .sort({ createdAt: -1 })
+        .limit(250)
+        .populate("userId", "name email")
+        .lean(),
+      path
+    );
+    res.json(Array.isArray(activities) ? activities : emptyList());
+  } catch (err) {
+    console.error("ADMIN ACTIVITIES ERROR:", err);
+    res.status(200).json(emptyList());
+  } finally {
+    logAdminEnd(path);
+  }
+});
+
+router.post("/user/:id/badge", async (req, res) => {
+  try {
+    const badge = String(req.body?.badge || "").trim();
+    if (!badge) {
+      return res.status(400).json({ error: "badge_required" });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+    }
+
+    const currentBadges = Array.isArray(user.badges) ? user.badges : [];
+    if (!currentBadges.includes(badge)) {
+      currentBadges.push(badge);
+    }
+    user.badges = currentBadges;
+    if (badge === "verified") {
+      user.verifiedBadge = true;
+    }
+    await user.save();
+    await logAdminAction(req, "add_badge", req.params.id, { userId: req.params.id, badge });
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error("ADMIN BADGE ADD ERROR:", err);
+    res.status(500).json({ error: "Rozet eklenemedi" });
+  }
+});
+
+router.delete("/user/:id/badge", async (req, res) => {
+  try {
+    const badge = String(req.body?.badge || "").trim();
+    if (!badge) {
+      return res.status(400).json({ error: "badge_required" });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "Kullanıcı bulunamadı" });
+    }
+
+    user.badges = (Array.isArray(user.badges) ? user.badges : []).filter((item) => item !== badge);
+    if (badge === "verified") {
+      user.verifiedBadge = false;
+    }
+    await user.save();
+    await logAdminAction(req, "remove_badge", req.params.id, { userId: req.params.id, badge });
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error("ADMIN BADGE REMOVE ERROR:", err);
+    res.status(500).json({ error: "Rozet kaldırılamadı" });
+  }
+});
+
 // ADMIN NOTIFICATIONS
 router.get("/notifications", async (req, res) => {
   const path = "/api/admin/notifications";
   logAdminStart(path);
   try {
-    const data = await withTimeout(
-      Notification.find()
-        .sort({ createdAt: -1 })
-        .limit(20)
-        .maxTimeMS(QUERY_TIMEOUT_MS),
-      path
-    );
+    const [totalCount, unreadCount, data] = await Promise.all([
+      withTimeout(Notification.countDocuments({}), `${path}:total`),
+      withTimeout(Notification.countDocuments({ isRead: { $ne: true } }), `${path}:unread`),
+      withTimeout(
+        Notification.find()
+          .sort({ isRead: 1, createdAt: -1 })
+          .limit(50)
+          .lean()
+          .maxTimeMS(QUERY_TIMEOUT_MS),
+        path
+      )
+    ]);
+
+    res.setHeader("X-Notification-Total-Count", String(totalCount || 0));
+    res.setHeader("X-Notification-Unread-Count", String(unreadCount || 0));
 
     res.json(data);
   } catch (err) {
@@ -869,6 +1276,23 @@ router.get("/notifications", async (req, res) => {
     res.status(200).json(emptyList());
   } finally {
     logAdminEnd(path);
+  }
+});
+
+router.put("/notifications/:id/read", async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.id,
+      { isRead: true },
+      { new: true }
+    );
+    if (!notification) {
+      return res.status(404).json({ error: "Bildirim bulunamadı" });
+    }
+    res.json({ success: true, notification });
+  } catch (err) {
+    console.error("NOTIFICATION READ ERROR:", err);
+    res.status(500).json({ error: "Bildirim güncellenemedi" });
   }
 });
 
@@ -884,7 +1308,37 @@ router.get("/logs", async (req, res) => {
     res.json(logs);
   } catch (err) {
     console.error("ADMIN LOG ERROR:", err);
-    res.status(500).json({ error: "Loglar alÄ±namadÄ±" });
+    res.status(500).json({ error: "Loglar alınamadı" });
+  }
+});
+
+router.post("/change-password", async (req, res) => {
+  try {
+    const oldPassword = String(req.body?.oldPassword || "");
+    const newPassword = String(req.body?.newPassword || "");
+
+    if (!oldPassword || newPassword.length < 6) {
+      return res.status(400).json({ error: "invalid_password_request" });
+    }
+
+    const user = await User.findById(req.user?._id);
+    if (!user || !user.password) {
+      return res.status(404).json({ error: "admin_not_found" });
+    }
+
+    const ok = await bcrypt.compare(oldPassword, String(user.password || ""));
+    if (!ok) {
+      return res.status(400).json({ error: "old_password_invalid" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    await logAdminAction(req, "change_password", req.user?._id, { userId: req.user?._id });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("ADMIN CHANGE PASSWORD ERROR:", err);
+    res.status(500).json({ error: "password_change_failed" });
   }
 });
 

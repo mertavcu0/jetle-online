@@ -563,6 +563,10 @@
   <script>
     (function () {
       const grid = document.getElementById("myListingsGrid");
+      const favoritesLink = document.querySelector('a[href="/favorites.html"]');
+      if (favoritesLink) {
+        console.log("FAVORITE_DASHBOARD_VISIBLE");
+      }
       if (!grid) return;
 
       const originalLoadSection = typeof window.loadSection === "function"

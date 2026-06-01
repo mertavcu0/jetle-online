@@ -1,5 +1,6 @@
-const express = require("express");
+﻿const express = require("express");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 const Listing = require("../models/Listing");
 const User = require("../models/User");
@@ -8,8 +9,34 @@ const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const storage = require("../services/storage");
 const isProduction = process.env.NODE_ENV === "production";
+const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
 const activeUploadMap = new Map();
 const MAX_CONCURRENT_UPLOADS = 3;
+const OPEN_BETA_MODE = String(process.env.OPEN_BETA_MODE || "").trim().toLowerCase() === "true";
+
+function getListingAccessPolicy({ userRole = "user", sellerType = "" } = {}) {
+  if (OPEN_BETA_MODE) {
+    return {
+      allowed: true,
+      betaMode: true,
+      requiresPayment: false,
+      unlimitedListings: true,
+      listingLimit: null,
+      userRole: String(userRole || "").trim().toLowerCase() || "user",
+      sellerType: String(sellerType || "").trim().toLowerCase()
+    };
+  }
+
+  return {
+    allowed: true,
+    betaMode: false,
+    requiresPayment: false,
+    unlimitedListings: false,
+    listingLimit: null,
+    userRole: String(userRole || "").trim().toLowerCase() || "user",
+    sellerType: String(sellerType || "").trim().toLowerCase()
+  };
+}
 
 function sanitizeText(value, maxLength = 500) {
   return String(value || "")
@@ -64,6 +91,36 @@ function normalizeImageList(value) {
   return [];
 }
 
+async function resolveOptionalRequestUser(req) {
+  const authHeader = String(req.header("Authorization") || "").trim();
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+
+  const token = authHeader.slice(7).trim();
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    if (!decoded?.id) return null;
+
+    const user = await User.findById(decoded.id).select("_id name email role banned isBanned");
+    if (!user || user.banned || user.isBanned) return null;
+
+    const normalizedRole = typeof User.normalizeUserRole === "function"
+      ? User.normalizeUserRole(user.role)
+      : String(user.role || "").trim().toLowerCase() || "user";
+
+    return {
+      id: String(user._id),
+      _id: String(user._id),
+      name: user.name || "",
+      email: user.email || "",
+      role: normalizedRole || "user"
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
 function listingToClient(doc) {
   const o = doc.toObject ? doc.toObject() : { ...doc };
   o.id = String(o._id);
@@ -101,17 +158,93 @@ function escapeRegex(value) {
   return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function buildListingQuery(req) {
-  const query = {
-    status: "approved",
-    isDeleted: false
+function normalizeCategoryToken(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function inferMainCategory(...values) {
+  for (const value of values) {
+    const normalized = normalizeCategoryToken(value);
+    if (!normalized) continue;
+
+    if (["vasita", "otomobil", "arac", "araba", "suv", "motosiklet", "pickup", "kamyonet"].includes(normalized)) {
+      return "vasita";
+    }
+
+    if (["emlak", "arsa", "daire", "villa", "isyeri", "mustakil-ev", "rezidans"].includes(normalized)) {
+      return "emlak";
+    }
+
+    if (["yedek-parca", "yedek-parca-ve-aksesuar", "aksesuar", "lastik-jant", "oto-aksesuar"].includes(normalized)) {
+      return "yedek-parca";
+    }
+
+    if (["is-makineleri", "is-makinalari", "is-makinasi", "is-makinesi"].includes(normalized)) {
+      return "is-makineleri";
+    }
+  }
+
+  return "";
+}
+
+function inferSubCategory(rawSubCategory, rawCategory, mainCategory) {
+  const subCategory = String(rawSubCategory || "").trim();
+  if (subCategory) return subCategory;
+
+  const category = String(rawCategory || "").trim();
+  if (!category) return "";
+
+  const normalizedCategory = normalizeCategoryToken(category);
+  if (!normalizedCategory || normalizedCategory === mainCategory) return "";
+
+  return category;
+}
+
+function buildPublicVisibilityQuery() {
+  return {
+    approved: true,
+    isActive: true,
+    isDeleted: false,
+    $or: [
+      { status: "approved" },
+      { status: "active" }
+    ]
   };
+}
+
+function buildListingQuery(req) {
+  const query = buildPublicVisibilityQuery();
 
   const search = String(req.query.q || req.query.search || "").trim();
   const city = String(req.query.city || req.query.location || "").trim();
   const category = String(req.query.category || "").trim();
+  const showcaseOnly = String(req.query.showcase || "").trim().toLowerCase() === "true";
+  const featuredOnly = String(req.query.featured || "").trim().toLowerCase() === "true";
+  const normalOnly = String(req.query.normal || "").trim().toLowerCase() === "true";
   const min = Number(req.query.min || req.query.minPrice);
   const max = Number(req.query.max || req.query.maxPrice);
+
+  if (showcaseOnly) {
+    query.isShowcase = true;
+    query.isFeatured = false;
+  }
+
+  if (featuredOnly) {
+    query.isFeatured = true;
+    query.isShowcase = false;
+  }
+
+  if (normalOnly) {
+    query.isShowcase = false;
+    query.isFeatured = false;
+  }
 
   if (search) {
     const regex = new RegExp(escapeRegex(search), "i");
@@ -135,22 +268,21 @@ function buildListingQuery(req) {
   }
 
   if (category) {
-    const normalized = category.toLocaleLowerCase("tr");
-    const categories = [category];
+    const mainCategory = inferMainCategory(category);
+    const categoryRegex = new RegExp("^" + escapeRegex(category) + "$", "i");
 
-    if (
-      normalized.includes("oto") ||
-      normalized.includes("araç") ||
-      normalized.includes("arac") ||
-      normalized.includes("vasıta") ||
-      normalized.includes("vasita")
-    ) {
-      categories.push("Araç", "Vasıta");
+    if (mainCategory) {
+      query.$and = query.$and || [];
+      query.$and.push({
+        $or: [
+          { mainCategory: mainCategory },
+          { category: new RegExp("^" + escapeRegex(mainCategory) + "$", "i") },
+          { subCategory: categoryRegex }
+        ]
+      });
+    } else {
+      query.category = categoryRegex;
     }
-
-    query.category = {
-      $in: categories.map((item) => new RegExp("^" + escapeRegex(item) + "$", "i"))
-    };
   }
 
   if (!Number.isNaN(min) || !Number.isNaN(max)) {
@@ -171,17 +303,30 @@ function normalizeListingItem(raw) {
   const mergedImages = [...new Set([...images, ...photos])];
   const image = !isPlaceholderImage(item.image) ? String(item.image || "").trim() : "";
   const primaryImage = image || mergedImages[0] || "";
+  const mainCategory = inferMainCategory(item.mainCategory, item.category, item.subCategory, item.type);
+  const subCategory = inferSubCategory(item.subCategory, item.category, mainCategory);
 
   const createdAt = item.createdAt ? new Date(item.createdAt) : null;
   const createdAtMs = createdAt && !Number.isNaN(createdAt.getTime())
     ? createdAt.getTime()
     : 0;
 
+  console.log("LISTING_CATEGORY_DEBUG", JSON.stringify({
+    id: String(item._id || item.id || ""),
+    category: item.category || "",
+    mainCategory,
+    subCategory,
+    type: item.type || ""
+  }, null, 2));
+
   return {
     ...item,
+    mainCategory,
+    subCategory,
     image: primaryImage,
     images: mergedImages,
     photos: mergedImages,
+    isShowcase: Boolean(item.isShowcase),
     favorites: Array.isArray(item.favorites) ? item.favorites : [],
     views: Number(item.views || 0),
     isFeatured: Boolean(item.isFeatured),
@@ -237,12 +382,15 @@ function releaseUploadSlot(key) {
 function withUploadGuard(req, res, next) {
   const key = getUploadKey(req);
   const current = Number(activeUploadMap.get(key) || 0);
+  console.log("UPLOAD_GUARD_CHECK", { key, current, max: MAX_CONCURRENT_UPLOADS });
 
   if (current >= MAX_CONCURRENT_UPLOADS) {
+    console.error("UPLOAD_400_GUARD", { key, current, max: MAX_CONCURRENT_UPLOADS });
     return res.status(429).json({ error: "too_many_requests" });
   }
 
   activeUploadMap.set(key, current + 1);
+  console.log("UPLOAD_GUARD_OK", { key, nextCount: current + 1 });
   let released = false;
   const cleanup = () => {
     if (released) return;
@@ -257,38 +405,61 @@ function withUploadGuard(req, res, next) {
 router.post(
   "/upload",
   authMiddleware,
-  withUploadGuard,
   function (req, res, next) {
-    upload.array("images", 10)(req, res, function (err) {
-      if (err) return res.status(400).json({ msg: err.message || "upload hatası" });
-      next();
+    console.log("UPLOAD_AUTH_OK", {
+      userId: String(req.user?.id || req.user?._id || ""),
+      email: String(req.user?.email || "")
     });
+    next();
   },
-  function (req, res) {
-    Promise.resolve(upload.optimizeFiles(req.files || []))
-      .catch(() => [])
-      .then((thumbs) => storage.storeFiles(req.files || [], thumbs))
-      .then(({ urls, thumbnailUrls, publicIds, assets, provider }) => {
-        res.json({ urls, thumbnailUrls, publicIds, assets, provider });
-      })
-      .catch((err) => {
-        console.error("LISTING UPLOAD ERROR REAL:", {
-          message: err?.message || "unknown_error",
-          stack: err?.stack || "",
-          fileCount: Array.isArray(req.files) ? req.files.length : 0,
-          hasCloudinaryUrl: Boolean(String(process.env.CLOUDINARY_URL || "").trim()),
-          hasCloudinaryParts: Boolean(
-            String(process.env.CLOUDINARY_CLOUD_NAME || "").trim() &&
-            String(process.env.CLOUDINARY_API_KEY || "").trim() &&
-            String(process.env.CLOUDINARY_API_SECRET || "").trim()
-          )
-        });
-        res.status(500).json({
-          error: "upload_error",
-          message: "Görseller yüklenemedi",
-          ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
-        });
-      });
+  withUploadGuard,
+  upload.array("images", 30),
+  async function (req, res, next) {
+    console.log("UPLOAD_ROUTE_START");
+    console.log("UPLOAD_REQ_BODY", JSON.stringify(req.body || {}, null, 2));
+    console.log("UPLOAD_REQ_FILES", JSON.stringify(req.files || [], null, 2));
+    console.log("UPLOAD_REQ_FILES_FULL", JSON.stringify(req.files || [], null, 2));
+    console.log("UPLOAD_MIDDLEWARE_OK");
+
+    try {
+      console.log("UPLOAD_FILE_MAP_START");
+      const thumbs = await Promise.resolve(upload.optimizeFiles(req.files || [])).catch(() => []);
+      console.log("UPLOAD_FILE_MAP_DONE", JSON.stringify(thumbs || [], null, 2));
+      const { urls, thumbnailUrls, publicIds, assets, provider } = await storage.storeFiles(req.files || [], thumbs);
+
+      console.log("UPLOAD_SAVED_FILES", JSON.stringify({
+        urls,
+        thumbnailUrls,
+        publicIds,
+        assets,
+        provider,
+        files: (req.files || []).map((file) => ({
+          fieldname: file.fieldname,
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+          filename: file.filename,
+          path: file.path
+        }))
+      }, null, 2));
+
+      const responsePayload = { urls, thumbnailUrls, publicIds, assets, provider };
+      console.log("UPLOAD_RESPONSE_READY", JSON.stringify(responsePayload, null, 2));
+      console.log("UPLOAD_RESPONSE", JSON.stringify(responsePayload, null, 2));
+      console.log("UPLOAD_ROUTE_SUCCESS");
+      return res.json(responsePayload);
+    } catch (err) {
+      console.error("UPLOAD_400_UNKNOWN", err?.message || err);
+      return next(err);
+    }
+  },
+  function (err, req, res, next) {
+    console.error("UPLOAD_FATAL", err);
+    if (res.headersSent) return next(err);
+    return res.status(500).json({
+      success: false,
+      error: String(err?.message || err)
+    });
   }
 );
 
@@ -302,17 +473,58 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
 }, async (req, res) => {
   try {
     req.body = sanitizeHtmlLikeObject(req.body);
+    console.log("CREATE_REQ_BODY_RAW", JSON.stringify(req.body, null, 2));
+    const body = { ...req.body };
     const thumbResults = await upload.optimizeFiles(req.files || []);
     const storedFiles = await storage.storeFiles(req.files || [], thumbResults);
     const imageUrls = Array.isArray(storedFiles.urls) ? storedFiles.urls : [];
     const imagePublicIds = Array.isArray(storedFiles.publicIds) ? storedFiles.publicIds : [];
     const currentUserId = String(req.user?.id || req.user?._id || "").trim();
     const currentUserEmail = String(req.user?.email || "").trim().toLowerCase();
-    const title = sanitizeText(req.body.title, 160);
-    const description = sanitizeText(req.body.description || req.body.desc, 5000);
+    const listingAccessPolicy = getListingAccessPolicy({
+      userRole: req.user?.role,
+      sellerType: req.body?.sellerType
+    });
+    if (listingAccessPolicy.betaMode) {
+      console.log("OPEN_BETA_MODE_ACTIVE", JSON.stringify(listingAccessPolicy, null, 2));
+      console.log("UNLIMITED_FREE_LISTINGS_ENABLED", JSON.stringify({
+        userId: currentUserId,
+        userRole: listingAccessPolicy.userRole,
+        sellerType: listingAccessPolicy.sellerType
+      }, null, 2));
+      console.log("LISTING_LIMIT_BYPASSED", JSON.stringify({
+        userId: currentUserId,
+        userRole: listingAccessPolicy.userRole,
+        sellerType: listingAccessPolicy.sellerType
+      }, null, 2));
+    }
+    const title = sanitizeText(body.title, 160);
+    const rawDescriptionValue =
+      body.description ??
+      body.desc ??
+      body.content ??
+      body.details ??
+      "";
+    const description = sanitizeText(rawDescriptionValue, 5000);
+    console.log("DESCRIPTION_RAW", JSON.stringify({
+      description: body.description,
+      desc: body.desc,
+      content: body.content,
+      details: body.details
+    }, null, 2));
+    console.log("DESCRIPTION_TYPE", typeof rawDescriptionValue);
+    console.log("DESCRIPTION_LENGTH", String(rawDescriptionValue || "").length);
+    console.log("DESCRIPTION_AFTER_TRIM", description);
+    console.log("DESCRIPTION_VALIDATION_RESULT", JSON.stringify({
+      hasDescription: Boolean(description),
+      length: String(description || "").length,
+      min: 10,
+      max: 5000
+    }, null, 2));
     const {
       price,
       category,
+      mainCategory,
       subCategory,
       brand,
       series,
@@ -339,19 +551,151 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
       sellerType,
       city,
       district,
+      coverImage,
+      mainImage,
+      gallery,
       images,
-      photos
-    } = req.body;
-    const bodyImages = normalizeImageList(images || photos);
-    const listingImages = imageUrls.length ? imageUrls : bodyImages;
+      photos,
+      image
+    } = body;
+    const normalizedImages = normalizeImageList(images);
+    const normalizedPhotos = normalizeImageList(photos);
+    const normalizedGallery = normalizeImageList(gallery);
+    const fallbackImages = normalizeImageList([coverImage, mainImage, image].filter(Boolean));
+    const baseImageChain =
+      normalizedImages.length ? normalizedImages :
+      normalizedPhotos.length ? normalizedPhotos :
+      normalizedGallery.length ? normalizedGallery :
+      fallbackImages;
+    const listingImages = imageUrls.length ? imageUrls : baseImageChain;
+    const primaryImage = listingImages[0] || "";
+    const finalGallery = imageUrls.length ? listingImages : (normalizedGallery.length ? normalizedGallery : listingImages);
+    const finalImages = imageUrls.length ? listingImages : (normalizedImages.length ? normalizedImages : listingImages);
+    const finalPhotos = imageUrls.length ? listingImages : (normalizedPhotos.length ? normalizedPhotos : listingImages);
+    const finalCoverImage = imageUrls.length ? primaryImage : (String(coverImage || "").trim() || primaryImage);
+    const finalMainImage = imageUrls.length ? primaryImage : (String(mainImage || "").trim() || primaryImage);
+    const finalImage = imageUrls.length ? primaryImage : (String(image || "").trim() || primaryImage);
     const uploadProvider = String(storedFiles.provider || "local").trim() || "local";
+
+    const standardizedMainCategory = inferMainCategory(mainCategory, category, subCategory, body.type);
+    const standardizedSubCategory = inferSubCategory(subCategory, category, standardizedMainCategory);
+
+    console.log("CREATE_CATEGORY_RAW", JSON.stringify({
+      category: body.category,
+      mainCategory: body.mainCategory,
+      subCategory: body.subCategory,
+      type: body.type || ""
+    }, null, 2));
+    console.log("CREATE_MAIN_CATEGORY", standardizedMainCategory);
+    console.log("CREATE_SUBCATEGORY", standardizedSubCategory);
+    console.log("CATEGORY_STANDARDIZED", JSON.stringify({
+      input: {
+        category: body.category,
+        mainCategory: body.mainCategory,
+        subCategory: body.subCategory
+      },
+      output: {
+        mainCategory: standardizedMainCategory,
+        subCategory: standardizedSubCategory
+      }
+    }, null, 2));
+
+    body.coverImage = finalCoverImage;
+    body.mainImage = finalMainImage;
+    body.image = finalImage;
+    body.gallery = finalGallery;
+    body.images = finalImages;
+    body.photos = finalPhotos;
+    body.title = title;
+    body.description = description;
+    body.price = price;
+    body.category = standardizedMainCategory || category;
+    body.mainCategory = standardizedMainCategory || category;
+    body.subCategory = standardizedSubCategory;
+    body.brand = brand;
+    body.series = series;
+    body.model = model;
+    body.year = year;
+    body.km = km;
+    body.fuel = fuel;
+    body.transmission = transmission;
+    body.bodyType = bodyType;
+    body.color = color;
+    body.engineSize = engineSize;
+    body.enginePower = enginePower;
+    body.damage = damage;
+    body.features = features;
+    body.kaput = kaput;
+    body.tavan = tavan;
+    body.bagaj = bagaj;
+    body.sag_on_camurluk = sag_on_camurluk;
+    body.sol_on_camurluk = sol_on_camurluk;
+    body.sag_on_kapi = sag_on_kapi;
+    body.sol_on_kapi = sol_on_kapi;
+    body.sag_arka_kapi = sag_arka_kapi;
+    body.sol_arka_kapi = sol_arka_kapi;
+    body.sellerType = sellerType;
+    body.city = city;
+    body.district = district;
+    body.imagePublicIds = imagePublicIds;
+    body.uploadProvider = uploadProvider;
+    body.listingNo = body.listingNo || await generateUniqueListingNo();
+    body.approved = false;
+    body.status = "pending";
+    body.isActive = false;
+    body.isShowcase = false;
+    body.isFeatured = false;
+    body.user = currentUserId || undefined;
+    body.userEmail = currentUserEmail || undefined;
+    console.log("MODERATION_CREATE", JSON.stringify({
+      approved: body.approved,
+      status: body.status,
+      isActive: body.isActive,
+      isShowcase: body.isShowcase,
+      isFeatured: body.isFeatured
+    }, null, 2));
+    console.log("LISTING_APPROVAL_STATUS", JSON.stringify({
+      approved: body.approved,
+      status: body.status,
+      isActive: body.isActive
+    }, null, 2));
+
+    console.log("CREATE_REQ_BODY_NORMALIZED", JSON.stringify(body, null, 2));
+
+    const createData = {
+      approved: body.approved,
+      status: body.status,
+      isActive: body.isActive,
+      isShowcase: body.isShowcase,
+      isFeatured: body.isFeatured,
+      images: body.images,
+      photos: body.photos,
+      gallery: body.gallery,
+      image: body.image,
+      coverImage: body.coverImage,
+      mainImage: body.mainImage
+    };
+
+    console.log("CREATE_MONGO_INPUT", JSON.stringify(createData, null, 2));
 
     if (!title || title.length < 3 || title.length > 160) {
       return res.status(400).json({ error: "invalid_title" });
     }
 
     if (!description || description.length < 10 || description.length > 5000) {
-      return res.status(400).json({ error: "invalid_description" });
+      const reason =
+        !description ? "description_empty_after_trim" :
+        description.length < 10 ? "description_too_short" :
+        "description_too_long";
+      console.error("DESCRIPTION_VALIDATION_FAIL", {
+        reason,
+        length: description?.length || 0
+      });
+      return res.status(400).json({
+        error: "invalid_description",
+        reason,
+        length: description?.length || 0
+      });
     }
 
     if (!category || !city) {
@@ -359,47 +703,7 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
     }
 
     const listing = new Listing({
-      ...req.body,
-      title,
-      description,
-      price,
-      category,
-      subCategory,
-      brand,
-      series,
-      model,
-      year,
-      km,
-      fuel,
-      transmission,
-      bodyType,
-      color,
-      engineSize,
-      enginePower,
-      damage,
-      features,
-      kaput,
-      tavan,
-      bagaj,
-      sag_on_camurluk,
-      sol_on_camurluk,
-      sag_on_kapi,
-      sol_on_kapi,
-      sag_arka_kapi,
-      sol_arka_kapi,
-      sellerType,
-      city,
-      district,
-      image: listingImages[0] || "",
-      images: listingImages,
-      photos: listingImages,
-      imagePublicIds,
-      uploadProvider,
-      listingNo: req.body.listingNo || await generateUniqueListingNo(),
-      status: "pending",
-      isFeatured: false,
-      user: currentUserId || undefined,
-      userEmail: currentUserEmail || undefined
+      ...body
     });
 
     if (title.length < 3 || description.length < 10) {
@@ -407,6 +711,23 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
     }
 
     await listing.save();
+    const savedListing = listing.toObject ? listing.toObject() : listing;
+    console.log("CREATE_SAVED_LISTING", JSON.stringify(savedListing, null, 2));
+    console.log("CREATE_SAVED_KEYS", Object.keys(savedListing));
+    console.log("LISTING_APPROVAL_STATUS", JSON.stringify({
+      id: String(savedListing._id || ""),
+      approved: savedListing.approved,
+      status: savedListing.status,
+      isActive: savedListing.isActive
+    }, null, 2));
+    console.log("MONGO_SAVED_RESULT", {
+      id: listing._id,
+      images: listing.images,
+      gallery: listing.gallery,
+      image: listing.image,
+      coverImage: listing.coverImage,
+      mainImage: listing.mainImage
+    });
     await Notification.create({
       message: "Yeni ilan eklendi",
       type: "listing"
@@ -558,9 +879,8 @@ router.get("/user/:id", async (req, res) => {
     }
 
     const listings = await Listing.find({
-      user: req.params.id,
-      status: "approved",
-      isDeleted: false
+      ...buildPublicVisibilityQuery(),
+      user: req.params.id
     });
 
     res.json(listings);
@@ -651,8 +971,7 @@ router.post("/:id/view", async (req, res) => {
     await Listing.findOneAndUpdate(
       {
         _id: req.params.id,
-        status: "approved",
-        isDeleted: false
+        ...buildPublicVisibilityQuery()
       },
       { $inc: { views: 1 } }
     );
@@ -665,21 +984,180 @@ router.post("/:id/view", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  console.log("DETAIL_ROUTE_ENTRY", {
+    id: String(req.params.id || "")
+  });
+  console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "detail_route_start");
   if (!mongoose.Types.ObjectId.isValid(String(req.params.id || ""))) {
     return res.status(404).json({ error: "İlan bulunamadı" });
   }
 
-  const listing = await Listing.findOne({
-    _id: req.params.id,
-    status: "approved",
-    isDeleted: false
-  }).populate("user");
+  const listing = await Listing.findById(req.params.id).populate("user");
+  console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "after_findById_populate");
 
-  if (!listing) {
+  if (!listing || listing.isDeleted) {
     return res.status(404).json({ error: "İlan bulunamadı" });
   }
 
-  res.json(listing);
+  const normalizedStatus = String(listing.status || "").trim().toLowerCase();
+  const hasApprovedField = typeof listing.approved !== "undefined";
+  const hasStatusField = typeof listing.status !== "undefined" && listing.status !== null && String(listing.status).trim() !== "";
+  const hasIsActiveField = typeof listing.isActive !== "undefined";
+  const isRejected = normalizedStatus === "rejected";
+  const isPending = normalizedStatus === "pending";
+  const isDraft = normalizedStatus === "draft";
+  const isApprovedStatus = normalizedStatus === "approved" || normalizedStatus === "active";
+  const isLegacyListing = !hasStatusField && !hasIsActiveField && !hasApprovedField;
+  const isPubliclyVisible = isLegacyListing
+    ? true
+    : Boolean(listing.approved === true && listing.isActive === true && isApprovedStatus);
+  const isActiveExplicitFalse = listing.isActive === false;
+  const isExplicitlyBlocked = !isPubliclyVisible;
+
+  console.log("DETAIL_VISIBILITY_VALUES", {
+    status: listing.status,
+    approved: listing.approved,
+    isActive: listing.isActive
+  });
+
+  console.log("DETAIL_VISIBILITY_CHECK", JSON.stringify({
+    id: String(listing._id || ""),
+    approved: listing.approved,
+    status: listing.status,
+    isActive: listing.isActive,
+    hasApprovedField,
+    hasStatusField,
+    hasIsActiveField,
+    isLegacyListing,
+    publicVisible: isPubliclyVisible,
+    isActiveExplicitFalse,
+    isRejected,
+    isPending,
+    isDraft
+  }, null, 2));
+
+  console.log("DETAIL_VISIBILITY_RESULT", {
+    id: String(listing._id || ""),
+    isExplicitlyBlocked,
+    isLegacyListing,
+    isPubliclyVisible
+  });
+
+  if (isPubliclyVisible) {
+    if (isLegacyListing) {
+      console.log("DETAIL_LEGACY_ALLOWED", {
+        id: String(listing._id || ""),
+        status: listing.status,
+        approved: listing.approved,
+        isActive: listing.isActive
+      });
+    }
+    console.log("DETAIL_PUBLIC_ALLOWED", {
+      id: String(listing._id || ""),
+      status: normalizedStatus || "legacy",
+      approved: listing.approved,
+      isActive: listing.isActive,
+      isLegacyListing
+    });
+  }
+
+  if (!isPubliclyVisible) {
+    console.log("DETAIL_BLOCK_REASON", {
+      id: String(listing._id || ""),
+      status: listing.status,
+      approved: listing.approved,
+      isActive: listing.isActive,
+      isRejected,
+      isPending,
+      isDraft,
+      isActiveExplicitFalse
+    });
+    console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "pending_visibility_check");
+    const requestUser = await resolveOptionalRequestUser(req);
+    if (requestUser) req.user = requestUser;
+    const isAdmin = requestUser?.role === "admin";
+
+    if (!isAdmin) {
+      return res.status(403).json({ error: "İlan yayında değil" });
+    }
+  }
+
+  console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "before_toObject");
+  console.log({
+    listingId: String(listing._id || ""),
+    status: String(listing.status || ""),
+    userRole: req.user?.role || null,
+    allowPending: true
+  });
+  console.log("DETAIL_REQUEST_INSTANCE", Date.now());
+
+  console.log("DB_RAW_LISTING", listing);
+  const listingData = listing.toObject ? listing.toObject() : { ...listing };
+  console.log("DB_TO_OBJECT", listingData);
+  console.log("DETAIL_DB_LISTING_RAW", JSON.stringify(listing.toObject ? listing.toObject() : listingData, null, 2));
+  console.log("PRE_RESPONSE_OBJECT", {
+    images: listingData.images,
+    gallery: listingData.gallery,
+    photos: listingData.photos,
+    image: listingData.image,
+    coverImage: listingData.coverImage,
+    mainImage: listingData.mainImage
+  });
+
+  const responseListing = {
+    ...listingData,
+    seller: listingData.seller || listingData.user || {},
+    user: listingData.user || listingData.seller || {}
+  };
+  console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "response_listing_built");
+  console.log("FINAL_RESPONSE_OBJECT", responseListing);
+
+  console.log("DETAIL_ROUTE_RESULT", {
+    id: responseListing._id,
+    images: responseListing.images,
+    photos: responseListing.photos,
+    gallery: responseListing.gallery,
+    image: responseListing.image,
+    coverImage: responseListing.coverImage,
+    mainImage: responseListing.mainImage
+  });
+
+  console.log("FINAL_ROUTE_RESPONSE", {
+    id: responseListing._id,
+    images: responseListing.images,
+    photos: responseListing.photos,
+    gallery: responseListing.gallery,
+    image: responseListing.image,
+    coverImage: responseListing.coverImage,
+    mainImage: responseListing.mainImage
+  });
+
+  console.log("LIVE_DETAIL_RESPONSE", JSON.stringify({
+    id: responseListing._id,
+    images: responseListing.images,
+    photos: responseListing.photos,
+    gallery: responseListing.gallery,
+    image: responseListing.image,
+    coverImage: responseListing.coverImage,
+    mainImage: responseListing.mainImage
+  }, null, 2));
+
+  console.log("FINAL_ROUTE_RESPONSE_KEYS", Object.keys(responseListing));
+  console.log("FINAL_RESPONSE_MEDIA", {
+    images: responseListing.images,
+    gallery: responseListing.gallery,
+    photos: responseListing.photos,
+    image: responseListing.image,
+    coverImage: responseListing.coverImage,
+    mainImage: responseListing.mainImage
+  });
+  console.log("LISTING_ROUTE_MIDDLEWARE_STAGE", "before_res_json");
+  console.log("DETAIL_FETCH_ROUTE_OK", {
+    id: String(responseListing._id || responseListing.id || ""),
+    publicVisible: isPubliclyVisible
+  });
+
+  res.json(responseListing);
 });
 
 router.put("/:id", authMiddleware, async (req, res) => {
@@ -752,7 +1230,20 @@ router.delete("/:id", authMiddleware, async function (req, res) {
   }
 });
 
+router.use((err, req, res, next) => {
+  if (!err) return next();
+  console.error("UPLOAD_FATAL", err);
+  if (res.headersSent) return next(err);
+  return res.status(500).json({
+    success: false,
+    error: String(err?.message || err)
+  });
+});
+
 module.exports = router;
+
+
+
 
 
 

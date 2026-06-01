@@ -431,16 +431,41 @@
         ));
         store.editingMessageId = "";
       } else {
-        const response = await ChatApi.sendMessage({
+        const conversationId = String(store.activeConversationId || "").trim();
+        const usersPart = conversationId.split("users:")[1] || "";
+        const parsedUsers = usersPart
+          .split("_")
+          .map((id) => String(id).trim())
+          .filter(Boolean);
+        const currentUserId = String(store.currentUser?._id || store.currentUser?.id || "").trim();
+        const receiverId = parsedUsers.find(
+          (id) => id !== currentUserId
+        ) || String(store.listingOwner?.id || "").trim();
+        const lockedReceiverId = receiverId;
+        console.log("FRONTEND_USER_PARSE", {
+          conversationId,
+          parsedUsers,
+          currentUserId,
+          receiverId,
+          lockedReceiverId
+        });
+        const messagePayload = {
           listingId,
           text,
-          receiverEmail: store.listingOwner?.email || ""
-        });
-        const message = ChatState.normalizeMessage(response.message, store.currentUser);
-        const conversationId = String(response.conversationId || message.conversationId || "").trim();
-        const summary = upsertConversation(store, {
-          id: conversationId,
+          message: text,
+          content: text,
           conversationId,
+          senderId: String(store.currentUser?.id || store.currentUser?._id || ""),
+          receiverId: lockedReceiverId,
+          receiverEmail: store.listingOwner?.email || ""
+        };
+        console.log("FINAL_MESSAGE_PAYLOAD", messagePayload);
+        const response = await ChatApi.sendMessage(messagePayload);
+        const message = ChatState.normalizeMessage(response.message, store.currentUser);
+        const responseConversationId = String(response.conversationId || message.conversationId || "").trim();
+        const summary = upsertConversation(store, {
+          id: responseConversationId,
+          conversationId: responseConversationId,
           listing: store.listing,
           sellerId: store.listingOwner?.id || "",
           otherUser: store.listing?.user || null,
@@ -454,6 +479,11 @@
         store.activeConversationId = getConversationIdentity(summary);
         store.activeMessages = [...store.activeMessages, message];
         updateConversationPreviewFromMessages(store);
+        console.log("MESSAGE_SEND_SUCCESS", {
+          conversationId: responseConversationId,
+          listingId,
+          messageId: message.id || message._id || ""
+        });
       }
 
       syncActiveConversation(store);
@@ -461,7 +491,10 @@
       resetTextarea(input);
       renderAll(store);
     } catch (error) {
-      console.error("MESSAGE SEND ERROR", error);
+      console.error("MESSAGE_SEND_ERROR_RESPONSE", {
+        status: error?.status || null,
+        errorData: error?.payload || null
+      });
       setComposerStatus("Mesaj gönderilemedi.");
     } finally {
       store.isSending = false;

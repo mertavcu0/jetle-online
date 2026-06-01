@@ -2,6 +2,7 @@
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
 const authMiddleware = require("../middleware/auth");
 
@@ -65,6 +66,259 @@ function logLoginReject(reason, extra = {}) {
     reason,
     ...extra
   });
+}
+
+function hashResetToken(token) {
+  return crypto.createHash("sha256").update(String(token || "")).digest("hex");
+}
+
+function getJwtSecret() {
+  return String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
+}
+
+function signAuthToken(user) {
+  const jwtSecret = getJwtSecret();
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET missing during auth token signing");
+  }
+
+  return jwt.sign(
+    {
+      id: String(user._id),
+      role: normalizeRole(user.role)
+    },
+    jwtSecret,
+    { expiresIn: "7d" }
+  );
+}
+
+function getGoogleClientId() {
+  return String(process.env.GOOGLE_CLIENT_ID || "").trim();
+}
+
+function getGoogleClientSecret() {
+  return String(process.env.GOOGLE_CLIENT_SECRET || "").trim();
+}
+
+function isGoogleOAuthConfigured() {
+  return Boolean(getGoogleClientId() && getGoogleClientSecret());
+}
+
+function toBase64Url(value) {
+  return Buffer.from(String(value || ""), "utf8")
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function fromBase64Url(value) {
+  const normalized = String(value || "")
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+  const padding = (4 - (normalized.length % 4 || 4)) % 4;
+  return Buffer.from(normalized + "=".repeat(padding), "base64").toString("utf8");
+}
+
+function getAppOrigin(req) {
+  const explicitOrigin = String(
+    process.env.APP_ORIGIN ||
+    process.env.PUBLIC_APP_ORIGIN ||
+    process.env.FRONTEND_ORIGIN ||
+    ""
+  ).trim();
+
+  if (explicitOrigin) {
+    return explicitOrigin.replace(/\/+$/, "");
+  }
+
+  return `${req.protocol}://${req.get("host")}`;
+}
+
+function getGoogleCallbackUrl(req) {
+  return `${getAppOrigin(req)}/auth/google/callback`;
+}
+
+function createGoogleState(req) {
+  const payload = {
+    ts: Date.now(),
+    next: String(req.query?.next || "/").trim() || "/"
+  };
+  const encodedPayload = toBase64Url(JSON.stringify(payload));
+  const signature = crypto
+    .createHmac("sha256", getJwtSecret())
+    .update(encodedPayload)
+    .digest("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+  return `${encodedPayload}.${signature}`;
+}
+
+function verifyGoogleState(value) {
+  const raw = String(value || "");
+  const [encodedPayload = "", signature = ""] = raw.split(".");
+  if (!encodedPayload || !signature) {
+    throw new Error("invalid_google_state");
+  }
+
+  const expectedSignature = crypto
+    .createHmac("sha256", getJwtSecret())
+    .update(encodedPayload)
+    .digest("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+
+  if (expectedSignature !== signature) {
+    throw new Error("google_state_signature_mismatch");
+  }
+
+  const payload = JSON.parse(fromBase64Url(encodedPayload) || "{}");
+  const ts = Number(payload?.ts || 0);
+  if (!ts || Math.abs(Date.now() - ts) > 10 * 60 * 1000) {
+    throw new Error("google_state_expired");
+  }
+
+  return {
+    next: String(payload?.next || "/").trim() || "/"
+  };
+}
+
+function sanitizeRedirectPath(value) {
+  const text = String(value || "").trim();
+  if (!text.startsWith("/")) return "/";
+  if (text.startsWith("//")) return "/";
+  return text;
+}
+
+function redirectGoogleAuthResult(req, res, options = {}) {
+  const appOrigin = getAppOrigin(req);
+  const nextPath = sanitizeRedirectPath(options.next || "/");
+  const hashParams = new URLSearchParams();
+
+  if (options.error) hashParams.set("google_error", String(options.error));
+  if (options.token) hashParams.set("google_token", String(options.token));
+  if (options.user) hashParams.set("google_user", toBase64Url(JSON.stringify(options.user)));
+  hashParams.set("next", nextPath);
+
+  res.redirect(`${appOrigin}/login.html#${hashParams.toString()}`);
+}
+
+async function exchangeGoogleCodeForToken(code, req) {
+  const body = new URLSearchParams({
+    code: String(code || ""),
+    client_id: getGoogleClientId(),
+    client_secret: getGoogleClientSecret(),
+    redirect_uri: getGoogleCallbackUrl(req),
+    grant_type: "authorization_code"
+  });
+
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.access_token) {
+    throw new Error(data.error_description || data.error || "google_token_exchange_failed");
+  }
+
+  return data;
+}
+
+async function fetchGoogleUserProfile(accessToken) {
+  const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+    headers: {
+      Authorization: `Bearer ${String(accessToken || "").trim()}`
+    }
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.sub || !data.email) {
+    throw new Error(data.error_description || data.error || "google_userinfo_failed");
+  }
+
+  return data;
+}
+
+async function findOrCreateGoogleUser(profile) {
+  const googleId = String(profile?.sub || "").trim();
+  const safeEmail = String(profile?.email || "").trim().toLowerCase();
+  const safeName = sanitizeText(profile?.name || profile?.given_name || safeEmail.split("@")[0], 80);
+  const safeUsername = sanitizeUsername(
+    profile?.given_name ||
+    profile?.name ||
+    safeEmail.split("@")[0]
+  );
+  const safeAvatarUrl = String(profile?.picture || "").trim();
+
+  if (!googleId || !isValidEmail(safeEmail)) {
+    throw new Error("google_profile_invalid");
+  }
+
+  let user = await User.findOne({
+    $or: [
+      { googleId },
+      { email: safeEmail }
+    ]
+  }).lean(false);
+
+  if (user) {
+    if (user.banned) {
+      throw new Error("google_user_banned");
+    }
+
+    let changed = false;
+    if (!String(user.googleId || "").trim()) {
+      user.googleId = googleId;
+      changed = true;
+    }
+    if (!String(user.authProvider || "").trim() || String(user.authProvider || "").trim() === "local") {
+      user.authProvider = "google";
+      changed = true;
+    }
+    if (!String(user.name || "").trim() && safeName) {
+      user.name = safeName;
+      changed = true;
+    }
+    if (!String(user.username || "").trim() && safeUsername) {
+      user.username = safeUsername;
+      changed = true;
+    }
+    if (!String(user.avatarUrl || "").trim() && safeAvatarUrl) {
+      user.avatarUrl = safeAvatarUrl;
+      changed = true;
+    }
+    if (!user.isVerified && profile?.email_verified) {
+      user.isVerified = true;
+      changed = true;
+    }
+
+    if (changed) {
+      await user.save();
+    }
+
+    return user;
+  }
+
+  user = new User({
+    name: safeName,
+    username: safeUsername,
+    email: safeEmail,
+    password: "",
+    role: "user",
+    googleId,
+    authProvider: "google",
+    avatarUrl: safeAvatarUrl,
+    isVerified: Boolean(profile?.email_verified)
+  });
+
+  await user.save();
+  return user;
 }
 
 router.post("/register", async (req, res) => {
@@ -290,7 +544,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
+    const jwtSecret = getJwtSecret();
     if (!jwtSecret) {
       throw new Error("JWT_SECRET missing during login");
     }
@@ -301,14 +555,7 @@ router.post("/login", async (req, res) => {
     });
     let token = "";
     try {
-      token = jwt.sign(
-        {
-          id: String(user._id),
-          role: normalizeRole(user.role)
-        },
-        jwtSecret,
-        { expiresIn: "7d" }
-      );
+      token = signAuthToken(user);
       console.log("LOGIN STEP token_sign_ok:", { tokenLength: token.length });
     } catch (tokenErr) {
       console.error("LOGIN STEP token_sign_fail:", tokenErr);
@@ -327,6 +574,68 @@ router.post("/login", async (req, res) => {
       success: false,
       message: "Server error",
       ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
+    });
+  }
+});
+
+router.get("/google", (req, res) => {
+  if (!isGoogleOAuthConfigured()) {
+    return res.status(503).send("google_oauth_not_configured");
+  }
+
+  const params = new URLSearchParams({
+    client_id: getGoogleClientId(),
+    redirect_uri: getGoogleCallbackUrl(req),
+    response_type: "code",
+    scope: "openid email profile",
+    access_type: "online",
+    include_granted_scopes: "true",
+    prompt: "select_account",
+    state: createGoogleState(req)
+  });
+
+  console.log("GOOGLE_LOGIN_START", {
+    callback: getGoogleCallbackUrl(req)
+  });
+
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+});
+
+router.get("/google/callback", async (req, res) => {
+  let nextPath = "/";
+  try {
+    if (!isGoogleOAuthConfigured()) {
+      throw new Error("google_oauth_not_configured");
+    }
+
+    const statePayload = verifyGoogleState(req.query?.state);
+    nextPath = sanitizeRedirectPath(statePayload.next);
+
+    const code = String(req.query?.code || "").trim();
+    if (!code) {
+      throw new Error("google_code_missing");
+    }
+
+    const tokenResponse = await exchangeGoogleCodeForToken(code, req);
+    const profile = await fetchGoogleUserProfile(tokenResponse.access_token);
+    const user = await findOrCreateGoogleUser(profile);
+    const token = signAuthToken(user);
+
+    console.log("GOOGLE_LOGIN_SUCCESS", {
+      userId: String(user._id),
+      email: String(user.email || "").trim().toLowerCase()
+    });
+
+    return redirectGoogleAuthResult(req, res, {
+      token,
+      user: userResponse(user),
+      next: nextPath
+    });
+  } catch (error) {
+    console.error("GOOGLE_LOGIN_ERROR", error);
+    return redirectGoogleAuthResult(req, res, {
+      error: error?.message || "google_login_failed",
+      next: nextPath
     });
   }
 });
@@ -368,6 +677,106 @@ router.post("/update", authMiddleware, async (req, res) => {
     });
   } catch (err) {
     console.error("AUTH UPDATE ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
+    });
+  }
+});
+
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Geçerli bir e-posta girin"
+      });
+    }
+
+    const user = await User.findOne({ email }).lean(false);
+    if (!user) {
+      return res.json({
+        success: true,
+        message: "Şifre sıfırlama bağlantısı gönderildi."
+      });
+    }
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const expireAt = new Date(Date.now() + 1000 * 60 * 30);
+
+    user.resetPasswordToken = hashResetToken(rawToken);
+    user.resetPasswordExpire = expireAt;
+    await user.save();
+
+    const resetLink = `http://localhost:3000/reset-password.html?token=${encodeURIComponent(rawToken)}`;
+    console.log("FORGOT_REQUEST_OK", { email });
+    console.log("RESET_TOKEN_CREATED", {
+      userId: String(user._id),
+      expireAt: expireAt.toISOString()
+    });
+    console.log("RESET_LINK_READY");
+    console.log("PASSWORD_RESET_LINK:", resetLink);
+
+    res.json({
+      success: true,
+      message: "Şifre sıfırlama bağlantısı gönderildi."
+    });
+  } catch (err) {
+    console.error("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      ...(isProduction ? {} : { debugError: err?.message || "unknown_error" })
+    });
+  }
+});
+
+router.post("/reset-password/:token", async (req, res) => {
+  try {
+    const rawToken = String(req.params?.token || "").trim();
+    const password = String(req.body?.password || "");
+    const password2 = String(req.body?.password2 || "");
+
+    if (!rawToken || password.length < 6 || password !== password2) {
+      return res.status(400).json({
+        success: false,
+        message: "Geçersiz şifre sıfırlama isteği"
+      });
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: hashResetToken(rawToken),
+      resetPasswordExpire: { $gt: new Date() }
+    }).lean(false);
+
+    if (!user) {
+      console.log("RESET_PASSWORD_INVALID_TOKEN", {
+        tokenPreview: rawToken.slice(0, 8)
+      });
+      return res.status(400).json({
+        success: false,
+        error: "invalid_reset_token",
+        message: "Bağlantı geçersiz veya süresi dolmuş"
+      });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = "";
+    user.resetPasswordExpire = null;
+    await user.save();
+
+    console.log("RESET_PASSWORD_SUCCESS", {
+      userId: String(user._id)
+    });
+
+    res.json({
+      success: true,
+      message: "Şifreniz güncellendi"
+    });
+  } catch (err) {
+    console.error("RESET PASSWORD ERROR:", err);
     res.status(500).json({
       success: false,
       message: "Server error",

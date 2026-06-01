@@ -46,7 +46,19 @@ const ListingSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  coverImage: {
+    type: String,
+    default: "",
+  },
+  mainImage: {
+    type: String,
+    default: "",
+  },
   images: {
+    type: [String],
+    default: [],
+  },
+  gallery: {
     type: [String],
     default: [],
   },
@@ -70,12 +82,20 @@ const ListingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
+  approved: {
+    type: Boolean,
+    default: false,
+  },
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected"],
+    enum: ["pending", "approved", "active", "rejected"],
     default: "pending",
   },
   isFeatured: {
+    type: Boolean,
+    default: false,
+  },
+  isShowcase: {
     type: Boolean,
     default: false,
   },

@@ -256,7 +256,7 @@ function loadSection(type) {
             <div class="listing-card">
               <img src="${l.image}">
               <h3>${l.title}</h3>
-              <p>${l.price} TL</p>
+              <p>${formatPrice(l.price)}</p>
             </div>
           `).join("");
       });

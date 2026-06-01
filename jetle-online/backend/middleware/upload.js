@@ -15,8 +15,10 @@ try {
   sharp = null;
 }
 
-const uploadRoot = path.resolve(process.cwd(), "uploads");
+const uploadRoot = path.resolve(__dirname, "..", "..", "..", "uploads");
+const legacyUploadRoot = path.resolve(__dirname, "..", "uploads");
 fsSync.mkdirSync(uploadRoot, { recursive: true });
+fsSync.mkdirSync(legacyUploadRoot, { recursive: true });
 
 function getSafeExtension(file) {
   const ext = String(path.extname(file?.originalname || "") || "").toLowerCase();
@@ -114,5 +116,8 @@ upload.optimizeFiles = async function optimizeFiles(files = []) {
   }
   return results;
 };
+
+upload.uploadRoot = uploadRoot;
+upload.legacyUploadRoot = legacyUploadRoot;
 
 module.exports = upload;
