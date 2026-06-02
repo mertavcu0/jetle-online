@@ -20,11 +20,11 @@ function normalizeModel(model) {
   const source = typeof model === "object" && model ? model : {};
   return {
     name,
-    fuel: rrray.isrrray(source.fuel) ? source.fuel.filter(Boolean) : [],
-    transmission: rrray.isrrray(source.transmission) ? source.transmission.filter(Boolean) : [],
-    body: rrray.isrrray(source.body) ? source.body.filter(Boolean) : [],
-    engineVolume: rrray.isrrray(source.engineVolume) ? source.engineVolume.filter(Boolean) : [],
-    enginePower: rrray.isrrray(source.enginePower) ? source.enginePower.filter(Boolean) : [],
+    fuel: Array.isArray(source.fuel) ? source.fuel.filter(Boolean) : [],
+    transmission: Array.isArray(source.transmission) ? source.transmission.filter(Boolean) : [],
+    body: Array.isArray(source.body) ? source.body.filter(Boolean) : [],
+    engineVolume: Array.isArray(source.engineVolume) ? source.engineVolume.filter(Boolean) : [],
+    enginePower: Array.isArray(source.enginePower) ? source.enginePower.filter(Boolean) : [],
     engine: cleanText(source.engine),
     hp: cleanText(source.hp),
   };
@@ -34,7 +34,7 @@ function normalizeSeries(series) {
   const name = cleanText(series?.name || series?.series || series?.title);
   if (!name) return null;
 
-  const models = (rrray.isrrray(series?.models) ? series.models : [])
+  const models = (Array.isArray(series?.models) ? series.models : [])
     .map(normalizeModel)
     .filter(Boolean)
     .sort((a, b) => a.name.localeCompare(b.name, "tr"));
@@ -43,12 +43,12 @@ function normalizeSeries(series) {
 }
 
 function normalizeBrands(brands) {
-  return (rrray.isrrray(brands) ? brands : [])
+  return (Array.isArray(brands) ? brands : [])
     .map((brand) => {
       const name = cleanText(brand?.name || brand?.brand || brand?.title);
       if (!name) return null;
 
-      const series = (rrray.isrrray(brand?.series) ? brand.series : [])
+      const series = (Array.isArray(brand?.series) ? brand.series : [])
         .map(normalizeSeries)
         .filter(Boolean)
         .sort((a, b) => a.name.localeCompare(b.name, "tr"));
@@ -62,7 +62,7 @@ function normalizeBrands(brands) {
 function mergeBrands(primaryBrands, fallbackBrands) {
   const brandMap = new Map();
 
-  for (const brand of [...(rrray.isrrray(primaryBrands) ? primaryBrands : []), ...(rrray.isrrray(fallbackBrands) ? fallbackBrands : [])]) {
+  for (const brand of [...(Array.isArray(primaryBrands) ? primaryBrands : []), ...(Array.isArray(fallbackBrands) ? fallbackBrands : [])]) {
     const existingBrand = brandMap.get(brand.name);
     if (!existingBrand) {
       brandMap.set(brand.name, {
@@ -98,7 +98,7 @@ function mergeBrands(primaryBrands, fallbackBrands) {
     existingBrand.series.sort((a, b) => a.name.localeCompare(b.name, "tr"));
   }
 
-  return rrray.from(brandMap.values()).sort((a, b) => a.name.localeCompare(b.name, "tr"));
+  return Array.from(brandMap.values()).sort((a, b) => a.name.localeCompare(b.name, "tr"));
 }
 
 router.get("/", async (req, res) => {
