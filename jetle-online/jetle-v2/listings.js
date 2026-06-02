@@ -17,7 +17,7 @@ async function loadListings() {
       <div class="listing-card" onclick="goDetail('${listing._id}')">
         <img src="${src}" />
         <h3>${listing.title || ""}</h3>
-        <p>${listing.price || 0} TL</p>
+        <p>${formatPrice(listing.price)}</p>
         <span>${listing.city || ""}</span>
         ${renderBadges(listing)}
       </div>
@@ -60,3 +60,10 @@ function goDetail(id) {
 
 loadListings();
 
+
+
+function formatPrice(price) {
+  const num = Number(price || 0);
+  if (Number.isNaN(num)) return "-";
+  return new Intl.NumberFormat("tr-TR").format(num) + " TL";
+}

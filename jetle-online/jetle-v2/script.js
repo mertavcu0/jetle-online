@@ -1,3 +1,9 @@
+﻿function formatPrice(price) {
+  const num = Number(price || 0);
+  if (Number.isNaN(num)) return "-";
+  return new Intl.NumberFormat("tr-TR").format(num) + " TL";
+}
+
 function renderListings(data) {
   const container = document.getElementById("listingArea");
   if (!container) return;
@@ -5,7 +11,7 @@ function renderListings(data) {
   container.innerHTML = "";
 
   if (!Array.isArray(data)) {
-    container.innerHTML = "Veri hatalı geldi";
+    container.innerHTML = "Veri hatalÄ± geldi";
     return;
   }
 
@@ -24,7 +30,7 @@ function renderListings(data) {
       <div class="listing-info">
         <div class="listing-title">${item.title}</div>
         <div class="listing-desc">${item.description}</div>
-        <div class="listing-price">${item.price} ₺</div>
+        <div class="listing-price">${formatPrice(item.price)}</div>
         <div class="listing-location">${item.location}</div>
       </div>
     `;
@@ -38,14 +44,14 @@ function renderListings(data) {
 }
 
 function getBadgeText(badge) {
-  if (badge === "verified") return "Doğrulanmış";
-  if (badge === "trusted") return "Güvenilir Satıcı";
+  if (badge === "verified") return "DoÄŸrulanmÄ±ÅŸ";
+  if (badge === "trusted") return "GÃ¼venilir SatÄ±cÄ±";
   return "";
 }
 
 function getBadgeDesc(badge) {
-  if (badge === "verified") return "Kimliği doğrulanmış kullanıcı";
-  if (badge === "trusted") return "Güvenilir satıcı";
+  if (badge === "verified") return "KimliÄŸi doÄŸrulanmÄ±ÅŸ kullanÄ±cÄ±";
+  if (badge === "trusted") return "GÃ¼venilir satÄ±cÄ±";
   return "";
 }
 
@@ -83,7 +89,7 @@ function showAdmin() {
       nav.appendChild(link);
     }
   } catch (e) {
-    console.error("Token parse hatası:", e);
+    console.error("Token parse hatasÄ±:", e);
   }
 }
 
@@ -91,7 +97,7 @@ function goToCreate() {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("İlan vermek için giriş yapmalısın");
+    alert("Ä°lan vermek iÃ§in giriÅŸ yapmalÄ±sÄ±n");
     window.location.href = "login.html";
     return;
   }
@@ -114,7 +120,7 @@ async function loadListings() {
     const data = await res.json();
 
     if (!Array.isArray(data)) {
-      container.innerHTML = "Veri hatalı geldi";
+      container.innerHTML = "Veri hatalÄ± geldi";
       return;
     }
 
@@ -131,7 +137,7 @@ async function loadListings() {
     </div>
     <div class="listing-info">
       <div class="listing-title">${item.title}</div>
-      <div class="listing-price">${item.price} ₺</div>
+      <div class="listing-price">${formatPrice(item.price)}</div>
       <div class="listing-location">${item.location}</div>
     </div>
   `;
@@ -221,5 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
   showAdmin();
   loadAll();
 });
+
 
 

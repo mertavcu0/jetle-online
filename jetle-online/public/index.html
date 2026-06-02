@@ -868,36 +868,98 @@
       }
 
       .nav-right {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
       }
 
       .post-btn {
-        grid-column: 1 / -1;
+        grid-column: auto;
       }
     }
 
     @media (max-width: 768px) {
       .navbar-inner {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "logo actions"
+          "search search";
+        gap: 10px 12px;
+        align-items: start;
+      }
+
+      .logo {
+        grid-area: logo;
+        align-self: center;
       }
 
       .search {
-        order: 2;
+        grid-area: search;
         width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .search input {
+        height: 42px;
+        border-right: 1px solid #d1d5db;
+        border-radius: 10px;
+      }
+
+      .search button,
+      .primary-btn {
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 10px;
       }
 
       .nav-right,
       #authArea {
-        width: 100%;
+        white-space: normal;
+      }
+
+      .nav-right {
+        grid-area: actions;
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+      }
+
+      #authArea {
+        width: auto;
+        display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content: flex-end;
+        gap: 8px;
         white-space: normal;
       }
 
       .post-btn {
-        width: 100%;
+        width: auto;
+        min-height: 40px;
+        height: 40px;
+        padding: 0 14px;
+        font-size: 14px;
+        border-radius: 10px;
+        align-self: flex-end;
+      }
+
+      #authArea span {
+        max-width: 140px;
+        font-size: 13px;
+      }
+
+      #authArea button,
+      .login-btn,
+      .register-btn {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 13px;
       }
 
       .page {
@@ -912,13 +974,15 @@
 
     @media (max-width: 480px) {
       .search {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
       }
 
       .search input,
       .search button,
       .primary-btn {
-        width: 100%;
+        width: auto;
         border-radius: 8px;
       }
 
@@ -1139,6 +1203,10 @@
       .home-section .listing-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      #showcase-section .listing-slider {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 560px) {
@@ -1148,6 +1216,15 @@
 
       .home-section .listing-grid {
         grid-template-columns: 1fr;
+      }
+
+      #showcase-section .listing-slider {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      #showcase-section .listing-slider .listing-card {
+        min-height: 270px;
       }
     }
     /* UI polish layer */
@@ -1204,6 +1281,316 @@
     .home-section .listing-slider {
       gap: 18px;
       padding: 4px 2px 16px;
+    }
+
+    #showcase-section .listing-slider {
+      display: grid !important;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      overflow: visible !important;
+      padding: 4px 0 4px;
+      align-items: stretch;
+      scroll-snap-type: none;
+    }
+
+    #showcase-section .listing-slider .listing-card {
+      width: 100%;
+      min-width: 0 !important;
+      min-height: 318px;
+      height: 318px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      scroll-snap-align: unset;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    #showcase-section .listing-slider .listing-card:hover,
+    #featured-section .listing-grid .listing-card:hover,
+    #latest-section .listing-grid .listing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+      border-color: #dbe3ee;
+    }
+
+    #showcase-section .listing-slider .listing-card .img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      background: #eef2f7;
+    }
+
+    #showcase-section .listing-slider .listing-card .img-wrapper img,
+    #showcase-section .listing-slider .listing-card .listing-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    #showcase-section .listing-slider .listing-card .img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    #showcase-section .listing-slider .listing-card .badge-featured,
+    #showcase-section .listing-slider .listing-card .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28);
+    }
+
+    #showcase-section .listing-slider .listing-card .card-body {
+      min-width: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 12px 14px;
+    }
+
+    #showcase-section .listing-slider .listing-card .title,
+    #featured-section .listing-grid .listing-card .title,
+    #latest-section .listing-grid .listing-card .title {
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: normal;
+      overflow-wrap: break-word;
+      color: #111827;
+      font-weight: 800;
+    }
+
+    #showcase-section .listing-slider .listing-card .title {
+      font-size: 14px;
+      line-height: 1.38;
+      min-height: calc(1.4em * 2);
+    }
+
+    #showcase-section .listing-slider .listing-card .price,
+    #featured-section .listing-grid .listing-card .price,
+    #latest-section .listing-grid .listing-card .price {
+      margin: 0;
+      color: #2563eb;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    #showcase-section .listing-slider .listing-card .price {
+      margin-top: auto;
+      font-size: 24px;
+    }
+
+    #showcase-section .listing-slider .listing-card .meta,
+    #featured-section .listing-grid .listing-card .meta,
+    #latest-section .listing-grid .listing-card .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    #showcase-section .listing-slider .listing-card .meta {
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      min-height: 18px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    #showcase-section .listing-slider .listing-card .meta .dot {
+      color: #cbd5e1;
+      font-weight: 800;
+    }
+
+    #showcase-section .listing-slider .listing-card .city-meta,
+    #showcase-section .listing-slider .listing-card .category-meta,
+    #featured-section .listing-grid .listing-card .city-meta,
+    #featured-section .listing-grid .listing-card .category-meta,
+    #latest-section .listing-grid .listing-card .city-meta,
+    #latest-section .listing-grid .listing-card .category-meta {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    #showcase-section .listing-slider .listing-card .city-meta,
+    #showcase-section .listing-slider .listing-card .year-meta {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #showcase-section .listing-slider .listing-card .card-footer,
+    #featured-section .listing-grid .listing-card .card-footer,
+    #latest-section .listing-grid .listing-card .card-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid #f1f5f9;
+      color: #9ca3af;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    #showcase-section .listing-slider .listing-card .card-footer {
+      display: none;
+    }
+
+    #featured-section .listing-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    #featured-section .listing-grid .listing-card,
+    #latest-section .listing-grid .listing-card {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
+    }
+
+    #featured-section .listing-grid .listing-card .img-wrapper,
+    #latest-section .listing-grid .listing-card .img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 156px;
+      overflow: hidden;
+      background: #eef2f7;
+    }
+
+    #featured-section .listing-grid .listing-card .img-wrapper img,
+    #featured-section .listing-grid .listing-card .listing-img img,
+    #latest-section .listing-grid .listing-card .img-wrapper img,
+    #latest-section .listing-grid .listing-card .listing-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    #featured-section .listing-grid .listing-card .badge-premium {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+    }
+
+    #featured-section .listing-grid .listing-card .card-body,
+    #latest-section .listing-grid .listing-card .card-body {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 12px 14px;
+    }
+
+    #featured-section .listing-grid .listing-card .title,
+    #latest-section .listing-grid .listing-card .title {
+      font-size: 14px;
+      line-height: 1.4;
+      min-height: calc(1.4em * 2);
+    }
+
+    #featured-section .listing-grid .listing-card .price,
+    #latest-section .listing-grid .listing-card .price {
+      font-size: 22px;
+    }
+
+    #latest-section .listing-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (min-width: 1480px) {
+      #showcase-section .listing-slider {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1280px) {
+      #showcase-section .listing-slider {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      #featured-section .listing-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      #showcase-section .listing-slider .listing-card {
+        min-height: 300px;
+        height: 300px;
+      }
+
+      #featured-section .listing-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      #latest-section .listing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      #showcase-section .listing-slider .listing-card .img-wrapper {
+        height: 138px;
+      }
+
+      #showcase-section .listing-slider .listing-card {
+        min-height: 270px;
+        height: 270px;
+      }
+
+      #showcase-section .listing-slider .listing-card .title,
+      #featured-section .listing-grid .listing-card .title,
+      #latest-section .listing-grid .listing-card .title {
+        font-size: 14px;
+        line-height: 1.38;
+      }
+
+      #showcase-section .listing-slider .listing-card .price,
+      #featured-section .listing-grid .listing-card .price,
+      #latest-section .listing-grid .listing-card .price {
+        font-size: 22px;
+      }
     }
 
     .listing-card,
@@ -1335,10 +1722,10 @@
     <aside class="sidebar">
       <h2>Kategoriler</h2>
       <div class="category-grid">
-        <a class="category-card" href="/listings.htmlcategory=emlak">Emlak</a>
-        <a class="category-card" href="/listings.html?category=vasita">Vasıta</a>
-        <a class="category-card" href="/listings.html?category=is-makineleri">İş Makineleri</a>
-        <a class="category-card" href="/listings.html?category=yedek-parca">Yedek Parça</a>
+        <a class="category-card" href="?category=emlak" data-category="emlak">Emlak</a>
+        <a class="category-card" href="?category=vasita" data-category="vasita">Vasıta</a>
+        <a class="category-card" href="?category=is-makineleri" data-category="is-makineleri">İş Makineleri</a>
+        <a class="category-card" href="?category=yedek-parca" data-category="yedek-parca">Yedek Parça</a>
       </div>
     </aside>
 
@@ -1354,20 +1741,20 @@
         <div id="showcaseSlider" class="hidden-compat"></div>
       </section>
 
-      <section id="latest-section" class="home-section section-block">
-        <div class="section-head">
-          <h2>Son Eklenen İlanlar</h2>
-          <a href="listings.html?sort=new">Yeni ilanlar</a>
-        </div>
-        <div id="latestGrid" class="listing-grid"></div>
-      </section>
-
       <section id="featured-section" class="home-section section-block">
         <div class="section-head">
           <h2>Öne Çıkan İlanlar</h2>
-          <a href="listings.html?featured=true">Tümünü gör</a>
+          <a href="listings.html?featured=true">Tüm öne çıkanlar</a>
         </div>
         <div id="featuredGrid" class="listing-grid"></div>
+      </section>
+
+      <section id="latest-section" class="home-section section-block">
+        <div class="section-head">
+          <h2>Son Eklenen İlanlar</h2>
+          <a href="listings.html?sort=new">Tüm son eklenenler</a>
+        </div>
+        <div id="latestGrid" class="listing-grid"></div>
       </section>
     </div>
 
@@ -1376,6 +1763,10 @@
       <div id="sidebarBackdrop"></div>
       <select id="filterCategory">
         <option value=""></option>
+        <option value="Emlak">Emlak</option>
+        <option value="Araç">Araç</option>
+        <option value="İş Makineleri">İş Makineleri</option>
+        <option value="Yedek Parça">Yedek Parça</option>
       </select>
       <input id="filterCity" type="text">
       <input id="filterMin" type="number">
@@ -1469,6 +1860,51 @@
       topSearch: document.getElementById("topSearch"),
       topSearchInput: document.getElementById("topSearchInput")
     };
+
+    function getCurrentUrlCategorySlug() {
+      const params = new URLSearchParams(window.location.search);
+      return String(params.get("category") || "").trim().toLocaleLowerCase("tr");
+    }
+
+    function mapCategorySlugToFilter(slug) {
+      const value = String(slug || "").trim().toLocaleLowerCase("tr");
+      if (value === "emlak") return "Emlak";
+      if (value === "vasita" || value === "vasıta" || value === "otomobil" || value === "arac" || value === "araç") return "Araç";
+      if (value === "is-makineleri" || value === "iş-makineleri" || value === "is makineleri" || value === "iş makineleri") return "İş Makineleri";
+      if (value === "yedek-parca" || value === "yedek parca" || value === "yedek parça") return "Yedek Parça";
+      return "";
+    }
+
+    function getActiveCategoryFilter() {
+      const urlCategory = mapCategorySlugToFilter(getCurrentUrlCategorySlug());
+      return urlCategory || String(els.filterCategory.value || "").trim();
+    }
+
+    function syncCategoryUiFromUrl() {
+      const slug = getCurrentUrlCategorySlug();
+      const mapped = mapCategorySlugToFilter(slug);
+      if (mapped) {
+        els.filterCategory.value = mapped;
+      } else if (!String(els.filterCategory.value || "").trim()) {
+        els.filterCategory.value = "";
+      }
+
+      document.querySelectorAll(".category-card").forEach((link) => {
+        const isActive = String(link.dataset.category || "").trim().toLocaleLowerCase("tr") === slug;
+        link.classList.toggle("active", isActive);
+      });
+    }
+
+    function updateCategoryUrl(categorySlug) {
+      const url = new URL(window.location.href);
+      if (categorySlug) {
+        url.searchParams.set("category", categorySlug);
+      } else {
+        url.searchParams.delete("category");
+      }
+      window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      syncCategoryUiFromUrl();
+    }
 
     function updateSectionVisibility(showcaseListings, featuredListings, normalListings) {
       const showcaseVisible = Array.isArray(showcaseListings) && showcaseListings.length > 0;
@@ -1685,6 +2121,30 @@
       `;
     }
 
+    function showcaseCardTemplate(item) {
+      const favs = JSON.parse(localStorage.getItem("favs") || "[]");
+      const city = escapeHtml(item.city || item.location || "Konum yok");
+      const year = escapeHtml(String(item.year || item.modelYear || item.vehicleYear || "-"));
+      return `
+        <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" data-action="detail" data-url="${escapeHtml(listingUrl(item))}">
+          <div class="img-wrapper">
+            ${imageMarkup(item, item.title || "İlan")}
+            ${listingStatusBadge(item) || ""}
+            <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" type="button" data-action="favorite" data-id="${escapeHtml(String(item._id))}">♡</button>
+          </div>
+          <div class="card-body">
+            <div class="meta">
+              <span class="city-meta">${city}</span>
+              <span class="dot">•</span>
+              <span class="year-meta">${year}</span>
+            </div>
+            <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
+            <p class="price">${formatPrice(item.price)}</p>
+          </div>
+        </div>
+      `;
+    }
+
     function toggleFavorite(id){
       let favs = JSON.parse(localStorage.getItem("favs") || "[]");
 
@@ -1737,11 +2197,22 @@
 
     function renderShowcaseListings(showcaseListings) {
       console.log("RENDER_SOURCE_NAME", "showcaseListings");
-      const finalListings = (Array.isArray(showcaseListings) ? showcaseListings : [])
+      const sourceListings = Array.isArray(showcaseListings) ? showcaseListings : [];
+      const selectedCategory = getCurrentUrlCategorySlug();
+      console.log("SHOWCASE_BEFORE_FILTER", sourceListings.length);
+      console.log("ACTIVE_CATEGORY", selectedCategory);
+      const filteredListings = applyFilters(sourceListings);
+      console.log("SHOWCASE_AFTER_FILTER", filteredListings.length);
+      const finalListings = filteredListings
         .filter((item) => item && item.isShowcase === true && item.isFeatured !== true)
         .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       console.log("SHOWCASE_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
-      renderApiGrid(els.showcase, finalListings.slice(0, 8));
+      if (els.showcase) {
+        const items = finalListings.slice(0, 6);
+        els.showcase.innerHTML = items.length
+          ? items.map(showcaseCardTemplate).join("")
+          : emptyTemplate(selectedCategory ? "Bu kategoride vitrin ilanı bulunamadı" : "Vitrin ilan bulunamadı.");
+      }
       renderFeatured(finalListings);
       return finalListings;
     }
@@ -1752,7 +2223,7 @@
         .filter((item) => item && item.isFeatured === true && item.isShowcase !== true)
         .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       console.log("FEATURED_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
-      renderApiGrid(els.featured, finalListings.slice(0, 8));
+      renderApiGrid(els.featured, finalListings.slice(0, 10));
       return finalListings;
     }
 
@@ -1859,7 +2330,7 @@
     }
 
     function applyFilters(listings) {
-      const category = els.filterCategory.value.trim();
+      const category = getActiveCategoryFilter();
       const city = els.filterCity.value.trim().toLocaleLowerCase("tr");
       const min = Number(els.filterMin.value);
       const max = Number(els.filterMax.value);
@@ -1881,11 +2352,14 @@
     }
 
     function renderHome(normalListings, showcaseListings, featuredListings) {
+      const activeCategorySlug = getCurrentUrlCategorySlug();
+      if (activeCategorySlug) {
+        console.log("CATEGORY_RENDER_START", activeCategorySlug);
+      }
       const filteredNormal = applyFilters(Array.isArray(normalListings) ? normalListings : []);
-      const filteredShowcase = applyFilters(Array.isArray(showcaseListings) ? showcaseListings : []);
       const filteredFeatured = applyFilters(Array.isArray(featuredListings) ? featuredListings : []);
 
-      const finalShowcase = renderShowcaseListings(filteredShowcase);
+      const finalShowcase = renderShowcaseListings(Array.isArray(showcaseListings) ? showcaseListings : []);
       const finalFeatured = renderFeaturedListings(filteredFeatured);
       const finalNormal = renderNormalListings(filteredNormal);
 
@@ -1905,6 +2379,7 @@
       [els.showcase, els.featuredListings, els.featured, els.latest, els.realEstate, els.vehicle, els.electronics].forEach((el) => {
         el.innerHTML = loadingTemplate("İlanlar yükleniyor...");
       });
+      syncCategoryUiFromUrl();
       try {
         const requestOptions = { cache: "no-store" };
         const [allRes, showcaseRes, featuredRes, normalRes] = await Promise.all([
@@ -1961,6 +2436,16 @@
       });
     });
 
+    document.querySelectorAll(".category-card").forEach((card) => {
+      card.addEventListener("click", (event) => {
+        event.preventDefault();
+        const category = String(card.dataset.category || "").trim();
+        console.log("CATEGORY_CLICK", category);
+        updateCategoryUrl(category);
+        renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
+      });
+    });
+
     const categoryToggle = document.getElementById("categoryToggle");
     const leftSidebar = document.querySelector(".left-sidebar");
     const sidebarBackdrop = document.getElementById("sidebarBackdrop");
@@ -1980,6 +2465,11 @@
     document.getElementById("filterBtn").addEventListener("click", () => renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings));
     [els.filterCategory, els.filterCity, els.filterMin, els.filterMax].forEach((input) => {
       input.addEventListener("change", () => renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings));
+    });
+
+    window.addEventListener("popstate", () => {
+      syncCategoryUiFromUrl();
+      renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
     });
 
     els.topSearch.addEventListener("submit", (event) => {
@@ -2028,6 +2518,7 @@
     console.log("HOME_DUPLICATE_SEARCH_REMOVED");
 
     cleanupStoredTextCache();
+    syncCategoryUiFromUrl();
     loadListings();
   </script>
   <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>

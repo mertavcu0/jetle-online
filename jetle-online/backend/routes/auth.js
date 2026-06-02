@@ -201,8 +201,16 @@ function redirectGoogleAuthResult(req, res, options = {}) {
   if (options.token) hashParams.set("google_token", String(options.token));
   if (options.user) hashParams.set("google_user", toBase64Url(JSON.stringify(options.user)));
   hashParams.set("next", nextPath);
+  const redirectUrl = `${appOrigin}/login.html#${hashParams.toString()}`;
+  console.log("REDIRECT_SUCCESS", {
+    hasToken: Boolean(options.token),
+    hasUser: Boolean(options.user),
+    hasError: Boolean(options.error),
+    next: nextPath
+  });
+  console.log("REDIRECT_HASH", redirectUrl);
 
-  res.redirect(`${appOrigin}/login.html#${hashParams.toString()}`);
+  res.redirect(redirectUrl);
 }
 
 async function exchangeGoogleCodeForToken(code, req) {
@@ -604,6 +612,7 @@ router.get("/google", (req, res) => {
 router.get("/google/callback", async (req, res) => {
   let nextPath = "/";
   try {
+    console.log("GOOGLE_CALLBACK_START");
     if (!isGoogleOAuthConfigured()) {
       throw new Error("google_oauth_not_configured");
     }
@@ -618,13 +627,23 @@ router.get("/google/callback", async (req, res) => {
 
     const tokenResponse = await exchangeGoogleCodeForToken(code, req);
     const profile = await fetchGoogleUserProfile(tokenResponse.access_token);
+    console.log("GOOGLE_PROFILE", profile);
     const user = await findOrCreateGoogleUser(profile);
+    console.log("USER_FOUND", user);
     const token = signAuthToken(user);
+    console.log("JWT_CREATED");
+
+    const redirectUrl = `${getAppOrigin(req)}/login.html#${new URLSearchParams({
+      google_token: String(token),
+      google_user: toBase64Url(JSON.stringify(userResponse(user))),
+      next: nextPath
+    }).toString()}`;
 
     console.log("GOOGLE_LOGIN_SUCCESS", {
       userId: String(user._id),
       email: String(user.email || "").trim().toLowerCase()
     });
+    console.log("REDIRECT_TARGET", redirectUrl);
 
     return redirectGoogleAuthResult(req, res, {
       token,
@@ -632,6 +651,7 @@ router.get("/google/callback", async (req, res) => {
       next: nextPath
     });
   } catch (error) {
+    console.error("GOOGLE_CALLBACK_ERROR", error);
     console.error("GOOGLE_LOGIN_ERROR", error);
     return redirectGoogleAuthResult(req, res, {
       error: error?.message || "google_login_failed",

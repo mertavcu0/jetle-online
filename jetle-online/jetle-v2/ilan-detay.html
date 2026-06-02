@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>İlan Detay</title>
+  <title>Ä°lan Detay</title>
   <style>
 
 body {
@@ -113,12 +113,18 @@ body {
 </head>
 <body>
   <script>
+function formatPrice(price) {
+  const num = Number(price || 0);
+  if (Number.isNaN(num)) return "-";
+  return new Intl.NumberFormat("tr-TR").format(num) + " TL";
+}
+
 async function loadDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
   if (!id) {
-    document.body.innerHTML = "İlan bulunamadı";
+    document.body.innerHTML = "Ä°lan bulunamadÄ±";
     return;
   }
 
@@ -128,7 +134,7 @@ async function loadDetail() {
     const data = list.find(i => i._id === id);
 
     if (!data) {
-      document.body.innerHTML = "İlan bulunamadı";
+      document.body.innerHTML = "Ä°lan bulunamadÄ±";
       return;
     }
 
@@ -148,22 +154,22 @@ async function loadDetail() {
     <div class="title">${data.title}</div>
 
     <div class="desc-box">
-      <div class="desc-title">Açıklama</div>
+      <div class="desc-title">AÃ§Ä±klama</div>
       <div class="desc">${data.description}</div>
     </div>
   </div>
 
   <div class="right">
     <div class="price-box">
-      <div class="price">${data.price} ₺</div>
+      <div class="price">${formatPrice(data.price)}</div>
       <div class="location">${data.location}</div>
-      <button class="btn">Mesaj Gönder</button>
-      <button class="btn" onclick="report('${data._id}')">Şikayet Et</button>
+      <button class="btn">Mesaj GÃ¶nder</button>
+      <button class="btn" onclick="report('${data._id}')">Åikayet Et</button>
     </div>
 
     <div class="seller-box">
-      <div class="seller-title">Satıcı</div>
-      <div class="seller-name">Jetle Kullanıcısı</div>
+      <div class="seller-title">SatÄ±cÄ±</div>
+      <div class="seller-name">Jetle KullanÄ±cÄ±sÄ±</div>
     </div>
   </div>
 
@@ -171,14 +177,14 @@ async function loadDetail() {
 `;
   } catch (err) {
     console.error(err);
-    document.body.innerHTML = "Hata oluştu";
+    document.body.innerHTML = "Hata oluÅŸtu";
   }
 }
 
 loadDetail();
 
 function report(id) {
-  const reason = prompt("Şikayet sebebi nedir?");
+  const reason = prompt("Åikayet sebebi nedir?");
 
   fetch("/api/report", {
     method: "POST",
@@ -192,9 +198,11 @@ function report(id) {
     })
   });
 
-  alert("Şikayet gönderildi");
+  alert("Åikayet gÃ¶nderildi");
 }
 </script>
 </body>
 </html>
+
+
 

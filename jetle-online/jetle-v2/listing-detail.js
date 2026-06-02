@@ -86,6 +86,12 @@ function renderGallery(listing) {
   }
 }
 
+function formatPrice(price) {
+  const num = Number(price || 0);
+  if (Number.isNaN(num)) return "-";
+  return new Intl.NumberFormat("tr-TR").format(num) + " TL";
+}
+
 async function loadListing() {
   const id = new URLSearchParams(window.location.search).get("id");
 
@@ -98,7 +104,7 @@ async function loadListing() {
     window.listingData = data;
 
     document.getElementById("title").innerText = data.title || "";
-    document.getElementById("price").innerText = (data.price || 0) + " TL";
+    document.getElementById("price").innerText = formatPrice(data.price);
     document.getElementById("city").innerText = data.city || "";
     document.getElementById("category").innerText = data.category || "";
 

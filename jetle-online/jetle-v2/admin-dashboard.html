@@ -1109,7 +1109,6 @@
 
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const API_BASE = "";
     const token = localStorage.getItem("token");
@@ -1468,6 +1467,82 @@
       return "/api/admin/listings" + (query ? "?" + query : "");
     }
 
+    function renderAnalyticsLineChart(canvas, labels, listingPoints, userPoints) {
+      if (!canvas || typeof canvas.getContext !== "function") return false;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return false;
+
+      const width = canvas.clientWidth || canvas.width || 640;
+      const height = canvas.clientHeight || canvas.height || 220;
+      const ratio = window.devicePixelRatio || 1;
+      const leftPad = 24;
+      const rightPad = 12;
+      const topPad = 18;
+      const bottomPad = 28;
+      const chartWidth = Math.max(width - leftPad - rightPad, 40);
+      const chartHeight = Math.max(height - topPad - bottomPad, 40);
+      const pointsA = Array.isArray(listingPoints) ? listingPoints.map((value) => Number(value || 0)) : [];
+      const pointsB = Array.isArray(userPoints) ? userPoints.map((value) => Number(value || 0)) : [];
+      const pointCount = Math.max(pointsA.length, pointsB.length, 1);
+      const maxValue = Math.max(...pointsA, ...pointsB, 1);
+
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(leftPad, topPad);
+      ctx.lineTo(leftPad, topPad + chartHeight);
+      ctx.lineTo(leftPad + chartWidth, topPad + chartHeight);
+      ctx.stroke();
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "12px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.textAlign = "center";
+      const xStep = pointCount > 1 ? chartWidth / (pointCount - 1) : 0;
+      labels.forEach((label, index) => {
+        const x = leftPad + (pointCount > 1 ? xStep * index : chartWidth / 2);
+        ctx.fillText(label || "-", x, height - 8);
+      });
+
+      const drawSeries = (values, strokeColor, fillColor) => {
+        if (!values.length) return;
+        ctx.beginPath();
+        values.forEach((value, index) => {
+          const x = leftPad + (pointCount > 1 ? xStep * index : chartWidth / 2);
+          const y = topPad + chartHeight - (Math.max(Number(value || 0), 0) / maxValue) * chartHeight;
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        values.forEach((value, index) => {
+          const x = leftPad + (pointCount > 1 ? xStep * index : chartWidth / 2);
+          const y = topPad + chartHeight - (Math.max(Number(value || 0), 0) / maxValue) * chartHeight;
+          ctx.beginPath();
+          ctx.fillStyle = fillColor;
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      };
+
+      drawSeries(pointsA, "#3b6fd8", "#3b6fd8");
+      drawSeries(pointsB, "#2f9461", "#2f9461");
+
+      console.log("ADMIN_CHART_LOCAL_RENDER", {
+        labels,
+        listingPoints: pointsA,
+        userPoints: pointsB
+      });
+      return true;
+    }
+
     function renderAnalytics(analytics) {
       const topCategory = analytics?.topCategory;
       const mostActiveCity = analytics?.mostActiveCity;
@@ -1512,28 +1587,31 @@
 
       document.getElementById("conversionRate").textContent = (analytics?.conversionRate || 0) + "%";
 
+      const ctx = document.getElementById("analyticsChart");
+      const labels = daily.map((item) => item.date
+        ? new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" })
+        : "-");
+      const listingPoints = daily.map((item) => Number(item.count || 0));
+
       if (typeof Chart === "function") {
-        const ctx = document.getElementById("analyticsChart");
         if (state.chart) {
           state.chart.destroy();
           state.chart = null;
         }
         console.log("ADMIN_CHART_RENDER", {
           labels: daily.map((item) => item.date),
-          listingPoints: daily.map((item) => item.count),
+          listingPoints,
           userPoints: dailyUsers,
           chartCanvasReady: Boolean(ctx)
         });
         state.chart = new Chart(ctx, {
           type: "line",
           data: {
-            labels: daily.map((item) => item.date
-              ? new Date(item.date).toLocaleDateString("tr-TR", { weekday: "short" })
-              : "-"),
+            labels,
             datasets: [
               {
                 label: "İlan trendi",
-                data: daily.map((item) => Number(item.count || 0)),
+                data: listingPoints,
                 borderColor: "#3b6fd8",
                 backgroundColor: "rgba(59,111,216,0.12)",
                 tension: 0.35,
@@ -1555,7 +1633,10 @@
             scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
           }
         });
+        return;
       }
+
+      renderAnalyticsLineChart(ctx, labels, listingPoints, dailyUsers);
     }
 
     async function loadDashboard() {
