@@ -298,6 +298,7 @@
 
       const username = String(form.elements.username?.value || "").trim();
       const email = String(form.elements.email?.value || "").trim();
+      const phone = String(form.elements.phone?.value || "").trim();
       const password = String(form.elements.password?.value || "");
       const password2 = String(form.elements.password2?.value || "");
       const submitButton = form.querySelector('button[type="submit"]');
@@ -307,7 +308,7 @@
         message.style.color = "";
       }
 
-      if (!username || !email || !password || !password2) {
+      if (!username || !email || !phone || !password || !password2) {
         if (message) {
           message.textContent = "Lütfen tüm alanları doldurun.";
           message.style.color = "#b91c1c";
@@ -335,6 +336,7 @@
             name: username,
             username,
             email,
+            phone,
             password
           })
         });
