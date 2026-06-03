@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>İlanlar | jetle.online</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-YCWYPP371K");
+  </script>
   <link rel="stylesheet" href="/style.css?v=2">
   <style>
     * {
@@ -399,6 +406,14 @@
       align-items: stretch;
     }
 
+    .listing-grid.showcase-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(228px, 228px));
+      gap: 14px;
+      align-items: stretch;
+      justify-content: start;
+    }
+
     .listing-table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -439,6 +454,11 @@
     .listing-table.diger .listing-table-header,
     .listing-table.diger .listing-row {
       grid-template-columns: 182px minmax(420px, 1fr) 112px 146px 96px 116px;
+    }
+
+    .listing-table.showcase .listing-table-header,
+    .listing-table.showcase .listing-row {
+      grid-template-columns: 182px minmax(420px, 1fr) 146px 96px 116px;
     }
 
     .listing-table-header {
@@ -573,6 +593,23 @@
       gap: 3px;
     }
 
+    .listing-grid.showcase-grid .listing-submeta {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.35;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      overflow: hidden;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .listing-grid.showcase-grid .listing-submeta span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .listing-price {
       color: #1d4ed8;
       font-size: 24px;
@@ -581,6 +618,36 @@
       white-space: nowrap;
       width: 100%;
       text-align: right;
+    }
+
+    .listing-grid.showcase-grid .listing-price {
+      margin-top: auto;
+      padding-top: 8px;
+      text-align: left;
+    }
+
+    .listing-grid.showcase-grid .listing-thumb-wrap {
+      width: 100%;
+      height: 178px;
+      border: 0;
+      border-bottom: 1px solid #edf2f7;
+      border-radius: 0;
+    }
+
+    .listing-grid.showcase-grid .listing-photo,
+    .listing-grid.showcase-grid .listing-photo-placeholder {
+      width: 100%;
+      height: 178px;
+      border-radius: 0;
+    }
+
+    .listing-grid.showcase-grid .listing-title {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.38;
+      color: #111827;
+      min-height: calc(1.38em * 2);
+      max-height: calc(1.38em * 2);
     }
 
     .listing-side-stack {
@@ -611,9 +678,30 @@
       align-items: center;
     }
 
+    .listing-grid.showcase-grid .listing-card.showcase-card {
+      display: flex !important;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      min-height: 328px;
+      height: 328px;
+      padding: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
     .listing-card:hover {
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
       border-color: #d1d5db;
+    }
+
+    .listing-grid.showcase-grid .listing-card.showcase-card:hover {
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+      border-color: #dbe3ee;
+      transform: translateY(-2px);
     }
 
     .card-img {
@@ -674,6 +762,16 @@
       row-gap: 6px;
       align-items: start;
       overflow: hidden;
+    }
+
+    .listing-grid.showcase-grid .card-body {
+      padding: 12px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      min-height: 0;
+      flex: 1 1 auto;
     }
 
     .card-body h3 {
@@ -957,7 +1055,8 @@
 
       .listing-table.vasita .listing-row,
       .listing-table.emlak .listing-row,
-      .listing-table.diger .listing-row {
+      .listing-table.diger .listing-row,
+      .listing-table.showcase .listing-row {
         grid-template-columns: 132px minmax(0, 1fr);
         gap: 10px;
         padding: 10px;
@@ -968,6 +1067,11 @@
 
       .listing-row .mobile-hide {
         display: none;
+      }
+
+      .listing-grid.showcase-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
       }
 
       .jl-footer-grid {
@@ -984,8 +1088,25 @@
 
       .listing-table.vasita .listing-row,
       .listing-table.emlak .listing-row,
-      .listing-table.diger .listing-row {
+      .listing-table.diger .listing-row,
+      .listing-table.showcase .listing-row {
         grid-template-columns: 1fr;
+      }
+
+      .listing-grid.showcase-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .listing-grid.showcase-grid .listing-card.showcase-card {
+        min-height: 302px;
+        height: 302px;
+      }
+
+      .listing-grid.showcase-grid .listing-thumb-wrap,
+      .listing-grid.showcase-grid .listing-photo,
+      .listing-grid.showcase-grid .listing-photo-placeholder {
+        height: 150px;
       }
 
       .results-tab {
@@ -1239,6 +1360,11 @@
         return (params.get("category") || "").trim().toLowerCase();
       };
 
+      const isShowcaseListingPage = () => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("showcase") === "true";
+      };
+
       const getActivePage = () => {
         if (typeof getPageFromUrl === "function") return getPageFromUrl();
         const params = new URLSearchParams(window.location.search);
@@ -1264,7 +1390,7 @@
         });
 
         if (title) {
-          title.textContent = titleMap[activeCategory] || "Tüm İlanlar";
+          title.textContent = isShowcaseListingPage() ? "Vitrin İlanları" : (titleMap[activeCategory] || "Tüm İlanlar");
         }
 
         if (typeof setFormFromUrl === "function") {
@@ -1371,13 +1497,49 @@
         const isRecent = createdAt && !Number.isNaN(createdAt.getTime()) && (Date.now() - createdAt.getTime()) < 7 * 24 * 60 * 60 * 1000;
 
         if (isRecent) badges.push('<span class="status-badge new">Yeni</span>');
-        if (listing?.isShowcase === true) badges.push('<span class="status-badge showcase">Vitrin</span>');
+        if (listing?.isShowcase === true && !isShowcaseListingPage()) badges.push('<span class="status-badge showcase">Vitrin</span>');
         if (listing?.isFeatured === true) badges.push('<span class="status-badge featured">Öne Çıkan</span>');
 
         return badges.join("");
       };
 
+      const renderShowcaseRow = (listing, user, src, dateText, id) => {
+        const location = [listing.city, listing.district].filter(Boolean).join(" / ");
+        const metaLine = [listing.subCategory, listing.category, listing.brand, listing.model].filter(Boolean);
+        const statusBadges = buildStatusBadges(listing);
+        return `
+          <div class="listing-row" data-action="detail" data-id="${escapeHtml(String(id))}">
+            <div class="listing-cell photo">
+              <div class="listing-thumb-wrap">
+                ${src ? `<img class="listing-photo" src="${escapeHtml(src)}" alt="${escapeHtml(listing.title || "İlan")}" loading="lazy">` : `<div class="listing-photo-placeholder">Görsel yok</div>`}
+              </div>
+              ${typeof favoriteButton === "function" ? favoriteButton(listing, user) : ""}
+            </div>
+            <div class="listing-cell">
+              <div class="listing-title">${escapeHtml(listing.title || "")}</div>
+              <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">•</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
+              ${statusBadges ? `<div class="badge-row">${statusBadges}</div>` : ""}
+            </div>
+            <div class="listing-cell"><div class="listing-side-stack"><div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div></div></div>
+            <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
+            <div class="listing-cell listing-location mobile-hide">${escapeHtml(location || "-")}</div>
+          </div>
+        `;
+      };
+
       const buildHeaderRow = (viewType) => {
+        if (viewType === "showcase") {
+          return `
+            <div class="listing-table-header">
+              <div class="listing-cell">Fotoğraf</div>
+              <div class="listing-cell">İlan Başlığı</div>
+              <div class="listing-cell">Fiyat</div>
+              <div class="listing-cell mobile-hide">İlan Tarihi</div>
+              <div class="listing-cell mobile-hide">İl / İlçe</div>
+            </div>
+          `;
+        }
+
         if (viewType === "vasita") {
           return `
             <div class="listing-table-header">
@@ -1542,7 +1704,8 @@
       if (originalRenderListings) {
         const renderListingRows = (filteredListings) => {
           const user = typeof currentUser === "function" ? currentUser() : {};
-          const viewType = getViewType();
+          const showcasePage = isShowcaseListingPage();
+          const viewType = showcasePage ? "showcase" : getViewType();
           const seenIds = new Set();
           let renderCount = 0;
           const rows = filteredListings.map((listing) => {
@@ -1554,10 +1717,11 @@
             if (id) seenIds.add(id);
 
             const src = typeof listingImage === "function" ? listingImage(listing) : "";
-            const dateText = formatListingDate(listing.createdAt);
             renderCount += 1;
             console.log("ROW_RENDER_SUCCESS", id || `row-${renderCount}`);
 
+            const dateText = formatListingDate(listing.createdAt);
+            if (showcasePage) return renderShowcaseRow(listing, user, src, dateText, id);
             if (viewType === "vasita") return renderVehicleRow(listing, user, src, dateText, id);
             if (viewType === "emlak") return renderEstateRow(listing, user, src, dateText, id);
             return renderGenericRow(listing, user, src, dateText, id);
@@ -1649,6 +1813,12 @@
         const detailRow = event.target.closest('.listing-row[data-action="detail"]');
         if (detailRow) {
           goDetail(detailRow.dataset.id || "");
+          return;
+        }
+
+        const detailCard = event.target.closest('.listing-card[data-action="detail"]');
+        if (detailCard) {
+          goDetail(detailCard.dataset.id || "");
         }
       });
     })();

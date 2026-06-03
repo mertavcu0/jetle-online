@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>İlan Detayı | jetle.online</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-YCWYPP371K");
+  </script>
   <link rel="stylesheet" href="style.css?v=2" />
   <style>
     * {
@@ -2083,16 +2090,102 @@
     }
 
     @media (max-width: 768px) {
-      .nav-right,
-      #authArea {
-        width: 100%;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+      .detail-grid {
+        display: flex;
+        flex-direction: column;
       }
 
-      .post-btn,
-      .register-btn {
+      .left-panel {
+        display: contents;
+      }
+
+      .slider,
+      .image-info,
+      #thumbnails {
+        order: 1;
+      }
+
+      .listing-info-box {
+        order: 2;
+      }
+
+      .detail-tabs-layout {
+        order: 3;
+      }
+
+      .right-panel {
+        order: 4;
+      }
+
+      .marketplace-blocks {
+        order: 5;
+      }
+
+      .navbar-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 6px 10px;
+      }
+
+      .logo {
+        order: 1;
+        flex: 0 0 100%;
+      }
+
+      .nav-right {
+        order: 2;
+        width: 100%;
         margin-left: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .search {
+        order: 3;
+      }
+
+      #authArea {
+        width: auto;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      #authArea span {
+        flex: 0 1 auto;
+        margin: 0;
+        text-align: right;
+        white-space: nowrap;
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 11px;
+        line-height: 1;
+        color: #475569;
+      }
+
+      #authArea button,
+      .login-btn,
+      .register-btn,
+      .post-btn {
+        min-height: 28px;
+        height: 28px;
+        padding: 0 7px;
+        font-size: 11px;
+        line-height: 1;
+        border-radius: 7px;
+        margin-left: 0;
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
 
       .seller-actions {

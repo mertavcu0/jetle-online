@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jetle - Türkiye'nin ilan platformu</title>
   <meta name="description" content="Satılık, kiralık, ikinci el ilanlar">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-YCWYPP371K");
+  </script>
   <link rel="stylesheet" href="/style.css?v=2">
   <style>
     * {
@@ -885,21 +892,24 @@
         grid-template-areas:
           "logo actions"
           "search search";
-        gap: 10px 12px;
-        align-items: start;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        gap: 4px;
+        align-items: center;
       }
 
       .logo {
         grid-area: logo;
         align-self: center;
+        line-height: 1.05;
       }
 
       .search {
         grid-area: search;
         width: 100%;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
+        grid-template-columns: 1fr;
+        gap: 6px;
         align-items: center;
       }
 
@@ -914,52 +924,56 @@
         height: 42px;
         padding: 0 16px;
         border-radius: 10px;
+        width: 100%;
       }
 
       .nav-right,
       #authArea {
-        white-space: normal;
+        white-space: nowrap;
       }
 
       .nav-right {
         grid-area: actions;
         width: auto;
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 8px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        min-width: 0;
+        flex-wrap: nowrap;
+        margin-top: 0;
       }
 
       #authArea {
         width: auto;
+        flex: 0 0 auto;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: flex-end;
-        gap: 8px;
-        white-space: normal;
+        gap: 5px;
+        min-width: 0;
+        line-height: 1;
       }
 
       .post-btn {
-        width: auto;
-        min-height: 40px;
-        height: 40px;
-        padding: 0 14px;
-        font-size: 14px;
-        border-radius: 10px;
-        align-self: flex-end;
+        display: none;
       }
 
       #authArea span {
-        max-width: 140px;
-        font-size: 13px;
+        display: none;
       }
 
       #authArea button,
       .login-btn,
       .register-btn {
-        min-height: 36px;
-        padding: 7px 10px;
-        font-size: 13px;
+        min-height: 32px;
+        height: 32px;
+        padding: 0 10px;
+        font-size: 11px;
+        border-radius: 8px;
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
 
       .page {
@@ -975,14 +989,14 @@
     @media (max-width: 480px) {
       .search {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
+        grid-template-columns: 1fr;
+        gap: 6px;
       }
 
       .search input,
       .search button,
       .primary-btn {
-        width: auto;
+        width: 100%;
         border-radius: 8px;
       }
 
@@ -994,8 +1008,20 @@
       .register-btn,
       .login-btn,
       #authArea button {
-        width: 100%;
+        width: auto;
         text-align: center;
+      }
+
+      .post-btn {
+        padding: 0 9px;
+        font-size: 12px;
+      }
+
+      .register-btn,
+      .login-btn,
+      #authArea button {
+        padding: 0 9px;
+        font-size: 12px;
       }
 
       .footer-container {
@@ -1368,7 +1394,8 @@
       flex: 1 1 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      justify-content: flex-start;
+      gap: 8px;
       padding: 12px 12px 14px;
     }
 
@@ -1390,6 +1417,7 @@
       font-size: 14px;
       line-height: 1.38;
       min-height: calc(1.4em * 2);
+      max-height: calc(1.4em * 2);
     }
 
     #showcase-section .listing-slider .listing-card .price,
@@ -1403,6 +1431,7 @@
 
     #showcase-section .listing-slider .listing-card .price {
       margin-top: auto;
+      padding-top: 8px;
       font-size: 24px;
     }
 
@@ -1418,7 +1447,7 @@
     #showcase-section .listing-slider .listing-card .meta {
       flex-direction: row;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-height: 18px;
       color: #6b7280;
       font-size: 12px;
@@ -1451,6 +1480,14 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    #showcase-section .listing-slider .listing-card .meta.location-meta {
+      min-width: 0;
+    }
+
+    #showcase-section .listing-slider .listing-card .meta.location-meta .city-meta {
+      flex: 1 1 auto;
     }
 
     #showcase-section .listing-slider .listing-card .card-footer,
@@ -2123,8 +2160,10 @@
 
     function showcaseCardTemplate(item) {
       const favs = JSON.parse(localStorage.getItem("favs") || "[]");
-      const city = escapeHtml(item.city || item.location || "Konum yok");
-      const year = escapeHtml(String(item.year || item.modelYear || item.vehicleYear || "-"));
+      const city = String(item.city || item.location || "").trim();
+      const district = String(item.district || item.town || item.districtName || "").trim();
+      const primaryLocation = city || district || "Konum yok";
+      const locationLabel = escapeHtml(city && district && district.toLowerCase() !== city.toLowerCase() ? `${city} / ${district}` : primaryLocation);
       return `
         <div class="listing-card ${item.isFeatured ? "featured-card" : ""}" data-action="detail" data-url="${escapeHtml(listingUrl(item))}">
           <div class="img-wrapper">
@@ -2133,12 +2172,10 @@
             <button class="fav-btn ${favs.includes(item._id) ? "active" : ""}" type="button" data-action="favorite" data-id="${escapeHtml(String(item._id))}">♡</button>
           </div>
           <div class="card-body">
-            <div class="meta">
-              <span class="city-meta">${city}</span>
-              <span class="dot">•</span>
-              <span class="year-meta">${year}</span>
-            </div>
             <h3 class="title">${escapeHtml(item.title || "Başlıksız ilan")}</h3>
+            <div class="meta location-meta">
+              <span class="city-meta">${locationLabel}</span>
+            </div>
             <p class="price">${formatPrice(item.price)}</p>
           </div>
         </div>

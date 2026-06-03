@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesajlar | Jetle</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-YCWYPP371K");
+  </script>
   <link rel="stylesheet" href="/style.css">
   <style>
     :root {
@@ -835,11 +842,41 @@
       }
 
       .listing-summary-body {
-        padding: 14px;
+        padding: 12px;
+        gap: 10px;
       }
 
       .listing-summary-image {
-        aspect-ratio: 16 / 10;
+        aspect-ratio: auto;
+        height: 92px;
+        max-height: 92px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      .listing-summary {
+        min-height: 0;
+        height: auto;
+        max-height: min(168px, 22vh);
+      }
+
+      .listing-summary-header {
+        padding-bottom: 8px;
+      }
+
+      .listing-summary-title {
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .listing-summary-price {
+        font-size: 18px;
+        line-height: 1.1;
+      }
+
+      .listing-summary-meta {
+        gap: 6px;
+        font-size: 12px;
       }
 
       .message-meta {
