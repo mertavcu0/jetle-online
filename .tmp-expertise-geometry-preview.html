@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekspertiz Preview</title>
+<style>
+body{margin:0;padding:28px;background:#eef3f9;font-family:Inter,Arial,sans-serif;}
+.frame{max-width:1180px;margin:0 auto;background:#fff;border:1px solid #dbe4f0;border-radius:18px;padding:18px;box-shadow:0 16px 40px rgba(15,23,42,.08)}
+.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.preview-head h2{margin:0;font-size:18px;color:#0f172a}.preview-head span{font-size:11px;font-weight:700;color:#64748b}
+.expertise-showcase{display:grid;grid-template-columns:minmax(0,2.55fr) minmax(112px,.23fr);gap:10px;align-items:start}.expertise-showcase-board{border:1px solid #e2e8f0;border-radius:18px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:0 14px 36px rgba(15,23,42,.055);padding:10px 10px 12px}.expertise-showcase-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.expertise-showcase-head h4{margin:0;color:#0f172a;font-size:15px;font-weight:850}.expertise-showcase-note{color:#6b7280;font-size:9px;font-weight:700;white-space:nowrap}.expertise-showcase-canvas{position:relative;min-height:286px;padding:6px 8px 8px;border-radius:14px;overflow:hidden;background:radial-gradient(circle at 50% 8%,rgba(255,255,255,.98) 0%,rgba(248,250,252,.96) 42%,rgba(241,245,249,.92) 100%),linear-gradient(180deg,rgba(255,255,255,.94) 0%,rgba(248,250,252,.96) 100%)}.expertise-showcase-canvas::before{content:"";position:absolute;inset:6px;border:1px solid rgba(226,232,240,.9);border-radius:12px;pointer-events:none}.expertise-showcase-canvas::after{content:"";position:absolute;left:50%;top:14px;transform:translateX(-50%);width:min(100%,900px);height:236px;border-radius:999px;background:radial-gradient(circle at center,rgba(148,163,184,.12) 0%,rgba(148,163,184,.06) 48%,rgba(148,163,184,0) 72%);pointer-events:none}.expertise-showcase-vehicle{position:relative;width:min(100%,900px);height:228px;margin:2px auto 0}.expertise-showcase-vehicle::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:662px;height:188px;border-radius:54px;background:linear-gradient(180deg,#d4dbe6 0%,#eef2f7 34%,#dbe4ee 72%,#d2dae5 100%);box-shadow:inset 0 0 0 1px rgba(100,116,139,.18),inset 0 18px 30px rgba(255,255,255,.22),0 26px 42px rgba(15,23,42,.09);clip-path:polygon(12% 0%,88% 0%,95% 8%,100% 22%,100% 78%,95% 92%,88% 100%,12% 100%,5% 92%,0% 78%,0% 22%,5% 8%)}.expertise-showcase-vehicle::after{content:"";position:absolute;left:50%;top:46px;transform:translateX(-50%);width:138px;height:136px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.74) 0%,rgba(203,213,225,.54) 100%);box-shadow:inset 0 0 0 1px rgba(148,163,184,.24),inset 0 -10px 18px rgba(100,116,139,.08);clip-path:polygon(10% 0%,90% 0%,96% 10%,100% 25%,100% 75%,96% 90%,90% 100%,10% 100%,4% 90%,0% 75%,0% 25%,4% 10%)}.expertise-showcase-wheel{position:absolute;width:44px;height:66px;border-radius:24px;background:#1f2937;box-shadow:inset 0 0 0 8px #475569,0 10px 18px rgba(15,23,42,.14)}.expertise-showcase-wheel.front-left{left:154px;top:42px}.expertise-showcase-wheel.front-right{right:154px;top:42px}.expertise-showcase-wheel.rear-left{left:154px;bottom:42px}.expertise-showcase-wheel.rear-right{right:154px;bottom:42px}.expertise-showcase-part{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px 4px;border-radius:11px;border:1px solid rgba(148,163,184,.26);color:#111827;font-size:7.2px;font-weight:700;line-height:1.05;box-shadow:0 6px 14px rgba(15,23,42,.07);background:#e5e7eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.expertise-showcase-part.is-original{background:#dcfce7;border-color:#86efac;color:#166534}.expertise-showcase-part.is-local{background:repeating-linear-gradient(-45deg,#fef08a 0 8px,#fde68a 8px 16px);border-color:#facc15;color:#854d0e}.expertise-showcase-part.is-painted{background:#fde68a;border-color:#facc15;color:#854d0e}.expertise-showcase-part.is-changed{background:#fecaca;border-color:#ef4444;color:#991b1b}.expertise-showcase-part.front-bumper{left:50%;top:12px;transform:translateX(-50%);width:414px;height:18px;border-radius:15px 15px 6px 6px}.expertise-showcase-part.hood{left:50%;top:34px;transform:translateX(-50%);width:118px;height:22px;border-radius:12px 12px 5px 5px}.expertise-showcase-part.fender-left{left:186px;top:30px;width:136px;height:42px;border-radius:14px 10px 12px 14px}.expertise-showcase-part.fender-right{right:186px;top:30px;width:136px;height:42px;border-radius:10px 14px 14px 12px}.expertise-showcase-part.door-left{left:188px;top:78px;width:126px;height:60px;border-radius:10px 7px 7px 9px}.expertise-showcase-part.door-right{right:188px;top:78px;width:126px;height:60px;border-radius:7px 10px 9px 7px}.expertise-showcase-part.leftRearDoor{left:188px;top:144px;width:126px;height:60px;border-radius:9px 7px 9px 7px}.expertise-showcase-part.rightRearDoor{right:188px;top:144px;width:126px;height:60px;border-radius:7px 9px 7px 9px}.expertise-showcase-part.roof{left:50%;top:76px;transform:translateX(-50%);width:74px;height:128px;border-radius:14px}.expertise-showcase-part.leftRearFender{left:186px;bottom:22px;width:136px;height:42px;border-radius:14px 12px 10px 12px}.expertise-showcase-part.rightRearFender{right:186px;bottom:22px;width:136px;height:42px;border-radius:12px 14px 12px 10px}.expertise-showcase-part.trunk{left:50%;bottom:24px;transform:translateX(-50%);width:118px;height:22px;border-radius:5px 5px 12px 12px}.expertise-showcase-part.rear-bumper{left:50%;bottom:2px;transform:translateX(-50%);width:414px;height:18px;border-radius:6px 6px 15px 15px}.expertise-showcase-legend{display:grid;gap:5px;align-content:start;max-width:118px}.expertise-showcase-card{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:7px;box-shadow:0 8px 22px rgba(15,23,42,.045)}.expertise-showcase-card h4{margin:0 0 8px;font-size:10px;color:#0f172a;font-weight:800}.expertise-showcase-legend-list{display:grid;gap:6px}.expertise-showcase-legend-item{display:flex;align-items:center;gap:6px;font-size:9px;color:#334155;font-weight:700}.expertise-showcase-swatch{width:10px;height:10px;border-radius:4px;border:1px solid rgba(148,163,184,.35);flex:0 0 auto}.expertise-showcase-swatch.is-original{background:#22c55e;border-color:#16a34a}.expertise-showcase-swatch.is-local{background:repeating-linear-gradient(-45deg,#fde68a 0 5px,#facc15 5px 10px);border-color:#ca8a04}.expertise-showcase-swatch.is-painted{background:#facc15;border-color:#ca8a04}.expertise-showcase-swatch.is-changed{background:#ef4444;border-color:#dc2626}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="preview-head"><h2>Ekspertiz Şema Preview</h2><span>Arabam panel ağırlığı</span></div>
+  <div class="expertise-showcase">
+    <div class="expertise-showcase-board">
+      <div class="expertise-showcase-head">
+        <h4>Araç Üst Görünüş Ekspertiz</h4>
+        <span class="expertise-showcase-note">Preview</span>
+      </div>
+      <div class="expertise-showcase-canvas">
+        <div class="expertise-showcase-vehicle">
+          <span class="expertise-showcase-wheel front-left"></span>
+          <span class="expertise-showcase-wheel.front-right"></span>
+          <span class="expertise-showcase-wheel rear-left"></span>
+          <span class="expertise-showcase-wheel rear-right"></span>
+          <div class="expertise-showcase-part is-original front-bumper">Ön tampon</div>
+          <div class="expertise-showcase-part is-painted hood">Kaput</div>
+          <div class="expertise-showcase-part is-original fender-left">Sol ön çamurluk</div>
+          <div class="expertise-showcase-part is-changed fender-right">Sağ ön çamurluk</div>
+          <div class="expertise-showcase-part is-original door-left">Sol ön kapı</div>
+          <div class="expertise-showcase-part is-painted door-right">Sağ ön kapı</div>
+          <div class="expertise-showcase-part is-original leftRearDoor">Sol arka kapı</div>
+          <div class="expertise-showcase-part is-local rightRearDoor">Sağ arka kapı</div>
+          <div class="expertise-showcase-part is-original roof">Tavan</div>
+          <div class="expertise-showcase-part is-painted leftRearFender">Sol arka çamurluk</div>
+          <div class="expertise-showcase-part is-original rightRearFender">Sağ arka çamurluk</div>
+          <div class="expertise-showcase-part is-original trunk">Bagaj</div>
+          <div class="expertise-showcase-part is-changed rear-bumper">Arka tampon</div>
+        </div>
+      </div>
+    </div>
+    <div class="expertise-showcase-legend">
+      <div class="expertise-showcase-card">
+        <h4>Durum Açıklaması</h4>
+        <div class="expertise-showcase-legend-list">
+          <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-original"></span><span>Orijinal</span></div>
+          <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-local"></span><span>Lokal</span></div>
+          <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-painted"></span><span>Boyalı</span></div>
+          <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-changed"></span><span>Değişen</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

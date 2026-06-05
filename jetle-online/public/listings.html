@@ -1141,14 +1141,65 @@
 
     @media (max-width: 768px) {
       .topbar {
-        padding: 12px 14px;
+        padding: 8px 12px;
       }
 
       .topbar-inner {
-        flex-direction: column;
-        align-items: flex-start;
-        width: min(100%, calc(100% - 28px));
+        width: 100%;
         padding: 0;
+        gap: 4px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: -0.2px;
+        line-height: 1.05;
+        align-self: center;
+      }
+
+      #authArea {
+        width: auto;
+        flex: 0 0 auto;
+        min-width: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      #authArea span {
+        display: none;
+      }
+
+      #authArea .auth-user {
+        gap: 5px;
+        min-width: 0;
+      }
+
+      #authArea .auth-user .user-name {
+        max-width: 72px;
+        font-size: 11px;
+        line-height: 1;
+      }
+
+      #authArea a,
+      #authArea button,
+      .login-btn,
+      .register-btn {
+        min-height: 32px;
+        height: 32px;
+        padding: 0 10px;
+        font-size: 11px;
+        line-height: 1;
+        border-radius: 8px;
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
 
       .page,
@@ -1174,11 +1225,15 @@
 
     @media (max-width: 480px) {
       .topbar {
-        padding: 10px 12px;
+        padding: 8px 12px;
       }
 
       .price-row {
         grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        gap: 4px;
       }
 
       .results-tab {

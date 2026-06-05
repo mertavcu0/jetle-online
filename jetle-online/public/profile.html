@@ -16,20 +16,123 @@
     }
 
     .navbar {
-      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
       background: #fff;
       border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
     }
 
-    .brand {
+    .navbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: grid;
+      grid-template-columns: 150px minmax(280px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .logo {
       color: #2563eb;
-      font-size: 22px;
-      font-weight: 800;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
       text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: #111827;
+    }
+
+    .search {
+      display: flex;
+      min-width: 0;
+    }
+
+    .search input {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-right: 0;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+      background: #f9fafb;
+      font: inherit;
+    }
+
+    .search input:focus {
+      border-color: #2563eb;
+      background: #fff;
+    }
+
+    .search button {
+      height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 0 8px 8px 0;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+    }
+
+    #authArea {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+    }
+
+    #authArea a {
+      text-decoration: none;
+    }
+
+    #authArea .auth-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #authArea .user-name {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #authArea .panel-link,
+    #authArea .logout-btn,
+    #authArea > a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .page {
@@ -132,19 +235,66 @@
       color: #6b7280;
     }
 
+    @media (max-width: 900px) {
+      .navbar-inner {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "logo auth"
+          "search search";
+      }
+
+      .logo {
+        grid-area: logo;
+      }
+
+      .search {
+        grid-area: search;
+      }
+
+      .nav-right {
+        grid-area: auth;
+      }
+    }
+
     @media (max-width: 720px) {
-      .navbar { padding: 0 16px; }
+      .navbar-inner {
+        padding: 10px 14px;
+        gap: 10px;
+      }
+
       .page { padding: 16px; }
       .stats-grid { grid-template-columns: 1fr; }
       .listing-item { flex-direction: column; }
       .listing-item a { align-self: flex-start; }
+      .search input,
+      .search button {
+        height: 40px;
+      }
+      #authArea .auth-user {
+        gap: 8px;
+      }
+      #authArea .panel-link,
+      #authArea .logout-btn,
+      #authArea > a {
+        min-height: 36px;
+        padding: 0 10px;
+        font-size: 13px;
+      }
     }
   </style>
 </head>
 <body>
   <header class="navbar">
-    <a class="brand" href="/">jetle.online</a>
-    <div id="authArea"></div>
+    <div class="navbar-inner">
+      <a class="logo" href="/index.html">jetle<span>.online</span></a>
+      <form class="search" action="/listings.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+      </div>
+    </div>
   </header>
 
   <main class="page">
@@ -168,7 +318,7 @@
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get("userId");
+    const userId = String(params.get("id") || params.get("userId") || "").trim();
 
     function escapeHtml(value) {
       return String(value || "")
@@ -183,6 +333,37 @@
       return Number(value || 0).toLocaleString("tr-TR") + " TL";
     }
 
+    function readStoredUser() {
+      try {
+        return JSON.parse(localStorage.getItem("user") || "null");
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function getAuthHeaders() {
+      const token = String(localStorage.getItem("token") || "").trim();
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function normalizeUserId(value) {
+      if (!value) return "";
+      if (typeof value === "string") return value.trim();
+      if (typeof value === "object") return String(value._id || value.id || "").trim();
+      return "";
+    }
+
+    function isListingActive(item) {
+      const status = String(item && item.status || "").trim().toLowerCase();
+      return Boolean(
+        item &&
+        item.isDeleted !== true &&
+        item.isActive === true &&
+        item.approved === true &&
+        (status === "approved" || status === "active")
+      );
+    }
+
     function renderListing(item) {
       return `
         <div class="listing-item">
@@ -195,35 +376,76 @@
       `;
     }
 
+    function renderProfile(user, listings) {
+      const safeListings = Array.isArray(listings) ? listings : [];
+      const totalListings = Number(user && user.totalListings != null ? user.totalListings : safeListings.length);
+      const activeListings = Number(
+        user && user.activeListings != null
+          ? user.activeListings
+          : safeListings.filter((item) => isListingActive(item)).length
+      );
+
+      document.getElementById("profileName").innerText = user && user.name ? user.name : "Jetle Kullanıcısı";
+      document.getElementById("profileEmail").innerText = user && user.email ? user.email : "";
+      document.getElementById("totalListings").innerText = totalListings;
+      document.getElementById("activeListings").innerText = activeListings;
+      document.getElementById("listings").innerHTML = safeListings.length
+        ? safeListings.map(renderListing).join("")
+        : `<div class="empty">Bu kullanıcının yayında ilanı yok.</div>`;
+    }
+
+    async function loadPrivateProfile() {
+      const headers = getAuthHeaders();
+      const userRes = await fetch(`/api/users/${userId}`, { headers });
+      if (!userRes.ok) throw new Error("Kullanıcı bilgisi alınamadı");
+      const user = await userRes.json();
+
+      const listingsRes = await fetch(`/api/users/${userId}/listings`, { headers });
+      if (!listingsRes.ok) throw new Error("İlanlar alınamadı");
+      const listings = await listingsRes.json();
+
+      renderProfile(user, listings);
+    }
+
+    async function loadPublicProfile() {
+      const listingsRes = await fetch("/api/listings");
+      if (!listingsRes.ok) throw new Error("İlanlar alınamadı");
+
+      const allListings = await listingsRes.json();
+      const listings = (Array.isArray(allListings) ? allListings : []).filter((item) => {
+        return normalizeUserId(item && item.user) === userId;
+      });
+      const firstListing = listings[0] || {};
+      const sellerUser = firstListing.user && typeof firstListing.user === "object" ? firstListing.user : null;
+
+      renderProfile({
+        name: sellerUser && sellerUser.name ? sellerUser.name : "Jetle Kullanıcısı",
+        email: sellerUser && sellerUser.email ? sellerUser.email : "",
+        totalListings: listings.length,
+        activeListings: listings.filter((item) => isListingActive(item)).length
+      }, listings);
+    }
+
     async function loadProfile() {
       if (!userId) {
         document.querySelector(".page").innerHTML = `<div class="empty">Kullanıcı bulunamadı.</div>`;
         return;
       }
 
-      const userRes = await fetch(`/api/users/${userId}`);
-      if (!userRes.ok) throw new Error("Kullanıcı bilgisi alınamadı");
-      const user = await userRes.json();
+      const storedUser = readStoredUser();
+      const storedUserId = normalizeUserId(storedUser && (storedUser._id || storedUser.id));
+      if (storedUserId && storedUserId === userId) {
+        await loadPrivateProfile();
+        return;
+      }
 
-      document.getElementById("profileName").innerText = user.name || "Jetle Kullanıcısı";
-      document.getElementById("profileEmail").innerText = user.email || "";
-      document.getElementById("totalListings").innerText = user.totalListings || 0;
-      document.getElementById("activeListings").innerText = user.activeListings || 0;
-
-      const listingsRes = await fetch(`/api/users/${userId}/listings`);
-      if (!listingsRes.ok) throw new Error("İlanlar alınamadı");
-      const listings = await listingsRes.json();
-
-      document.getElementById("listings").innerHTML = listings.length
-         listings.map(renderListing).join("")
-        : `<div class="empty">Bu kullanıcının yayında ilanı yok.</div>`;
+      await loadPublicProfile();
     }
 
     loadProfile().catch((err) => {
-      document.querySelector(".page").innerHTML = `<div class="empty">${escapeHtml(err.message)}</div>`;
+      document.querySelector(".page").innerHTML = `<div class="empty">${escapeHtml(err && err.message ? err.message : "Bir hata oluştu.")}</div>`;
     });
   </script>
   <script src="/auth-global.js"></script>
 </body>
 </html>
-

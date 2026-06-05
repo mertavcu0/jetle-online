@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
+const jwtSecret = String(process.env.JWT_SECRET || "").trim();
 
 module.exports = async function authMiddleware(req, res, next) {
   const authHeader = String(req.header("Authorization") || "").trim();

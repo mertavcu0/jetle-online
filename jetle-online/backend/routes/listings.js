@@ -9,7 +9,7 @@ const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const storage = require("../services/storage");
 const isProduction = process.env.NODE_ENV === "production";
-const jwtSecret = String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
+const jwtSecret = String(process.env.JWT_SECRET || "").trim();
 const activeUploadMap = new Map();
 const MAX_CONCURRENT_UPLOADS = 3;
 const OPEN_BETA_MODE = String(process.env.OPEN_BETA_MODE || "").trim().toLowerCase() === "true";

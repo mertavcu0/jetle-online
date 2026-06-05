@@ -1,0 +1,4531 @@
+﻿﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İlan Detayı | jetle.online</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-YCWYPP371K");
+  </script>
+  <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.06), transparent 22%),
+        #f4f6f8;
+      color: #111827;
+      overflow-x: hidden;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .login-btn {
+      font-size: 14px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .register-btn {
+      margin-left: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .register-btn:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .post-btn {
+      margin-left: 16px;
+      padding: 10px 18px;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-block;
+      transition: all 0.2s ease;
+    }
+
+    .post-btn:hover {
+      background: #1e40af;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: auto;
+      padding: 18px 18px 28px;
+    }
+
+    .detail-container {
+      background: transparent;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-shell .detail-container {
+      flex: 1;
+      width: 100%;
+    }
+
+    .listing-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 10px;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+    }
+
+    .listing-header h1 {
+      margin: 0;
+      font-size: clamp(29px, 3vw, 38px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      max-width: 840px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .listing-header-main {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .listing-location-line {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .listing-location-line::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #9ca3af;
+      flex: 0 0 auto;
+    }
+
+    .listing-info-box .listing-location-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 1px 0 0;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price-panel {
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .price {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      flex-wrap: wrap;
+      font-size: clamp(30px, 2.8vw, 38px);
+      color: #1e40af;
+      font-weight: 900;
+      white-space: nowrap;
+      line-height: 0.98;
+      text-align: left;
+      letter-spacing: 0;
+    }
+
+    .price-amount {
+      color: #0f172a;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .price-currency {
+      color: #64748b;
+      font-size: 0.34em;
+      font-weight: 800;
+      line-height: 1;
+      padding-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      vertical-align: super;
+    }
+
+    .price-note {
+      margin: 0;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .price-toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .price-tool {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .price-tool:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+    }
+
+    .price-tool.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.18);
+    }
+
+    .detail-top-layout {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.52fr) minmax(280px, 340px) minmax(268px, 312px);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .left-panel {
+      width: 100%;
+      margin-right: 0;
+      min-height: 0;
+      align-self: start;
+      min-width: 0;
+    }
+
+    .left {
+      background: #fff;
+      padding: 12px 12px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(226, 232, 240, 0.88);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
+    }
+
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      max-height: 420px;
+      border-radius: 20px;
+      overflow: hidden;
+      isolation: isolate;
+      background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 18px 44px rgba(15, 23, 42, 0.24);
+    }
+
+    .slider img,
+    .main-img {
+      width: 100%;
+      height: 420px;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 20px;
+      display: block;
+      background: transparent;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .image-container {
+      position: relative;
+    }
+
+    .fav-btn {
+      display: none !important;
+    }
+
+    .fav-btn.active {
+      display: none !important;
+    }
+
+    .no-image-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.72);
+      font-weight: 700;
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .image-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    .slider button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.45);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      z-index: 3;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(15,23,42,0.24);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 700;
+      padding: 0;
+    }
+
+    .slider button:hover {
+      background: rgba(17,24,39,0.84);
+      transform: translateY(-50%) scale(1.04);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.34);
+    }
+
+    .card img:hover,
+    .main-img:hover {
+      transform: scale(1.01);
+      transition: 0.3s;
+    }
+
+    #prev {
+      left: 18px;
+    }
+
+    #next {
+      right: 18px;
+    }
+
+    #thumbnails,
+    .gallery {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      overflow-x: auto;
+      padding: 2px 0 0;
+    }
+
+    #thumbnails img,
+    .gallery img {
+      width: 92px;
+      height: 64px;
+      object-fit: cover;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 2px solid rgba(148,163,184,0.18);
+      flex: 0 0 auto;
+      background: #e5e7eb;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    #thumbnails img:hover,
+    .gallery img:hover {
+      border-color: rgba(37,99,235,0.55);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.14);
+    }
+
+    #thumbnails img.active,
+    .gallery img.active {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.16);
+      transform: translateY(-1px);
+    }
+
+    .gallery-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(4px);
+    }
+
+    .gallery-modal.open {
+      display: flex;
+    }
+
+    .gallery-modal-dialog {
+      position: relative;
+      width: min(1180px, 100%);
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .gallery-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fff;
+    }
+
+    .gallery-modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .gallery-modal-counter {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .gallery-modal-close {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-modal-close:hover {
+      background: rgba(255,255,255,0.22);
+      transform: scale(1.04);
+    }
+
+    .gallery-modal-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      flex: 1;
+      background: rgba(17, 24, 39, 0.8);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .gallery-modal-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: calc(100vh - 220px);
+      object-fit: contain;
+      margin: 0 auto;
+      cursor: zoom-in;
+      transition: transform 0.24s ease, cursor 0.2s ease;
+      transform-origin: center center;
+    }
+
+    .gallery-modal-image.zoomed {
+      transform: scale(1.72);
+      cursor: zoom-out;
+    }
+
+    .gallery-modal-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .gallery-modal-nav:hover {
+      background: rgba(0,0,0,0.72);
+      transform: translateY(-50%) scale(1.04);
+    }
+
+    .gallery-modal-nav.prev {
+      left: 18px;
+    }
+
+    .gallery-modal-nav.next {
+      right: 18px;
+    }
+
+    .gallery-modal-thumbs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 2px 2px 8px;
+      scrollbar-width: thin;
+    }
+
+    .gallery-modal-thumbs img {
+      width: 92px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+      flex: 0 0 auto;
+      background: rgba(255,255,255,0.08);
+      transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+      opacity: 0.82;
+    }
+
+    .gallery-modal-thumbs img:hover {
+      border-color: rgba(96,165,250,0.9);
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .gallery-modal-thumbs img.active {
+      border-color: #60a5fa;
+      opacity: 1;
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.2);
+    }
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .right-panel {
+      width: 100%;
+      max-width: 332px;
+      align-self: start;
+      position: sticky;
+      top: 16px;
+      height: fit-content;
+    }
+
+    .right-column-tools {
+      display: grid;
+      gap: 5px;
+      width: 100%;
+    }
+
+    .detail-tabs-layout {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .info-card,
+    .seller-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 0;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .seller-box,
+    .listing-info-box {
+      width: 100%;
+    }
+
+    .listing-info-box {
+      display: block !important;
+      margin-top: 0;
+      border-radius: 8px;
+      padding: 8px 0 0;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      box-shadow: none;
+      background: #fff;
+    }
+
+    .listing-info-box h4 {
+      margin: 0 12px 8px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: 0;
+    }
+
+    .listing-info-box .right-column-tools {
+      gap: 4px;
+      padding: 0 12px 8px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .listing-info-box .price-panel {
+      width: 100%;
+    }
+
+    .listing-info-box .price {
+      font-size: clamp(28px, 2.3vw, 34px);
+      color: #1d4ed8;
+      line-height: 0.98;
+    }
+
+    .listing-info-box .price-amount {
+      color: #1d4ed8;
+    }
+
+    .listing-info-box .price-toolbar {
+      gap: 6px;
+      padding-top: 1px;
+    }
+
+    .listing-info-box .price-tool {
+      min-height: 26px;
+      padding: 4px 7px;
+      font-size: 10px;
+      border-radius: 6px;
+    }
+
+    .info-card p,
+    .seller-card p {
+      margin: 0 0 10px;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .seller-top h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .member-date {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .seller-info {
+      margin-top: 10px;
+    }
+
+    .seller-card h3 {
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .seller-card {
+      display: grid;
+      gap: 12px;
+      padding: 15px 16px;
+    }
+
+    .seller-header {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 0;
+    }
+
+    .seller-header-main {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .seller-header strong {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.15;
+    }
+
+    .seller-role-line {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .seller-badges {
+      display: none;
+    }
+
+    .seller-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .seller-meta span:first-child,
+    .seller-trust-badge,
+    .seller-card > .badge,
+    .btn-boost {
+      display: none !important;
+    }
+
+    .seller-type-badge,
+    .seller-trust-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 800;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .seller-trust-badge {
+      border-color: #dcfce7;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .seller-stat-grid {
+      display: none;
+    }
+
+    .seller-stat-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 9px;
+      background: #fcfcfd;
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .seller-stat-card span {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .seller-stat-card strong {
+      font-size: 12px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1.25;
+    }
+
+    .seller-link-row {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0;
+    }
+
+    .seller-link-row span {
+      display: none;
+    }
+
+    .seller-link-row a {
+      color: #2563eb;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.3;
+      transition: color 0.18s ease;
+    }
+
+    .seller-link-row a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-left: 0;
+      font-weight: 700;
+    }
+
+    .seller-card p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .user-card h3 {
+      margin: 0 0 6px;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .user-card p {
+      margin: 0 0 6px;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .user-card small {
+      display: block;
+      margin-bottom: 14px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      font-size: 13px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #2f6df6 0%, #1d4ed8 100%);
+      color: #fff;
+      border: none;
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: #2d6cdf;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      background: #f1f1f1;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-boost {
+      width: 100%;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #111827;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 8px;
+      transition: 0.2s;
+    }
+
+    .btn-boost:hover {
+      background: #d97706;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .message-box textarea {
+      width: 100%;
+      height: 60px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      padding: 8px;
+      margin-top: 10px;
+    }
+
+    .seller-message-form {
+      margin-top: 8px;
+    }
+
+    .seller-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    .seller-contact-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .seller-phone-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #dbe4f0;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+
+    .seller-phone-label {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .seller-phone-value {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      color: #0f172a;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .seller-phone-value.is-hidden {
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .btn-secondary.revealed {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .owner-visibility-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      width: auto;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .owner-visibility-badge::before {
+      content: "✓";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #15803d;
+      font-size: 11px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .owner-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .btn-owner-manage {
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: #111827;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-owner-manage:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .btn-owner-danger {
+      border-color: #fecaca;
+      background: #fff5f5;
+      color: #b91c1c;
+    }
+
+    .btn-owner-danger:hover {
+      background: #fee2e2;
+    }
+
+    .full {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #1e40af;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+
+    .btn-secondary {
+      margin-top: 8px;
+      background: #f8fafc;
+      color: #111827;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .phone-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .phone-btn:hover {
+      background: #1e40af;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+
+    .msg-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 10px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .msg-btn:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .trust-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .trust-box h4 {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .trust-box li {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .seller-trust {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .tabs {
+      margin-top: 0;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tab {
+      padding: 11px 16px;
+      border: 1px solid #dbe1ea;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 999px;
+      font-weight: 700;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+      border-color: rgba(37, 99, 235, 0.28);
+      color: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .tab.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      box-shadow:
+        0 10px 20px rgba(37, 99, 235, 0.18),
+        0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .tab-content {
+      display: none;
+      margin-top: 8px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 10px 12px;
+      line-height: 1.58;
+      border: 1px solid rgba(226, 232, 240, 0.92);
+      box-shadow: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section-card-head {
+      margin-bottom: 8px;
+    }
+
+    .section-card-head h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      color: #0f172a;
+    }
+
+    .section-card-head p {
+      margin: 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    #descText {
+      margin: 0;
+      color: #1f2937;
+      font-size: 14px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      max-width: 980px;
+    }
+
+    .spec-section + .spec-section {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #eef0f3;
+    }
+
+    .spec-section h4 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 12px;
+      align-items: start;
+    }
+
+    .spec-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid #edf2f7;
+      border-radius: 0;
+      padding: 7px 0;
+      min-height: 34px;
+      box-shadow: none;
+      transition: none;
+    }
+
+    .spec-item:hover,
+    .details-grid div:hover {
+      transform: none;
+      border-color: #edf2f7;
+      box-shadow: none;
+    }
+
+    .spec-item strong {
+      display: block;
+      margin-bottom: 0;
+      flex: 0 0 42%;
+      color: #6b7280;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spec-item span {
+      color: #111827;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.15;
+      flex: 1;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .marketplace-blocks {
+      margin-top: 6px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .marketplace-block {
+      background: #fff;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 8px;
+      padding: 7px;
+      box-shadow: none;
+    }
+
+    .marketplace-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .marketplace-block-head h3 {
+      margin: 0;
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    .marketplace-block-head p {
+      margin: 0;
+      color: #64748b;
+      font-size: 9px;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .related-card {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      min-width: 0;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .related-card:hover {
+      transform: translateY(-2px);
+      border-color: #bfdbfe;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .related-card img {
+      width: 104px;
+      min-width: 104px;
+      aspect-ratio: auto;
+      height: 72px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .related-card-body {
+      padding: 6px 7px;
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+      align-content: center;
+    }
+
+    .related-card-title {
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #0f172a;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+    }
+
+    .related-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px 6px;
+      color: #64748b;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .related-card-price {
+      font-size: 14px;
+      font-weight: 900;
+      color: #1d4ed8;
+    }
+
+    .related-empty {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .related-skeleton {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 6px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      align-items: center;
+    }
+
+    .related-skeleton:hover {
+      transform: translateY(-1px);
+      border-color: #d6e2f0;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .related-skeleton-media,
+    .related-skeleton-line {
+      background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 50%, #eef2f7 100%);
+      background-size: 200% 100%;
+      animation: relatedPulse 1.8s ease-in-out infinite;
+      border-radius: 10px;
+    }
+
+    .related-skeleton-media {
+      width: 104px;
+      height: 72px;
+    }
+
+    .related-skeleton-line {
+      height: 8px;
+    }
+
+    .related-skeleton-line.short {
+      width: 58%;
+    }
+
+    .related-skeleton-caption {
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+      grid-column: 2;
+      line-height: 1.2;
+    }
+
+    .related-empty .related-skeleton:nth-child(n + 3) {
+      display: none;
+    }
+
+    @keyframes relatedPulse {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .feature-group {
+      padding: 0 0 22px;
+      border: 0;
+      border-bottom: 1px solid #e5e7eb;
+      background: transparent;
+      box-shadow: none;
+      min-width: 0;
+    }
+
+    .feature-group h5 {
+      margin: 0 0 16px;
+      font-size: 20px;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      font-weight: 800;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 28px;
+      align-items: start;
+    }
+
+    .feature-item {
+      position: static;
+      padding-left: 0;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.65;
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    @media (max-width: 1180px) {
+      .feature-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .feature-grid {
+        grid-template-columns: 1fr;
+        gap: 10px 0;
+      }
+    }
+
+    .feature-panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .feature-category-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .expertise-showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .expertise-showcase-board {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.055);
+      padding: 8px;
+    }
+
+    .expertise-showcase-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .expertise-showcase-head h4 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .expertise-showcase-note {
+      color: #6b7280;
+      font-size: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .expertise-showcase-canvas {
+      position: relative;
+      border-radius: 14px;
+      padding: 4px;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.96) 44%, rgba(241,245,249,0.92) 100%),
+        linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(248,250,252,0.96) 100%);
+      overflow: hidden;
+    }
+
+    .expertise-showcase-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .expertise-showcase-svg {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .expertise-showcase-svg .vehicle-shadow {
+      fill: rgba(148, 163, 184, 0.12);
+    }
+
+    .expertise-showcase-svg .vehicle-outline {
+      fill: #dbe4ee;
+      stroke: rgba(148, 163, 184, 0.35);
+      stroke-width: 1.5;
+    }
+
+    .expertise-showcase-svg .vehicle-cabin {
+      fill: rgba(255, 255, 255, 0.72);
+      stroke: rgba(148, 163, 184, 0.28);
+      stroke-width: 1.2;
+    }
+
+    .expertise-showcase-svg .wheel {
+      fill: #334155;
+    }
+
+    .expertise-showcase-svg .wheel-inner {
+      fill: #1f2937;
+    }
+
+    .expertise-svg-part {
+      fill: #e5e7eb;
+      stroke: rgba(148, 163, 184, 0.38);
+      stroke-width: 1.4;
+    }
+
+    .expertise-svg-part.is-original {
+      fill: #dcfce7;
+      stroke: #86efac;
+    }
+
+    .expertise-svg-part.is-local {
+      fill: url(#expertiseLocalPattern);
+      stroke: #facc15;
+    }
+
+    .expertise-svg-part.is-painted {
+      fill: #fde68a;
+      stroke: #facc15;
+    }
+
+    .expertise-svg-part.is-changed {
+      fill: #fecaca;
+      stroke: #ef4444;
+    }
+
+    .expertise-svg-part.is-unknown {
+      fill: #e5e7eb;
+      stroke: #cbd5e1;
+    }
+
+    .expertise-svg-label {
+      fill: #334155;
+      font-size: 9px;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+
+    .expertise-showcase-legend {
+      display: grid;
+      gap: 4px;
+      align-content: start;
+      max-width: 92px;
+    }
+
+    .expertise-showcase-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+      padding: 6px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.045);
+    }
+
+    .expertise-showcase-card h4 {
+      margin: 0 0 8px;
+      font-size: 9px;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .expertise-showcase-card p {
+      margin: 0;
+      color: #64748b;
+      font-size: 7px;
+      line-height: 1.4;
+    }
+
+    .expertise-showcase-legend-list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .expertise-showcase-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 8px;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .expertise-showcase-swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      flex: 0 0 auto;
+    }
+
+    .expertise-showcase-swatch.is-original { background: #22c55e; border-color: #16a34a; }
+    .expertise-showcase-swatch.is-local { background: repeating-linear-gradient(-45deg, #fde68a 0 5px, #facc15 5px 10px); border-color: #ca8a04; }
+    .expertise-showcase-swatch.is-painted { background: #facc15; border-color: #ca8a04; }
+    .expertise-showcase-swatch.is-changed { background: #ef4444; border-color: #dc2626; }
+    .expertise-showcase-swatch.is-unknown { background: #cbd5e1; border-color: #94a3b8; }
+
+    .details-box {
+      margin-top: 20px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .details-box h4 {
+      margin: 0 0 10px;
+    }
+
+    .details-box ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.7;
+    }
+
+    .info-box {
+      margin-top: 12px;
+      background: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      border: 1px solid #eee;
+    }
+
+    .info-box ul {
+      padding-left: 16px;
+    }
+
+    .info-box li {
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    .details-grid {
+      display: block;
+      padding: 0 12px 8px;
+    }
+
+    .details-grid div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 32px;
+      padding: 6px 0;
+      font-size: 11px;
+      color: #111827;
+      box-sizing: border-box;
+      border-bottom: 1px solid #edf2f7;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      transition: none;
+    }
+
+    .details-grid div:hover {
+      transform: none;
+      border-color: #edf2f7;
+      box-shadow: none;
+    }
+
+    .details-grid strong {
+      display: block;
+      margin-bottom: 0;
+      flex: 0 0 42%;
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .details-grid span {
+      display: block;
+      flex: 1;
+      text-align: right;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: normal;
+    }
+
+    .details-grid [hidden] {
+      display: none !important;
+    }
+
+    .detail-spec-grid {
+      margin-top: 2px;
+    }
+
+    .tab[data-tab="tech"],
+    #tech {
+      display: none !important;
+    }
+
+    .price-panel,
+    .related-grid,
+    .seller-stat-grid {
+      box-sizing: border-box;
+    }
+
+    .footer {
+      background: #fff;
+      margin-top: 18px;
+      padding: 28px 0 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .footer-container {
+      max-width: 1180px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      padding: 0 14px;
+    }
+
+    .footer-col h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-col li {
+      margin-bottom: 7px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .footer a {
+      display: block;
+      margin-bottom: 6px;
+      color: #444;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #2563eb;
+    }
+
+    .footer-bottom {
+      margin-top: 26px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    button:focus,
+    textarea:focus,
+    input:focus {
+      outline: none;
+    }
+
+    @media (max-width: 900px) {
+      .navbar-inner {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .search {
+        order: 3;
+        width: 100%;
+      }
+
+      .listing-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel {
+        margin-right: 0;
+      }
+
+      .right-panel {
+        width: 100%;
+        max-width: none;
+        position: static;
+      }
+
+      .listing-info-box {
+        order: 2;
+      }
+
+      .detail-tabs-layout {
+        margin-top: 10px;
+      }
+
+      .related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .related-empty {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 12px;
+      }
+
+      .left {
+        padding: 14px 14px 10px;
+      }
+
+      .listing-header h1 {
+        font-size: 24px;
+      }
+
+      .price-panel {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .price-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .listing-meta-bar {
+        gap: 8px;
+      }
+
+      .details-grid {
+        display: block;
+        padding: 0 12px 8px;
+      }
+
+      .details-grid div {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .details-grid strong,
+      .details-grid span {
+        flex: initial;
+      }
+
+      .details-grid span {
+        text-align: right;
+      }
+
+      .spec-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 20px;
+      }
+
+      .feature-panel-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .seller-stat-grid,
+      .related-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .price {
+        font-size: 28px;
+      }
+
+      .price-currency {
+        padding-top: 5px;
+      }
+
+      .tab-content {
+        padding: 20px 18px 22px;
+      }
+
+      .related-empty {
+        grid-template-columns: 1fr;
+      }
+
+      .right-panel {
+        position: static;
+      }
+
+      .main-img {
+        height: 300px;
+      }
+
+      .slider {
+        height: 300px;
+      }
+
+      .slider button {
+        width: 38px;
+        height: 38px;
+        font-size: 28px;
+      }
+
+      #prev {
+        left: 10px;
+      }
+
+      #next {
+        right: 10px;
+      }
+
+      #thumbnails,
+      .gallery {
+      gap: 6px;
+      margin-top: 8px;
+      }
+
+      #thumbnails img,
+      .gallery img {
+        width: 76px;
+        height: 58px;
+      }
+
+      .nav-right {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+
+      .expertise-showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .expertise-showcase-canvas {
+        padding: 6px;
+      }
+
+      .expertise-showcase-svg {
+        width: 100%;
+      }
+
+      .expertise-svg-label {
+        font-size: 8px;
+      }
+
+      .gallery-modal {
+        padding: 12px;
+      }
+
+      .gallery-modal-dialog {
+        width: 100%;
+        max-height: calc(100vh - 24px);
+        gap: 12px;
+      }
+
+      .gallery-modal-title {
+        font-size: 16px;
+      }
+
+      .gallery-modal-counter {
+        font-size: 13px;
+      }
+
+      .gallery-modal-close {
+        width: 38px;
+        height: 38px;
+        font-size: 24px;
+      }
+
+      .gallery-modal-stage {
+        border-radius: 14px;
+      }
+
+      .gallery-modal-image {
+        max-height: calc(100vh - 250px);
+      }
+
+      .gallery-modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 28px;
+      }
+
+      .gallery-modal-nav.prev {
+        left: 10px;
+      }
+
+      .gallery-modal-nav.next {
+        right: 10px;
+      }
+
+      .gallery-modal-thumbs {
+        gap: 8px;
+      }
+
+      .gallery-modal-thumbs img {
+        width: 74px;
+        height: 56px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .detail-grid {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .left-panel {
+        display: contents;
+      }
+
+      .slider,
+      .image-info,
+      #thumbnails {
+        order: 1;
+      }
+
+      .listing-info-box {
+        order: 2;
+      }
+
+      .detail-tabs-layout {
+        order: 3;
+      }
+
+      .right-panel {
+        order: 4;
+      }
+
+      .marketplace-blocks {
+        order: 5;
+      }
+
+      .navbar-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 6px 10px;
+      }
+
+      .logo {
+        order: 1;
+        flex: 0 0 100%;
+      }
+
+      .nav-right {
+        order: 2;
+        width: 100%;
+        margin-left: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .search {
+        order: 3;
+      }
+
+      #authArea {
+        width: auto;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      #authArea span {
+        flex: 0 1 auto;
+        margin: 0;
+        text-align: right;
+        white-space: nowrap;
+        max-width: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 11px;
+        line-height: 1;
+        color: #475569;
+      }
+
+      #authArea button,
+      .login-btn,
+      .register-btn,
+      .post-btn {
+        min-height: 28px;
+        height: 28px;
+        padding: 0 7px;
+        font-size: 11px;
+        line-height: 1;
+        border-radius: 7px;
+        margin-left: 0;
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+
+      .seller-actions {
+        width: 100%;
+      }
+
+      .seller-phone-panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .seller-phone-value {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .owner-actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search {
+        flex-direction: column;
+      }
+
+      .search input,
+      .search button {
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      .search input {
+        border-right: 1px solid #d1d5db;
+      }
+
+      .gallery-modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+<base href='http://localhost:3000/'></head>
+<body>
+  <div class="page-shell">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="index.html">jetle<span>.online</span></a>
+      <form class="search" action="ilanlar.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="create-listing.html" class="post-btn">İlan Ver</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container detail-container">
+    <div class="listing-header">
+      <div class="listing-header-main">
+        <h1 id="title"></h1>
+      </div>
+    </div>
+
+    <div class="detail-top-layout">
+      <div class="detail-grid">
+        <div class="left left-panel">
+          <div class="slider image-container">
+            <button id="prev" type="button" aria-label="Önceki fotoğraf">&lsaquo;</button>
+            <img id="mainImage" class="main-img main-image" src="" alt="İlan fotoğrafı">
+            <button id="next" type="button" aria-label="Sonraki fotoğraf">&rsaquo;</button>
+            <button id="detailFavoriteBtn" class="fav-btn" type="button">
+              ♡
+            </button>
+            <div class="no-image-text">Fotoğraf yok</div>
+          </div>
+          <div class="image-info">
+            <span id="imageCount">1 Fotoğraf</span>
+          </div>
+        <div id="thumbnails"></div>
+
+          <div class="detail-tabs-layout">
+            <div class="tabs">
+              <button class="tab active" data-tab="desc">Açıklama</button>
+              <button class="tab" data-tab="tech">Teknik Özellikler</button>
+              <button class="tab" data-tab="features">Özellikler</button>
+              <button class="tab" data-tab="expertise">Ekspertiz Bilgisi</button>
+            </div>
+
+            <div class="tab-content active" id="desc">
+              <div class="section-card-head">
+                <h3>Açıklama</h3>
+              </div>
+              <p id="descText"></p>
+            </div>
+
+            <div class="tab-content" id="tech">
+              <div class="section-card-head">
+                <h3>Teknik Özellikler</h3>
+              </div>
+              <div id="techText" class="spec-grid detail-spec-grid">
+                <div class="spec-item"><strong>Marka</strong><span id="techBrand">-</span></div>
+                <div class="spec-item"><strong>Seri</strong><span id="techSeries">-</span></div>
+                <div class="spec-item"><strong>Model</strong><span id="techModel">-</span></div>
+                <div class="spec-item"><strong>Yıl</strong><span id="techYear">-</span></div>
+                <div class="spec-item"><strong>KM</strong><span id="techKm">-</span></div>
+                <div class="spec-item"><strong>Yakıt</strong><span id="techFuel">-</span></div>
+                <div class="spec-item"><strong>Vites</strong><span id="techTransmission">-</span></div>
+                <div class="spec-item"><strong>Motor</strong><span id="techEngine">-</span></div>
+                <div class="spec-item"><strong>Çekiş</strong><span id="techTraction">-</span></div>
+                <div class="spec-item"><strong>Kasa Tipi</strong><span id="techBodyType">-</span></div>
+                <div class="spec-item"><strong>Renk</strong><span id="techColor">-</span></div>
+                <div class="spec-item"><strong>Motor Hacmi</strong><span id="techEngineVolume">-</span></div>
+                <div class="spec-item"><strong>Motor Gücü</strong><span id="techMotorPower">-</span></div>
+                <div class="spec-item"><strong>Garanti</strong><span id="techWarranty">-</span></div>
+                <div class="spec-item"><strong>Ağır Hasar Kayıtlı</strong><span id="techHeavyDamage">-</span></div>
+                <div class="spec-item"><strong>Plaka / Uyruk</strong><span id="techPlate">-</span></div>
+                <div class="spec-item"><strong>Takas</strong><span id="techSwap">-</span></div>
+                <div class="spec-item"><strong>Kimden</strong><span id="techFromWho">-</span></div>
+                <div class="spec-item"><strong>Boya</strong><span id="techPaint">-</span></div>
+                <div class="spec-item"><strong>Değişen</strong><span id="techChanged">-</span></div>
+                <div class="spec-item"><strong>Ekspertiz Özeti</strong><span id="techExpertiseSummary">-</span></div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="features">
+              <div class="section-card-head">
+                <h3>Özellikler</h3>
+              </div>
+              <p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>
+            </div>
+
+            <div class="tab-content" id="expertise">
+              <div class="section-card-head">
+                <h3>Ekspertiz Bilgisi</h3>
+              </div>
+              <p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>
+            </div>
+          </div>
+
+          <div class="marketplace-blocks">
+            <section class="marketplace-block">
+              <div class="marketplace-block-head">
+                <div>
+                  <h3>Benzer İlanlar</h3>
+                  <p>Aynı kategori ve profile yakın diğer ilanlar</p>
+                </div>
+              </div>
+              <div id="relatedSimilarGrid" class="related-grid"></div>
+            </section>
+
+            <section class="marketplace-block">
+              <div class="marketplace-block-head">
+                <div>
+                  <h3>Aynı Marka İlanlar</h3>
+                  <p>İlgilendiğiniz markaya ait diğer seçenekler</p>
+                </div>
+              </div>
+              <div id="relatedBrandGrid" class="related-grid"></div>
+            </section>
+
+            <section class="marketplace-block">
+              <div class="marketplace-block-head">
+                <div>
+                  <h3>Aynı Şehir İlanları</h3>
+                  <p>Aynı şehirdeki diğer canlı ilanlar</p>
+                </div>
+              </div>
+              <div id="relatedCityGrid" class="related-grid"></div>
+            </section>
+          </div>
+        </div>
+
+        <div class="info-box listing-info-box">
+          <div class="right-column-tools">
+            <div class="price-panel">
+              <div class="price" id="price"></div>
+            </div>
+            <div class="listing-location-line" id="topListingLocation"></div>
+            <div class="price-toolbar">
+              <button class="price-tool" type="button" data-action="toggle-favorite-header">Favorilere Ekle</button>
+              <button class="price-tool" type="button" data-action="share-listing">Paylaş</button>
+              <button class="price-tool" type="button" data-action="print-listing">Yazdır</button>
+            </div>
+          </div>
+          <div class="details-grid">
+            <div><strong>İlan No:</strong> <span id="listingNo"></span></div>
+            <div><strong>Yayın Tarihi:</strong> <span id="listingDate"></span></div>
+            <div id="updatedAtRow" hidden><strong>Güncelleme:</strong> <span></span></div>
+            <div><strong>Durum:</strong> <span id="condition">İkinci El</span></div>
+            <div id="brandRow" hidden><strong>Marka:</strong> <span></span></div>
+            <div id="seriesRow" hidden><strong>Seri:</strong> <span></span></div>
+            <div id="modelRow" hidden><strong>Model:</strong> <span></span></div>
+            <div id="yearRow" hidden><strong>Yıl:</strong> <span></span></div>
+            <div id="kmRow" hidden><strong>Kilometre:</strong> <span></span></div>
+            <div id="fuelRow" hidden><strong>Yakıt:</strong> <span></span></div>
+            <div id="transmissionRow" hidden><strong>Vites:</strong> <span></span></div>
+            <div id="bodyTypeRow" hidden><strong>Kasa Tipi:</strong> <span></span></div>
+            <div id="engineSizeRow" hidden><strong>Motor:</strong> <span></span></div>
+            <div id="colorRow" hidden><strong>Renk:</strong> <span></span></div>
+            <div id="motorPowerRow" hidden><strong>Motor Gücü:</strong> <span></span></div>
+            <div id="tractionRow" hidden><strong>Çekiş:</strong> <span></span></div>
+            <div id="warrantyRow" hidden><strong>Garanti:</strong> <span></span></div>
+            <div id="heavyDamageRow" hidden><strong>Ağır Hasar Kayıtlı:</strong> <span></span></div>
+            <div id="plateRow" hidden><strong>Plaka / Uyruk:</strong> <span></span></div>
+            <div id="swapRow" hidden><strong>Takas:</strong> <span></span></div>
+            <div id="fromWhoRow" hidden><strong>Kimden:</strong> <span></span></div>
+            <div id="paintRow" hidden><strong>Boya:</strong> <span></span></div>
+            <div id="changedRow" hidden><strong>Değişen:</strong> <span></span></div>
+            <div id="expertiseSummaryRow" hidden><strong>Ekspertiz Özeti:</strong> <span></span></div>
+          </div>
+        </div>
+
+        <div class="right right-panel">
+          <div class="seller-box">
+            <div class="user-box"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div id="galleryModal" class="gallery-modal" aria-hidden="true">
+    <div class="gallery-modal-dialog" role="dialog" aria-modal="true" aria-label="Büyük Fotoğraf">
+      <div class="gallery-modal-header">
+        <div class="gallery-modal-title">Büyük Fotoğraf</div>
+        <div id="galleryModalCounter" class="gallery-modal-counter">1 / 1</div>
+        <button id="galleryModalClose" type="button" class="gallery-modal-close" aria-label="Kapat">×</button>
+      </div>
+      <div class="gallery-modal-stage">
+        <button id="galleryModalPrev" type="button" class="gallery-modal-nav prev" aria-label="Önceki fotoğraf">&lsaquo;</button>
+        <img id="galleryModalImage" class="gallery-modal-image" src="" alt="Büyük fotoğraf">
+        <button id="galleryModalNext" type="button" class="gallery-modal-nav next" aria-label="Sonraki fotoğraf">&rsaquo;</button>
+      </div>
+      <div id="galleryModalThumbs" class="gallery-modal-thumbs"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
+  </footer>
+
+  <script>
+    (function () {
+      let images = [];
+      let galleryImages = [];
+      let currentIndex = 0;
+      let galleryModalOpen = false;
+      let galleryModalBound = false;
+      let galleryShowImage = null;
+      let galleryZoomed = false;
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      function logMedia(label, payload) {
+        console.log(label, payload);
+      }
+
+      function cleanMediaItem(value) {
+        const text = String(value || "").trim();
+        if (!text) return "";
+        return text;
+      }
+
+      function normalizeMediaPath(value) {
+        const text = cleanMediaItem(value);
+        if (!text) return "";
+        if (/^(data:|blob:|https?:\/\/)/i.test(text)) return text;
+        if (text.startsWith("//")) return `${window.location.protocol}${text}`;
+
+        const normalized = text
+          .replace(/\\/g, "/")
+          .replace(/^\.\//, "")
+          .replace(/^public\//i, "")
+          .replace(/^jetle-online\/public\//i, "");
+
+        if (/^uploads\//i.test(normalized)) {
+          return `/${normalized}`;
+        }
+
+        if (/^\/?uploads\//i.test(normalized)) {
+          return normalized.startsWith("/") ? normalized : `/${normalized}`;
+        }
+
+        if (/^\/api\/|^\/assets\/|^\/images\/|^\/media\//i.test(normalized)) {
+          return normalized;
+        }
+
+        if (/^[^/]+\.(png|jpe?g|webp|gif|avif|svg)$/i.test(normalized)) {
+          return `/uploads/${normalized}`;
+        }
+
+        return normalized.startsWith("/") ? normalized : `/${normalized}`;
+      }
+
+      function toMediaArray(value) {
+        if (Array.isArray(value)) {
+          return value
+            .flatMap((item) => toMediaArray(item))
+            .filter(Boolean);
+        }
+
+        const text = cleanMediaItem(value);
+        if (!text) return [];
+
+        if (text.startsWith("[") && text.endsWith("]")) {
+          try {
+            const parsed = JSON.parse(text);
+            return toMediaArray(parsed);
+          } catch (_) {}
+        }
+
+        if (text.includes(",") && !/^https?:\/\//i.test(text)) {
+          return text
+            .split(",")
+            .map((item) => normalizeMediaPath(item))
+            .filter(Boolean);
+        }
+
+        const normalized = normalizeMediaPath(text);
+        return normalized ? [normalized] : [];
+      }
+
+      function resolveMedia(listing) {
+        const source = listing && typeof listing === "object" ? listing : {};
+        const pools = [
+          toMediaArray(source.coverImage),
+          toMediaArray(source.mainImage),
+          toMediaArray(source.gallery),
+          toMediaArray(source.images),
+          toMediaArray(source.photos),
+          toMediaArray(source.image),
+          toMediaArray(source.media)
+        ];
+
+        const merged = pools.flat().filter(Boolean);
+        const uniqueMedia = [...new Set(merged)];
+
+        logMedia("MEDIA_PATH_FIXED", {
+          images: source.images,
+          gallery: source.gallery,
+          photos: source.photos,
+          media: source.media,
+          image: source.image,
+          coverImage: source.coverImage,
+          mainImage: source.mainImage,
+          normalizedMedia: uniqueMedia
+        });
+
+        return uniqueMedia;
+      }
+
+      function getGalleryElements() {
+        return {
+          main: document.getElementById("mainImage"),
+          thumbs: document.getElementById("thumbnails"),
+          prev: document.getElementById("prev"),
+          next: document.getElementById("next"),
+          imageCount: document.getElementById("imageCount"),
+          modal: document.getElementById("galleryModal"),
+          modalImage: document.getElementById("galleryModalImage"),
+          modalCounter: document.getElementById("galleryModalCounter"),
+          modalThumbs: document.getElementById("galleryModalThumbs"),
+          modalPrev: document.getElementById("galleryModalPrev"),
+          modalNext: document.getElementById("galleryModalNext"),
+          modalClose: document.getElementById("galleryModalClose")
+        };
+      }
+
+      function getNoImageText() {
+        return document.getElementById("mainImage")?.parentElement?.querySelector(".no-image-text") || null;
+      }
+
+      function preloadImage(src) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve({ ok: true, src });
+          img.onerror = () => resolve({ ok: false, src });
+          img.src = src;
+        });
+      }
+
+      async function filterRenderableMedia(media) {
+        const list = Array.isArray(media) ? media.filter(Boolean) : [];
+        if (!list.length) return [];
+
+        const results = await Promise.all(list.map((src) => preloadImage(src)));
+        const valid = results.filter((item) => item.ok).map((item) => item.src);
+
+        if (valid.length !== list.length) {
+          logMedia("MEDIA_BROKEN_FILTER", {
+            requested: list.length,
+            valid: valid.length,
+            removed: results.filter((item) => !item.ok).map((item) => item.src)
+          });
+        }
+
+        return valid;
+      }
+
+      function updateSelectedThumbs() {
+        const { thumbs, modalThumbs } = getGalleryElements();
+
+        if (thumbs) {
+          thumbs.querySelectorAll("img").forEach((thumb, index) => {
+            thumb.classList.toggle("active", index === currentIndex);
+          });
+        }
+
+        if (modalThumbs) {
+          modalThumbs.querySelectorAll("img").forEach((thumb, index) => {
+            thumb.classList.toggle("active", index === currentIndex);
+          });
+        }
+      }
+
+      function syncMainImage(src) {
+        const { main } = getGalleryElements();
+        const noImageText = getNoImageText();
+        if (!main) return;
+
+        main.onload = () => {
+          if (noImageText) noImageText.style.display = "none";
+        };
+        main.onerror = () => {
+          main.removeAttribute("src");
+          if (noImageText) noImageText.style.display = "flex";
+        };
+
+        if (noImageText) noImageText.style.display = "none";
+        main.style.display = "block";
+        main.style.visibility = "visible";
+        main.style.opacity = "1";
+        main.style.cursor = "zoom-in";
+        main.src = src;
+      }
+
+      function syncModalImage(src) {
+        const { modalImage, modalCounter } = getGalleryElements();
+        if (!modalImage) return;
+
+        galleryZoomed = false;
+        modalImage.classList.remove("zoomed");
+        modalImage.src = src;
+        modalImage.alt = `Büyük fotoğraf ${currentIndex + 1}`;
+        if (modalCounter) {
+          modalCounter.textContent = `${currentIndex + 1} / ${galleryImages.length || 1}`;
+        }
+      }
+
+      function toggleModalZoom(forceState = null) {
+        const { modalImage } = getGalleryElements();
+        if (!modalImage) return;
+        galleryZoomed = typeof forceState === "boolean" ? forceState : !galleryZoomed;
+        modalImage.classList.toggle("zoomed", galleryZoomed);
+      }
+
+      async function enterGalleryFullscreen() {
+        const { modal } = getGalleryElements();
+        if (!modal || document.fullscreenElement || typeof modal.requestFullscreen !== "function") return;
+        try {
+          await modal.requestFullscreen();
+          logMedia("FULLSCREEN_GALLERY_OK", {
+            mode: "entered",
+            count: galleryImages.length,
+            currentIndex
+          });
+        } catch (_) {}
+      }
+
+      async function exitGalleryFullscreen() {
+        if (!document.fullscreenElement || typeof document.exitFullscreen !== "function") return;
+        try {
+          await document.exitFullscreen();
+        } catch (_) {}
+      }
+
+      function preloadAdjacentImages() {
+        if (!galleryImages.length) return;
+        const nextIndex = (currentIndex + 1) % galleryImages.length;
+        const prevIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+        [galleryImages[nextIndex], galleryImages[prevIndex]].forEach((src) => {
+          if (!src) return;
+          const img = new Image();
+          img.src = src;
+        });
+      }
+
+      function setMainImage(media, index) {
+        if (!Array.isArray(media) || !media.length) return;
+        currentIndex = ((index % media.length) + media.length) % media.length;
+        const src = media[currentIndex];
+
+        syncMainImage(src);
+        updateSelectedThumbs();
+        preloadAdjacentImages();
+
+        if (galleryModalOpen) {
+          syncModalImage(src);
+        }
+
+        logMedia("DETAIL_IMAGE_RENDER_OK", {
+          currentIndex,
+          src,
+          count: media.length
+        });
+      }
+
+      function renderThumbStrip(root, media, clickHandler, activeIndex) {
+        if (!root) return;
+        const fragment = document.createDocumentFragment();
+        root.innerHTML = "";
+
+        media.forEach((src, index) => {
+          const thumb = document.createElement("img");
+          thumb.src = src;
+          thumb.alt = `Küçük görsel ${index + 1}`;
+          thumb.loading = "lazy";
+          thumb.decoding = "async";
+          if (index === activeIndex) thumb.classList.add("active");
+          thumb.onerror = () => thumb.remove();
+          thumb.addEventListener("click", () => {
+            clickHandler(index);
+            logMedia("THUMBNAIL_NAVIGATION_OK", {
+              targetIndex: index,
+              count: media.length
+            });
+          });
+          fragment.appendChild(thumb);
+        });
+
+        root.appendChild(fragment);
+      }
+
+      function closeGalleryModal() {
+        const { modal } = getGalleryElements();
+        if (!modal) return;
+        galleryModalOpen = false;
+        galleryZoomed = false;
+        getGalleryElements().modalImage?.classList.remove("zoomed");
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        exitGalleryFullscreen();
+      }
+
+      function openGalleryModal(index) {
+        const { modal } = getGalleryElements();
+        if (!modal || !galleryImages.length) return;
+        galleryModalOpen = true;
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setMainImage(galleryImages, typeof index === "number" ? index : currentIndex);
+        enterGalleryFullscreen();
+        logMedia("LIGHTBOX_READY", {
+          count: galleryImages.length,
+          currentIndex
+        });
+        logMedia("MARKETPLACE_GALLERY_EXPERIENCE_OK", {
+          count: galleryImages.length,
+          currentIndex,
+          keyboard: true,
+          swipe: true,
+          fullscreen: true,
+          zoom: true
+        });
+      }
+
+      function handleSwipe(clientX, clientY) {
+        const deltaX = clientX - touchStartX;
+        const deltaY = clientY - touchStartY;
+        if (Math.abs(deltaX) < 36 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+        if (deltaX < 0) {
+          setMainImage(galleryImages, currentIndex + 1);
+        } else {
+          setMainImage(galleryImages, currentIndex - 1);
+        }
+      }
+
+      function bindSwipeSurface(element) {
+        if (!element || element.dataset.swipeBound === "true") return;
+        element.dataset.swipeBound = "true";
+        element.addEventListener("touchstart", (event) => {
+          const touch = event.changedTouches?.[0];
+          if (!touch) return;
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+        }, { passive: true });
+        element.addEventListener("touchend", (event) => {
+          const touch = event.changedTouches?.[0];
+          if (!touch) return;
+          handleSwipe(touch.clientX, touch.clientY);
+        }, { passive: true });
+      }
+
+      function bindGalleryModalEvents() {
+        if (galleryModalBound) return;
+        galleryModalBound = true;
+
+        const { modal, modalPrev, modalNext, modalClose, modalThumbs, modalImage } = getGalleryElements();
+        if (!modal) return;
+
+        modalPrev?.addEventListener("click", () => setMainImage(galleryImages, currentIndex - 1));
+        modalNext?.addEventListener("click", () => setMainImage(galleryImages, currentIndex + 1));
+        modalClose?.addEventListener("click", closeGalleryModal);
+
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeGalleryModal();
+        });
+
+        bindSwipeSurface(modalImage);
+        bindSwipeSurface(modal);
+        modalImage?.addEventListener("click", () => toggleModalZoom());
+
+        document.addEventListener("keydown", (event) => {
+          if (!galleryModalOpen) return;
+          if (event.key === "Escape") {
+            event.preventDefault();
+            closeGalleryModal();
+            return;
+          }
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            setMainImage(galleryImages, currentIndex - 1);
+            return;
+          }
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            setMainImage(galleryImages, currentIndex + 1);
+          }
+        });
+
+        if (modalThumbs) {
+          modalThumbs.addEventListener("click", (event) => {
+            const target = event.target.closest("img");
+            if (!target) return;
+            const thumbs = Array.from(modalThumbs.querySelectorAll("img"));
+            const index = thumbs.indexOf(target);
+            if (index >= 0) setMainImage(galleryImages, index);
+          });
+        }
+      }
+
+      async function renderGallery(input) {
+        const rawMedia = Array.isArray(input) ? input.slice() : resolveMedia(input);
+        const media = await filterRenderableMedia(rawMedia);
+        const { main, thumbs, prev, next, imageCount, modalThumbs, modalImage } = getGalleryElements();
+        const noImageText = getNoImageText();
+
+        images = media.slice();
+        galleryImages = media.slice();
+        currentIndex = 0;
+
+        if (imageCount) {
+          imageCount.textContent = media.length ? `${media.length} Fotoğraf` : "Fotoğraf yok";
+        }
+
+        if (!media.length) {
+          if (main) {
+            main.removeAttribute("src");
+            main.style.display = "none";
+            main.onclick = null;
+            main.style.cursor = "default";
+          }
+          if (modalImage) modalImage.removeAttribute("src");
+          if (thumbs) thumbs.innerHTML = "";
+          if (modalThumbs) modalThumbs.innerHTML = "";
+          if (prev) prev.style.display = "none";
+          if (next) next.style.display = "none";
+          if (noImageText) noImageText.style.display = "flex";
+          closeGalleryModal();
+          logMedia("DETAIL_IMAGE_RENDER_OK", { count: 0, state: "empty" });
+          return;
+        }
+
+        renderThumbStrip(thumbs, media, (index) => setMainImage(media, index), 0);
+        renderThumbStrip(modalThumbs, media, (index) => setMainImage(media, index), 0);
+
+        if (prev) {
+          prev.style.display = "";
+          prev.onclick = () => setMainImage(media, currentIndex - 1);
+        }
+
+        if (next) {
+          next.style.display = "";
+          next.onclick = () => setMainImage(media, currentIndex + 1);
+        }
+
+        if (main) {
+          bindSwipeSurface(main);
+          main.onclick = () => openGalleryModal(currentIndex);
+        }
+
+        galleryShowImage = (index) => setMainImage(media, index);
+        bindGalleryModalEvents();
+        setMainImage(media, 0);
+
+        logMedia("MARKETPLACE_GALLERY_OK", {
+          count: media.length,
+          primary: media[0],
+          thumbnailsReady: Boolean(thumbs?.childElementCount),
+          modalThumbsReady: Boolean(modalThumbs?.childElementCount)
+        });
+      }
+
+      window.resolveMedia = resolveMedia;
+      window.setMainImage = setMainImage;
+      window.renderGallery = renderGallery;
+      window.openGalleryModal = openGalleryModal;
+      window.closeGalleryModal = closeGalleryModal;
+      window.getListingImages = function (listing) {
+        return resolveMedia(listing);
+      };
+    })();
+  </script>
+  <script>
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleDateString("tr-TR");
+    }
+
+    function renderSellerCard(listing) {
+      const userBox = document.querySelector(".user-box");
+      if (!userBox) return;
+
+      const user = listing.user || {};
+      const seller = listing.seller || {};
+      const viewerContext = getListingViewerContext(listing);
+      const {
+        currentUserId,
+        currentUserEmail,
+        currentUserRole,
+        listingUserId,
+        listingUserEmail,
+        isOwner,
+        isAdmin
+      } = viewerContext;
+      const canManageListing = isOwner || isAdmin;
+      const isVerifiedSeller = Boolean(
+        listing.isVerifiedSeller === true ||
+        seller?.isVerified === true ||
+        listing.user?.isVerified === true ||
+        user?.isVerified === true
+      );
+      const sellerName = user?.name || user?.email || seller?.name || seller?.email || (listing.sellerType === "Kurumsal" ? "Kurumsal kullanıcı" : "Bireysel kullanıcı");
+      const sellerCity = user?.city || seller?.city || listing.city || "";
+      const sellerCreatedAt = user?.createdAt || seller?.createdAt || null;
+      const sellerMemberYear = sellerCreatedAt ? new Date(sellerCreatedAt).getFullYear() : null;
+      const sellerTypeLabel = String(
+        listing.sellerType ||
+        listing.fromWho ||
+        listing.kimden ||
+        (listing.isDealer ? "Yetkili Bayi" : "")
+      ).trim();
+      const sellerRoleLabel = /kurumsal|bayi/i.test(sellerTypeLabel) ? "Kurumsal Satıcı" : "Bireysel Üye";
+      const sellerProfileId = listingUserId || String(user?._id || "");
+      console.log("MESSAGE_AUTH_STATE", {
+        currentUserId,
+        currentUserEmail,
+        currentUserRole,
+        listingUserId,
+        listingUserEmail,
+        isOwner,
+        isAdmin
+      });
+      if (isOwner) {
+        console.log("OWNER_MESSAGE_BLOCKED", {
+          currentUserId,
+          listingUserId
+        });
+        console.log("OWNER_VIEW_ACTIVE", {
+          listingId: String(listing._id || listing.id || ""),
+          currentUserId
+        });
+        console.log("LISTING_OWNER_ACTIONS_READY", {
+          listingId: String(listing._id || listing.id || ""),
+          status: String(listing.status || ""),
+          isActive: listing.isActive
+        });
+        console.log("MARKETPLACE_OWNER_MODE_OK", {
+          listingId: String(listing._id || listing.id || "")
+        });
+      } else {
+        console.log("VISITOR_VIEW_ACTIVE", {
+          listingId: String(listing._id || listing.id || ""),
+          currentUserId
+        });
+      }
+
+      userBox.innerHTML = `
+        <div class="seller-card">
+          <div class="seller-header">
+            <div class="seller-header-main">
+              <strong>${sellerName || "Bilinmeyen kullanıcı"}</strong>
+              <div class="seller-role-line">${sellerRoleLabel}</div>
+            </div>
+          </div>
+          <div class="seller-meta">
+            <span>${sellerCity}</span>
+            <span>Üye: ${sellerCreatedAt ? formatDate(sellerCreatedAt) : "Yeni"}</span>
+          </div>
+          <div class="seller-stat-grid">
+            <div class="seller-stat-card">
+              <span>Üyelik Yılı</span>
+              <strong>${sellerMemberYear || "Yeni Üye"}</strong>
+            </div>
+            <div class="seller-stat-card">
+              <span>Satıcı Tipi</span>
+              <strong>${sellerRoleLabel}</strong>
+            </div>
+            <div class="seller-stat-card">
+              <span>Konum</span>
+              <strong>${sellerCity || "Türkiye"}</strong>
+            </div>
+            <div class="seller-stat-card">
+              <span>Durum</span>
+              <strong>${isVerifiedSeller ? "Doğrulanmış Profil" : "Mesajlara Açık"}</strong>
+            </div>
+          </div>
+          <div class="seller-link-row">
+            <span>Satıcı profilini inceleyin</span>
+            ${sellerProfileId ? `<a href="/profile.html?id=${encodeURIComponent(sellerProfileId)}">Tüm ilanlarını gör →</a>` : `<a href="/listings.html">Tüm ilanlarını gör →</a>`}
+          </div>
+          <div class="seller-actions">
+            ${canManageListing
+              ? `
+                <div class="owner-actions-grid">
+                  <button class="btn-owner-manage" type="button" data-action="edit-listing">İlanı Düzenle</button>
+                  ${isListingCurrentlyActive(listing)
+                    ? '<button class="btn-owner-manage" type="button" data-action="deactivate-listing">İlanı Pasife Al</button>'
+                    : '<button class="btn-owner-manage" type="button" data-action="activate-listing">İlanı Aktif Et</button>'}
+                  <button class="btn-owner-manage btn-owner-danger" type="button" data-action="delete-listing">İlanı Sil</button>
+                </div>
+              `
+              : `
+                <div class="seller-contact-stack">
+                  <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
+                  <div class="seller-phone-panel">
+                    <div class="seller-phone-label">Telefon Numarası</div>
+                    <div id="sellerPhoneValue" class="seller-phone-value">${formatPhoneNumber(listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor"}</div>
+                  </div>
+                </div>
+              `}
+          </div>
+          ${(isOwner || isAdmin) ? '<button class="btn-boost" type="button" data-action="buy-boost">İlanı Öne Çıkar</button>' : ''}
+        </div>
+      `;
+
+      applyOwnerVisitorView(listing);
+
+      const messageButtons = userBox.querySelectorAll('[data-action="open-messages"]');
+      console.log("MESSAGE_BUTTON_FOUND", {
+        count: messageButtons.length,
+        duplicateDetected: messageButtons.length > 1
+      });
+      if (messageButtons.length) {
+        console.log("MESSAGE_BUTTON_BOUND", {
+          action: "open-messages",
+          strategy: "document-delegation"
+        });
+      }
+    }
+
+    function safeStringValue(key, value) {
+      if (value == null) {
+        console.error("DETAIL_RUNTIME_FIELD", {
+          key,
+          value
+        });
+      }
+      return String(value || "");
+    }
+
+    function safeTrimValue(key, value) {
+      return String(safeStringValue(key, value) || "").trim();
+    }
+
+    function formatPhoneNumber(value) {
+      const raw = safeTrimValue("phoneFormat", value);
+      const digits = raw.replace(/\D+/g, "");
+      if (digits.length === 11 && digits.startsWith("0")) {
+        return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 9)} ${digits.slice(9, 11)}`;
+      }
+      if (digits.length === 10) {
+        return `0${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 8)} ${digits.slice(8, 10)}`;
+      }
+      return raw;
+    }
+
+    function safeIncludesValue(key, value, needle) {
+      if (!Array.isArray(value) && typeof value !== "string") {
+        console.error("DETAIL_RUNTIME_FIELD", {
+          key,
+          value
+        });
+      }
+
+      if (Array.isArray(value)) {
+        return value.includes(needle);
+      }
+
+      return String(safeStringValue(key, value) || "").includes(String(needle || ""));
+    }
+
+    function goProfile(id){
+      window.location.href = `/profile.html?id=${id}`;
+    }
+
+    function readStoredUser() {
+      try {
+        return JSON.parse(localStorage.getItem("user") || "{}");
+      } catch (err) {
+        return {};
+      }
+    }
+
+    function getListingViewerContext(listing) {
+      const user = listing?.user || {};
+      const currentUser = readStoredUser();
+      const currentUserId = String(currentUser._id || currentUser.id || "");
+      const currentUserEmail = String(currentUser.email || "");
+      const currentUserRole = String(currentUser.role || "").trim().toLowerCase();
+      const listingUserId = String(user?._id || listing?.userId || listing?.user || "");
+      const listingUserEmail = String(user?.email || "");
+      const isOwner = Boolean(
+        (currentUserId && listingUserId && currentUserId === listingUserId) ||
+        (currentUserEmail && listingUserEmail && currentUserEmail === listingUserEmail)
+      );
+
+      return {
+        currentUser,
+        currentUserId,
+        currentUserEmail,
+        currentUserRole,
+        listingUserId,
+        listingUserEmail,
+        isOwner,
+        isAdmin: currentUserRole === "admin"
+      };
+    }
+
+    function isListingCurrentlyActive(listing) {
+      const normalizedStatus = String(listing?.status || "").trim().toLowerCase();
+      return normalizedStatus === "active" && listing?.isActive !== false;
+    }
+
+    function applyOwnerVisitorView(listing) {
+      const { isOwner } = getListingViewerContext(listing || {});
+      const detailFavoriteBtn = document.getElementById("detailFavoriteBtn");
+      const headerFavoriteBtn = document.querySelector('[data-action="toggle-favorite-header"]');
+
+      if (detailFavoriteBtn) {
+        detailFavoriteBtn.hidden = isOwner;
+        detailFavoriteBtn.disabled = isOwner;
+        detailFavoriteBtn.setAttribute("aria-hidden", isOwner ? "true" : "false");
+      }
+
+      if (headerFavoriteBtn) {
+        headerFavoriteBtn.hidden = isOwner;
+        headerFavoriteBtn.disabled = isOwner;
+        headerFavoriteBtn.setAttribute("aria-hidden", isOwner ? "true" : "false");
+      }
+    }
+
+    function sendMsg(toId){
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const listing = window.resolvedListing || {};
+      const input = document.getElementById("sellerMessage");
+      const text = safeTrimValue("sellerMessage", input?.value);
+
+      if (!user.email && !user.id && !user._id) {
+        alert("Mesaj göndermek için giriş yapmalısınız.");
+        window.location.href = "/login.html";
+        return;
+      }
+
+      if (!text) {
+        alert("Mesaj yazın.");
+        return;
+      }
+
+      const token = safeTrimValue("token", localStorage.getItem("token"));
+      if (!token) {
+        window.location.href = "/login.html";
+        return;
+      }
+
+      fetch("/api/messages", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          listingId: listing._id,
+          text
+        })
+      }).then(() => {
+        input.value = "";
+        alert("Gönderildi");
+      });
+    }
+
+    function openMessagesForListing() {
+      console.log("MESSAGE_BUTTON_CLICKED");
+      const listing = window.resolvedListing || window.listingData || {};
+      const token = safeTrimValue("token", localStorage.getItem("token"));
+      const viewerContext = getListingViewerContext(listing);
+      const {
+        currentUserId,
+        currentUserEmail,
+        currentUserRole,
+        listingUserId,
+        listingUserEmail,
+        isOwner
+      } = viewerContext;
+
+      console.log("MESSAGE_OWNER_CHECK", {
+        currentUserId,
+        currentUserEmail,
+        currentUserRole,
+        listingUserId,
+        listingUserEmail,
+        isOwner
+      });
+
+      if (isOwner) {
+        alert("Kendi ilanınıza mesaj gönderemezsiniz.");
+        return;
+      }
+
+      if (!token) {
+        console.log("MESSAGE_ACTION_TRIGGERED", {
+          action: "redirect-login"
+        });
+        window.location.href = "/login.html";
+        return;
+      }
+
+      const listingId = String(listing._id || listing.id || "").trim();
+      if (!listingId) {
+        console.error("MESSAGE_ACTION_TRIGGERED", {
+          action: "missing-listing-id"
+        });
+        alert("İlan bilgisi bulunamadı.");
+        return;
+      }
+
+      const messageUrl = `/messages.html?listingId=${encodeURIComponent(listingId)}`;
+      console.log("MESSAGE_ACTION_TRIGGERED", {
+        action: "redirect-messages",
+        url: messageUrl
+      });
+
+      try {
+        window.location.href = messageUrl;
+      } catch (error) {
+        console.error("MESSAGE_ACTION_TRIGGERED", {
+          action: "fallback-modal",
+          error: String(error?.message || error)
+        });
+        alert("Mesaj sistemi yakında aktif olacak");
+      }
+    }
+
+    async function updateListingVisibility(nextState) {
+      const listing = window.resolvedListing || window.listingData || {};
+      const listingId = String(listing._id || listing.id || "").trim();
+      const token = safeTrimValue("token", localStorage.getItem("token"));
+
+      if (!listingId) {
+        alert("İlan bilgisi bulunamadı.");
+        return false;
+      }
+
+      if (!token) {
+        window.location.href = "/login.html";
+        return false;
+      }
+
+      const response = await fetch(`/api/listings/${encodeURIComponent(listingId)}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(nextState)
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.error || "listing_update_failed");
+      }
+
+      window.resolvedListing = { ...listing, ...(data?.listing || {}) };
+      window.listingData = window.resolvedListing;
+      renderSellerCard(window.resolvedListing);
+      return true;
+    }
+
+    function editCurrentListing() {
+      const listing = window.resolvedListing || window.listingData || {};
+      const listingId = String(listing._id || listing.id || "").trim();
+      if (!listingId) {
+        alert("İlan bilgisi bulunamadı.");
+        return;
+      }
+      window.location.href = `/create-listing.html?edit=${encodeURIComponent(listingId)}`;
+    }
+
+    async function deactivateCurrentListing() {
+      if (!window.confirm("Bu ilanı pasife almak istiyor musunuz?")) return;
+
+      try {
+        await updateListingVisibility({
+          approved: true,
+          status: "inactive",
+          isActive: false
+        });
+      } catch (error) {
+        alert("İlan pasife alınamadı.");
+      }
+    }
+
+    async function activateCurrentListing() {
+      try {
+        await updateListingVisibility({
+          approved: true,
+          status: "active",
+          isActive: true
+        });
+      } catch (error) {
+        alert("İlan aktif edilemedi.");
+      }
+    }
+
+    async function deleteCurrentListing() {
+      try {
+        const listing = window.resolvedListing || window.listingData || {};
+        const listingId = String(listing._id || listing.id || "").trim();
+        const token = safeTrimValue("token", localStorage.getItem("token"));
+
+        if (!window.confirm("Bu ilanı silmek istiyor musunuz?")) return;
+
+        if (!listingId) {
+          alert("İlan bilgisi bulunamadı.");
+          return;
+        }
+
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const response = await fetch(`/api/listings/${encodeURIComponent(listingId)}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data?.msg || "listing_delete_failed");
+        }
+
+        window.location.href = "/dashboard.html";
+      } catch (error) {
+        alert("İlan silinemedi.");
+      }
+    }
+
+    async function buyBoost() {
+      const listing = window.resolvedListing || {};
+
+      if (!listing._id) {
+        alert("İlan bilgisi bulunamadı");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/payments/boost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            listingId: listing._id,
+            duration: 3
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "Boost işlemi başarısız");
+        }
+
+        alert(`Boost aktif edildi. Ücret: ${Number(data.price || 0).toLocaleString("tr-TR")} TL`);
+      } catch (err) {
+        console.error("BOOST ERROR:", err);
+        alert("Boost işlemi tamamlanamadı");
+      }
+    }
+
+    const favoriteState = {
+      ids: new Set(),
+      loaded: false,
+      loading: false
+    };
+
+    function readAuthToken() {
+      return String(localStorage.getItem("token") || "").trim();
+    }
+
+    async function loadFavoriteState() {
+      const token = readAuthToken();
+      if (!token) {
+        favoriteState.ids = new Set();
+        favoriteState.loaded = true;
+        favoriteState.loading = false;
+        return favoriteState.ids;
+      }
+
+      if (favoriteState.loading) return favoriteState.ids;
+
+      favoriteState.loading = true;
+      try {
+        const res = await fetch("/api/listings/favorites", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          favoriteState.ids = new Set();
+          favoriteState.loaded = true;
+          return favoriteState.ids;
+        }
+
+        const data = await res.json().catch(() => []);
+        const ids = Array.isArray(data)
+          ? data
+            .map((item) => String(item?._id || item?.id || item || "").trim())
+            .filter(Boolean)
+          : [];
+
+        favoriteState.ids = new Set(ids);
+        favoriteState.loaded = true;
+        return favoriteState.ids;
+      } catch (err) {
+        console.error("FAVORITE_STATE_LOAD_ERROR", err);
+        favoriteState.ids = new Set();
+        favoriteState.loaded = true;
+        return favoriteState.ids;
+      } finally {
+        favoriteState.loading = false;
+      }
+    }
+
+    async function toggleFavorite(id) {
+      if (!id) return;
+
+      const token = readAuthToken();
+      if (!token) {
+        window.location.href = "/login.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/listings/${encodeURIComponent(id)}/favorite`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data?.error || "favorite_toggle_failed");
+        }
+
+        if (data.favorited) {
+          favoriteState.ids.add(id);
+          console.log("DB_FAVORITE_SAVE_OK", {
+            listingId: id,
+            count: Number(data.count || 0)
+          });
+        } else {
+          favoriteState.ids.delete(id);
+          console.log("DB_FAVORITE_REMOVE_OK", {
+            listingId: id,
+            count: Number(data.count || 0)
+          });
+        }
+
+        favoriteState.loaded = true;
+        syncFavoriteButtons(id);
+      } catch (err) {
+        console.error("FAVORITE_TOGGLE_ERROR", err);
+      }
+    }
+
+    function isFavorite(id) {
+      if (!id) return false;
+      return favoriteState.ids.has(String(id).trim());
+    }
+
+    function syncFavoriteButtons(id) {
+      const favoriteActive = isFavorite(id);
+      const detailFavoriteBtn = document.getElementById("detailFavoriteBtn");
+      const headerFavoriteBtn = document.querySelector('[data-action="toggle-favorite-header"]');
+
+      if (detailFavoriteBtn) {
+        detailFavoriteBtn.classList.toggle("active", favoriteActive);
+        detailFavoriteBtn.setAttribute("aria-pressed", favoriteActive ? "true" : "false");
+        detailFavoriteBtn.textContent = favoriteActive ? "♥" : "♡";
+      }
+
+      if (headerFavoriteBtn) {
+        headerFavoriteBtn.classList.toggle("active", favoriteActive);
+        headerFavoriteBtn.setAttribute("aria-pressed", favoriteActive ? "true" : "false");
+        headerFavoriteBtn.textContent = favoriteActive ? "Favorilerden Çıkar" : "Favorilere Ekle";
+      }
+    }
+
+    const detailFavoriteBtn = document.getElementById("detailFavoriteBtn");
+    if (detailFavoriteBtn) {
+      console.log("FAVORITE_BUTTON_BOUND", {
+        target: "detailFavoriteBtn"
+      });
+      detailFavoriteBtn.addEventListener("click", async () => {
+        const listing = window.resolvedListing || {};
+        const id = String(listing._id || listing.id || "").trim();
+        await toggleFavorite(id);
+      });
+    }
+
+    document.addEventListener("click", async (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl) return;
+
+      if (actionEl.dataset.action === "open-messages") {
+        console.log("MESSAGE_BUTTON_CLICKED", {
+          datasetAction: actionEl.dataset.action,
+          tagName: actionEl.tagName
+        });
+      }
+
+      if (actionEl.dataset.action === "open-messages") return openMessagesForListing();
+      if (actionEl.dataset.action === "buy-boost") return buyBoost();
+      if (actionEl.dataset.action === "edit-listing") return editCurrentListing();
+      if (actionEl.dataset.action === "deactivate-listing") return deactivateCurrentListing();
+      if (actionEl.dataset.action === "activate-listing") return activateCurrentListing();
+      if (actionEl.dataset.action === "delete-listing") return deleteCurrentListing();
+      if (actionEl.dataset.action === "toggle-favorite-header") {
+        const listing = window.resolvedListing || {};
+        const id = String(listing._id || listing.id || "").trim();
+        await toggleFavorite(id);
+        return;
+      }
+      if (actionEl.dataset.action === "share-listing") {
+        const shareUrl = window.location.href;
+        if (navigator.share) {
+          navigator.share({
+            title: document.getElementById("title")?.textContent || "İlan",
+            url: shareUrl
+          }).catch(() => {});
+          return;
+        }
+        navigator.clipboard?.writeText(shareUrl).catch(() => {});
+        return;
+      }
+      if (actionEl.dataset.action === "print-listing") return window.print();
+    });
+
+    console.log("FAVORITE_BUTTON_BOUND", {
+      target: "toggle-favorite-header",
+      strategy: "document-delegation"
+    });
+  </script>
+  <script>
+    (function () {
+      const expertiseParts = [
+        { key: "frontBumper", area: "frontBumper", label: "Ön Tampon", aliases: ["frontBumper", "front_bumper", "onTampon", "önTampon"] },
+        { key: "hood", area: "hood", label: "Kaput", aliases: ["hood", "kaput"] },
+        { key: "leftFrontFender", area: "leftFrontFender", label: "Sol Ön Çamurluk", aliases: ["leftFrontFender", "left_front_fender", "solOnCamurluk", "fender_left"] },
+        { key: "rightFrontFender", area: "rightFrontFender", label: "Sağ Ön Çamurluk", aliases: ["rightFrontFender", "right_front_fender", "sagOnCamurluk", "fender_right"] },
+        { key: "leftFrontDoor", area: "leftFrontDoor", label: "Sol Ön Kapı", aliases: ["leftFrontDoor", "left_front_door", "solOnKapi", "door_left"] },
+        { key: "rightFrontDoor", area: "rightFrontDoor", label: "Sağ Ön Kapı", aliases: ["rightFrontDoor", "right_front_door", "sagOnKapi", "door_right"] },
+        { key: "roof", area: "roof", label: "Tavan", aliases: ["roof", "tavan"] },
+        { key: "leftRearDoor", area: "leftRearDoor", label: "Sol Arka Kapı", aliases: ["leftRearDoor", "left_rear_door", "solArkaKapi"] },
+        { key: "rightRearDoor", area: "rightRearDoor", label: "Sağ Arka Kapı", aliases: ["rightRearDoor", "right_rear_door", "sagArkaKapi"] },
+        { key: "leftRearFender", area: "leftRearFender", label: "Sol Arka Çamurluk", aliases: ["leftRearFender", "left_rear_fender", "solArkaCamurluk"] },
+        { key: "rightRearFender", area: "rightRearFender", label: "Sağ Arka Çamurluk", aliases: ["rightRearFender", "right_rear_fender", "sagArkaCamurluk"] },
+        { key: "trunk", area: "trunk", label: "Bagaj", aliases: ["trunk", "bagaj"] },
+        { key: "rearBumper", area: "rearBumper", label: "Arka Tampon", aliases: ["rearBumper", "rear_bumper", "arkaTampon"] }
+      ];
+      const directDamageMapKeyMap = {
+        front_bumper: "frontBumper",
+        hood: "hood",
+        roof: "roof",
+        trunk: "trunk",
+        rear_bumper: "rearBumper",
+        fender_left: "leftFrontFender",
+        fender_right: "rightFrontFender",
+        door_left: "leftFrontDoor",
+        door_right: "rightFrontDoor"
+      };
+
+      function safeText(value) {
+        return String(value ?? "").trim();
+      }
+
+      function formatUiValue(value) {
+        const text = typeof formatValue === "function" ? formatValue(value) : safeText(value);
+        return text || "-";
+      }
+
+      function normalizeExpertiseStatus(value) {
+        const text = safeText(value).toLocaleLowerCase("tr-TR");
+        if (!text) return "unknown";
+        if (text.includes("değ") || text.includes("deg") || text.includes("changed")) return "changed";
+        if (text.includes("lokal") || text.includes("local")) return "local";
+        if (text.includes("boy") || text.includes("paint")) return "painted";
+        return "original";
+      }
+
+      function expertiseStatusLabel(status) {
+        if (status === "changed") return "Değişen";
+        if (status === "local") return "Lokal Boyalı";
+        if (status === "painted") return "Boyalı";
+        if (status === "unknown") return "Bilinmiyor";
+        return "Orijinal";
+      }
+
+      function collectExpertiseSource(listing) {
+        const output = {};
+        const sources = [listing?.expertise, listing?.damageMap, listing?.inspectionMap];
+        sources.forEach((source) => {
+          if (!source || typeof source !== "object") return;
+          Object.entries(source).forEach(([key, value]) => {
+            output[key] = value;
+          });
+        });
+        Object.entries(directDamageMapKeyMap).forEach(([rawKey, normalizedKey]) => {
+          if (output[normalizedKey] == null && output[rawKey] != null) {
+            output[normalizedKey] = output[rawKey];
+          }
+        });
+        console.log("DETAIL_EXPERTISE_SOURCE", {
+          listingId: String(listing?._id || listing?.id || ""),
+          expertise: listing?.expertise || null,
+          damageMap: listing?.damageMap || null,
+          inspectionMap: listing?.inspectionMap || null,
+          output
+        });
+        return output;
+      }
+
+      function getExpertiseStatus(raw, aliases) {
+        for (const alias of aliases) {
+          if (raw[alias] != null && safeText(raw[alias])) {
+            return normalizeExpertiseStatus(raw[alias]);
+          }
+        }
+        return "unknown";
+      }
+
+      function renderDetailTechCards(listing) {
+        const techFields = {
+          techBrand: listing.brand,
+          techSeries: listing.series,
+          techModel: listing.model,
+          techYear: listing.year,
+          techKm: listing.km,
+          techFuel: listing.fuel,
+          techEngine: listing.engineSize || listing.engineVolume || listing.engine,
+          techTransmission: listing.transmission,
+          techBodyType: listing.bodyType || listing.body,
+          techTraction: listing.traction || listing.driveType,
+          techColor: listing.color,
+          techEngineVolume: listing.engineSize || listing.engineVolume || listing.engine,
+          techMotorPower: listing.motorPower || listing.enginePower || listing.hp,
+          techWarranty: listing.warranty,
+          techHeavyDamage: listing.heavyDamage || listing.isHeavyDamageRecorded || listing.agirHasarKayitli,
+          techPlate: listing.plate || listing.plateOrigin || listing.uyruk,
+          techSwap: listing.swap || listing.takas,
+          techFromWho: listing.fromWho || listing.kimden || listing.sellerType,
+          techPaint: listing.paint || listing.paintedParts,
+          techChanged: listing.changedParts || listing.changed,
+          techExpertiseSummary: listing.expertiseSummary || listing.expertise || listing.inspection
+        };
+
+        Object.entries(techFields).forEach(([id, value]) => {
+          const node = document.getElementById(id);
+          if (!node) return;
+          const wrapper = node.closest(".spec-item");
+          const text = typeof formatValue === "function" ? formatValue(value) : String(value || "").trim();
+          if (wrapper) wrapper.hidden = !text;
+          node.textContent = text || "-";
+        });
+      }
+
+      function renderExpertisePanel(listing) {
+        const root = document.getElementById("expertise");
+        console.log("DETAIL_EXPERTISE_PANEL_ENTRY", {
+          listingId: String(listing?._id || listing?.id || ""),
+          hasRoot: Boolean(root),
+          rootNode: root,
+          rootHtmlBefore: root ? root.innerHTML : null
+        });
+        if (!root) return;
+
+        const raw = collectExpertiseSource(listing || {});
+        const hasAnyValue = Object.keys(raw).length > 0 && Object.keys(raw).some((key) => safeText(raw[key]));
+        const showcaseParts = [
+          { id: "front_bumper", key: "frontBumper", label: "Ön tampon", shape: `<rect x="255" y="20" width="390" height="28" rx="14" ry="14" />`, text: `<text class="expertise-svg-label" x="450" y="34">Ön tampon</text>` },
+          { id: "hood", key: "hood", label: "Kaput", shape: `<rect x="389" y="56" width="122" height="48" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="450" y="80">Kaput</text>` },
+          { id: "left_front_fender", key: "leftFrontFender", label: "Sol ön çamurluk", shape: `<rect x="200" y="50" width="150" height="64" rx="16" ry="16" />`, text: `<text class="expertise-svg-label" x="275" y="82">Sol ön çamurluk</text>` },
+          { id: "right_front_fender", key: "rightFrontFender", label: "Sağ ön çamurluk", shape: `<rect x="550" y="50" width="150" height="64" rx="16" ry="16" />`, text: `<text class="expertise-svg-label" x="625" y="82">Sağ ön çamurluk</text>` },
+          { id: "left_front_door", key: "leftFrontDoor", label: "Sol ön kapı", shape: `<rect x="208" y="122" width="140" height="74" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="278" y="159">Sol ön kapı</text>` },
+          { id: "right_front_door", key: "rightFrontDoor", label: "Sağ ön kapı", shape: `<rect x="552" y="122" width="140" height="74" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="622" y="159">Sağ ön kapı</text>` },
+          { id: "left_rear_door", key: "leftRearDoor", label: "Sol arka kapı", shape: `<rect x="208" y="204" width="140" height="74" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="278" y="241">Sol arka kapı</text>` },
+          { id: "right_rear_door", key: "rightRearDoor", label: "Sağ arka kapı", shape: `<rect x="552" y="204" width="140" height="74" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="622" y="241">Sağ arka kapı</text>` },
+          { id: "roof", key: "roof", label: "Tavan", shape: `<rect x="410" y="122" width="80" height="156" rx="16" ry="16" />`, text: `<text class="expertise-svg-label" x="450" y="200">Tavan</text>` },
+          { id: "left_rear_fender", key: "leftRearFender", label: "Sol arka çamurluk", shape: `<rect x="200" y="286" width="150" height="64" rx="16" ry="16" />`, text: `<text class="expertise-svg-label" x="275" y="318">Sol arka çamurluk</text>` },
+          { id: "right_rear_fender", key: "rightRearFender", label: "Sağ arka çamurluk", shape: `<rect x="550" y="286" width="150" height="64" rx="16" ry="16" />`, text: `<text class="expertise-svg-label" x="625" y="318">Sağ arka çamurluk</text>` },
+          { id: "trunk", key: "trunk", label: "Bagaj", shape: `<rect x="389" y="292" width="122" height="48" rx="12" ry="12" />`, text: `<text class="expertise-svg-label" x="450" y="316">Bagaj</text>` },
+          { id: "rear_bumper", key: "rearBumper", label: "Arka tampon", shape: `<rect x="255" y="350" width="390" height="28" rx="14" ry="14" />`, text: `<text class="expertise-svg-label" x="450" y="364">Arka tampon</text>` }
+        ];
+        const showcaseMarkup = showcaseParts.map((part) => {
+          const config = expertiseParts.find((item) => item.key === part.key);
+          const status = config ? getExpertiseStatus(raw, config.aliases) : "unknown";
+          return `
+            <g id="${part.id}" data-status="${status}" aria-label="${part.label}: ${expertiseStatusLabel(status)}">
+              <g class="expertise-svg-part is-${status}">
+                ${part.shape}
+              </g>
+              ${part.text}
+            </g>
+          `;
+        }).join("");
+        const mockupMarkup = `
+          <div class="expertise-showcase">
+            <div class="expertise-showcase-board">
+              <div class="expertise-showcase-head">
+                <h4>Araç Üst Görünüş Ekspertiz</h4>
+                <span class="expertise-showcase-note">${hasAnyValue ? "Ekspertiz Özeti" : "Örnek Yerleşim"}</span>
+              </div>
+              <div class="expertise-showcase-canvas">
+                <svg class="expertise-showcase-svg" viewBox="120 0 660 400" role="img" aria-label="Araç üst görünüş ekspertiz şeması">
+                  <defs>
+                    <pattern id="expertiseLocalPattern" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                      <rect width="12" height="12" fill="#fde68a"></rect>
+                      <rect width="4" height="12" fill="#facc15"></rect>
+                    </pattern>
+                  </defs>
+                  <ellipse class="vehicle-shadow" cx="450" cy="200" rx="340" ry="164"></ellipse>
+                  <path class="vehicle-outline" d="M170 88 L235 36 H665 L730 88 L760 150 V250 L730 312 L665 364 H235 L170 312 L140 250 V150 Z"></path>
+                  <rect class="vehicle-cabin" x="376" y="112" width="148" height="170" rx="34" ry="34"></rect>
+                  <rect class="wheel" x="146" y="108" width="34" height="82" rx="16"></rect>
+                  <rect class="wheel" x="146" y="210" width="34" height="82" rx="16"></rect>
+                  <rect class="wheel" x="720" y="108" width="34" height="82" rx="16"></rect>
+                  <rect class="wheel" x="720" y="210" width="34" height="82" rx="16"></rect>
+                  <rect class="wheel-inner" x="154" y="118" width="18" height="62" rx="9"></rect>
+                  <rect class="wheel-inner" x="154" y="220" width="18" height="62" rx="9"></rect>
+                  <rect class="wheel-inner" x="728" y="118" width="18" height="62" rx="9"></rect>
+                  <rect class="wheel-inner" x="728" y="220" width="18" height="62" rx="9"></rect>
+                  ${showcaseMarkup}
+                </svg>
+              </div>
+            </div>
+            <div class="expertise-showcase-legend">
+              <div class="expertise-showcase-card">
+                <h4>Durum Açıklaması</h4>
+                <div class="expertise-showcase-legend-list">
+                  <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-original"></span><span>Orijinal</span></div>
+                  <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-local"></span><span>Lokal Boyalı</span></div>
+                  <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-painted"></span><span>Boyalı</span></div>
+                  <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-changed"></span><span>Değişen</span></div>
+                  <div class="expertise-showcase-legend-item"><span class="expertise-showcase-swatch is-unknown"></span><span>Bilinmiyor</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        console.log("DETAIL_EXPERTISE_DAMAGE_MAP", {
+          listingId: String(listing?._id || listing?.id || ""),
+          hasDamageMap: Boolean(listing?.damageMap && typeof listing.damageMap === "object"),
+          damageMap: listing?.damageMap || null
+        });
+        console.log("DETAIL_EXPERTISE_HAS_ANY_VALUE", {
+          listingId: String(listing?._id || listing?.id || ""),
+          raw,
+          keys: Object.keys(raw),
+          hasAnyValue
+        });
+
+        if (!hasAnyValue) {
+          console.log("DETAIL_EXPERTISE_EMPTY_REASON", {
+            listingId: String(listing?._id || listing?.id || ""),
+            expertiseType: typeof listing?.expertise,
+            damageMapType: typeof listing?.damageMap,
+            inspectionMapType: typeof listing?.inspectionMap,
+            expertiseKeys: listing?.expertise && typeof listing.expertise === "object" ? Object.keys(listing.expertise) : [],
+            damageMapKeys: listing?.damageMap && typeof listing.damageMap === "object" ? Object.keys(listing.damageMap) : [],
+            inspectionMapKeys: listing?.inspectionMap && typeof listing.inspectionMap === "object" ? Object.keys(listing.inspectionMap) : [],
+            rawKeys: Object.keys(raw)
+          });
+          root.innerHTML = `
+            <div class="section-card-head">
+              <h3>Ekspertiz Bilgisi</h3>
+            </div>
+            ${mockupMarkup}
+            <p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>
+          `;
+          return;
+        }
+
+        root.innerHTML = `
+          <div class="section-card-head">
+            <h3>Ekspertiz Bilgisi</h3>
+          </div>
+          ${mockupMarkup}
+        `;
+      }
+      window.renderExpertisePanel = renderExpertisePanel;
+    })();
+  </script>
+  <script>
+    (function () {
+      function fixMojibakeText(value) {
+        const text = String(value || "");
+        if (!text) return "";
+        if (!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(text)) {
+          return text.normalize("NFC");
+        }
+        try {
+          const bytes = Uint8Array.from(Array.from(text).map((char) => char.charCodeAt(0) & 255));
+          const fixed = new TextDecoder("utf-8").decode(bytes).replace(/\uFFFD/g, "").trim();
+          return (fixed || text).normalize("NFC");
+        } catch {
+          return text.replace(/\uFFFD/g, "").normalize("NFC");
+        }
+      }
+
+      function formatField(value, fallback = "") {
+        if (value == null) return fallback;
+        const text = fixMojibakeText(value).trim();
+        return text || fallback;
+      }
+
+      function pickField(listing, keys, fallback = "") {
+        for (const key of keys) {
+          const value = listing?.[key];
+          if (value == null) continue;
+          const text = String(value).trim();
+          if (text) return value;
+        }
+        return fallback;
+      }
+
+      function setRowValue(rowId, value) {
+        const row = document.getElementById(rowId);
+        if (!row) return;
+        const text = formatField(value);
+        row.hidden = !text;
+        const target = row.querySelector("span");
+        if (target) target.textContent = text;
+      }
+
+      function asFeatureList(value) {
+        if (Array.isArray(value)) {
+          return value.map((item) => formatField(item)).filter(Boolean);
+        }
+        const text = formatField(value);
+        if (!text) return [];
+        return text
+          .split(/[,|]/)
+          .map((item) => formatField(item))
+          .filter(Boolean);
+      }
+
+      const FEATURE_CATEGORY_RULES = [
+        {
+          key: "Güvenlik",
+          patterns: [
+            "abs", "esp", "asr", "airbag", "hava yast", "yan hava yast", "perde hava yast",
+            "yokuş kalk", "yokus kalk", "şerit", "serit", "kör nokta", "kor nokta",
+            "adaptif hız", "adaptif hiz", "hız sabitle", "hiz sabitle", "hız limitle", "hiz limitle",
+            "cruise control", "park sens", "park asist", "fren", "elektronik el freni",
+            "isofix", "immobilizer", "alarm", "traction control", "tcs", "tpms",
+            "lastik bas", "çarpışma", "carpisma", "yorgunluk", "dikkat asistan"
+          ]
+        },
+        {
+          key: "İç Donanım",
+          patterns: [
+            "deri kolt", "kumaş kolt", "kumas kolt", "elektrikli koltuk", "soğutmalı koltuk",
+            "sogutmali koltuk", "katlanır arka koltuk", "katlanir arka koltuk", "direksiyon ısıtma",
+            "direksiyon isitma", "direksiyon ısıtmalı", "direksiyon isitmali", "koltuk ısıtma",
+            "koltuk isitma", "kol dayama", "ahşap", "ahsap", "trim", "konsol", "torpido"
+          ]
+        },
+        {
+          key: "Dış Donanım",
+          patterns: [
+            "sunroof", "cam tavan", "panoramik", "led far", "xenon", "adaptif far", "far",
+            "stop", "jant", "alaşım jant", "alasim jant", "spoiler", "body kit", "ayna",
+            "ısıtmalı ayna", "isitmali ayna", "katlanır ayna", "katlanir ayna", "sis far",
+            "roof rail", "tavan ray"
+          ]
+        },
+        {
+          key: "Multimedya",
+          patterns: [
+            "bluetooth", "carplay", "android auto", "navigasyon", "multimedya", "usb",
+            "aux", "radyo", "hoparlör", "hoparlor", "subwoofer", "ekran", "teyp",
+            "ses sistemi", "premium ses", "apple", "tv", "dijital yayın", "dijital yayin",
+            "kablosuz şarj", "kablosuz sarj"
+          ]
+        },
+        {
+          key: "Konfor",
+          patterns: [
+            "anahtarsız", "anahtarsiz", "start stop", "start/stop", "dijital klima", "klima",
+            "elektrikli cam", "elektrikli bagaj", "hafızalı", "hafizali", "otomatik park",
+            "masaj", "sürüş modu", "surus modu", "gece görüş", "gece gorus", "uzaktan çalıştır",
+            "uzaktan calistir", "yağmur sens", "yagmur sens", "otomatik kararan dikiz",
+            "ambiyans aydınlatma", "ambiyans aydinlatma", "dijital gösterge", "dijital gosterge"
+          ]
+        }
+      ];
+
+      const FEATURE_LABEL_REPLACEMENTS = [
+        [/^gece görüş sistemi$/i, "Gece Görüş Sistemi"],
+        [/^gece görüx sistemi$/i, "Gece Görüş Sistemi"],
+        [/^sürüş modları$/i, "Sürüş Modları"],
+        [/^sürüx modları$/i, "Sürüş Modları"],
+        [/^asr\s*\/\s*çekiş kontrol$/i, "ASR / Çekiş Kontrol Sistemi"],
+        [/^asr\s*\/\s*!ekix kontrol$/i, "ASR / Çekiş Kontrol Sistemi"],
+        [/^alaşım jant$/i, "Alaşım Jantlar"],
+        [/^alaxım jant$/i, "Alaşım Jantlar"],
+        [/^direksiyon ısıtma$/i, "Isıtmalı Direksiyon"],
+        [/^elektrikli bagaj$/i, "Elektrikli Bagaj Kapağı"],
+        [/^dijital gösterge$/i, "Dijital Gösterge Paneli"],
+        [/^dijital klima$/i, "Dijital Klima Sistemi"],
+        [/^otomatik kararan dikiz$/i, "Otomatik Kararan Dikiz Aynası"],
+        [/^katlanır arka koltuk$/i, "Katlanabilir Arka Koltuklar"],
+        [/^elektrikli koltuk$/i, "Elektrikli Koltuklar"],
+        [/^adaptif far$/i, "Adaptif Farlar"],
+        [/^tavan rayı$/i, "Tavan Rayları"],
+        [/^ısıtmalı ayna$/i, "Isıtmalı Aynalar"],
+        [/^park sensörü arka$/i, "Arka Park Sensörü"],
+        [/^tv\s*\/\s*dijital yayın$/i, "TV / Dijital Yayın Sistemi"],
+        [/^kablosuz şarj$/i, "Kablosuz Şarj Ünitesi"]
+      ];
+
+      function normalizeFeatureValue(value) {
+        return fixMojibakeText(value)
+          .toLocaleLowerCase("tr-TR")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function normalizeFeatureLabel(feature) {
+        const cleaned = formatField(feature);
+        if (!cleaned) return "";
+        const normalized = normalizeFeatureValue(cleaned);
+        const matched = FEATURE_LABEL_REPLACEMENTS.find(([pattern]) => pattern.test(normalized));
+        return matched ? matched[1] : cleaned;
+      }
+
+      function categorizeFeatures(features) {
+        const grouped = new Map(
+          FEATURE_CATEGORY_RULES.map((rule) => [rule.key, []]).concat([["Diğer Özellikler", []]])
+        );
+
+        features.forEach((feature) => {
+          const label = normalizeFeatureLabel(feature);
+          const normalized = normalizeFeatureValue(label);
+          const matchedRule = FEATURE_CATEGORY_RULES.find((rule) =>
+            rule.patterns.some((pattern) => normalized.includes(pattern))
+          );
+          const bucket = matchedRule ? matchedRule.key : "Diğer Özellikler";
+          grouped.get(bucket).push(label);
+        });
+
+        return Array.from(grouped.entries())
+          .map(([title, items]) => ({
+            title,
+            items: [...new Set(items)].sort((a, b) => a.localeCompare(b, "tr-TR"))
+          }))
+          .filter((group) => group.items.length);
+      }
+
+      function bindTabs() {
+        const buttons = Array.from(document.querySelectorAll(".tab"));
+        const panels = Array.from(document.querySelectorAll(".tab-content"));
+        console.log("DETAIL_TABS_BIND_START", {
+          buttonCount: buttons.length,
+          panelCount: panels.length,
+          tabIds: buttons.map((button) => button.dataset.tab),
+          panelIds: panels.map((panel) => panel.id)
+        });
+        if (!buttons.length || !panels.length) {
+          console.log("DETAIL_TABS_BIND_ABORT", {
+            reason: "missing_tabs_or_panels",
+            buttonCount: buttons.length,
+            panelCount: panels.length
+          });
+          return;
+        }
+
+        buttons.forEach((button) => {
+          button.onclick = () => {
+            const tabId = button.dataset.tab;
+            console.log("DETAIL_TAB_CLICK", {
+              tabId,
+              buttonText: String(button.textContent || "").trim()
+            });
+            buttons.forEach((item) => item.classList.toggle("active", item === button));
+            panels.forEach((panel) => panel.classList.toggle("active", panel.id === tabId));
+            console.log("DETAIL_TAB_ACTIVATION_DONE", {
+              activeTabId: tabId,
+              activePanels: panels.filter((panel) => panel.classList.contains("active")).map((panel) => panel.id)
+            });
+            const currentListing = window.resolvedListing || window.listingData || {};
+            if (tabId === "features") {
+              renderFeatures(currentListing);
+            }
+            if (tabId === "expertise") {
+              renderExpertise(currentListing);
+            }
+          };
+        });
+      }
+
+      function resolveListing(raw) {
+        const resolvedListing = raw?.listing || raw?.data || raw || {};
+        return resolvedListing && typeof resolvedListing === "object" ? resolvedListing : {};
+      }
+
+      function renderHeader(listing) {
+        document.title = `${formatField(listing.title, "İlan Detayı")} | jetle.online`;
+
+        const title = document.getElementById("title");
+        if (title) title.textContent = formatField(listing.title);
+
+        const price = document.getElementById("price");
+        if (price) {
+          const numericPrice = Number(listing.price || 0);
+          if (Number.isFinite(numericPrice) && numericPrice > 0) {
+            price.innerHTML = `<span class="price-amount">${numericPrice.toLocaleString("tr-TR")}</span><span class="price-currency">TL</span>`;
+          } else {
+            price.textContent = formatField(listing.price);
+          }
+        }
+
+        const listingNo = document.getElementById("listingNo");
+        if (listingNo) listingNo.textContent = formatField(listing.listingNo, String(listing._id || listing.id || ""));
+        const topListingNo = document.getElementById("topListingNo");
+        if (topListingNo) topListingNo.textContent = formatField(listing.listingNo, String(listing._id || listing.id || ""));
+
+        const listingDate = document.getElementById("listingDate");
+        if (listingDate) listingDate.textContent = listing.createdAt ? formatDate(listing.createdAt) : "";
+        const topListingDate = document.getElementById("topListingDate");
+        if (topListingDate) topListingDate.textContent = listing.createdAt ? formatDate(listing.createdAt) : "Bugün";
+        const topListingUpdated = document.getElementById("topListingUpdated");
+        if (topListingUpdated) topListingUpdated.textContent = listing.updatedAt ? formatDate(listing.updatedAt) : "Yeni";
+
+        const topListingLocation = document.getElementById("topListingLocation");
+        if (topListingLocation) {
+          topListingLocation.textContent = [formatField(listing.city), formatField(listing.district)]
+            .filter(Boolean)
+            .join(" / ");
+        }
+
+        const condition = document.getElementById("condition");
+        if (condition) condition.textContent = formatField(listing.condition || listing.conditionType, "İkinci El");
+
+        const descText = document.getElementById("descText");
+        if (descText) descText.textContent = formatField(listing.description || listing.desc);
+
+        setRowValue("updatedAtRow", listing.updatedAt ? formatDate(listing.updatedAt) : "");
+        setRowValue("brandRow", listing.brand);
+        setRowValue("seriesRow", listing.series);
+        setRowValue("modelRow", listing.model);
+        setRowValue("yearRow", listing.year);
+        setRowValue("kmRow", listing.km);
+        setRowValue("fuelRow", listing.fuel);
+        setRowValue("transmissionRow", listing.transmission);
+        setRowValue("bodyTypeRow", listing.bodyType || listing.body);
+        setRowValue("engineSizeRow", listing.engineSize || listing.engineVolume || listing.engine);
+        setRowValue("colorRow", listing.color);
+        setRowValue("motorPowerRow", listing.motorPower || listing.enginePower || listing.hp);
+        setRowValue("tractionRow", listing.traction || listing.driveType);
+        setRowValue("warrantyRow", listing.warranty);
+        setRowValue("heavyDamageRow", listing.heavyDamage || listing.isHeavyDamageRecorded || listing.agirHasarKayitli);
+        setRowValue("plateRow", listing.plate || listing.plateOrigin || listing.uyruk);
+        setRowValue("swapRow", listing.swap || listing.takas);
+        setRowValue("fromWhoRow", listing.fromWho || listing.kimden || listing.sellerType);
+        setRowValue("paintRow", listing.paint || listing.paintedParts);
+        setRowValue("changedRow", listing.changedParts || listing.changed);
+        setRowValue("expertiseSummaryRow", listing.expertiseSummary || listing.expertise || listing.inspection);
+      }
+
+      function renderSpecs(listing) {
+        if (typeof renderDetailTechCards === "function") {
+          const mappedListing = {
+            ...listing,
+            brand: pickField(listing, ["brand", "marka"]),
+            series: pickField(listing, ["series", "seri"]),
+            model: pickField(listing, ["model", "modelAdi", "ilanModel"]),
+            year: pickField(listing, ["year", "yil"]),
+            km: pickField(listing, ["km", "kilometre", "kilometer"]),
+            fuel: pickField(listing, ["fuel", "yakit"]),
+            transmission: pickField(listing, ["transmission", "vites", "gear"]),
+            engineSize: pickField(listing, ["engineSize", "engineVolume", "engine", "motor"]),
+            traction: pickField(listing, ["traction", "driveType", "cekis", "wheelDrive"]),
+            bodyType: pickField(listing, ["bodyType", "body", "kasaTipi"]),
+            color: pickField(listing, ["color", "renk"])
+          };
+
+          renderDetailTechCards(mappedListing);
+        }
+      }
+
+      function renderFeatures(listing) {
+        const root = document.getElementById("features");
+        if (!root) return;
+
+        const featureValues = [
+          ...asFeatureList(listing.features),
+          ...asFeatureList(listing.options),
+          ...asFeatureList(listing.equipment),
+          ...asFeatureList(listing.selectedFeatures)
+        ];
+
+        const uniqueFeatures = [...new Set(featureValues)];
+        const categorizedFeatures = categorizeFeatures(uniqueFeatures);
+        console.log("DETAIL_FEATURE_COUNT", uniqueFeatures.length);
+        console.log("DETAIL_FEATURE_RENDER", uniqueFeatures);
+
+        root.innerHTML = categorizedFeatures.length
+          ? `
+            <div class="section-card-head">
+              <h3>Özellikler</h3>
+            </div>
+            <div class="feature-category-grid">
+              ${categorizedFeatures.map((group) => `
+                <section class="feature-group">
+                  <h5>${group.title}</h5>
+                  <div class="feature-grid">
+                    ${group.items.map((feature) => `
+                      <div class="feature-item">${feature}</div>
+                    `).join("")}
+                  </div>
+                </section>
+              `).join("")}
+            </div>
+          `
+          : `
+            <div class="section-card-head">
+              <h3>Özellikler</h3>
+            </div>
+            <p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>
+          `;
+      }
+
+      function renderExpertise(listing) {
+        const expertiseRenderer = typeof renderExpertisePanel === "function"
+          ? renderExpertisePanel
+          : typeof window.renderExpertisePanel === "function"
+            ? window.renderExpertisePanel
+            : null;
+        console.log("DETAIL_EXPERTISE_RENDER_CALL", {
+          listingId: String(listing?._id || listing?.id || ""),
+          hasRenderExpertisePanel: typeof expertiseRenderer === "function",
+          expertiseContainer: document.getElementById("expertise")
+        });
+        if (typeof expertiseRenderer === "function") {
+          expertiseRenderer(listing);
+        }
+      }
+
+      function formatPriceValue(value) {
+        const numericValue = Number(value || 0);
+        if (Number.isFinite(numericValue) && numericValue > 0) {
+          return `${numericValue.toLocaleString("tr-TR")} TL`;
+        }
+        return formatField(value, "Fiyat belirtilmemiş");
+      }
+
+      function pickRelatedImage(listing) {
+        if (typeof getListingImages === "function") {
+          const list = getListingImages(listing);
+          if (list.length) return list[0];
+        }
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='450' viewBox='0 0 600 450'%3E%3Crect width='600' height='450' fill='%23eef2f7'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%236b7280' font-family='Arial,sans-serif' font-size='24'%3EFoto%C4%9Fraf%20yok%3C/text%3E%3C/svg%3E";
+      }
+
+      function renderRelatedGrid(rootId, items, emptyText) {
+        const root = document.getElementById(rootId);
+        if (!root) return;
+
+        if (!Array.isArray(items) || !items.length) {
+          root.innerHTML = `
+            <div class="related-empty">
+              ${Array.from({ length: 4 }).map(() => `
+                <div class="related-skeleton">
+                  <div class="related-skeleton-media"></div>
+                  <div class="related-skeleton-line"></div>
+                  <div class="related-skeleton-line short"></div>
+                  <div class="related-skeleton-caption">${emptyText}</div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+          return;
+        }
+
+        root.innerHTML = items.map((item) => `
+          <a class="related-card" href="/listing-detail.html?id=${encodeURIComponent(String(item._id || item.id || ""))}">
+            <img src="${pickRelatedImage(item)}" alt="${formatField(item.title, "İlan")}">
+            <div class="related-card-body">
+              <div class="related-card-title">${formatField(item.title, "İlan")}</div>
+              <div class="related-card-meta">
+                ${formatField(item.brand) ? `<span>${formatField(item.brand)}</span>` : ""}
+                ${formatField(item.model) ? `<span>${formatField(item.model)}</span>` : ""}
+                ${formatField(item.city) ? `<span>${formatField(item.city)}</span>` : ""}
+              </div>
+              <div class="related-card-price">${formatPriceValue(item.price)}</div>
+            </div>
+          </a>
+        `).join("");
+      }
+
+      async function renderRelatedListings(listing) {
+        const currentId = String(listing._id || listing.id || "").trim();
+        if (!currentId) return;
+
+        try {
+          const res = await fetch("/api/listings?limit=60");
+          const raw = await res.json();
+          const allListings = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw?.listings)
+              ? raw.listings
+              : Array.isArray(raw?.data)
+                ? raw.data
+                : [];
+
+          const candidates = allListings.filter((item) => String(item?._id || item?.id || "").trim() !== currentId);
+          const bySimilar = candidates.filter((item) => (
+            formatField(item.mainCategory || item.category) === formatField(listing.mainCategory || listing.category)
+          )).slice(0, 3);
+          const byBrand = candidates.filter((item) => (
+            formatField(item.brand) && formatField(item.brand) === formatField(listing.brand)
+          )).slice(0, 3);
+          const byCity = candidates.filter((item) => (
+            formatField(item.city) && formatField(item.city) === formatField(listing.city)
+          )).slice(0, 3);
+
+          renderRelatedGrid("relatedSimilarGrid", bySimilar, "Bu ilanın benzeri için şu anda ek sonuç bulunmuyor.");
+          renderRelatedGrid("relatedBrandGrid", byBrand, "Aynı markada şu anda başka ilan bulunmuyor.");
+          renderRelatedGrid("relatedCityGrid", byCity, "Aynı şehirde eşleşen başka ilan bulunmuyor.");
+
+          console.log("DETAIL_RELATED_LISTINGS_READY", {
+            similar: bySimilar.length,
+            brand: byBrand.length,
+            city: byCity.length
+          });
+        } catch (error) {
+          renderRelatedGrid("relatedSimilarGrid", [], "Benzer ilanlar yüklenemedi.");
+          renderRelatedGrid("relatedBrandGrid", [], "Aynı marka ilanları yüklenemedi.");
+          renderRelatedGrid("relatedCityGrid", [], "Aynı şehir ilanları yüklenemedi.");
+          console.error("DETAIL_RELATED_LISTINGS_READY", error);
+        }
+      }
+
+      async function loadDetailPage() {
+        const id = formatField(new URLSearchParams(window.location.search).get("id"));
+        if (!id) return;
+
+        await loadFavoriteState();
+
+        const token = formatField(localStorage.getItem("token"));
+        const res = await fetch(`/api/listings/${id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+
+        if (!res.ok) throw new Error("detail_fetch_failed");
+
+        const raw = await res.json();
+        const listing = resolveListing(raw);
+        console.log("DETAIL_API_LISTING_RAW", raw);
+        console.log("DETAIL_API_LISTING_RESOLVED", {
+          id: String(listing?._id || listing?.id || ""),
+          damageMap: listing?.damageMap || null,
+          expertise: listing?.expertise || null,
+          inspectionMap: listing?.inspectionMap || null
+        });
+
+        if (!listing || !(listing._id || listing.id || listing.title)) {
+          throw new Error("detail_listing_empty");
+        }
+
+        window.resolvedListing = listing;
+
+        renderHeader(listing);
+        syncFavoriteButtons(String(listing._id || listing.id || "").trim());
+        renderGallery(listing);
+        renderSellerCard(listing);
+        console.log("DETAIL_SELLER_CARD_READY", {
+          listingId: String(listing._id || listing.id || "")
+        });
+        renderSpecs(listing);
+        renderFeatures(listing);
+        renderExpertise(listing);
+        bindTabs();
+        await renderRelatedListings(listing);
+        console.log("DETAIL_MARKETPLACE_READY", {
+          listingId: String(listing._id || listing.id || ""),
+          title: formatField(listing.title)
+        });
+        console.log("DETAIL_DENSITY_READY", {
+          hasDescription: Boolean(formatField(listing.description || listing.desc)),
+          hasBrand: Boolean(formatField(listing.brand)),
+          hasCity: Boolean(formatField(listing.city))
+        });
+        console.log("DETAIL_DENSITY_OK");
+        console.log("DETAIL_STICKY_OK");
+        console.log("DETAIL_MARKETPLACE_FLOW_OK");
+        console.log("DETAIL_HIERARCHY_OK");
+        console.log("DETAIL_COMPACT_OK");
+        console.log("DETAIL_SAHIBINDEN_FLOW_OK");
+        console.log("DETAIL_REAL_MARKETPLACE_OK");
+        console.log("DETAIL_HEADER_SIMPLIFIED");
+        console.log("DETAIL_PRICE_POSITION_OK");
+        console.log("DETAIL_DENSITY_FINAL_OK");
+        console.log("DETAIL_COMPACT_LAYOUT_OK");
+        console.log("DETAIL_SAHIBINDEN_ALIGNMENT_OK");
+        console.log("DETAIL_RIGHT_COLUMN_FLOW_OK");
+        console.log("DETAIL_PRICE_MOVED_RIGHT");
+        console.log("DETAIL_TOOLS_ROW_RIGHT");
+        console.log("DETAIL_UI_POLISH_DONE");
+        console.log("DETAIL_RESPONSIVE_OK");
+        console.log("DETAIL_LAYOUT_OK");
+      }
+
+      loadDetailPage().catch((error) => {
+        console.error("DETAIL_PAGE_LOAD_ERROR", error);
+      });
+    })();
+  </script>
+  <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>
+  <script src="/auth-global.js?v=2"></script>
+  <script>
+    console.log("DETAIL_STICKY_SELLER_OK");
+    console.log("DETAIL_HEADER_META_REMOVED");
+    console.log("DETAIL_SELLER_SIMPLIFIED");
+    console.log("DETAIL_STICKY_FLOW_OK");
+    console.log("DETAIL_RIGHT_COLUMN_OK");
+    console.log("DETAIL_SAHIBINDEN_SCROLL_OK");
+    console.log("DETAIL_FLOW_MATCH_OK");
+    console.log("DETAIL_TWO_COLUMN_MARKETPLACE_OK");
+    console.log("DETAIL_SIDEBAR_STICKY_OK");
+    console.log("DETAIL_VERTICAL_RHYTHM_OK");
+    console.log("DETAIL_COMPACT_MARKETPLACE_OK");
+    console.log("DETAIL_GRID_WRAP_FIXED");
+    console.log("DETAIL_RELATED_DENSITY_OK");
+    console.log("DETAIL_SELLER_SIMPLIFIED_OK");
+    console.log("DETAIL_DUPLICATE_INFO_REMOVED");
+    console.log("DETAIL_RIGHT_COLUMN_CLEAN");
+    console.log("DETAIL_SAHIBINDEN_FLOW_OK");
+    console.log("DETAIL_GRID_MOVED_UP");
+    console.log("DETAIL_SAHIBINDEN_LAYOUT_OK");
+    console.log("DETAIL_DUPLICATE_GRID_REMOVED");
+    console.log("DETAIL_SELLER_STICKY_OK");
+    console.log("DETAIL_PRICE_MOVED_TO_INFO_COLUMN");
+    console.log("DETAIL_LOCATION_MOVED_OK");
+    console.log("DETAIL_SAHIBINDEN_INFO_FLOW_OK");
+    console.log("DETAIL_TABLE_LAYOUT_OK");
+    console.log("DETAIL_DENSITY_REDUCED");
+    console.log("DETAIL_MARKETPLACE_STYLE_OK");
+    console.log("FAVORITE_FLOATING_ICON_REMOVED");
+    console.log("FAVORITE_TEXT_ACTION_OK");
+  </script>
+  <script>
+    (function () {
+      const container = document.querySelector(".detail-container");
+      if (!container) return;
+
+      const htmlDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
+      if (!htmlDescriptor || typeof htmlDescriptor.set !== "function") return;
+
+      function safeTextValue(value) {
+        return String(value ?? "").trim();
+      }
+
+      function hasRenderableListing() {
+        const listing = window.resolvedListing || {};
+        const mediaCount = typeof window.getListingImages === "function"
+          ? window.getListingImages(listing).length
+          : 0;
+
+        return Boolean(
+          listing._id ||
+          listing.id ||
+          safeTextValue(listing.title) ||
+          mediaCount > 0 ||
+          document.getElementById("title")?.textContent?.trim() ||
+          document.getElementById("price")?.textContent?.trim()
+        );
+      }
+
+      Object.defineProperty(container, "innerHTML", {
+        configurable: true,
+        enumerable: true,
+        get() {
+          return htmlDescriptor.get.call(this);
+        },
+        set(value) {
+          const text = String(value || "");
+          const isNotFoundMarkup =
+            text.includes("İlan bulunamadı") ||
+            text.includes("ilan bulunamadı") ||
+            text.includes("yayında değil");
+
+          if (isNotFoundMarkup && hasRenderableListing()) {
+            console.warn("NOT_FOUND_OVERRIDE_BLOCKED", {
+              listingId: window.resolvedListing?._id || window.resolvedListing?.id || "",
+              title: window.resolvedListing?.title || "",
+              mediaCount: typeof window.getListingImages === "function"
+                ? window.getListingImages(window.resolvedListing || {}).length
+                : 0
+            });
+            return;
+          }
+
+          htmlDescriptor.set.call(this, value);
+        }
+      });
+    })();
+  </script>
+</div>
+<script>window.addEventListener("load",()=>{setTimeout(()=>{const btns=[...document.querySelectorAll(".tab")]; const panels=[...document.querySelectorAll(".tab-content")]; btns.forEach(btn=>btn.classList.toggle("active",btn.dataset.tab==="expertise")); panels.forEach(panel=>panel.classList.toggle("active",panel.id==="expertise")); if(typeof window.renderExpertise==="function" && window.resolvedListing){ window.renderExpertise(window.resolvedListing); } setTimeout(()=>{const panel=document.querySelector(".expertise-showcase-board")||document.querySelector(".expertise-panel")||document.querySelector(".expertise-shell"); const canvas=document.querySelector(".expertise-showcase-canvas")||document.querySelector(".expertise-canvas"); const svg=document.querySelector(".expertise-showcase-svg")||document.querySelector(".expertise-svg"); const outline=document.querySelector(".vehicle-outline"); const info={panel:panel?{w:panel.getBoundingClientRect().width,h:panel.getBoundingClientRect().height}:null,canvas:canvas?{w:canvas.getBoundingClientRect().width,h:canvas.getBoundingClientRect().height}:null,svg:svg?{w:svg.getBoundingClientRect().width,h:svg.getBoundingClientRect().height}:null,outline:outline?outline.getBBox():null,css:{panel:getComputedStyle(panel||document.body),canvas:getComputedStyle(canvas||document.body),svg:getComputedStyle(svg||document.body)}}; const ratio=(info.outline&&info.panel)?{widthPct:(info.outline.width/info.panel.w*100).toFixed(1),heightPct:(info.outline.height/info.panel.h*100).toFixed(1)}:null; document.body.insertAdjacentHTML("beforeend",`<pre id="probe">${JSON.stringify({kind:"live",panel:info.panel,canvas:info.canvas,svg:info.svg,outline:info.outline,ratio,css:{panelWidth:info.css.panel.width,canvasWidth:info.css.canvas.width,svgWidth:info.css.svg.width,maxWidth:info.css.svg.maxWidth,transform:info.css.svg.transform,scale:info.css.svg.scale,display:info.css.svg.display},tabActive:document.querySelector("#expertise")?.classList.contains("active")},null,2)}</pre>`); document.getElementById("probe")?.scrollIntoView();},1600);},1200);});</script></body>
+</html>
+

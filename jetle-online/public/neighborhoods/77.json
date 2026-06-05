@@ -1,0 +1,92 @@
+﻿{
+    "cityCode":  "77",
+    "city":  "YALOVA",
+    "districts":  {
+                      "MERKEZ":  [
+                                     "ADNAN MENDERES",
+                                     "BAĞLARBAŞI",
+                                     "BAHÇELİEVLER",
+                                     "BAYRAKTEPE",
+                                     "DERE",
+                                     "FEVZİ ÇAKMAK",
+                                     "GAZİ OSMAN PAŞA",
+                                     "GÜNEYKÖY MÜCAVİR",
+                                     "İSMET PAŞA",
+                                     "KAZIM KARABEKİR",
+                                     "MERKEZ",
+                                     "MUSTAFA KEMAL PAŞA",
+                                     "ÖZDEN",
+                                     "PAŞAKENT",
+                                     "RÜSTEM PAŞA",
+                                     "SANAYİ",
+                                     "SEYRANTEPE",
+                                     "SUGÖREN MÜCAVİR",
+                                     "SÜLEYMAN BEY",
+                                     "SÜPÜRGELİK"
+                                 ],
+                      "ALTINOVA":  [
+                                       "ALTINKENT",
+                                       "CUMHURİYET",
+                                       "DENİZGÖREN",
+                                       "DEVLETYOLU ÜSTÜ",
+                                       "FATİH",
+                                       "HERSEK",
+                                       "HÜRRİYET",
+                                       "KÖY ALTI",
+                                       "KÖY İÇİ ",
+                                       "KÖYÜN KENDİSİ",
+                                       "MERKEZ",
+                                       "ŞEHİTLİK",
+                                       "TERSANELER BÖLGESİ"
+                                   ],
+                      "ARMUTLU":  [
+                                      "50. YIL",
+                                      "BAYIR",
+                                      "HAYRİYE MERKEZ",
+                                      "İHSANİYE",
+                                      "KARŞIYAKA",
+                                      "KÖY MERKEZİ",
+                                      "SULTANİYE",
+                                      "YALI "
+                                  ],
+                      "ÇINARCIK":  [
+                                       "ALİYE HANIM",
+                                       "ATAKENT ",
+                                       "CUMHURİYET",
+                                       "ÇAMLIK",
+                                       "HARMANLAR",
+                                       "HASANBABA",
+                                       "HÜRRİYET",
+                                       "İSTİKLAL",
+                                       "KARPUZDERE",
+                                       "KARŞIYAKA",
+                                       "KÖY İÇİ",
+                                       "LİMAN",
+                                       "MERKEZ",
+                                       "TAŞLİMAN",
+                                       "YALI"
+                                   ],
+                      "ÇİFTLİKKÖY":  [
+                                         "500 EVLER",
+                                         "ÇİFTLİK",
+                                         "GACIK",
+                                         "GÖLLÜ",
+                                         "KILIÇ MERKEZ",
+                                         "KÖYÜN KENDİSİ",
+                                         "MEHMET AKİF ERSOY",
+                                         "MERKEZ",
+                                         "SAHİL",
+                                         "SİTELER",
+                                         "SULTANİYE",
+                                         "TAŞKÖPRÜ MERKEZ",
+                                         "TAŞKÖPRÜ YENİ ",
+                                         "YALOVA İZMİT KARAYOLU",
+                                         "YUKARI"
+                                     ],
+                      "TERMAL":  [
+                                     "GÖKÇEDERE",
+                                     "KÖYİÇİ",
+                                     "ÜVEZPINAR"
+                                 ]
+                  }
+}

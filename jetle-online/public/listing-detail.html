@@ -30,33 +30,134 @@
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 0;
+      gap: 10px;
+      margin-left: auto;
+      min-width: 0;
     }
 
-    .login-btn {
-      font-size: 14px;
+    #authArea {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    #authArea > a,
+    .login-btn,
+    .register-btn,
+    #authArea .panel-link,
+    #authArea .logout-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
       text-decoration: none;
-      color: #333;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
+    #authArea > a:first-child,
+    .login-btn,
+    #authArea .panel-link,
+    #authArea .logout-btn {
+      border-color: #d7e0ec;
+      background: #fff;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    #authArea > a:last-child,
     .register-btn {
-      margin-left: 12px;
-      padding: 8px 14px;
-      border-radius: 8px;
-      background: transparent;
-      border: 1px solid #ddd;
-      font-size: 14px;
-      text-decoration: none;
-      color: #333;
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
     }
 
+    #authArea > a:hover,
+    .login-btn:hover,
+    .register-btn:hover,
+    #authArea .panel-link:hover,
+    #authArea .logout-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #authArea > a:first-child:hover,
+    .login-btn:hover,
+    #authArea .panel-link:hover,
+    #authArea .logout-btn:hover {
+      border-color: #bfcddd;
+      background: #f8fafc;
+      color: #0f172a;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    #authArea > a:last-child:hover,
     .register-btn:hover {
-      border-color: #2563eb;
-      color: #2563eb;
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24);
+    }
+
+    #authArea > a::before,
+    .login-btn::before,
+    .register-btn::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 14px 14px;
+    }
+
+    #authArea > a:first-child::before,
+    .login-btn::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'/%3E%3C/svg%3E");
+    }
+
+    #authArea > a:last-child::before,
+    .register-btn::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632ZM18 8.25h3m-1.5-1.5v3'/%3E%3C/svg%3E");
+    }
+
+    #authArea .auth-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    #authArea .user-name {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 132px;
     }
 
     .post-btn {
-      margin-left: 16px;
+      margin-left: 0;
       padding: 10px 18px;
       background: #2563eb;
       color: #fff;
@@ -700,79 +801,51 @@
     .seller-card {
       display: grid;
       gap: 12px;
+      padding: 15px 16px;
     }
 
     .seller-header {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 9px;
-      margin-bottom: 8px;
-    }
-
-    .seller-avatar {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-      color: #1d4ed8;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 900;
-      flex: 0 0 auto;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
-    }
-
-    .seller-status-dot {
-      display: none;
+      display: grid;
+      gap: 4px;
+      margin-bottom: 0;
     }
 
     .seller-header-main {
       display: grid;
-      gap: 2px;
+      gap: 4px;
       min-width: 0;
-      flex: 1;
     }
 
     .seller-header strong {
-      font-size: 14px;
+      font-size: 19px;
+      font-weight: 800;
       color: #0f172a;
-      line-height: 1.1;
+      line-height: 1.15;
     }
 
-    .seller-presence {
-      display: none;
-    }
-
-    .seller-presence span:last-child,
-    .seller-meta span:last-child,
-    .seller-stat-card:last-child {
-      display: none !important;
+    .seller-role-line {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
     }
 
     .seller-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      align-items: center;
-      margin-bottom: 6px;
+      display: none;
     }
 
     .seller-meta {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
+      gap: 8px;
+      margin-bottom: 0;
       color: #64748b;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
     }
 
     .seller-meta span:first-child,
-    .seller-meta span:last-child,
     .seller-trust-badge,
     .seller-card > .badge,
     .btn-boost {
@@ -832,13 +905,11 @@
     }
 
     .seller-link-row {
-      margin-top: 4px;
+      margin-top: 0;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 6px;
-      font-size: 10px;
-      color: #475569;
+      gap: 0;
     }
 
     .seller-link-row span {
@@ -849,9 +920,13 @@
       color: #2563eb;
       font-weight: 700;
       text-decoration: none;
+      font-size: 12px;
+      line-height: 1.3;
+      transition: color 0.18s ease;
     }
 
     .seller-link-row a:hover {
+      color: #1d4ed8;
       text-decoration: underline;
     }
 
@@ -967,18 +1042,20 @@
     .seller-actions {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 10px;
+      margin-top: 0;
     }
 
     .seller-contact-stack {
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
 
     .seller-phone-panel {
-      display: grid;
-      gap: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       padding: 10px 12px;
       border: 1px solid #dbe4f0;
       border-radius: 10px;
@@ -987,21 +1064,25 @@
 
     .seller-phone-label {
       color: #64748b;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      text-transform: none;
+      letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .seller-phone-value {
-      min-height: 24px;
       display: flex;
       align-items: center;
+      justify-content: flex-end;
+      flex: 1;
       color: #0f172a;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       letter-spacing: 0.02em;
       line-height: 1.2;
+      text-align: right;
+      white-space: nowrap;
     }
 
     .seller-phone-value.is-hidden {
@@ -1020,17 +1101,18 @@
     .owner-visibility-badge {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 8px;
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #c7d2fe;
-      background: #eff6ff;
-      color: #1e3a8a;
-      font-size: 13px;
-      font-weight: 800;
+      width: auto;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.3;
     }
 
     .owner-visibility-badge::before {
@@ -1038,12 +1120,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 999px;
-      background: #2563eb;
-      color: #fff;
-      font-size: 12px;
+      background: #ecfdf3;
+      color: #15803d;
+      font-size: 11px;
       line-height: 1;
       flex: 0 0 auto;
     }
@@ -1555,122 +1637,6 @@
       align-items: start;
     }
 
-    .expertise-shell {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .expertise-vehicle {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-template-areas:
-        ". frontBumper frontBumper ."
-        ". hood hood ."
-        "leftFrontFender hood hood rightFrontFender"
-        "leftFrontDoor roof roof rightFrontDoor"
-        "leftRearDoor roof roof rightRearDoor"
-        "leftRearFender trunk trunk rightRearFender"
-        ". rearBumper rearBumper .";
-      gap: 10px;
-      padding: 20px;
-      border-radius: 20px;
-      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-      border: 1px solid #e2e8f0;
-      position: relative;
-    }
-
-    .expertise-part {
-      min-height: 78px;
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-      background: #e5e7eb;
-      color: #0f172a;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      cursor: default;
-    }
-
-    .expertise-part:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
-    }
-
-    .expertise-part strong {
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .expertise-part span {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .status-original {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .status-painted {
-      background: #fde68a;
-      color: #78350f;
-    }
-
-    .status-changed {
-      background: #fca5a5;
-      color: #7f1d1d;
-    }
-
-    .expertise-legend {
-      display: grid;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .legend-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
-    }
-
-    .legend-card h4 {
-      margin: 0 0 12px;
-      font-size: 15px;
-      color: #0f172a;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: #334155;
-    }
-
-    .legend-item + .legend-item {
-      margin-top: 8px;
-    }
-
-    .legend-swatch {
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      flex: 0 0 auto;
-    }
-
-    .legend-swatch.original { background: #9ca3af; }
-    .legend-swatch.painted { background: #facc15; }
-    .legend-swatch.changed { background: #ef4444; }
-
     .details-box {
       margin-top: 20px;
       background: #fff;
@@ -2015,24 +1981,6 @@
         grid-template-columns: 1fr;
       }
 
-      .expertise-shell {
-        grid-template-columns: 1fr;
-      }
-
-      .expertise-vehicle {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-areas:
-          "frontBumper frontBumper"
-          "hood hood"
-          "leftFrontFender rightFrontFender"
-          "leftFrontDoor rightFrontDoor"
-          "roof roof"
-          "leftRearDoor rightRearDoor"
-          "leftRearFender rightRearFender"
-          "trunk trunk"
-          "rearBumper rearBumper";
-      }
-
       .gallery-modal {
         padding: 12px;
       }
@@ -2095,8 +2043,28 @@
         flex-direction: column;
       }
 
+      .listing-header {
+        gap: 6px;
+        margin-bottom: 8px;
+        min-width: 0;
+      }
+
+      .listing-header-main {
+        min-width: 0;
+      }
+
+      .listing-header h1 {
+        max-width: none;
+        min-width: 0;
+        font-size: clamp(22px, 6vw, 28px);
+        line-height: 1.14;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
       .left-panel {
-        display: contents;
+        display: block;
+        order: 1;
       }
 
       .slider,
@@ -2105,15 +2073,38 @@
         order: 1;
       }
 
+      .slider {
+        height: auto;
+        aspect-ratio: 4 / 3;
+        max-height: none;
+        margin-bottom: 0;
+      }
+
+      .slider img,
+      .main-img {
+        height: 100%;
+        max-height: none;
+      }
+
+      .image-info {
+        margin-top: 2px;
+        margin-bottom: 0;
+        padding: 0 2px 0;
+      }
+
+      #thumbnails {
+        margin-top: 4px;
+      }
+
       .listing-info-box {
         order: 2;
       }
 
-      .detail-tabs-layout {
+      .right-panel {
         order: 3;
       }
 
-      .right-panel {
+      .detail-tabs-layout {
         order: 4;
       }
 
@@ -2122,31 +2113,63 @@
       }
 
       .navbar-inner {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 6px 10px;
-      }
-
-      .logo {
-        order: 1;
-        flex: 0 0 100%;
-      }
-
-      .nav-right {
-        order: 2;
-        width: 100%;
-        margin-left: 0;
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        align-items: center;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "logo actions"
+          "search search";
+        padding-top: 8px;
+        padding-bottom: 8px;
         gap: 4px;
+        align-items: center;
         min-width: 0;
       }
 
+      .logo {
+        grid-area: logo;
+        align-self: center;
+        line-height: 1.05;
+        min-width: 0;
+      }
+
+      .nav-right {
+        grid-area: actions;
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        min-width: 0;
+        flex-wrap: nowrap;
+        margin-top: 0;
+      }
+
       .search {
-        order: 3;
+        grid-area: search;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .search input {
+        height: 42px;
+        border-right: 1px solid #d1d5db;
+        border-radius: 10px;
+      }
+
+      .search button,
+      .primary-btn {
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 10px;
+        width: 100%;
+      }
+
+      .nav-right,
+      #authArea {
+        white-space: nowrap;
       }
 
       #authArea {
@@ -2154,42 +2177,65 @@
         display: flex;
         flex-wrap: nowrap;
         justify-content: flex-end;
-        align-items: center;
-        gap: 4px;
-        flex: 1 1 auto;
+        gap: 5px;
+        flex: 0 0 auto;
         min-width: 0;
+        line-height: 1;
+      }
+
+      .post-btn {
+        display: none;
       }
 
       #authArea span {
-        flex: 0 1 auto;
-        margin: 0;
-        text-align: right;
-        white-space: nowrap;
-        max-width: 72px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 11px;
-        line-height: 1;
-        color: #475569;
+        display: none;
       }
 
       #authArea button,
+      #authArea > a,
+      #authArea .panel-link,
+      #authArea .logout-btn,
       .login-btn,
       .register-btn,
       .post-btn {
-        min-height: 28px;
-        height: 28px;
-        padding: 0 7px;
+        min-height: 32px;
+        height: 32px;
+        padding: 0 10px;
         font-size: 11px;
         line-height: 1;
-        border-radius: 7px;
+        border-radius: 8px;
         margin-left: 0;
         white-space: nowrap;
         flex: 0 0 auto;
       }
 
+      #authArea > a::before,
+      .login-btn::before,
+      .register-btn::before {
+        width: 12px;
+        height: 12px;
+        background-size: 12px 12px;
+      }
+
+      #authArea .user-name {
+        min-height: 32px;
+        padding: 0 10px;
+        font-size: 11px;
+        max-width: 78px;
+      }
+
       .seller-actions {
         width: 100%;
+      }
+
+      .seller-phone-panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .seller-phone-value {
+        justify-content: flex-start;
+        text-align: left;
       }
 
       .owner-actions-grid {
@@ -2589,8 +2635,14 @@
       function preloadImage(src) {
         return new Promise((resolve) => {
           const img = new Image();
-          img.onload = () => resolve({ ok: true, src });
-          img.onerror = () => resolve({ ok: false, src });
+          img.onload = () => {
+            console.log("PRELOAD_SUCCESS", src);
+            resolve({ ok: true, src });
+          };
+          img.onerror = () => {
+            console.log("PRELOAD_ERROR", src);
+            resolve({ ok: false, src });
+          };
           img.src = src;
         });
       }
@@ -2610,7 +2662,7 @@
           });
         }
 
-        return valid;
+        return list;
       }
 
       function updateSelectedThumbs() {
@@ -2629,15 +2681,56 @@
         }
       }
 
+      function logGalleryLayout(stage, extra = {}) {
+        const slider = document.querySelector(".slider");
+        const leftPanel = document.querySelector(".left-panel");
+        const mainImage = document.getElementById("mainImage");
+        const thumbs = document.getElementById("thumbnails");
+        console.log("GALLERY_LAYOUT_METRICS", {
+          stage,
+          slider: slider ? {
+            clientHeight: slider.clientHeight,
+            scrollHeight: slider.scrollHeight,
+            offsetHeight: slider.offsetHeight,
+            inlineStyle: slider.getAttribute("style") || ""
+          } : null,
+          leftPanel: leftPanel ? {
+            clientHeight: leftPanel.clientHeight,
+            scrollHeight: leftPanel.scrollHeight,
+            offsetHeight: leftPanel.offsetHeight,
+            inlineStyle: leftPanel.getAttribute("style") || ""
+          } : null,
+          mainImage: mainImage ? {
+            src: mainImage.currentSrc || mainImage.src || "",
+            clientHeight: mainImage.clientHeight,
+            scrollHeight: mainImage.scrollHeight,
+            offsetHeight: mainImage.offsetHeight,
+            parentScrollHeight: mainImage.parentElement?.scrollHeight ?? null,
+            parentOffsetHeight: mainImage.parentElement?.offsetHeight ?? null
+          } : null,
+          thumbnails: thumbs ? {
+            clientHeight: thumbs.clientHeight,
+            scrollHeight: thumbs.scrollHeight,
+            offsetHeight: thumbs.offsetHeight,
+            inlineStyle: thumbs.getAttribute("style") || ""
+          } : null,
+          ...extra
+        });
+      }
+
       function syncMainImage(src) {
         const { main } = getGalleryElements();
         const noImageText = getNoImageText();
         if (!main) return;
 
         main.onload = () => {
+          console.log("MAIN_IMAGE_LOADED_SRC", main.src);
+          logGalleryLayout("main-onload", { src: main.src });
           if (noImageText) noImageText.style.display = "none";
         };
         main.onerror = () => {
+          console.log("MAIN_IMAGE_ERROR_SRC", main.src);
+          logGalleryLayout("main-onerror", { src: main.src });
           main.removeAttribute("src");
           if (noImageText) noImageText.style.display = "flex";
         };
@@ -2647,7 +2740,9 @@
         main.style.visibility = "visible";
         main.style.opacity = "1";
         main.style.cursor = "zoom-in";
+        logGalleryLayout("before-main-src-set", { src });
         main.src = src;
+        logGalleryLayout("after-main-src-set", { src });
       }
 
       function syncModalImage(src) {
@@ -2706,9 +2801,19 @@
         currentIndex = ((index % media.length) + media.length) % media.length;
         const src = media[currentIndex];
 
+        logGalleryLayout("before-setMainImage", {
+          requestedIndex: index,
+          currentIndex,
+          src
+        });
         syncMainImage(src);
         updateSelectedThumbs();
         preloadAdjacentImages();
+        logGalleryLayout("after-setMainImage", {
+          requestedIndex: index,
+          currentIndex,
+          src
+        });
 
         if (galleryModalOpen) {
           syncModalImage(src);
@@ -2968,16 +3073,9 @@
         listing.fromWho ||
         listing.kimden ||
         (listing.isDealer ? "Yetkili Bayi" : "")
-      ).trim() || "Sahibinden";
-      const sellerActiveText = listing.updatedAt ? `${formatDate(listing.updatedAt)} aktif` : "Bugün aktif";
-      const sellerSeenText = listing.updatedAt ? `Son görülme: ${formatDate(listing.updatedAt)}` : "Son görülme: Bugün";
+      ).trim();
+      const sellerRoleLabel = /kurumsal|bayi/i.test(sellerTypeLabel) ? "Kurumsal Satıcı" : "Bireysel Üye";
       const sellerProfileId = listingUserId || String(user?._id || "");
-      const sellerInitials = (sellerName || "J")
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part.charAt(0).toUpperCase())
-        .join("") || "J";
       console.log("MESSAGE_AUTH_STATE", {
         currentUserId,
         currentUserEmail,
@@ -3014,27 +3112,14 @@
       userBox.innerHTML = `
         <div class="seller-card">
           <div class="seller-header">
-            <div class="seller-avatar" aria-hidden="true">
-              ${sellerInitials}
-              <span class="seller-status-dot"></span>
-            </div>
             <div class="seller-header-main">
               <strong>${sellerName || "Bilinmeyen kullanıcı"}</strong>
-              <div class="seller-presence">
-                <span>${sellerActiveText}</span>
-                <span>${sellerSeenText}</span>
-              </div>
+              <div class="seller-role-line">${sellerRoleLabel}</div>
             </div>
-            ${isVerifiedSeller ? '<span class="badge">Onaylı</span>' : ""}
-          </div>
-          <div class="seller-badges">
-            <span class="seller-type-badge">${sellerTypeLabel}</span>
-            <span class="seller-trust-badge">${isVerifiedSeller ? "Güven Rozeti" : "Aktif Profil"}</span>
           </div>
           <div class="seller-meta">
             <span>${sellerCity}</span>
             <span>Üye: ${sellerCreatedAt ? formatDate(sellerCreatedAt) : "Yeni"}</span>
-            <span>${sellerSeenText}</span>
           </div>
           <div class="seller-stat-grid">
             <div class="seller-stat-card">
@@ -3043,7 +3128,7 @@
             </div>
             <div class="seller-stat-card">
               <span>Satıcı Tipi</span>
-              <strong>${sellerTypeLabel}</strong>
+              <strong>${sellerRoleLabel}</strong>
             </div>
             <div class="seller-stat-card">
               <span>Konum</span>
@@ -3056,12 +3141,11 @@
           </div>
           <div class="seller-link-row">
             <span>Satıcı profilini inceleyin</span>
-            ${sellerProfileId ? `<a href="/profile.html?id=${encodeURIComponent(sellerProfileId)}">Tüm ilanları gör</a>` : `<a href="/listings.html">Tüm ilanları gör</a>`}
+            ${sellerProfileId ? `<a href="/profile.html?id=${encodeURIComponent(sellerProfileId)}">Tüm ilanlarını gör →</a>` : `<a href="/listings.html">Tüm ilanlarını gör →</a>`}
           </div>
           <div class="seller-actions">
             ${canManageListing
               ? `
-                ${isOwner ? '<div class="owner-visibility-badge">Kendi ilanınız</div>' : ''}
                 <div class="owner-actions-grid">
                   <button class="btn-owner-manage" type="button" data-action="edit-listing">İlanı Düzenle</button>
                   ${isListingCurrentlyActive(listing)
@@ -3074,7 +3158,7 @@
                 <div class="seller-contact-stack">
                   <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
                   <div class="seller-phone-panel">
-                    <div class="seller-phone-label">Telefon</div>
+                    <div class="seller-phone-label">Telefon Numarası</div>
                     <div id="sellerPhoneValue" class="seller-phone-value">${formatPhoneNumber(listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor"}</div>
                   </div>
                 </div>
@@ -3625,10 +3709,10 @@
       const expertiseParts = [
         { key: "frontBumper", area: "frontBumper", label: "Ön Tampon", aliases: ["frontBumper", "front_bumper", "onTampon", "önTampon"] },
         { key: "hood", area: "hood", label: "Kaput", aliases: ["hood", "kaput"] },
-        { key: "leftFrontFender", area: "leftFrontFender", label: "Sol Ön Çamurluk", aliases: ["leftFrontFender", "left_front_fender", "solOnCamurluk"] },
-        { key: "rightFrontFender", area: "rightFrontFender", label: "Sağ Ön Çamurluk", aliases: ["rightFrontFender", "right_front_fender", "sagOnCamurluk"] },
-        { key: "leftFrontDoor", area: "leftFrontDoor", label: "Sol Ön Kapı", aliases: ["leftFrontDoor", "left_front_door", "solOnKapi"] },
-        { key: "rightFrontDoor", area: "rightFrontDoor", label: "Sağ Ön Kapı", aliases: ["rightFrontDoor", "right_front_door", "sagOnKapi"] },
+        { key: "leftFrontFender", area: "leftFrontFender", label: "Sol Ön Çamurluk", aliases: ["leftFrontFender", "left_front_fender", "solOnCamurluk", "fender_left"] },
+        { key: "rightFrontFender", area: "rightFrontFender", label: "Sağ Ön Çamurluk", aliases: ["rightFrontFender", "right_front_fender", "sagOnCamurluk", "fender_right"] },
+        { key: "leftFrontDoor", area: "leftFrontDoor", label: "Sol Ön Kapı", aliases: ["leftFrontDoor", "left_front_door", "solOnKapi", "door_left"] },
+        { key: "rightFrontDoor", area: "rightFrontDoor", label: "Sağ Ön Kapı", aliases: ["rightFrontDoor", "right_front_door", "sagOnKapi", "door_right"] },
         { key: "roof", area: "roof", label: "Tavan", aliases: ["roof", "tavan"] },
         { key: "leftRearDoor", area: "leftRearDoor", label: "Sol Arka Kapı", aliases: ["leftRearDoor", "left_rear_door", "solArkaKapi"] },
         { key: "rightRearDoor", area: "rightRearDoor", label: "Sağ Arka Kapı", aliases: ["rightRearDoor", "right_rear_door", "sagArkaKapi"] },
@@ -3637,6 +3721,17 @@
         { key: "trunk", area: "trunk", label: "Bagaj", aliases: ["trunk", "bagaj"] },
         { key: "rearBumper", area: "rearBumper", label: "Arka Tampon", aliases: ["rearBumper", "rear_bumper", "arkaTampon"] }
       ];
+      const directDamageMapKeyMap = {
+        front_bumper: "frontBumper",
+        hood: "hood",
+        roof: "roof",
+        trunk: "trunk",
+        rear_bumper: "rearBumper",
+        fender_left: "leftFrontFender",
+        fender_right: "rightFrontFender",
+        door_left: "leftFrontDoor",
+        door_right: "rightFrontDoor"
+      };
 
       function safeText(value) {
         return String(value ?? "").trim();
@@ -3649,15 +3744,18 @@
 
       function normalizeExpertiseStatus(value) {
         const text = safeText(value).toLocaleLowerCase("tr-TR");
-        if (!text) return "original";
+        if (!text) return "unknown";
         if (text.includes("değ") || text.includes("deg") || text.includes("changed")) return "changed";
-        if (text.includes("boy") || text.includes("paint") || text.includes("lokal") || text.includes("local")) return "painted";
+        if (text.includes("lokal") || text.includes("local")) return "local";
+        if (text.includes("boy") || text.includes("paint")) return "painted";
         return "original";
       }
 
       function expertiseStatusLabel(status) {
         if (status === "changed") return "Değişen";
+        if (status === "local") return "Lokal Boyalı";
         if (status === "painted") return "Boyalı";
+        if (status === "unknown") return "Bilinmiyor";
         return "Orijinal";
       }
 
@@ -3670,6 +3768,18 @@
             output[key] = value;
           });
         });
+        Object.entries(directDamageMapKeyMap).forEach(([rawKey, normalizedKey]) => {
+          if (output[normalizedKey] == null && output[rawKey] != null) {
+            output[normalizedKey] = output[rawKey];
+          }
+        });
+        console.log("DETAIL_EXPERTISE_SOURCE", {
+          listingId: String(listing?._id || listing?.id || ""),
+          expertise: listing?.expertise || null,
+          damageMap: listing?.damageMap || null,
+          inspectionMap: listing?.inspectionMap || null,
+          output
+        });
         return output;
       }
 
@@ -3679,7 +3789,7 @@
             return normalizeExpertiseStatus(raw[alias]);
           }
         }
-        return "original";
+        return "unknown";
       }
 
       function renderDetailTechCards(listing) {
@@ -3719,49 +3829,22 @@
 
       function renderExpertisePanel(listing) {
         const root = document.getElementById("expertise");
+        console.log("DETAIL_EXPERTISE_PANEL_ENTRY", {
+          listingId: String(listing?._id || listing?.id || ""),
+          hasRoot: Boolean(root),
+          rootNode: root,
+          rootHtmlBefore: root ? root.innerHTML : null
+        });
         if (!root) return;
-
-        const raw = collectExpertiseSource(listing || {});
-        const hasAnyValue = Object.keys(raw).some((key) => safeText(raw[key]));
-
-        if (!hasAnyValue) {
-          root.innerHTML = `
-            <div class="section-card-head">
-              <h3>Ekspertiz Bilgisi</h3>
-            </div>
-            <p id="expertiseText">Bu ilan için ekspertiz bilgisi bulunmuyor.</p>
-          `;
-          return;
-        }
-
-        const partsMarkup = expertiseParts.map((part) => {
-          const status = getExpertiseStatus(raw, part.aliases);
-          return `
-            <div class="expertise-part status-${status}" style="grid-area:${part.area}" title="${part.label}: ${expertiseStatusLabel(status)}">
-              <strong>${part.label}</strong>
-              <span>${expertiseStatusLabel(status)}</span>
-            </div>
-          `;
-        }).join("");
 
         root.innerHTML = `
           <div class="section-card-head">
             <h3>Ekspertiz Bilgisi</h3>
           </div>
-          <div class="expertise-shell">
-            <div class="expertise-vehicle">${partsMarkup}</div>
-            <div class="expertise-legend">
-              <div class="legend-card">
-                <h4>Durum Açıklaması</h4>
-                <div class="legend-item"><span class="legend-swatch original"></span><span>Orijinal</span></div>
-                <div class="legend-item"><span class="legend-swatch painted"></span><span>Boyalı</span></div>
-                <div class="legend-item"><span class="legend-swatch changed"></span><span>Değişen</span></div>
-              </div>
-            </div>
-          </div>
+          <p id="expertiseText">Yeni ekspertiz görünümü geliştirme aşamasındadır.</p>
         `;
       }
-
+      window.renderExpertisePanel = renderExpertisePanel;
     })();
   </script>
   <script>
@@ -3934,13 +4017,41 @@
       function bindTabs() {
         const buttons = Array.from(document.querySelectorAll(".tab"));
         const panels = Array.from(document.querySelectorAll(".tab-content"));
-        if (!buttons.length || !panels.length) return;
+        console.log("DETAIL_TABS_BIND_START", {
+          buttonCount: buttons.length,
+          panelCount: panels.length,
+          tabIds: buttons.map((button) => button.dataset.tab),
+          panelIds: panels.map((panel) => panel.id)
+        });
+        if (!buttons.length || !panels.length) {
+          console.log("DETAIL_TABS_BIND_ABORT", {
+            reason: "missing_tabs_or_panels",
+            buttonCount: buttons.length,
+            panelCount: panels.length
+          });
+          return;
+        }
 
         buttons.forEach((button) => {
           button.onclick = () => {
             const tabId = button.dataset.tab;
+            console.log("DETAIL_TAB_CLICK", {
+              tabId,
+              buttonText: String(button.textContent || "").trim()
+            });
             buttons.forEach((item) => item.classList.toggle("active", item === button));
             panels.forEach((panel) => panel.classList.toggle("active", panel.id === tabId));
+            console.log("DETAIL_TAB_ACTIVATION_DONE", {
+              activeTabId: tabId,
+              activePanels: panels.filter((panel) => panel.classList.contains("active")).map((panel) => panel.id)
+            });
+            const currentListing = window.resolvedListing || window.listingData || {};
+            if (tabId === "features") {
+              renderFeatures(currentListing);
+            }
+            if (tabId === "expertise") {
+              renderExpertise(currentListing);
+            }
           };
         });
       }
@@ -3980,9 +4091,18 @@
 
         const topListingLocation = document.getElementById("topListingLocation");
         if (topListingLocation) {
-          topListingLocation.textContent = [formatField(listing.city), formatField(listing.district)]
+          const city = formatField(listing.city);
+          const district = formatField(listing.district);
+          const neighborhood = formatField(listing.neighborhood);
+          const fallbackLocation = formatField(listing.location);
+          const structuredLocation = [city, district, neighborhood]
             .filter(Boolean)
+            .map((value, index, list) => index === list.length - 1 && neighborhood && list.length > 2 ? `${value} Mah.` : value)
             .join(" / ");
+
+          topListingLocation.textContent = neighborhood
+            ? structuredLocation
+            : (fallbackLocation || [city, district].filter(Boolean).join(" / "));
         }
 
         const condition = document.getElementById("condition");
@@ -4078,8 +4198,18 @@
       }
 
       function renderExpertise(listing) {
-        if (typeof renderExpertisePanel === "function") {
-          renderExpertisePanel(listing);
+        const expertiseRenderer = typeof renderExpertisePanel === "function"
+          ? renderExpertisePanel
+          : typeof window.renderExpertisePanel === "function"
+            ? window.renderExpertisePanel
+            : null;
+        console.log("DETAIL_EXPERTISE_RENDER_CALL", {
+          listingId: String(listing?._id || listing?.id || ""),
+          hasRenderExpertisePanel: typeof expertiseRenderer === "function",
+          expertiseContainer: document.getElementById("expertise")
+        });
+        if (typeof expertiseRenderer === "function") {
+          expertiseRenderer(listing);
         }
       }
 
@@ -4178,6 +4308,57 @@
         }
       }
 
+      const mobileDetailOrderQuery = window.matchMedia("(max-width: 768px)");
+      let detailTabsAnchor = null;
+      let marketplaceBlocksAnchor = null;
+
+      function ensureMobileDetailOrderAnchors() {
+        const leftPanel = document.querySelector(".left-panel");
+        const detailTabs = document.querySelector(".detail-tabs-layout");
+        const marketplaceBlocks = document.querySelector(".marketplace-blocks");
+
+        if (leftPanel && detailTabs && !detailTabsAnchor) {
+          detailTabsAnchor = document.createComment("detail-tabs-layout-anchor");
+          leftPanel.insertBefore(detailTabsAnchor, detailTabs);
+        }
+
+        if (leftPanel && marketplaceBlocks && !marketplaceBlocksAnchor) {
+          marketplaceBlocksAnchor = document.createComment("marketplace-blocks-anchor");
+          leftPanel.insertBefore(marketplaceBlocksAnchor, marketplaceBlocks);
+        }
+      }
+
+      function applyMobileDetailOrder() {
+        ensureMobileDetailOrderAnchors();
+
+        const rightPanel = document.querySelector(".right-panel");
+        const detailTabs = document.querySelector(".detail-tabs-layout");
+        const marketplaceBlocks = document.querySelector(".marketplace-blocks");
+        const leftPanel = document.querySelector(".left-panel");
+
+        if (!detailTabs || !marketplaceBlocks || !leftPanel) return;
+
+        if (mobileDetailOrderQuery.matches) {
+          if (rightPanel?.parentNode) {
+            rightPanel.insertAdjacentElement("afterend", detailTabs);
+            detailTabs.insertAdjacentElement("afterend", marketplaceBlocks);
+          }
+          return;
+        }
+
+        if (detailTabsAnchor?.parentNode) {
+          detailTabsAnchor.parentNode.insertBefore(detailTabs, detailTabsAnchor.nextSibling);
+        } else {
+          leftPanel.appendChild(detailTabs);
+        }
+
+        if (marketplaceBlocksAnchor?.parentNode) {
+          marketplaceBlocksAnchor.parentNode.insertBefore(marketplaceBlocks, marketplaceBlocksAnchor.nextSibling);
+        } else {
+          leftPanel.appendChild(marketplaceBlocks);
+        }
+      }
+
       async function loadDetailPage() {
         const id = formatField(new URLSearchParams(window.location.search).get("id"));
         if (!id) return;
@@ -4193,6 +4374,13 @@
 
         const raw = await res.json();
         const listing = resolveListing(raw);
+        console.log("DETAIL_API_LISTING_RAW", raw);
+        console.log("DETAIL_API_LISTING_RESOLVED", {
+          id: String(listing?._id || listing?.id || ""),
+          damageMap: listing?.damageMap || null,
+          expertise: listing?.expertise || null,
+          inspectionMap: listing?.inspectionMap || null
+        });
 
         if (!listing || !(listing._id || listing.id || listing.title)) {
           throw new Error("detail_listing_empty");
@@ -4212,6 +4400,7 @@
         renderExpertise(listing);
         bindTabs();
         await renderRelatedListings(listing);
+        applyMobileDetailOrder();
         console.log("DETAIL_MARKETPLACE_READY", {
           listingId: String(listing._id || listing.id || ""),
           title: formatField(listing.title)
@@ -4240,6 +4429,9 @@
         console.log("DETAIL_RESPONSIVE_OK");
         console.log("DETAIL_LAYOUT_OK");
       }
+
+      mobileDetailOrderQuery.addEventListener("change", applyMobileDetailOrder);
+      applyMobileDetailOrder();
 
       loadDetailPage().catch((error) => {
         console.error("DETAIL_PAGE_LOAD_ERROR", error);

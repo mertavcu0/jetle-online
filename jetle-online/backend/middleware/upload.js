@@ -15,10 +15,30 @@ try {
   sharp = null;
 }
 
-const uploadRoot = path.resolve(__dirname, "..", "..", "..", "uploads");
+const preferredUploadRoot = path.resolve(__dirname, "..", "..", "..", "uploads");
 const legacyUploadRoot = path.resolve(__dirname, "..", "uploads");
-fsSync.mkdirSync(uploadRoot, { recursive: true });
-fsSync.mkdirSync(legacyUploadRoot, { recursive: true });
+
+function canWriteUploadDir(dirPath) {
+  try {
+    fsSync.mkdirSync(dirPath, { recursive: true });
+    fsSync.accessSync(dirPath, fsSync.constants.F_OK | fsSync.constants.W_OK);
+    const testFile = path.join(dirPath, `.upload-write-test-${process.pid}-${Date.now()}.tmp`);
+    fsSync.writeFileSync(testFile, "ok");
+    fsSync.unlinkSync(testFile);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+const uploadCandidates = [legacyUploadRoot, preferredUploadRoot];
+const resolvedUploadRoot = uploadCandidates.find((dirPath) => canWriteUploadDir(dirPath)) || legacyUploadRoot;
+
+console.log("UPLOAD_DIR", resolvedUploadRoot);
+console.log("UPLOAD_DIR_EXISTS", fsSync.existsSync(resolvedUploadRoot));
+console.log("UPLOAD_DIR_WRITE_OK", canWriteUploadDir(resolvedUploadRoot));
+
+const uploadRoot = resolvedUploadRoot;
 
 function getSafeExtension(file) {
   const ext = String(path.extname(file?.originalname || "") || "").toLowerCase();

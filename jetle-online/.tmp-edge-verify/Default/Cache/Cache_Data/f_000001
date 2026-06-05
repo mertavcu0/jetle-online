@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Ver - Jetle</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    html,
+    body.create-v3-page {
+      background: #f3f4f6 !important;
+      color: #0f172a !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    body.create-v3-page::before,
+    body.create-v3-page::after,
+    .create-v3-shell::before,
+    .create-v3-shell::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .create-v3-page {
+      margin: 0;
+      background: #f3f4f6;
+      color: #0f172a;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .create-v3-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid #d8e0e8;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+      backdrop-filter: blur(10px);
+    }
+
+    .create-v3-topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .create-v3-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .create-v3-brand .jetle {
+      color: #2563eb;
+    }
+
+    .create-v3-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .create-v3-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 7px;
+      color: #334155;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .create-v3-nav a:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .create-v3-nav .primary-link {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.14);
+    }
+
+    .create-v3-nav .primary-link:hover {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .create-v3-shell {
+      min-height: 100vh;
+      padding: 4px 12px 14px;
+      position: relative;
+      z-index: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-layout {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 14px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-form-card,
+    .create-v3-preview-wrap {
+      background: #fff;
+      border: 1px solid #e6ebf0;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.035);
+      position: relative;
+      z-index: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .create-v3-form-card {
+      padding: 10px 10px 14px;
+    }
+
+    .create-v3-progress {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .step-progress-item {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      min-height: 58px;
+      padding: 8px 9px;
+      border: 1px solid #d8e0e8;
+      border-radius: 10px;
+      background: #f7f8fa;
+      color: #64748b;
+      opacity: 0.68;
+      transition: opacity 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .step-progress-item::after {
+      content: "";
+      position: absolute;
+      top: 23px;
+      left: calc(100% + 4px);
+      width: 6px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+
+    .step-progress-item:last-child::after {
+      display: none;
+    }
+
+    .step-progress-item span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 27px;
+      height: 27px;
+      border-radius: 999px;
+      background: #dbe2ea;
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .step-progress-item strong {
+      font-size: 11px;
+      line-height: 1.25;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .step-progress-item small {
+      display: none;
+    }
+
+    .step-progress-item.active {
+      opacity: 1;
+      border-color: #3b82f6;
+      background: #f6f9ff;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(59, 130, 246, 0.22);
+    }
+
+    .step-progress-item.active span,
+    .step-progress-item.done span {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .step-progress-item.done {
+      opacity: 0.92;
+      border-color: #c9d8ea;
+      background: #f8fafc;
+    }
+
+    .step-progress-item.done span {
+      font-size: 0;
+      position: relative;
+    }
+
+    .step-progress-item.done span::before {
+      content: "\2713";
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .step-panel {
+      display: none;
+      border: 1px solid #e8edf3;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .step-panel.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-panel[data-step="2"].active {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      justify-items: stretch;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .step-panel h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .step-panel-note {
+      margin: 0 0 8px;
+      color: #6b7280;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .step-panel-note:empty {
+      display: none;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .field-group label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #475569;
+      letter-spacing: 0.01em;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%;
+      border: 1px solid #b7c4d0;
+      border-radius: 6px;
+      background: #fff;
+      color: #0f172a;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.35;
+      padding: 8px 11px;
+      box-sizing: border-box;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .field-group select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 38px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position:
+        calc(100% - 15px) calc(50% - 2px),
+        calc(100% - 10px) calc(50% - 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .field-group input,
+    .field-group select {
+      min-height: 40px;
+    }
+
+    .field-group textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.11);
+    }
+
+    .field-group input:hover,
+    .field-group select:hover,
+    .field-group textarea:hover {
+      border-color: #9fb0c2;
+    }
+
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    .field-group select:disabled,
+    .field-group input:disabled,
+    .field-group textarea:disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: #d7dee7;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    .field-hint {
+      font-size: 9px;
+      color: #6b7280;
+      line-height: 1.3;
+    }
+
+    .field-group.field-muted {
+      padding: 4px;
+      border: 1px solid #d9e1e8;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .field-group.field-muted label {
+      color: #64748b;
+    }
+
+    .field-group.field-muted .field-hint {
+      color: #475569;
+    }
+
+    .field-proxy {
+      display: none !important;
+    }
+
+    #dynamicFields {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      visibility: visible !important;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      margin-bottom: 6px;
+      align-items: start !important;
+      align-content: start !important;
+    }
+
+    #dynamicFields > * {
+      grid-column: 1 / -1;
+      min-width: 0;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    #dynamicFields .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .vehicle-dynamic-shell {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .vehicle-dynamic-primary,
+    .vehicle-dynamic-secondary {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      align-items: start !important;
+    }
+
+    .vehicle-dynamic-primary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vehicle-dynamic-secondary {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding-top: 4px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    #dynamicFields .field-group {
+      gap: 6px;
+    }
+
+    #dynamicFields .field-group label {
+      font-size: 11px;
+    }
+
+    #dynamicFields .field-group input,
+    #dynamicFields .field-group select {
+      min-height: 40px;
+      font-size: 13px;
+    }
+
+    #step2DescriptionField {
+      margin-top: 0 !important;
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .auto-secondary-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .package-field.is-pending {
+      opacity: 0.58;
+    }
+
+    .package-field.is-pending input {
+      background: #f8fafc;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .step-message {
+      min-height: 18px;
+      margin: 8px 0 0;
+      color: #dc2626;
+      font-size: 12px;
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-step {
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .btn-step:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-step-primary {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 5px 10px rgba(37, 99, 235, 0.16);
+    }
+
+    .btn-step-primary:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+
+    .btn-step-secondary {
+      background: #eef2f7;
+      color: #0f172a;
+    }
+
+    .btn-step:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .create-v3-section-block {
+      margin-top: 6px;
+      padding: 5px;
+      border: 1px solid #e1e7ee;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .create-v3-section-block h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .create-v3-section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .create-v3-section-head p {
+      margin: 2px 0 0;
+      font-size: 10px;
+      line-height: 1.3;
+      color: #6b7280;
+    }
+
+    .category-surface,
+    .category-feature-group {
+      display: none;
+    }
+
+    .category-surface.is-active,
+    .category-feature-group.is-active {
+      display: block;
+    }
+
+    .category-surface-stack {
+      display: grid;
+      gap: 6px;
+    }
+
+    .photo-upload-wrap {
+      border: 1px dashed #7f93a8;
+      border-radius: 6px;
+      background: #f9fafb;
+      padding: 8px;
+    }
+
+    .photo-upload-wrap.drag-over {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .photo-drop-label {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      align-items: center;
+    }
+
+    .photo-drop-label::before {
+      content: "+";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .photo-drop-label strong {
+      display: block;
+      font-size: 13px;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .photo-drop-label span {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .photo-input-hidden {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    .create-v3-gallery-placeholders {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .create-v3-gallery-slot {
+      min-height: 52px;
+      border: 1px dashed #c9d3de;
+      border-radius: 6px;
+      background: #f8fafc;
+      display: grid;
+      place-items: center;
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 10px;
+    }
+
+    .preview-item {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #e5e7eb;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .preview-item:first-child::after {
+      content: "Kapak";
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.84);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .preview-item img {
+      display: block;
+      width: 104px;
+      height: 78px;
+      object-fit: cover;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      border: 0;
+      border-radius: 999px;
+      width: 22px;
+      height: 22px;
+      background: rgba(17, 24, 39, 0.82);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .field-group.field-loading select,
+    .field-group.field-loading input {
+      border-color: #93c5fd;
+      background-color: #f8fbff;
+    }
+
+    .field-group.field-loading label::after {
+      content: " • yükleniyor";
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .features-root {
+      margin-top: 8px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .features-page-title {
+      margin: 0;
+      font-size: 19px;
+      color: #0f172a;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .features-block {
+      border: 1px solid #dbe4ee;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.045);
+    }
+
+    .features-block > .damage-panel {
+      padding: 8px;
+    }
+
+    .features-block h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .features-block summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      background: linear-gradient(180deg, #fbfdff 0%, #f8fbff 100%);
+      border-bottom: 1px solid #e8eef5;
+    }
+
+    .features-block summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .features-block summary::after {
+      content: "+";
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .features-block[open] summary::after {
+      content: "\2212";
+    }
+
+    .features-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .feature-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #dbe4ee;
+      border-radius: 8px;
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.25;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    .feature-check:hover {
+      border-color: #bfd0e2;
+      background: #f8fbff;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .feature-check input {
+      accent-color: #2563eb;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    .feature-label {
+      display: block;
+      min-width: 0;
+      color: #1e293b;
+    }
+
+    .category-feature-group.ev-hidden {
+      display: none !important;
+    }
+
+    .damage-panel {
+      display: grid;
+      gap: 8px;
+    }
+
+    .damage-header {
+      display: grid;
+      gap: 5px;
+    }
+
+    .damage-header p {
+      margin: 0;
+      font-size: 10px;
+      line-height: 1.3;
+      color: #6b7280;
+    }
+
+    .damage-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .damage-btn {
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      background: #fff;
+      color: #334155;
+      padding: 4px 7px;
+      font: inherit;
+      font-size: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .damage-btn.active {
+      border-color: #93c5fd;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .car-wrapper {
+      padding: 6px;
+      border-radius: 5px;
+      background: #f8fafc;
+      border: 1px solid #d8e0e8;
+    }
+
+    .damage-parts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .part {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 6px 5px;
+      border-radius: 4px;
+      border: 1px solid #cfd8e3;
+      background: #f3f5f7;
+      color: #334155;
+      font-size: 9px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .part:hover {
+      border-color: #2563eb;
+      background: #eef4ff;
+      transform: translateY(-1px);
+    }
+
+    .part.painted {
+      background: #dbeafe;
+      border-color: #60a5fa;
+      color: #1e40af;
+    }
+
+    .part.changed {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .part.damaged {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+
+    .damage-status-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .damage-status-list span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      font-size: 8.5px;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .damage-status-list span.is-original {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #4b5563;
+    }
+
+    .damage-status-list span.is-painted {
+      background: #dbeafe;
+      border-color: #93c5fd;
+      color: #1e40af;
+    }
+
+    .damage-status-list span.is-damaged {
+      background: #fef3c7;
+      border-color: #fcd34d;
+      color: #92400e;
+    }
+
+    .damage-status-list span.is-changed {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .damage-tooltip {
+      position: fixed;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .create-v3-preview-column {
+      position: sticky;
+      top: 68px;
+      align-self: start;
+    }
+
+    .create-v3-preview-wrap {
+      padding: 12px;
+      margin-top: 0;
+    }
+
+    .create-v3-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .create-v3-preview-wrap h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .preview-listing-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.045);
+    }
+
+    .preview-listing-media {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.12)),
+        linear-gradient(135deg, #eef2f7 0%, #e2e8f0 55%, #d8e0ea 100%);
+    }
+
+    .preview-listing-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-listing-media.is-placeholder img {
+      opacity: 0;
+    }
+
+    .preview-listing-media.is-placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%),
+        linear-gradient(135deg, #e7ebf0 0%, #f1f4f7 50%, #e5e7eb 100%);
+      animation: preview-sheen 2.2s linear infinite;
+    }
+
+    .preview-listing-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.82);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .preview-listing-media::after {
+      content: "Kapak görseli";
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #0f172a;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .preview-listing-body {
+      padding: 7px;
+    }
+
+    .is-placeholder-text {
+      color: #94a3b8 !important;
+    }
+
+    @keyframes preview-sheen {
+      0% { background-position: -180px 0, 0 0; }
+      100% { background-position: 340px 0, 0 0; }
+    }
+
+    .preview-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .preview-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 17px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      color: #334155;
+      font-size: 7.5px;
+      font-weight: 800;
+    }
+
+    .preview-chip.primary {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .preview-listing-title {
+      margin: 0 0 2px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-listing-meta {
+      margin: 0 0 2px;
+      color: #6b7280;
+      font-size: 7.5px;
+      line-height: 1.35;
+    }
+
+    .preview-submeta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin: 0 0 3px;
+      color: #6b7280;
+      font-size: 8px;
+      line-height: 1.35;
+    }
+
+    .preview-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 4px;
+    }
+
+    .preview-status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #eefbf2;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .preview-favorite {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid #d8e0e8;
+      background: #fff;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .preview-listing-price {
+      margin: 0 0 4px;
+      font-size: 30px;
+      font-weight: 900;
+      color: #111827;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .preview-specs {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 3px;
+      margin: 0 0 4px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .preview-spec {
+      min-width: 0;
+      flex: 1 1 25%;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+    }
+
+    .preview-spec strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 7px;
+      color: #64748b;
+    }
+
+    .preview-spec span {
+      font-size: 8.5px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .preview-highlights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px;
+    }
+
+    .preview-feature-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0 0 8px;
+      min-height: 28px;
+    }
+
+    .preview-feature-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      color: #0f172a;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .preview-feature-badge.is-placeholder {
+      color: #94a3b8;
+      border-style: dashed;
+    }
+
+    .preview-highlight {
+      padding: 4px 5px;
+      border-radius: 4px;
+      background: #fafbfd;
+      border: 1px solid #e5e7eb;
+    }
+
+    .preview-highlight strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 9px;
+      color: #475569;
+    }
+
+    .preview-highlight span {
+      font-size: 10px;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    @media (max-width: 1200px) {
+      .create-v3-layout {
+        grid-template-columns: 1fr 350px;
+      }
+
+      .preview-specs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .create-v3-layout {
+        grid-template-columns: 1fr;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .create-v3-preview-column {
+        position: static;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        top: auto !important;
+        order: 2;
+      }
+
+      .create-v3-preview-wrap {
+        max-width: 720px;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: relative !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .create-v3-gallery-placeholders,
+      .features-grid-4,
+      .damage-parts-grid,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary,
+      .auto-secondary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .create-v3-shell,
+      .create-v3-layout,
+      .create-v3-form-card,
+      .step-panel,
+      .step-panel.active,
+      #dynamicFields,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-shell,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .create-v3-layout {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        align-items: start !important;
+      }
+
+      .create-v3-preview-column {
+        position: relative !important;
+        top: auto !important;
+        align-self: auto !important;
+        order: 2;
+      }
+
+      .create-v3-form-card {
+        order: 1;
+        padding-bottom: 18px;
+      }
+
+      .create-v3-topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 14px;
+      }
+
+      .create-v3-nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .create-v3-progress,
+      .form-grid,
+      #dynamicFields,
+      .damage-parts-grid,
+      #dynamicFields .form-grid,
+      .vehicle-dynamic-primary,
+      .vehicle-dynamic-secondary,
+      .auto-secondary-grid,
+      .preview-highlights {
+        grid-template-columns: 1fr;
+      }
+
+      .create-v3-progress {
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .step-progress-item {
+        min-height: 60px;
+        padding: 9px 10px;
+      }
+
+      .preview-specs {
+        flex-wrap: wrap;
+      }
+
+      .preview-spec {
+        flex: 1 1 calc(50% - 4px);
+      }
+
+      .create-v3-form-card,
+      .step-panel,
+      .create-v3-preview-wrap {
+        padding: 14px;
+      }
+
+      .create-v3-preview-wrap {
+        margin-top: 10px;
+      }
+
+      .photo-drop-label {
+        grid-template-columns: 1fr;
+      }
+
+      .step-actions {
+        flex-direction: column;
+      }
+
+      .step-actions .btn-step {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="create-v3-page">
+  <header class="create-v3-topbar">
+    <div class="create-v3-topbar-inner">
+      <a class="create-v3-brand" href="/">
+        <span class="jetle">jetle</span><span>.online</span>
+      </a>
+      <nav class="create-v3-nav" aria-label="Hızlı bağlantılar">
+        <a href="/dashboard.html">Profilim</a>
+        <a href="/messages.html">Mesajlar</a>
+        <a href="/favorites.html">Favoriler</a>
+        <a class="primary-link" href="/create-listing-v3.html">Ücretsiz İlan Ver</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="create-v3-shell">
+    <div class="create-v3-layout">
+      <section class="create-v3-form-card">
+        <div class="create-v3-eyebrow">Güvenli İlan Yayını</div>
+        <div class="create-v3-progress" role="tablist" aria-label="İlan verme adımları">
+          <div class="step-progress-item active" data-step-indicator="1">
+            <span>1</span>
+            <strong>Temel Bilgiler</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item active" data-step-indicator="1">
+            <span>2</span>
+            <strong>Detaylar</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="2">
+            <span>3</span>
+            <strong>Özellikler</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="2">
+            <span>4</span>
+            <strong>Medya</strong>
+            <small></small>
+          </div>
+          <div class="step-progress-item" data-step-indicator="3">
+            <span>5</span>
+            <strong>Yayınla</strong>
+            <small></small>
+          </div>
+        </div>
+
+        <form id="createForm" enctype="multipart/form-data">
+          <div class="step-panel active" data-step="1">
+            <h2>Temel Bilgiler</h2>
+            <p class="step-panel-note"></p>
+
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="category">Kategori</label>
+                <select id="category" name="category">
+                  <option value="">Kategori seçin</option>
+                  <option value="Otomobil">Otomobil</option>
+                  <option value="Emlak">Emlak</option>
+                  <option value="Elektronik">Elektronik</option>
+                </select>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="title">Başlık</label>
+                <input type="text" id="title" name="title" required>
+              </div>
+
+              <div class="field-group">
+                <label for="city">Şehir</label>
+                <select id="city" name="city">
+                  <option value="">Şehir seçin</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="district">İlçe</label>
+                <select id="district" name="district" disabled>
+                  <option value="">Önce şehir seçin</option>
+                </select>
+              </div>
+            </div>
+
+            <p class="step-message" id="step1Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-primary" id="btnStep1Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="2" hidden>
+            <h2>Detaylar</h2>
+            <p class="step-panel-note"></p>
+
+            <div id="dynamicFields"></div>
+
+            <div class="form-grid" id="step2DescriptionField" style="margin-top:12px;">
+              <div class="field-group full-width">
+                <label for="description">Açıklama</label>
+                <textarea id="description" name="description"></textarea>
+              </div>
+            </div>
+
+            <div id="vehicleFields" class="visually-hidden" aria-hidden="true"></div>
+            <div id="ekspertizSection" class="visually-hidden" aria-hidden="true"></div>
+
+            <p class="step-message" id="step2Message"></p>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep2Back">Geri</button>
+              <button type="button" class="btn-step btn-step-primary" id="btnStep2Next">Devam Et</button>
+            </div>
+          </div>
+
+          <div class="step-panel" data-step="3" hidden>
+            <h2>Medya ve Yayın</h2>
+            <p class="step-panel-note"></p>
+
+            <section class="features-root" aria-labelledby="features-heading">
+              <h2 class="features-page-title" id="features-heading">Özellikler</h2>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockDamage" open>
+                <summary><h3>Ekspertiz ve Hasar Haritası</h3></summary>
+                <div class="damage-panel">
+                  <div class="damage-header">
+                    <p>Parça bazlı ekspertiz durumu ilan kartına ve payload yapısına uyumlu şekilde korunur.</p>
+                  </div>
+
+                  <div class="damage-controls">
+                    <button type="button" data-status="orijinal" class="damage-btn active">Orijinal</button>
+                    <button type="button" data-status="boyali" class="damage-btn">Boyalı</button>
+                    <button type="button" data-status="lokal" class="damage-btn">Lokal Boyalı</button>
+                    <button type="button" data-status="degisen" class="damage-btn">Değişen</button>
+                  </div>
+
+                  <div class="car-wrapper">
+                    <div class="damage-parts-grid">
+                      <button type="button" class="part" data-part="hood" data-label="Kaput">Kaput</button>
+                      <button type="button" class="part" data-part="roof" data-label="Tavan">Tavan</button>
+                      <button type="button" class="part" data-part="trunk" data-label="Bagaj">Bagaj</button>
+                      <button type="button" class="part" data-part="leftFrontFender" data-label="Sol Ön Çamurluk">Sol Ön Çamurluk</button>
+                      <button type="button" class="part" data-part="rightFrontFender" data-label="Sağ Ön Çamurluk">Sağ Ön Çamurluk</button>
+                      <button type="button" class="part" data-part="leftRearFender" data-label="Sol Arka Çamurluk">Sol Arka Çamurluk</button>
+                      <button type="button" class="part" data-part="rightRearFender" data-label="Sağ Arka Çamurluk">Sağ Arka Çamurluk</button>
+                    </div>
+                  </div>
+
+                  <div id="damageStatusList" class="damage-status-list"></div>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockSafety" open>
+                <summary><h3>Güvenlik</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_abs"><span class="feature-label">ABS</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_esp"><span class="feature-label">ESP / ESC</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_asr"><span class="feature-label">ASR / Çekiş Kontrol</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hill"><span class="feature-label">Yokuş Kalkış Desteği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_lane"><span class="feature-label">Şerit Takip Asistanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_blind"><span class="feature-label">Kör Nokta Uyarı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_cruise_control"><span class="feature-label">Adaptif Cruise Control</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_collision_avoid"><span class="feature-label">Çarpışma Önleme Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_sign_recognition"><span class="feature-label">Trafik İşareti Tanıma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_tire_pressure"><span class="feature-label">Lastik Basınç Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_airbag"><span class="feature-label">Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_side_airbag"><span class="feature-label">Yan Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_knee_airbag"><span class="feature-label">Diz Hava Yastığı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_isofix"><span class="feature-label">Isofix</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_night_vision"><span class="feature-label">Gece Görüş Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_camera_360"><span class="feature-label">360 Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_front_camera"><span class="feature-label">Ön Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_camera"><span class="feature-label">Arka Kamera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_front_park_sensor"><span class="feature-label">Park Sensörü Ön</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_park_sensor"><span class="feature-label">Park Sensörü Arka</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_park"><span class="feature-label">Otomatik Park Asistanı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockInterior" open>
+                <summary><h3>İç Donanım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_leather"><span class="feature-label">Deri Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fabric_seat"><span class="feature-label">Kumaş Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_electric_seat"><span class="feature-label">Elektrikli Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_memory_seat"><span class="feature-label">Hafızalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_heated"><span class="feature-label">Isıtmalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cooled_seat"><span class="feature-label">Soğutmalı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_massaging_seat"><span class="feature-label">Masajlı Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fold_rear_seat"><span class="feature-label">Katlanır Arka Koltuk</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_armrest"><span class="feature-label">Kol Dayama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_keyless"><span class="feature-label">Anahtarsız Giriş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_startstop"><span class="feature-label">Start/Stop</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hud"><span class="feature-label">Head-Up Display</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_digital_cluster"><span class="feature-label">Dijital Gösterge</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ambient"><span class="feature-label">Ambiyans Aydınlatma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_power_tailgate"><span class="feature-label">Elektrikli Bagaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_wireless_charge"><span class="feature-label">Kablosuz Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_power_windows"><span class="feature-label">Elektrikli Camlar</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_dimming_mirror"><span class="feature-label">Otomatik Kararan Dikiz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_panoramic_glass_roof"><span class="feature-label">Panoramik Cam Tavan</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockExterior" open>
+                <summary><h3>Dış Donanım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_led"><span class="feature-label">LED Far</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_matrix_led"><span class="feature-label">Matrix LED</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_xenon"><span class="feature-label">Xenon Far</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_foglamp"><span class="feature-label">Sis Farı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_roof"><span class="feature-label">Sunroof</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_panoramic_roof"><span class="feature-label">Panoramik Tavan</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_mirror"><span class="feature-label">Elektrikli Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_fold_mirror"><span class="feature-label">Katlanır Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_heated_mirror"><span class="feature-label">Isıtmalı Ayna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_roof_rail"><span class="feature-label">Tavan Rayı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_spoiler"><span class="feature-label">Spoiler</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_bodykit"><span class="feature-label">Body Kit</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_towbar"><span class="feature-label">Çeki Demiri</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_alloy_wheel"><span class="feature-label">Alaşım Jant</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_headlight"><span class="feature-label">Adaptif Far</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockMultimedia" open>
+                <summary><h3>Multimedya</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_carplay"><span class="feature-label">Apple CarPlay</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_android"><span class="feature-label">Android Auto</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_bluetooth"><span class="feature-label">Bluetooth</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_nav"><span class="feature-label">Navigasyon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_usb"><span class="feature-label">USB</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_aux"><span class="feature-label">AUX</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_premium_audio"><span class="feature-label">Premium Ses Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_touchscreen"><span class="feature-label">Dokunmatik Ekran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rear_entertainment"><span class="feature-label">Arka Eğlence Paketi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_tv"><span class="feature-label">TV / Dijital Yayın</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_hotspot"><span class="feature-label">WiFi Hotspot</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockComfort" open>
+                <summary><h3>Konfor</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_digital_climate"><span class="feature-label">Dijital Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_dual_zone_climate"><span class="feature-label">Çift Bölge Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_three_zone_climate"><span class="feature-label">Üç Bölge Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cruise"><span class="feature-label">Cruise Control</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_adaptive_cruise"><span class="feature-label">Adaptif Cruise</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_steering_heat"><span class="feature-label">Direksiyon Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_cooled_glovebox"><span class="feature-label">Soğutmalı Torpido</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_rain_sensor"><span class="feature-label">Yağmur Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_light_sensor"><span class="feature-label">Far Sensörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_auto_trunk"><span class="feature-label">Otomatik Bagaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_electronic_handbrake"><span class="feature-label">Elektronik El Freni</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_drive_modes"><span class="feature-label">Sürüş Modları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_speed_limiter"><span class="feature-label">Hız Limitleyici</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-auto" id="featureBlockEv" open>
+                <summary><h3>Elektrikli Araç Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ac_charge"><span class="feature-label">AC Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_dc_fast"><span class="feature-label">DC Hızlı Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ccs2"><span class="feature-label">CCS2</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_type2"><span class="feature-label">Type2</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_battery_rental"><span class="feature-label">Batarya Kiralama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_heat_pump"><span class="feature-label">Isı Pompası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_regen"><span class="feature-label">Rejeneratif Fren</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_v2l"><span class="feature-label">V2L</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_v2g"><span class="feature-label">V2G</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_battery_preheat"><span class="feature-label">Batarya Ön Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_one_pedal"><span class="feature-label">Tek Pedal Sürüş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_autonomous"><span class="feature-label">Otonom Sürüş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_fsd"><span class="feature-label">FSD</span></label>
+                  <label class="feature-check"><input type="checkbox" id="feat_ev_ota"><span class="feature-label">OTA Güncelleme</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak" open>
+                <summary><h3>Emlak Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_lift"><span>Asansör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_parking"><span>Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_security"><span>Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_cellar"><span>Kiler</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_terrace"><span>Teras</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_generator"><span>Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_pool"><span>Havuz</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-electronic" open>
+                <summary><h3>Elektronik Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_faceid"><span>Face ID</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_touchid"><span>Touch ID</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_fastcharge"><span>Hızlı Şarj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_5g"><span>5G</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_dualsim"><span>Çift SIM</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_nfc"><span>NFC</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_wifi"><span>Wi‑Fi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="elec_feat_bluetooth"><span>Bluetooth</span></label>
+                </div>
+              </details>
+            </section>
+
+            <div class="photo-upload-wrap" id="photoDropZone">
+              <label for="images" class="photo-drop-label">
+                <span>
+                  <strong>Fotoğraf ekle</strong>
+                  <span>İlk görsel kapak olarak kullanılır.</span>
+                </span>
+              </label>
+
+              <input type="file" id="images" name="images" multiple accept="image/*" class="photo-input-hidden">
+              <div id="imagePreview" class="visually-hidden" aria-hidden="true"></div>
+              <div id="preview" class="preview-grid"></div>
+              <div class="create-v3-gallery-placeholders" aria-hidden="true">
+                <div class="create-v3-gallery-slot">Kapak</div>
+                <div class="create-v3-gallery-slot">Galeri 2</div>
+                <div class="create-v3-gallery-slot">Galeri 3</div>
+                <div class="create-v3-gallery-slot">Galeri 4</div>
+              </div>
+            </div>
+
+            <div class="form-grid" style="margin-top:12px;">
+              <div class="field-group">
+                <label for="price">Fiyat</label>
+                <input type="text" id="price" name="price" inputmode="numeric" autocomplete="off">
+              </div>
+              <div class="field-group">
+                <label for="subCategory">Alt kategori</label>
+                <input type="text" id="subCategory" name="subCategory">
+              </div>
+              <div class="field-group full-width">
+                <label for="video">Video</label>
+                <input type="file" id="video" accept="video/*">
+              </div>
+            </div>
+
+            <div id="videoPreview"></div>
+
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-step-secondary" id="btnStep3Back">Geri</button>
+              <button type="submit" class="btn-step btn-step-primary" id="submitBtn">İlanı Yayınla</button>
+            </div>
+            <div id="btnSubmitListing" class="visually-hidden" aria-hidden="true"></div>
+          </div>
+        </form>
+      </section>
+
+      <aside class="create-v3-preview-column" aria-label="Canlı ilan önizlemesi">
+        <div class="create-v3-preview-wrap">
+          <div class="create-v3-preview-head">
+            <h3>Canlı ilan kartı</h3>
+          </div>
+
+          <div class="preview-listing-card">
+            <div class="preview-listing-media">
+              <span class="preview-listing-badge">Vitrin</span>
+              <img id="livePreviewImg" alt="">
+            </div>
+            <div class="preview-listing-body">
+              <div class="preview-badge-row">
+                <span class="preview-chip primary">Vasıta</span>
+                <span class="preview-chip" id="previewLocation"></span>
+                <span class="preview-chip">Bugün</span>
+              </div>
+
+              <p class="preview-listing-title" id="livePreviewTitle">Başlık</p>
+              <p class="preview-listing-meta" id="livePreviewMeta"></p>
+              <div class="preview-submeta">
+                <span id="previewSubLocation"></span>
+                <span id="previewDate">İlan tarihi: Bugün</span>
+              </div>
+              <div class="preview-status-row">
+                <span class="preview-status-pill">İlan yayına hazır</span>
+                <span class="preview-favorite" aria-hidden="true">♡</span>
+              </div>
+              <p class="preview-listing-price" id="livePreviewPrice">Fiyat</p>
+
+              <div class="preview-specs">
+                <div class="preview-spec">
+                  <strong>KM</strong>
+                  <span id="previewKm">KM</span>
+                </div>
+                <div class="preview-spec">
+                  <strong>Yıl</strong>
+                  <span id="previewYear">Yıl</span>
+                </div>
+                <div class="preview-spec">
+                  <strong>Yakıt</strong>
+                  <span id="previewFuel">Yakıt</span>
+                </div>
+                <div class="preview-spec">
+                  <strong>Vites</strong>
+                  <span id="previewTransmission">Vites</span>
+                </div>
+              </div>
+
+              <div class="preview-feature-strip" id="previewFeatureBadges">
+                <span class="preview-feature-badge is-placeholder">Seçilen özellikler burada görünür</span>
+              </div>
+
+              <div class="preview-highlights">
+                <div class="preview-highlight">
+                  <strong>Başlık</strong>
+                  <span id="previewTitle">Başlık</span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Konum</strong>
+                  <span id="previewLocationDetail"></span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Fiyat</strong>
+                  <span id="previewPrice">Fiyat</span>
+                </div>
+                <div class="preview-highlight">
+                  <strong>Durum</strong>
+                  <span>Yayına Hazır</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="damageTooltip" class="damage-tooltip"></div>
+
+  <script src="/cities.js"></script>
+  <script src="/create-listing.js"></script>
+  <script>
+    (function () {
+      const FEATURE_STATE_KEY = "jetle-create-listing-v3-feature-state";
+      const FEATURE_PANEL_KEY = "jetle-create-listing-v3-feature-panels";
+
+      function normalizedCategory() {
+        const category = (document.getElementById("category")?.value || "").trim();
+        if (category === "Otomobil") return "auto";
+        if (category === "Emlak") return "emlak";
+        if (category === "Elektronik") return "electronic";
+        return "";
+      }
+
+      function toggleCategorySurfacesLegacy() {
+        const current = normalizedCategory();
+
+        document.querySelectorAll(".category-surface").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+        });
+
+        document.querySelectorAll(".category-feature-group").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+              input.checked = false;
+            });
+          }
+        });
+
+        const categoryChip = document.querySelector(".preview-chip.primary");
+        if (categoryChip) {
+          categoryChip.textContent =
+            current === "auto" ? "Vasıta" :
+            current === "emlak" ? "Emlak" :
+            current === "electronic" ? "Elektronik" :
+            "İlan";
+        }
+      }
+
+      function text(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function setPlaceholderState(id, active) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle("is-placeholder-text", !!active);
+      }
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? String(el.value || "").trim() : "";
+      }
+
+      function formatPriceLegacy(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+        if (!digits) return "-";
+        return Number(digits).toLocaleString("tr-TR") + " TL";
+      }
+
+      function syncPreviewLegacy() {
+        const titleRaw = val("title");
+        const city = val("city");
+        const district = val("district");
+        const location = [city, district].filter(Boolean).join(" / ");
+        const brand = val("brand");
+        const series = val("series");
+        const model = val("model");
+        const vehicleLine = [brand, series, model].filter(Boolean).join(" ");
+        const title = titleRaw || "İlan başlığı";
+        const km = val("km") || "KM";
+        const year = val("year") || "Yıl";
+        const fuel = val("fuel") || "Yakıt";
+        const transmission = val("transmission") || "Vites";
+        const priceRaw = val("price");
+        const price = formatPrice(priceRaw);
+        const metaLine = [location, vehicleLine].filter(Boolean).join(" • ") || "Kategori / Şehir";
+
+        text("livePreviewTitle", title);
+        text("livePreviewMeta", metaLine);
+        text("livePreviewPrice", price);
+        text("previewTitle", title);
+        text("previewPrice", price);
+        text("previewLocation", location || "Konum");
+        text("previewSubLocation", location || "Şehir / İlçe");
+        text("previewKm", km);
+        text("previewYear", year);
+        text("previewFuel", fuel);
+        text("previewTransmission", transmission);
+
+        setPlaceholderState("livePreviewTitle", !titleRaw);
+        setPlaceholderState("previewTitle", !titleRaw);
+        setPlaceholderState("livePreviewMeta", !location && !vehicleLine);
+        setPlaceholderState("previewLocation", !location);
+        setPlaceholderState("previewSubLocation", !location);
+        setPlaceholderState("livePreviewPrice", !priceRaw);
+        setPlaceholderState("previewPrice", !priceRaw);
+        setPlaceholderState("previewKm", !val("km"));
+        setPlaceholderState("previewYear", !val("year"));
+        setPlaceholderState("previewFuel", !val("fuel"));
+        setPlaceholderState("previewTransmission", !val("transmission"));
+      }
+
+      function markLoading(group) {
+        if (!group) return;
+        group.classList.add("field-loading");
+        window.setTimeout(() => group.classList.remove("field-loading"), 450);
+      }
+
+      function bindLoadingState() {
+        const brand = document.getElementById("brand");
+        const series = document.getElementById("series");
+        const model = document.getElementById("model");
+        if (brand && series && !brand.dataset.loadingBound) {
+          brand.dataset.loadingBound = "true";
+          brand.addEventListener("change", () => {
+            markLoading(series.closest(".field-group"));
+            if (model) markLoading(model.closest(".field-group"));
+          });
+        }
+        if (series && model && !series.dataset.loadingBound) {
+          series.dataset.loadingBound = "true";
+          series.addEventListener("change", () => {
+            markLoading(model.closest(".field-group"));
+          });
+        }
+      }
+
+      function bindPreviewSync() {
+        document.addEventListener("input", (event) => {
+          if (event.target.closest("#createForm") || event.target.closest("#dynamicFields")) {
+            syncPreview();
+            syncElectricFeatureVisibility();
+            renderPreviewFeatureBadges();
+          }
+        });
+        document.addEventListener("change", (event) => {
+          if (event.target.closest("#createForm") || event.target.closest("#dynamicFields")) {
+            syncPreview();
+            bindLoadingState();
+            toggleCategorySurfaces();
+            syncElectricFeatureVisibility();
+            renderPreviewFeatureBadges();
+          }
+        });
+      }
+
+      function bindImageSync() {
+        const imageInput = document.getElementById("images");
+        const livePreviewImg = document.getElementById("livePreviewImg");
+        const mediaWrap = document.querySelector(".preview-listing-media");
+        if (!imageInput || !livePreviewImg) return;
+
+        if (mediaWrap) mediaWrap.classList.add("is-placeholder");
+
+        imageInput.addEventListener("change", () => {
+          const file = imageInput.files && imageInput.files[0];
+          if (!file || !file.type.startsWith("image/")) return;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            livePreviewImg.src = event.target.result;
+            mediaWrap?.classList.remove("is-placeholder");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function bindDamageHover() {
+        document.querySelectorAll(".damage-panel .part").forEach((part) => {
+          part.addEventListener("mouseenter", () => {
+            part.style.filter = "drop-shadow(0 0 6px rgba(37, 99, 235, 0.25))";
+          });
+          part.addEventListener("mouseleave", () => {
+            part.style.filter = "";
+          });
+        });
+      }
+
+      function decorateDamageStatusList() {
+        const list = document.getElementById("damageStatusList");
+        if (!list) return;
+
+        const apply = () => {
+          list.querySelectorAll("span").forEach((item) => {
+            const textValue = (item.textContent || "").toLowerCase();
+            item.classList.remove("is-original", "is-painted", "is-damaged", "is-changed");
+            if (textValue.includes("normal") || textValue.includes("orijinal")) item.classList.add("is-original");
+            else if (textValue.includes("boyal")) item.classList.add("is-painted");
+            else if (textValue.includes("hasarl")) item.classList.add("is-damaged");
+            else if (textValue.includes("değiş") || textValue.includes("degis")) item.classList.add("is-changed");
+          });
+        };
+
+        apply();
+        const observer = new MutationObserver(apply);
+        observer.observe(list, { childList: true, subtree: true, characterData: true });
+      }
+
+      function toggleCategorySurfaces() {
+        const current = normalizedCategory();
+
+        document.querySelectorAll(".category-surface").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"]):not([type="file"]), select, textarea').forEach((field) => {
+              field.value = "";
+            });
+          }
+        });
+
+        document.querySelectorAll(".category-feature-group").forEach((section) => {
+          const active =
+            (current === "auto" && section.classList.contains("category-auto")) ||
+            (current === "emlak" && section.classList.contains("category-emlak")) ||
+            (current === "electronic" && section.classList.contains("category-electronic"));
+          section.classList.toggle("is-active", active);
+          if (!active) {
+            section.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+              input.checked = false;
+            });
+          }
+        });
+
+        const categoryChip = document.querySelector(".preview-chip.primary");
+        if (categoryChip) {
+          categoryChip.textContent =
+            current === "auto" ? "Vasıta" :
+            current === "emlak" ? "Emlak" :
+            current === "electronic" ? "Elektronik" :
+            "İlan";
+        }
+      }
+
+      function formatPrice(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+        if (!digits) return "";
+        return Number(digits).toLocaleString("tr-TR") + " TL";
+      }
+
+      function readStoredList(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function autoFeatureCheckboxes() {
+        return Array.from(document.querySelectorAll(".features-root .category-feature-group.category-auto input[type='checkbox']"));
+      }
+
+      function isElectricVehicleSelection() {
+        return normalizedCategory() === "auto" && /elektr/i.test(val("fuel"));
+      }
+
+      function syncElectricFeatureVisibility() {
+        const block = document.getElementById("featureBlockEv");
+        if (!block) return;
+        const shouldShow = isElectricVehicleSelection();
+        block.classList.toggle("ev-hidden", !shouldShow);
+        block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+          input.disabled = !shouldShow;
+        });
+      }
+
+      function selectedPreviewFeatures() {
+        return autoFeatureCheckboxes()
+          .filter((input) => input.checked && !input.disabled)
+          .map((input) => input.closest("label")?.querySelector(".feature-label")?.textContent.trim() || input.closest("label")?.innerText.trim())
+          .filter(Boolean)
+          .slice(0, 4);
+      }
+
+      function renderPreviewFeatureBadges() {
+        const wrap = document.getElementById("previewFeatureBadges");
+        if (!wrap) return;
+        const features = normalizedCategory() === "auto" ? selectedPreviewFeatures() : [];
+        if (!features.length) {
+          wrap.innerHTML = '<span class="preview-feature-badge is-placeholder">Seçilen özellikler burada görünür</span>';
+          return;
+        }
+        wrap.innerHTML = features.map((feature) => `<span class="preview-feature-badge">${feature}</span>`).join("");
+      }
+
+      function persistFeatureState() {
+        const checkedIds = autoFeatureCheckboxes().filter((input) => input.checked).map((input) => input.id);
+        const openPanels = Array.from(document.querySelectorAll(".features-root details[id]"))
+          .filter((panel) => panel.open)
+          .map((panel) => panel.id);
+        localStorage.setItem(FEATURE_STATE_KEY, JSON.stringify(checkedIds));
+        localStorage.setItem(FEATURE_PANEL_KEY, JSON.stringify(openPanels));
+      }
+
+      function restoreFeatureState() {
+        const checkedIds = new Set(readStoredList(FEATURE_STATE_KEY));
+        const openPanels = new Set(readStoredList(FEATURE_PANEL_KEY));
+
+        autoFeatureCheckboxes().forEach((input) => {
+          input.checked = checkedIds.has(input.id);
+        });
+
+        document.querySelectorAll(".features-root details[id]").forEach((panel) => {
+          if (openPanels.size) panel.open = openPanels.has(panel.id);
+        });
+      }
+
+      function bindFeaturePersistence() {
+        document.addEventListener("change", (event) => {
+          if (event.target.matches(".features-root input[type='checkbox']")) {
+            persistFeatureState();
+            renderPreviewFeatureBadges();
+          }
+        });
+
+        document.querySelectorAll(".features-root details[id]").forEach((panel) => {
+          panel.addEventListener("toggle", persistFeatureState);
+        });
+      }
+
+      function syncPreview() {
+        const titleRaw = val("title");
+        const city = val("city");
+        const district = val("district");
+        const location = [city, district].filter(Boolean).join(" / ");
+        const brand = val("brand");
+        const series = val("series");
+        const model = val("model");
+        const vehicleLine = [brand, series, model].filter(Boolean).join(" ");
+        const title = titleRaw || "Başlık";
+        const km = val("km") || "KM";
+        const year = val("year") || "Yıl";
+        const fuel = val("fuel") || "Yakıt";
+        const transmission = val("transmission") || "Vites";
+        const priceRaw = val("price");
+        const price = formatPrice(priceRaw);
+        const metaLine = [location, vehicleLine].filter(Boolean).join(" • ");
+
+        text("livePreviewTitle", title);
+        text("livePreviewMeta", metaLine);
+        text("livePreviewPrice", price || "Fiyat");
+        text("previewTitle", title);
+        text("previewPrice", price || "Fiyat");
+        text("previewLocation", location || "Konum");
+        text("previewLocationDetail", location || "Şehir / İlçe");
+        text("previewSubLocation", location || "Şehir / İlçe");
+        text("previewKm", km);
+        text("previewYear", year);
+        text("previewFuel", fuel);
+        text("previewTransmission", transmission);
+
+        setPlaceholderState("livePreviewTitle", !titleRaw);
+        setPlaceholderState("previewTitle", !titleRaw);
+        setPlaceholderState("livePreviewMeta", !location && !vehicleLine);
+        setPlaceholderState("previewLocation", !location);
+        setPlaceholderState("previewLocationDetail", !location);
+        setPlaceholderState("previewSubLocation", !location);
+        setPlaceholderState("livePreviewPrice", !priceRaw);
+        setPlaceholderState("previewPrice", !priceRaw);
+        setPlaceholderState("previewKm", !val("km"));
+        setPlaceholderState("previewYear", !val("year"));
+        setPlaceholderState("previewFuel", !val("fuel"));
+        setPlaceholderState("previewTransmission", !val("transmission"));
+      }
+
+      function initRealtimeSurface() {
+        restoreFeatureState();
+        toggleCategorySurfaces();
+        syncElectricFeatureVisibility();
+        syncPreview();
+        renderPreviewFeatureBadges();
+        bindLoadingState();
+        bindPreviewSync();
+        bindImageSync();
+        bindDamageHover();
+        decorateDamageStatusList();
+        bindFeaturePersistence();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initRealtimeSurface);
+      } else {
+        initRealtimeSurface();
+      }
+    })();
+  </script>
+</body>
+</html>

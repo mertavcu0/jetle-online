@@ -11,6 +11,90 @@
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='140'%3E%3Crect fill='%23eef2f7' width='400' height='140'/%3E%3Ctext x='50%25' y='47%25' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-family='sans-serif' font-size='14'%3EFoto%C4%9Fraf%20y%C3%BCklenmedi%3C/text%3E%3C/svg%3E";
 
   const cityData = window.cities || {};
+  const neighborhoodCityCodeMap = {
+    ADANA: "01",
+    ADIYAMAN: "02",
+    AFYONKARAHISAR: "03",
+    AGRI: "04",
+    AMASYA: "05",
+    ANKARA: "06",
+    ANTALYA: "07",
+    ARTVIN: "08",
+    AYDIN: "09",
+    BALIKESIR: "10",
+    BILECIK: "11",
+    BINGOL: "12",
+    BITLIS: "13",
+    BOLU: "14",
+    BURDUR: "15",
+    BURSA: "16",
+    CANAKKALE: "17",
+    CANKIRI: "18",
+    CORUM: "19",
+    DENIZLI: "20",
+    DIYARBAKIR: "21",
+    EDIRNE: "22",
+    ELAZIG: "23",
+    ERZINCAN: "24",
+    ERZURUM: "25",
+    ESKISEHIR: "26",
+    GAZIANTEP: "27",
+    GIRESUN: "28",
+    GUMUSHANE: "29",
+    HAKKARI: "30",
+    HATAY: "31",
+    ISPARTA: "32",
+    MERSIN: "33",
+    ISTANBUL: "34",
+    IZMIR: "35",
+    KARS: "36",
+    KASTAMONU: "37",
+    KAYSERI: "38",
+    KIRKLARELI: "39",
+    KIRSEHIR: "40",
+    KOCAELI: "41",
+    KONYA: "42",
+    KUTAHYA: "43",
+    MALATYA: "44",
+    MANISA: "45",
+    KAHRAMANMARAS: "46",
+    MARDIN: "47",
+    MUGLA: "48",
+    MUS: "49",
+    NEVSEHIR: "50",
+    NIGDE: "51",
+    ORDU: "52",
+    RIZE: "53",
+    SAKARYA: "54",
+    SAMSUN: "55",
+    SIIRT: "56",
+    SINOP: "57",
+    SIVAS: "58",
+    TEKIRDAG: "59",
+    TOKAT: "60",
+    TRABZON: "61",
+    TUNCELI: "62",
+    SANLIURFA: "63",
+    USAK: "64",
+    VAN: "65",
+    YOZGAT: "66",
+    ZONGULDAK: "67",
+    AKSARAY: "68",
+    BAYBURT: "69",
+    KARAMAN: "70",
+    KIRIKKALE: "71",
+    BATMAN: "72",
+    SIRNAK: "73",
+    BARTIN: "74",
+    ARDAHAN: "75",
+    IGDIR: "76",
+    YALOVA: "77",
+    KARABUK: "78",
+    KILIS: "79",
+    OSMANIYE: "80",
+    DUZCE: "81"
+  };
+  const neighborhoodCache = new Map();
 
   function getChecked(name) {
     const el = document.querySelector(`[name="${name}"]`);
@@ -35,6 +119,20 @@
       .replace(/ı/g, "i")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  }
+
+  function normalizeLocationToken(value) {
+    return String(value || "")
+      .trim()
+      .toUpperCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/İ/g, "I")
+      .replace(/I/g, "I")
+      .replace(/ı/g, "I")
+      .replace(/[^A-Z0-9]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function inferMainCategory(...values) {
@@ -115,6 +213,10 @@
   function setVal(name, value) {
     const el = document.querySelector(`[name="${name}"]`) || document.getElementById(name);
     if (!el) return;
+    if (name === "price" || name === "km") {
+      el.value = formatThousands(value);
+      return;
+    }
     el.value = value;
   }
 
@@ -216,6 +318,7 @@
   const titleInput = $("title");
   const cityInput = $("city");
   const districtInput = $("district");
+  const neighborhoodInput = $("neighborhood");
   const descriptionInput = $("description");
   const livePreviewImg = $("livePreviewImg");
   const livePreviewTitle = $("livePreviewTitle");
@@ -271,6 +374,12 @@
 
   function digitsOnly(value) {
     return String(value || "").replace(/\D/g, "");
+  }
+
+  function formatThousands(value) {
+    const digits = digitsOnly(value);
+    if (!digits) return "";
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
   function formatTL(value) {
@@ -400,6 +509,95 @@
     districtInput.innerHTML = districts.length
       ? selectOptions(districts, "İlçe seçin")
       : '<option value="">Önce şehir seçin</option>';
+    resetNeighborhoodSelect();
+  }
+
+  function resetNeighborhoodSelect() {
+    if (!neighborhoodInput) return;
+    neighborhoodInput.disabled = true;
+    neighborhoodInput.innerHTML = '<option value="">Önce ilçe seçin</option>';
+  }
+
+  function getNeighborhoodCityCode(cityName) {
+    return neighborhoodCityCodeMap[normalizeLocationToken(cityName)] || "";
+  }
+
+  function getNormalizedDistrictMap(cityNeighborhoods) {
+    const map = new Map();
+    Object.keys(cityNeighborhoods?.districts || {}).forEach((key) => {
+      map.set(normalizeLocationToken(key), key);
+    });
+    return map;
+  }
+
+  async function loadNeighborhoodsForCity(cityName) {
+    const cityCode = getNeighborhoodCityCode(cityName);
+    if (!cityCode) return null;
+    if (neighborhoodCache.has(cityCode)) {
+      return neighborhoodCache.get(cityCode);
+    }
+
+    try {
+      console.log("LOAD_33_JSON", {
+        cityName,
+        cityCode,
+        fetchUrl: `/neighborhoods/${cityCode}.json`
+      });
+      const response = await fetch(`/neighborhoods/${cityCode}.json`, { cache: "force-cache" });
+      if (!response.ok) throw new Error(`Neighborhood data unavailable for city code ${cityCode}`);
+      const data = await response.json();
+      neighborhoodCache.set(cityCode, data);
+      return data;
+    } catch (err) {
+      console.error("NEIGHBORHOODS_LOAD_ERROR", {
+        city: cityName,
+        cityCode,
+        message: err?.message || String(err)
+      });
+      neighborhoodCache.set(cityCode, null);
+      return null;
+    }
+  }
+
+  async function populateNeighborhoods(preferredValue = "") {
+    if (!neighborhoodInput) return;
+    const city = safeVal("city");
+    const district = safeVal("district");
+    if (!district) {
+      resetNeighborhoodSelect();
+      return;
+    }
+
+    const cityNeighborhoods = await loadNeighborhoodsForCity(city);
+    const normalizedDistrict = normalizeLocationToken(district);
+    const districtKeyMap = getNormalizedDistrictMap(cityNeighborhoods);
+    const foundDistrictKey = districtKeyMap.get(normalizedDistrict) || "";
+    console.log("POPULATE_NEIGHBORHOODS", {
+      city,
+      district,
+      availableDistrictKeys: Object.keys(cityNeighborhoods?.districts || {})
+    });
+    const neighborhoods = foundDistrictKey ? (cityNeighborhoods?.districts?.[foundDistrictKey] || []) : [];
+    console.log("DISTRICT_LOOKUP_RESULT", {
+      district,
+      normalizedDistrict,
+      foundDistrictKey,
+      districtValue: foundDistrictKey ? cityNeighborhoods?.districts?.[foundDistrictKey] : undefined
+    });
+    neighborhoodInput.disabled = !neighborhoods.length;
+    console.log("ENABLE_NEIGHBORHOOD_SELECT", {
+      district,
+      normalizedDistrict,
+      foundDistrictKey,
+      neighborhoodsLength: neighborhoods.length,
+      disabled: neighborhoodInput.disabled
+    });
+    neighborhoodInput.innerHTML = neighborhoods.length
+      ? selectOptions(neighborhoods, "Mahalle seçin")
+      : '<option value="">Önce ilçe seçin</option>';
+    if (preferredValue && neighborhoods.includes(preferredValue)) {
+      setVal("neighborhood", preferredValue);
+    }
   }
 
   function field(id) {
@@ -535,7 +733,7 @@
         </div>
         <div class="field-group" style="display:block; visibility:visible; opacity:1;">
           <label for="km">Kilometre *</label>
-          <input type="number" id="km" name="km" min="0" max="1000000" placeholder="Örn. 84500">
+          <input type="text" id="km" name="km" inputmode="numeric" autocomplete="off" placeholder="Örn. 84.500">
         </div>
         <div class="field-group" style="display:block; visibility:visible; opacity:1;">
           <label for="fuel">Yakıt *</label>
@@ -1508,6 +1706,9 @@
         renderVehicleFields();
       }
     }
+    if (step === 3) {
+      applyEditFeatureSelections();
+    }
     document.querySelectorAll(".step-panel").forEach((panel) => {
       const active = Number(panel.dataset.step) === step;
       panel.classList.toggle("active", active);
@@ -1822,6 +2023,62 @@
     updateStepButtons();
   }
 
+  function normalizeFeatureText(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ı/g, "i")
+      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function featureValuesFromListing(listing) {
+    const sources = [
+      listing?.features,
+      listing?.selectedFeatures,
+      listing?.options,
+      listing?.equipment
+    ];
+
+    return [...new Set(
+      sources
+        .flatMap((value) => Array.isArray(value) ? value : [value])
+        .map((value) => String(value || "").trim())
+        .filter(Boolean)
+    )];
+  }
+
+  function applyEditFeatureSelections() {
+    if (!isEditMode || !editingListing) return;
+
+    const selectedFeatures = featureValuesFromListing(editingListing);
+    const normalizedSelected = new Set(
+      selectedFeatures.map(normalizeFeatureText).filter(Boolean)
+    );
+
+    const featureInputs = Array.from(
+      document.querySelectorAll(".features-root .category-feature-group input[type='checkbox']")
+    );
+
+    let matchedCount = 0;
+    featureInputs.forEach((input) => {
+      const labelText = input.closest("label")?.innerText || "";
+      const shouldCheck = normalizedSelected.has(normalizeFeatureText(labelText));
+      input.checked = shouldCheck;
+      if (shouldCheck) matchedCount += 1;
+    });
+
+    console.log("EDIT_FEATURES_HYDRATE", {
+      listingId: editListingId,
+      selectedCount: selectedFeatures.length,
+      matchedCount,
+      selectedFeatures
+    });
+  }
+
   async function loadEditListingIfNeeded() {
     if (!isEditMode) return;
 
@@ -1856,7 +2113,14 @@
     setVal("city", listing.city || "");
     populateDistricts();
     setVal("district", listing.district || "");
+    await loadNeighborhoodsForCity(listing.city || "");
+    await populateNeighborhoods(listing.neighborhood || "");
     setVal("subCategory", listing.subCategory || "");
+
+    if (categorySelect) {
+      categorySelect.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    applyEditFeatureSelections();
 
     renderImagePreview();
     updateLivePreviewImage();
@@ -1866,9 +2130,14 @@
   }
 
   function collectFeatures() {
-    return Array.from(document.querySelectorAll('.features-root .category-feature-group.is-active input[type="checkbox"]:checked:not(:disabled)'))
+    const features = Array.from(document.querySelectorAll('.features-root .category-feature-group.is-active input[type="checkbox"]:checked:not(:disabled)'))
       .map((input) => input.closest("label")?.innerText.trim())
       .filter(Boolean);
+    console.log("COLLECT_FEATURES_RESULT", {
+      count: features.length,
+      features
+    });
+    return features;
   }
 
   function collectDamageMap() {
@@ -1953,7 +2222,12 @@
       subCategory: subCategory,
       city: safeVal("city"),
       district: safeVal("district"),
-      location: safeVal("district") ? `${safeVal("city")} / ${safeVal("district")}` : safeVal("city"),
+      neighborhood: safeVal("neighborhood"),
+      location: safeVal("neighborhood")
+        ? `${safeVal("city")} / ${safeVal("district")} / ${safeVal("neighborhood")}`
+        : safeVal("district")
+          ? `${safeVal("city")} / ${safeVal("district")}`
+          : safeVal("city"),
       features: selectedFeatures,
       damage: selectedDamage,
       damageMap: collectDamageMap(),
@@ -1966,12 +2240,19 @@
     }, null, 2));
     console.log("CREATE_MAIN_CATEGORY", mainCategory || rawCategory);
     console.log("CREATE_SUBCATEGORY", subCategory);
+    console.log("CREATE_SELECTED_FEATURES", selectedFeatures);
+    console.log("CREATE_PAYLOAD_FEATURES", payload.features);
 
     ["brand", "series", "model", "year", "km", "fuel", "gear", "transmission", "bodyType", "color", "engine", "engineSize", "enginePower", "power", "sellerType", "vehicleCondition", "drivetrain", "torque", "fuelConsumption", "cityFuelConsumption", "highwayFuelConsumption", "combinedFuelConsumption", "emissionStandard", "plate", "hasarKaydi", "warrantyStatus", "isSwapEligibleVehicle", "isCreditEligibleVehicle", "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support", "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel", "fsdSupportVehicle", "hybridType", "rooms", "m2", "age", "floor", "estateType", "dues", "bathrooms", "zoningStatus", "arsaStatus", "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType", "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite", "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible", "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage", "roadOpened", "flatExchangeEligible", "electricInfrastructure", "waterInfrastructure", "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink", "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus", "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth", "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize", "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount", "sensorSize"].forEach((id) => {
       const element = field(id);
       if (element?.disabled) return;
       const value = safeVal(id);
-      if (element && value !== "") payload[id] = element.type === "number" ? Number(value) : value;
+      if (!element || value === "") return;
+      if (id === "km") {
+        payload[id] = Number(digitsOnly(value));
+        return;
+      }
+      payload[id] = element.type === "number" ? Number(value) : value;
     });
 
     if (getChecked("firstOwner")) payload.firstOwner = "Evet";
@@ -2102,16 +2383,23 @@
   document.querySelector('[name="category"]')?.addEventListener("change", toggleEkspertiz);
   toggleEkspertiz();
 
-  if (cityInput) cityInput.addEventListener("change", () => {
+  if (cityInput) cityInput.addEventListener("change", async () => {
     populateDistricts();
+    await loadNeighborhoodsForCity(safeVal("city"));
     updateLivePreview();
     updateStepButtons();
   });
 
-  [titleInput, descriptionInput, priceInput, districtInput].forEach((element) => {
+  if (districtInput) districtInput.addEventListener("change", async () => {
+    await populateNeighborhoods();
+    updateLivePreview();
+    updateStepButtons();
+  });
+
+  [titleInput, descriptionInput, priceInput, districtInput, neighborhoodInput].forEach((element) => {
     element?.addEventListener("input", () => {
       clearError(element);
-      if (element === priceInput) setVal("price", digitsOnly(safeVal("price")));
+      if (element === priceInput) setVal("price", safeVal("price"));
       updateLivePreview();
       updateStepButtons();
     });
@@ -2123,6 +2411,9 @@
 
   document.addEventListener("input", (event) => {
     if (event.target.closest("#dynamicFields")) {
+      if (event.target.id === "km") {
+        setVal("km", event.target.value);
+      }
       clearError(event.target);
       updateLivePreview();
       updateStepButtons();

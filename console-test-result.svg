@@ -1,0 +1,8 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="220">
+  <rect width="100%" height="100%" fill="#111827"/>
+  <text x="24" y="44" fill="#f9fafb" font-family="Consolas, monospace" font-size="22">
+    <tspan x="24" dy="0">Console boş.</tspan>
+    <tspan x="24" dy="34">Hard reload sonrası in-app browser create ekranına değil login.html sayfasına düştü.</tspan>
+    <tspan x="24" dy="34">Bu yüzden step 2 / dynamicFields test akışı bu oturumda ilerlemedi.</tspan>
+  </text>
+</svg>

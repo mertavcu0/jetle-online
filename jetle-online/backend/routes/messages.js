@@ -114,7 +114,9 @@ async function getUserFromToken(req) {
     const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
     if (!token) return null;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "jetle-dev-secret");
+    const jwtSecret = String(process.env.JWT_SECRET || "").trim();
+    if (!jwtSecret) return null;
+    const decoded = jwt.verify(token, jwtSecret);
     if (!decoded?.id || !isValidObjectId(decoded.id)) return null;
 
     return await User.findById(decoded.id).select("_id name email role username");

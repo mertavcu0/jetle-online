@@ -73,7 +73,7 @@ function hashResetToken(token) {
 }
 
 function getJwtSecret() {
-  return String(process.env.JWT_SECRET || "jetle-dev-secret").trim();
+  return String(process.env.JWT_SECRET || "").trim();
 }
 
 function signAuthToken(user) {

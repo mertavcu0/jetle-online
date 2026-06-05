@@ -71,7 +71,7 @@ if (!hasMongoUri && isProduction) {
 }
 
 if (!hasJwtSecret && !isProduction) {
-  console.warn("WARN JWT_SECRET missing; using development fallback.");
+  console.warn("WARN JWT_SECRET missing.");
 }
 
 if (!hasMongoUri && !isProduction) {
@@ -382,7 +382,11 @@ async function getSocketUser(socket) {
     throw new Error("unauthorized");
   }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET || "jetle-dev-secret");
+  const jwtSecret = String(process.env.JWT_SECRET || "").trim();
+  if (!jwtSecret) {
+    throw new Error("unauthorized");
+  }
+  const decoded = jwt.verify(token, jwtSecret);
   if (!decoded?.id || !isValidObjectId(decoded.id)) {
     throw new Error("unauthorized");
   }
@@ -807,9 +811,9 @@ app.use("/jetle-v2", express.static(path.join(__dirname, "../jetle-v2"), {
   }
 }));
 const uploadRoots = [
-  upload.uploadRoot,
-  upload.legacyUploadRoot
-].filter(Boolean);
+  path.resolve(__dirname, "..", "..", "uploads"),
+  path.resolve(__dirname, "uploads")
+].filter((uploadRootPath, index, roots) => uploadRootPath && roots.indexOf(uploadRootPath) === index);
 
 uploadRoots.forEach((uploadRootPath, index) => {
   if (index === 0) {
@@ -818,6 +822,17 @@ uploadRoots.forEach((uploadRootPath, index) => {
       legacyFallbacks: uploadRoots.slice(1)
     });
   }
+  app.use("/uploads", (req, res, next) => {
+    console.log("UPLOAD_ROUTE_HIT", req.path);
+    const relativePath = String(req.path || "").replace(/^\/+/, "");
+    const resolvedPhysicalPath = path.join(uploadRootPath, relativePath);
+    console.log("UPLOAD_ROUTE_HIT", {
+      reqPath: req.path,
+      resolvedPhysicalPath,
+      exists: fs.existsSync(resolvedPhysicalPath)
+    });
+    next();
+  });
   app.use("/uploads", express.static(uploadRootPath, {
     setHeaders(res, filePath) {
       const ext = path.extname(filePath).toLowerCase();
@@ -869,6 +884,7 @@ app.get("/", (req, res) => {
 
 // index.html fallback
 app.use((req, res, next) => {
+  console.log("CATCH_ALL_HIT", req.path);
   if (req.path.startsWith("/api/")) {
     return next();
   }

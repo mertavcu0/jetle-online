@@ -1,0 +1,4497 @@
+? injected env (1) from jetle-online\backend\.env // tip: ? encrypted .env [www.dotenvx.com]
+? injected env (0) from .env // tip: ? auth for agents [www.vestauth.com]
+START DEV SERVER
+DB CONNECT OK
+USER ROLE MIGRATION: clean
+DEV ADMIN READY babacandir@gmail.com
+ACTIVE_SERVER_INSTANCE 1779814539392
+START HTTP 3000
+STATIC_REQUEST /create-listing-v3.html
+STATIC_REQUEST /
+STATIC_REQUEST /login.html
+REQ GET / 200 5ms
+REQ GET /login.html 200 6ms
+REQ GET /create-listing-v3.html 200 13ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 200 3ms
+STATIC_REQUEST /style.css
+STATIC_REQUEST /cities.js
+STATIC_REQUEST /create-listing.js
+REQ GET /style.css 200 4ms
+REQ GET /cities.js 200 4ms
+REQ GET /create-listing.js 200 4ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 200 4ms
+REQ GET /api/cars 200 661ms
+STATIC_REQUEST /
+REQ GET / 200 5ms
+STATIC_REQUEST /style.css?v=2
+REQ GET /style.css?v=2 200 2ms
+STATIC_REQUEST /auth-global.js?v=2
+REQ GET /auth-global.js?v=2 200 2ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 200 4ms
+REQ GET /api/listings 200 219ms
+REQ GET /api/listings?featured=true 200 202ms
+REQ GET /api/listings?showcase=true 200 226ms
+REQ GET /api/listings?normal=true 200 224ms
+STATIC_REQUEST /
+REQ GET / 304 14ms
+STATIC_REQUEST /auth-global.js?v=2
+STATIC_REQUEST /style.css?v=2
+REQ GET /auth-global.js?v=2 304 3ms
+REQ GET /style.css?v=2 304 1ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 4ms
+REQ GET /api/listings?showcase=true 304 246ms
+REQ GET /api/listings 304 248ms
+REQ GET /api/listings?normal=true 304 273ms
+REQ GET /api/listings?featured=true 304 252ms
+STATIC_REQUEST /
+REQ GET / 304 3ms
+STATIC_REQUEST /style.css?v=2
+STATIC_REQUEST /auth-global.js?v=2
+REQ GET /style.css?v=2 304 1ms
+REQ GET /auth-global.js?v=2 304 2ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 3ms
+REQ GET /api/listings?featured=true 304 346ms
+REQ GET /api/listings?showcase=true 304 354ms
+REQ GET /api/listings?normal=true 304 359ms
+REQ GET /api/listings 304 363ms
+STATIC_REQUEST /create-listing.html
+REQ GET /create-listing.html 304 2ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /cities.js
+STATIC_REQUEST /create-listing.js
+STATIC_REQUEST /style.css
+REQ GET /cities.js 304 4ms
+REQ GET /create-listing.js 304 3ms
+REQ GET /style.css 304 3ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 1ms
+REQ GET /api/cars 304 2487ms
+STATIC_REQUEST /dashboard.html
+REQ GET /dashboard.html 304 2ms
+STATIC_REQUEST /style.css
+REQ GET /style.css 304 1ms
+STATIC_REQUEST /auth-global.js
+STATIC_REQUEST /dashboard.js
+REQ GET /dashboard.js 304 2ms
+REQ GET /auth-global.js 200 6ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+REQ GET /api/listings/my-listings 200 254ms
+STATIC_REQUEST /uploads/1779470039113-8491570.png
+REQ GET /uploads/1779470039113-8491570.png 200 3ms
+STATIC_REQUEST /listing-detail.html?id=6a108ed7ae2f310a3a33ff43
+REQ GET /listing-detail.html?id=6a108ed7ae2f310a3a33ff43 304 2ms
+STATIC_REQUEST /style.css?v=2
+REQ GET /style.css?v=2 304 1ms
+STATIC_REQUEST /auth-global.js?v=2
+REQ GET /auth-global.js?v=2 304 1ms
+DETAIL_ROUTE_ENTRY { id: '6a108ed7ae2f310a3a33ff43' }
+LISTING_ROUTE_MIDDLEWARE_STAGE detail_route_start
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 1ms
+LISTING_ROUTE_MIDDLEWARE_STAGE after_findById_populate
+DETAIL_VISIBILITY_VALUES { status: 'approved', approved: false, isActive: true }
+DETAIL_VISIBILITY_CHECK {
+  "id": "6a108ed7ae2f310a3a33ff43",
+  "approved": false,
+  "status": "approved",
+  "isActive": true,
+  "hasApprovedField": true,
+  "hasStatusField": true,
+  "hasIsActiveField": true,
+  "isLegacyListing": false,
+  "publicVisible": true,
+  "isActiveExplicitFalse": false,
+  "isRejected": false,
+  "isPending": false,
+  "isDraft": false
+}
+DETAIL_VISIBILITY_RESULT {
+  id: '6a108ed7ae2f310a3a33ff43',
+  isExplicitlyBlocked: false,
+  isLegacyListing: false,
+  isPubliclyVisible: true
+}
+DETAIL_PUBLIC_ALLOWED {
+  id: '6a108ed7ae2f310a3a33ff43',
+  status: 'approved',
+  approved: false,
+  isActive: true,
+  isLegacyListing: false
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE before_toObject
+{
+  listingId: '6a108ed7ae2f310a3a33ff43',
+  status: 'approved',
+  userRole: null,
+  allowPending: true
+}
+DETAIL_REQUEST_INSTANCE 1779817772263
+DB_RAW_LISTING {
+  approved: false,
+  isShowcase: false,
+  _id: new ObjectId('6a108ed7ae2f310a3a33ff43'),
+  listingNo: '218767365',
+  title: 'hjghjghhgj',
+  description: '5665656565',
+  desc: '5665656565',
+  price: 5655555,
+  views: 10,
+  location: 'Adana / Aladað',
+  city: 'Adana',
+  district: 'Aladað',
+  category: 'Otomobil',
+  subCategory: 'Otomobil',
+  brand: 'Acura',
+  series: 'CDX',
+  model: 'CDX',
+  year: 56565635,
+  km: 56565,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Hatchback',
+  color: 'Siyah',
+  engine: '1.5',
+  engineSize: '1.5',
+  enginePower: '56565',
+  damage: [
+    'hood:local',
+    'trunk:painted',
+    'leftFrontFender:local',
+    'rightFrontFender:painted',
+    'leftRearFender:painted'
+  ],
+  sellerType: 'Galeriden',
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png',
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ABS',
+    'ESP / ESC',
+    'Kör Nokta Uyarý',
+    'Trafik Ýþareti Tanýma',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Arka',
+    'Deri Koltuk',
+    'Masajlý Koltuk',
+    'Anahtarsýz Giriþ',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'Otomatik Kararan Dikiz',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Alaþým Jant',
+    'AUX',
+    'Dokunmatik Ekran',
+    'Arka Eðlence Paketi',
+    'Dijital Klima',
+    'Soðutmalý Torpido',
+    'Sürüþ Modlarý'
+  ],
+  damageMap: {
+    hood: 'local',
+    roof: 'original',
+    trunk: 'painted',
+    leftFrontFender: 'local',
+    rightFrontFender: 'painted',
+    leftRearFender: 'painted',
+    rightRearFender: 'original'
+  },
+  status: 'approved',
+  isFeatured: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: true,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-21T17:13:59.359Z,
+  createdAt: 2026-05-22T17:13:59.359Z,
+  __v: 0
+}
+DB_TO_OBJECT {
+  approved: false,
+  isShowcase: false,
+  _id: new ObjectId('6a108ed7ae2f310a3a33ff43'),
+  listingNo: '218767365',
+  title: 'hjghjghhgj',
+  description: '5665656565',
+  desc: '5665656565',
+  price: 5655555,
+  views: 10,
+  location: 'Adana / Aladað',
+  city: 'Adana',
+  district: 'Aladað',
+  category: 'Otomobil',
+  subCategory: 'Otomobil',
+  brand: 'Acura',
+  series: 'CDX',
+  model: 'CDX',
+  year: 56565635,
+  km: 56565,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Hatchback',
+  color: 'Siyah',
+  engine: '1.5',
+  engineSize: '1.5',
+  enginePower: '56565',
+  damage: [
+    'hood:local',
+    'trunk:painted',
+    'leftFrontFender:local',
+    'rightFrontFender:painted',
+    'leftRearFender:painted'
+  ],
+  sellerType: 'Galeriden',
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png',
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ABS',
+    'ESP / ESC',
+    'Kör Nokta Uyarý',
+    'Trafik Ýþareti Tanýma',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Arka',
+    'Deri Koltuk',
+    'Masajlý Koltuk',
+    'Anahtarsýz Giriþ',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'Otomatik Kararan Dikiz',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Alaþým Jant',
+    'AUX',
+    'Dokunmatik Ekran',
+    'Arka Eðlence Paketi',
+    'Dijital Klima',
+    'Soðutmalý Torpido',
+    'Sürüþ Modlarý'
+  ],
+  damageMap: {
+    hood: 'local',
+    roof: 'original',
+    trunk: 'painted',
+    leftFrontFender: 'local',
+    rightFrontFender: 'painted',
+    leftRearFender: 'painted',
+    rightRearFender: 'original'
+  },
+  status: 'approved',
+  isFeatured: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: true,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-21T17:13:59.359Z,
+  createdAt: 2026-05-22T17:13:59.359Z,
+  __v: 0
+}
+DETAIL_DB_LISTING_RAW {
+  "approved": false,
+  "isShowcase": false,
+  "_id": "6a108ed7ae2f310a3a33ff43",
+  "listingNo": "218767365",
+  "title": "hjghjghhgj",
+  "description": "5665656565",
+  "desc": "5665656565",
+  "price": 5655555,
+  "views": 10,
+  "location": "Adana / Aladað",
+  "city": "Adana",
+  "district": "Aladað",
+  "category": "Otomobil",
+  "subCategory": "Otomobil",
+  "brand": "Acura",
+  "series": "CDX",
+  "model": "CDX",
+  "year": 56565635,
+  "km": 56565,
+  "fuel": "Benzin",
+  "transmission": "Manuel",
+  "bodyType": "Hatchback",
+  "color": "Siyah",
+  "engine": "1.5",
+  "engineSize": "1.5",
+  "enginePower": "56565",
+  "damage": [
+    "hood:local",
+    "trunk:painted",
+    "leftFrontFender:local",
+    "rightFrontFender:painted",
+    "leftRearFender:painted"
+  ],
+  "sellerType": "Galeriden",
+  "image": "/uploads/1779470039113-8491570.png",
+  "coverImage": "/uploads/1779470039113-8491570.png",
+  "mainImage": "/uploads/1779470039113-8491570.png",
+  "images": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "gallery": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "photos": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "features": [
+    "ABS",
+    "ESP / ESC",
+    "Kör Nokta Uyarý",
+    "Trafik Ýþareti Tanýma",
+    "Lastik Basýnç Sensörü",
+    "Yan Hava Yastýðý",
+    "360 Kamera",
+    "Arka Kamera",
+    "Park Sensörü Arka",
+    "Deri Koltuk",
+    "Masajlý Koltuk",
+    "Anahtarsýz Giriþ",
+    "Elektrikli Bagaj",
+    "Kablosuz Þarj",
+    "Otomatik Kararan Dikiz",
+    "Isýtmalý Ayna",
+    "Tavan Rayý",
+    "Alaþým Jant",
+    "AUX",
+    "Dokunmatik Ekran",
+    "Arka Eðlence Paketi",
+    "Dijital Klima",
+    "Soðutmalý Torpido",
+    "Sürüþ Modlarý"
+  ],
+  "damageMap": {
+    "hood": "local",
+    "roof": "original",
+    "trunk": "painted",
+    "leftFrontFender": "local",
+    "rightFrontFender": "painted",
+    "leftRearFender": "painted",
+    "rightRearFender": "original"
+  },
+  "status": "approved",
+  "isFeatured": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": true,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": {
+    "resetPasswordToken": "",
+    "resetPasswordExpire": null,
+    "_id": "69ff967f286137d9def2c362",
+    "email": "babacandir@gmail.com",
+    "__v": 2,
+    "badges": [],
+    "banned": false,
+    "createdAt": "2026-05-09T20:18:06.587Z",
+    "favorites": [],
+    "name": "Admin",
+    "password": "$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe",
+    "role": "admin",
+    "city": "",
+    "district": "",
+    "isVerified": false,
+    "phone": "",
+    "updatedAt": "2026-05-21T20:39:44.297Z",
+    "username": "",
+    "verifiedBadge": false
+  },
+  "favorites": [],
+  "expiresAt": "2026-06-21T17:13:59.359Z",
+  "createdAt": "2026-05-22T17:13:59.359Z",
+  "__v": 0
+}
+PRE_RESPONSE_OBJECT {
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png'
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE response_listing_built
+FINAL_RESPONSE_OBJECT {
+  approved: false,
+  isShowcase: false,
+  _id: new ObjectId('6a108ed7ae2f310a3a33ff43'),
+  listingNo: '218767365',
+  title: 'hjghjghhgj',
+  description: '5665656565',
+  desc: '5665656565',
+  price: 5655555,
+  views: 10,
+  location: 'Adana / Aladað',
+  city: 'Adana',
+  district: 'Aladað',
+  category: 'Otomobil',
+  subCategory: 'Otomobil',
+  brand: 'Acura',
+  series: 'CDX',
+  model: 'CDX',
+  year: 56565635,
+  km: 56565,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Hatchback',
+  color: 'Siyah',
+  engine: '1.5',
+  engineSize: '1.5',
+  enginePower: '56565',
+  damage: [
+    'hood:local',
+    'trunk:painted',
+    'leftFrontFender:local',
+    'rightFrontFender:painted',
+    'leftRearFender:painted'
+  ],
+  sellerType: 'Galeriden',
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png',
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ABS',
+    'ESP / ESC',
+    'Kör Nokta Uyarý',
+    'Trafik Ýþareti Tanýma',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Arka',
+    'Deri Koltuk',
+    'Masajlý Koltuk',
+    'Anahtarsýz Giriþ',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'Otomatik Kararan Dikiz',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Alaþým Jant',
+    'AUX',
+    'Dokunmatik Ekran',
+    'Arka Eðlence Paketi',
+    'Dijital Klima',
+    'Soðutmalý Torpido',
+    'Sürüþ Modlarý'
+  ],
+  damageMap: {
+    hood: 'local',
+    roof: 'original',
+    trunk: 'painted',
+    leftFrontFender: 'local',
+    rightFrontFender: 'painted',
+    leftRearFender: 'painted',
+    rightRearFender: 'original'
+  },
+  status: 'approved',
+  isFeatured: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: true,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-21T17:13:59.359Z,
+  createdAt: 2026-05-22T17:13:59.359Z,
+  __v: 0,
+  seller: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  }
+}
+DETAIL_ROUTE_RESULT {
+  id: new ObjectId('6a108ed7ae2f310a3a33ff43'),
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png'
+}
+FINAL_ROUTE_RESPONSE {
+  id: new ObjectId('6a108ed7ae2f310a3a33ff43'),
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png'
+}
+LIVE_DETAIL_RESPONSE {
+  "id": "6a108ed7ae2f310a3a33ff43",
+  "images": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "photos": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "gallery": [
+    "/uploads/1779470039113-8491570.png",
+    "/uploads/1779470039121-387789367.png",
+    "/uploads/1779470039134-391646745.png",
+    "/uploads/1779470039139-162095688.png",
+    "/uploads/1779470039140-54564506.png",
+    "/uploads/1779470039146-87697768.png",
+    "/uploads/1779470039156-405965625.png",
+    "/uploads/1779470039157-445283413.png",
+    "/uploads/1779470039159-69281224.png",
+    "/uploads/1779470039163-355773953.png",
+    "/uploads/1779470039171-426580805.png"
+  ],
+  "image": "/uploads/1779470039113-8491570.png",
+  "coverImage": "/uploads/1779470039113-8491570.png",
+  "mainImage": "/uploads/1779470039113-8491570.png"
+}
+FINAL_ROUTE_RESPONSE_KEYS [
+  'approved',   'isShowcase',     '_id',
+  'listingNo',  'title',          'description',
+  'desc',       'price',          'views',
+  'location',   'city',           'district',
+  'category',   'subCategory',    'brand',
+  'series',     'model',          'year',
+  'km',         'fuel',           'transmission',
+  'bodyType',   'color',          'engine',
+  'engineSize', 'enginePower',    'damage',
+  'sellerType', 'image',          'coverImage',
+  'mainImage',  'images',         'gallery',
+  'photos',     'imagePublicIds', 'uploadProvider',
+  'features',   'damageMap',      'status',
+  'isFeatured', 'isBoosted',      'isPremium',
+  'isActive',   'isDeleted',      'isSuspicious',
+  'user',       'favorites',      'expiresAt',
+  'createdAt',  '__v',            'seller'
+]
+FINAL_RESPONSE_MEDIA {
+  images: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  gallery: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  photos: [
+    '/uploads/1779470039113-8491570.png',
+    '/uploads/1779470039121-387789367.png',
+    '/uploads/1779470039134-391646745.png',
+    '/uploads/1779470039139-162095688.png',
+    '/uploads/1779470039140-54564506.png',
+    '/uploads/1779470039146-87697768.png',
+    '/uploads/1779470039156-405965625.png',
+    '/uploads/1779470039157-445283413.png',
+    '/uploads/1779470039159-69281224.png',
+    '/uploads/1779470039163-355773953.png',
+    '/uploads/1779470039171-426580805.png'
+  ],
+  image: '/uploads/1779470039113-8491570.png',
+  coverImage: '/uploads/1779470039113-8491570.png',
+  mainImage: '/uploads/1779470039113-8491570.png'
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE before_res_json
+DETAIL_FETCH_ROUTE_OK { id: '6a108ed7ae2f310a3a33ff43', publicVisible: true }
+REQ GET /api/listings/6a108ed7ae2f310a3a33ff43 200 161ms
+STATIC_REQUEST /uploads/1779470039113-8491570.png
+STATIC_REQUEST /uploads/1779470039121-387789367.png
+STATIC_REQUEST /uploads/1779470039134-391646745.png
+STATIC_REQUEST /uploads/1779470039140-54564506.png
+STATIC_REQUEST /uploads/1779470039139-162095688.png
+REQ GET /uploads/1779470039113-8491570.png 304 7ms
+STATIC_REQUEST /uploads/1779470039156-405965625.png
+REQ GET /uploads/1779470039121-387789367.png 200 9ms
+REQ GET /uploads/1779470039140-54564506.png 200 6ms
+REQ GET /uploads/1779470039134-391646745.png 200 7ms
+REQ GET /uploads/1779470039139-162095688.png 200 6ms
+STATIC_REQUEST /uploads/1779470039163-355773953.png
+STATIC_REQUEST /uploads/1779470039159-69281224.png
+REQ GET /uploads/1779470039156-405965625.png 200 7ms
+STATIC_REQUEST /uploads/1779470039157-445283413.png
+STATIC_REQUEST /uploads/1779470039171-426580805.png
+REQ GET /uploads/1779470039163-355773953.png 200 5ms
+REQ GET /uploads/1779470039159-69281224.png 200 6ms
+STATIC_REQUEST /uploads/1779470039146-87697768.png
+REQ GET /uploads/1779470039157-445283413.png 200 6ms
+REQ GET /uploads/1779470039171-426580805.png 200 5ms
+REQ GET /uploads/1779470039146-87697768.png 200 3ms
+REQ GET /api/listings?limit=60 304 233ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 1ms
+STATIC_REQUEST /uploads/1779470039113-8491570.png
+REQ GET /uploads/1779470039113-8491570.png 304 1ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 1ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /login.html
+STATIC_REQUEST /
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /login.html 200 2ms
+REQ GET / 200 2ms
+REQ GET /create-listing-v3.html 200 3ms
+REQ POST /api/auth/register 200 205ms
+LOGIN ATTEMPT: {
+  email: 'beta1779817899@test.local',
+  hasPassword: true,
+  isProduction: false
+}
+LOGIN STEP user_lookup_start: { email: 'beta1779817899@test.local' }
+LOGIN STEP user_lookup_ok: { found: true, role: 'user', banned: false, hasPassword: true }
+LOGIN STEP password_mode: { hasBcryptPassword: true, storedLength: 60 }
+LOGIN STEP bcrypt_compare_ok: { ok: true }
+LOGIN STEP password_result: {
+  email: 'beta1779817899@test.local',
+  passwordMatches: true,
+  hasBcryptPassword: true,
+  isLegacyPlaintext: false
+}
+LOGIN STEP token_sign_start: { userId: '6a15ddabb117a9afc3a763ed', role: 'user' }
+LOGIN STEP token_sign_ok: { tokenLength: 189 }
+REQ POST /api/auth/login 200 139ms
+UPLOAD_GUARD_CHECK { key: '6a15ddabb117a9afc3a763ed', current: 0, max: 3 }
+UPLOAD_GUARD_OK { key: '6a15ddabb117a9afc3a763ed', nextCount: 1 }
+CREATE_REQ_BODY_RAW {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Corolla",
+  "km": "10000",
+  "description": "Acik beta test ilani birinci kayit aciklamasi",
+  "title": "Beta ilan 1779817899-1",
+  "year": "2020",
+  "brand": "Toyota",
+  "price": 100000,
+  "sellerType": "bireysel",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul"
+}
+DESCRIPTION_RAW {
+  "description": "Acik beta test ilani birinci kayit aciklamasi"
+}
+DESCRIPTION_TYPE string
+DESCRIPTION_LENGTH 45
+DESCRIPTION_AFTER_TRIM Acik beta test ilani birinci kayit aciklamasi
+DESCRIPTION_VALIDATION_RESULT {
+  "hasDescription": true,
+  "length": 45,
+  "min": 10,
+  "max": 5000
+}
+CREATE_CATEGORY_RAW {
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "otomobil",
+  "type": ""
+}
+CREATE_MAIN_CATEGORY vasita
+CREATE_SUBCATEGORY otomobil
+CATEGORY_STANDARDIZED {
+  "input": {
+    "category": "vasita",
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  },
+  "output": {
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  }
+}
+MODERATION_CREATE {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false
+}
+LISTING_APPROVAL_STATUS {
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+CREATE_REQ_BODY_NORMALIZED {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Corolla",
+  "km": "10000",
+  "description": "Acik beta test ilani birinci kayit aciklamasi",
+  "title": "Beta ilan 1779817899-1",
+  "year": "2020",
+  "brand": "Toyota",
+  "price": 100000,
+  "sellerType": "bireysel",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul",
+  "coverImage": "",
+  "mainImage": "",
+  "image": "",
+  "gallery": [],
+  "images": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "listingNo": "4984318048",
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "user": "6a15ddabb117a9afc3a763ed",
+  "userEmail": "beta1779817899@test.local"
+}
+CREATE_MONGO_INPUT {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "images": [],
+  "photos": [],
+  "gallery": [],
+  "image": "",
+  "coverImage": "",
+  "mainImage": ""
+}
+CREATE_SAVED_LISTING {
+  "listingNo": "4984318048",
+  "title": "Beta ilan 1779817899-1",
+  "description": "Acik beta test ilani birinci kayit aciklamasi",
+  "price": 100000,
+  "views": 0,
+  "city": "Istanbul",
+  "district": "Kadikoy",
+  "category": "vasita",
+  "subCategory": "otomobil",
+  "brand": "Toyota",
+  "series": "Corolla",
+  "model": "1.6",
+  "year": 2020,
+  "km": 10000,
+  "fuel": "Benzin",
+  "transmission": "Otomatik",
+  "bodyType": "Sedan",
+  "damage": [],
+  "sellerType": "bireysel",
+  "image": "",
+  "coverImage": "",
+  "mainImage": "",
+  "images": [],
+  "gallery": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "approved": false,
+  "status": "pending",
+  "isFeatured": false,
+  "isShowcase": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": false,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": "6a15ddabb117a9afc3a763ed",
+  "favorites": [],
+  "_id": "6a15ddacb117a9afc3a763f2",
+  "expiresAt": "2026-06-25T17:51:40.168Z",
+  "createdAt": "2026-05-26T17:51:40.168Z",
+  "__v": 0
+}
+CREATE_SAVED_KEYS [
+  'listingNo',    'title',          'description',
+  'price',        'views',          'city',
+  'district',     'category',       'subCategory',
+  'brand',        'series',         'model',
+  'year',         'km',             'fuel',
+  'transmission', 'bodyType',       'damage',
+  'sellerType',   'image',          'coverImage',
+  'mainImage',    'images',         'gallery',
+  'photos',       'imagePublicIds', 'uploadProvider',
+  'approved',     'status',         'isFeatured',
+  'isShowcase',   'isBoosted',      'isPremium',
+  'isActive',     'isDeleted',      'isSuspicious',
+  'user',         'favorites',      '_id',
+  'expiresAt',    'createdAt',      '__v'
+]
+LISTING_APPROVAL_STATUS {
+  "id": "6a15ddacb117a9afc3a763f2",
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+MONGO_SAVED_RESULT {
+  id: new ObjectId('6a15ddacb117a9afc3a763f2'),
+  images: [],
+  gallery: [],
+  image: '',
+  coverImage: '',
+  mainImage: ''
+}
+REQ POST /api/listings 200 270ms
+UPLOAD_GUARD_CHECK { key: '6a15ddabb117a9afc3a763ed', current: 0, max: 3 }
+UPLOAD_GUARD_OK { key: '6a15ddabb117a9afc3a763ed', nextCount: 1 }
+CREATE_REQ_BODY_RAW {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Civic",
+  "km": "8000",
+  "description": "Acik beta test ilani ikinci kayit aciklamasi",
+  "title": "Beta ilan 1779817899-2",
+  "year": "2021",
+  "brand": "Honda",
+  "price": 120000,
+  "sellerType": "galeri",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul"
+}
+DESCRIPTION_RAW {
+  "description": "Acik beta test ilani ikinci kayit aciklamasi"
+}
+DESCRIPTION_TYPE string
+DESCRIPTION_LENGTH 44
+DESCRIPTION_AFTER_TRIM Acik beta test ilani ikinci kayit aciklamasi
+DESCRIPTION_VALIDATION_RESULT {
+  "hasDescription": true,
+  "length": 44,
+  "min": 10,
+  "max": 5000
+}
+CREATE_CATEGORY_RAW {
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "otomobil",
+  "type": ""
+}
+CREATE_MAIN_CATEGORY vasita
+CREATE_SUBCATEGORY otomobil
+CATEGORY_STANDARDIZED {
+  "input": {
+    "category": "vasita",
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  },
+  "output": {
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  }
+}
+MODERATION_CREATE {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false
+}
+LISTING_APPROVAL_STATUS {
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+CREATE_REQ_BODY_NORMALIZED {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Civic",
+  "km": "8000",
+  "description": "Acik beta test ilani ikinci kayit aciklamasi",
+  "title": "Beta ilan 1779817899-2",
+  "year": "2021",
+  "brand": "Honda",
+  "price": 120000,
+  "sellerType": "galeri",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul",
+  "coverImage": "",
+  "mainImage": "",
+  "image": "",
+  "gallery": [],
+  "images": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "listingNo": "4816182037",
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "user": "6a15ddabb117a9afc3a763ed",
+  "userEmail": "beta1779817899@test.local"
+}
+CREATE_MONGO_INPUT {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "images": [],
+  "photos": [],
+  "gallery": [],
+  "image": "",
+  "coverImage": "",
+  "mainImage": ""
+}
+CREATE_SAVED_LISTING {
+  "listingNo": "4816182037",
+  "title": "Beta ilan 1779817899-2",
+  "description": "Acik beta test ilani ikinci kayit aciklamasi",
+  "price": 120000,
+  "views": 0,
+  "city": "Istanbul",
+  "district": "Kadikoy",
+  "category": "vasita",
+  "subCategory": "otomobil",
+  "brand": "Honda",
+  "series": "Civic",
+  "model": "1.6",
+  "year": 2021,
+  "km": 8000,
+  "fuel": "Benzin",
+  "transmission": "Otomatik",
+  "bodyType": "Sedan",
+  "damage": [],
+  "sellerType": "galeri",
+  "image": "",
+  "coverImage": "",
+  "mainImage": "",
+  "images": [],
+  "gallery": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "approved": false,
+  "status": "pending",
+  "isFeatured": false,
+  "isShowcase": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": false,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": "6a15ddabb117a9afc3a763ed",
+  "favorites": [],
+  "_id": "6a15ddacb117a9afc3a763f8",
+  "expiresAt": "2026-06-25T17:51:40.436Z",
+  "createdAt": "2026-05-26T17:51:40.436Z",
+  "__v": 0
+}
+CREATE_SAVED_KEYS [
+  'listingNo',    'title',          'description',
+  'price',        'views',          'city',
+  'district',     'category',       'subCategory',
+  'brand',        'series',         'model',
+  'year',         'km',             'fuel',
+  'transmission', 'bodyType',       'damage',
+  'sellerType',   'image',          'coverImage',
+  'mainImage',    'images',         'gallery',
+  'photos',       'imagePublicIds', 'uploadProvider',
+  'approved',     'status',         'isFeatured',
+  'isShowcase',   'isBoosted',      'isPremium',
+  'isActive',     'isDeleted',      'isSuspicious',
+  'user',         'favorites',      '_id',
+  'expiresAt',    'createdAt',      '__v'
+]
+LISTING_APPROVAL_STATUS {
+  "id": "6a15ddacb117a9afc3a763f8",
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+MONGO_SAVED_RESULT {
+  id: new ObjectId('6a15ddacb117a9afc3a763f8'),
+  images: [],
+  gallery: [],
+  image: '',
+  coverImage: '',
+  mainImage: ''
+}
+REQ POST /api/listings 200 250ms
+REQ GET /api/listings/my-listings 200 125ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /
+REQ GET / 200 2ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 200 2ms
+STATIC_REQUEST /login.html
+REQ GET /login.html 200 3ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 0ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /style.css
+REQ GET /style.css 304 1ms
+STATIC_REQUEST /cities.js
+STATIC_REQUEST /create-listing.js
+REQ GET /cities.js 304 1ms
+REQ GET /create-listing.js 304 1ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+REQ GET /api/cars 304 2073ms
+STATIC_REQUEST /style.css
+REQ GET /style.css 304 0ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /style.css
+STATIC_REQUEST /cities.js
+STATIC_REQUEST /create-listing.js
+REQ GET /style.css 304 2ms
+REQ GET /cities.js 304 3ms
+REQ GET /create-listing.js 304 2ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+REQ GET /api/cars 304 1275ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /
+REQ GET / 200 2ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 200 2ms
+STATIC_REQUEST /login.html
+REQ GET /login.html 200 1ms
+REQ POST /api/auth/register 200 212ms
+LOGIN ATTEMPT: {
+  email: 'perf1779819244@test.local',
+  hasPassword: true,
+  isProduction: false
+}
+LOGIN STEP user_lookup_start: { email: 'perf1779819244@test.local' }
+LOGIN STEP user_lookup_ok: { found: true, role: 'user', banned: false, hasPassword: true }
+LOGIN STEP password_mode: { hasBcryptPassword: true, storedLength: 60 }
+LOGIN STEP bcrypt_compare_ok: { ok: true }
+LOGIN STEP password_result: {
+  email: 'perf1779819244@test.local',
+  passwordMatches: true,
+  hasBcryptPassword: true,
+  isLegacyPlaintext: false
+}
+LOGIN STEP token_sign_start: { userId: '6a15e2edb117a9afc3a76401', role: 'user' }
+LOGIN STEP token_sign_ok: { tokenLength: 189 }
+REQ POST /api/auth/login 200 130ms
+UPLOAD_GUARD_CHECK { key: '6a15e2edb117a9afc3a76401', current: 0, max: 3 }
+UPLOAD_GUARD_OK { key: '6a15e2edb117a9afc3a76401', nextCount: 1 }
+CREATE_REQ_BODY_RAW {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Corolla",
+  "km": "9000",
+  "description": "Create listing flow backend save smoke test",
+  "title": "UI perf test 1779819244",
+  "year": "2022",
+  "brand": "Toyota",
+  "price": 111000,
+  "sellerType": "bireysel",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul"
+}
+DESCRIPTION_RAW {
+  "description": "Create listing flow backend save smoke test"
+}
+DESCRIPTION_TYPE string
+DESCRIPTION_LENGTH 43
+DESCRIPTION_AFTER_TRIM Create listing flow backend save smoke test
+DESCRIPTION_VALIDATION_RESULT {
+  "hasDescription": true,
+  "length": 43,
+  "min": 10,
+  "max": 5000
+}
+CREATE_CATEGORY_RAW {
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "otomobil",
+  "type": ""
+}
+CREATE_MAIN_CATEGORY vasita
+CREATE_SUBCATEGORY otomobil
+CATEGORY_STANDARDIZED {
+  "input": {
+    "category": "vasita",
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  },
+  "output": {
+    "mainCategory": "vasita",
+    "subCategory": "otomobil"
+  }
+}
+MODERATION_CREATE {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false
+}
+LISTING_APPROVAL_STATUS {
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+CREATE_REQ_BODY_NORMALIZED {
+  "category": "vasita",
+  "district": "Kadikoy",
+  "transmission": "Otomatik",
+  "subCategory": "otomobil",
+  "bodyType": "Sedan",
+  "mainCategory": "vasita",
+  "series": "Corolla",
+  "km": "9000",
+  "description": "Create listing flow backend save smoke test",
+  "title": "UI perf test 1779819244",
+  "year": "2022",
+  "brand": "Toyota",
+  "price": 111000,
+  "sellerType": "bireysel",
+  "model": "1.6",
+  "fuel": "Benzin",
+  "city": "Istanbul",
+  "coverImage": "",
+  "mainImage": "",
+  "image": "",
+  "gallery": [],
+  "images": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "listingNo": "6627408525",
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "user": "6a15e2edb117a9afc3a76401",
+  "userEmail": "perf1779819244@test.local"
+}
+CREATE_MONGO_INPUT {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "images": [],
+  "photos": [],
+  "gallery": [],
+  "image": "",
+  "coverImage": "",
+  "mainImage": ""
+}
+CREATE_SAVED_LISTING {
+  "listingNo": "6627408525",
+  "title": "UI perf test 1779819244",
+  "description": "Create listing flow backend save smoke test",
+  "price": 111000,
+  "views": 0,
+  "city": "Istanbul",
+  "district": "Kadikoy",
+  "category": "vasita",
+  "subCategory": "otomobil",
+  "brand": "Toyota",
+  "series": "Corolla",
+  "model": "1.6",
+  "year": 2022,
+  "km": 9000,
+  "fuel": "Benzin",
+  "transmission": "Otomatik",
+  "bodyType": "Sedan",
+  "damage": [],
+  "sellerType": "bireysel",
+  "image": "",
+  "coverImage": "",
+  "mainImage": "",
+  "images": [],
+  "gallery": [],
+  "photos": [],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "approved": false,
+  "status": "pending",
+  "isFeatured": false,
+  "isShowcase": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": false,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": "6a15e2edb117a9afc3a76401",
+  "favorites": [],
+  "_id": "6a15e2edb117a9afc3a76406",
+  "expiresAt": "2026-06-25T18:14:05.582Z",
+  "createdAt": "2026-05-26T18:14:05.582Z",
+  "__v": 0
+}
+CREATE_SAVED_KEYS [
+  'listingNo',    'title',          'description',
+  'price',        'views',          'city',
+  'district',     'category',       'subCategory',
+  'brand',        'series',         'model',
+  'year',         'km',             'fuel',
+  'transmission', 'bodyType',       'damage',
+  'sellerType',   'image',          'coverImage',
+  'mainImage',    'images',         'gallery',
+  'photos',       'imagePublicIds', 'uploadProvider',
+  'approved',     'status',         'isFeatured',
+  'isShowcase',   'isBoosted',      'isPremium',
+  'isActive',     'isDeleted',      'isSuspicious',
+  'user',         'favorites',      '_id',
+  'expiresAt',    'createdAt',      '__v'
+]
+LISTING_APPROVAL_STATUS {
+  "id": "6a15e2edb117a9afc3a76406",
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+MONGO_SAVED_RESULT {
+  id: new ObjectId('6a15e2edb117a9afc3a76406'),
+  images: [],
+  gallery: [],
+  image: '',
+  coverImage: '',
+  mainImage: ''
+}
+REQ POST /api/listings 200 269ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 200 2ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 304 1ms
+STATIC_REQUEST /style.css
+REQ GET /style.css 304 1ms
+STATIC_REQUEST /cities.js
+STATIC_REQUEST /create-listing.js
+REQ GET /cities.js 304 1ms
+REQ GET /create-listing.js 200 2ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+REQ GET /api/cars 304 1049ms
+STATIC_REQUEST /style.css
+REQ GET /style.css 304 2ms
+UPLOAD_AUTH_OK { userId: '69ff967f286137d9def2c362', email: 'babacandir@gmail.com' }
+UPLOAD_GUARD_CHECK { key: '69ff967f286137d9def2c362', current: 0, max: 3 }
+UPLOAD_GUARD_OK { key: '69ff967f286137d9def2c362', nextCount: 1 }
+UPLOAD_ROUTE_START
+UPLOAD_REQ_BODY {}
+UPLOAD_REQ_FILES [
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002456.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665598-704764789.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665598-704764789.png",
+    "size": 538425
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002501.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665612-112990983.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665612-112990983.png",
+    "size": 423569
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002506.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665622-355465525.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665622-355465525.png",
+    "size": 343447
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002510.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665625-518175573.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665625-518175573.png",
+    "size": 68038
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002513.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665626-417768086.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665626-417768086.png",
+    "size": 436664
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002516.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665629-698666258.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665629-698666258.png",
+    "size": 190391
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002519.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665631-249037255.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665631-249037255.png",
+    "size": 131995
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002522.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665633-232556428.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665633-232556428.png",
+    "size": 247501
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002526.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665636-31332856.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665636-31332856.png",
+    "size": 286094
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002530.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665638-639988370.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665638-639988370.png",
+    "size": 178585
+  }
+]
+UPLOAD_REQ_FILES_FULL [
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002456.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665598-704764789.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665598-704764789.png",
+    "size": 538425
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002501.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665612-112990983.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665612-112990983.png",
+    "size": 423569
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002506.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665622-355465525.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665622-355465525.png",
+    "size": 343447
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002510.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665625-518175573.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665625-518175573.png",
+    "size": 68038
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002513.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665626-417768086.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665626-417768086.png",
+    "size": 436664
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002516.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665629-698666258.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665629-698666258.png",
+    "size": 190391
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002519.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665631-249037255.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665631-249037255.png",
+    "size": 131995
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002522.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665633-232556428.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665633-232556428.png",
+    "size": 247501
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002526.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665636-31332856.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665636-31332856.png",
+    "size": 286094
+  },
+  {
+    "fieldname": "images",
+    "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002530.png",
+    "encoding": "7bit",
+    "mimetype": "image/png",
+    "destination": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads",
+    "filename": "1779819665638-639988370.png",
+    "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665638-639988370.png",
+    "size": 178585
+  }
+]
+UPLOAD_MIDDLEWARE_OK
+UPLOAD_FILE_MAP_START
+UPLOAD_FILE_MAP_DONE [
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  },
+  {
+    "thumbnailUrl": ""
+  }
+]
+UPLOAD_SAVED_FILES {
+  "urls": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "thumbnailUrls": [],
+  "publicIds": [],
+  "assets": [
+    {
+      "url": "/uploads/1779819665598-704764789.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665612-112990983.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665622-355465525.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665625-518175573.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665626-417768086.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665629-698666258.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665631-249037255.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665633-232556428.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665636-31332856.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665638-639988370.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    }
+  ],
+  "provider": "local",
+  "files": [
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002456.png",
+      "mimetype": "image/png",
+      "size": 538425,
+      "filename": "1779819665598-704764789.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665598-704764789.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002501.png",
+      "mimetype": "image/png",
+      "size": 423569,
+      "filename": "1779819665612-112990983.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665612-112990983.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002506.png",
+      "mimetype": "image/png",
+      "size": 343447,
+      "filename": "1779819665622-355465525.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665622-355465525.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002510.png",
+      "mimetype": "image/png",
+      "size": 68038,
+      "filename": "1779819665625-518175573.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665625-518175573.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002513.png",
+      "mimetype": "image/png",
+      "size": 436664,
+      "filename": "1779819665626-417768086.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665626-417768086.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002516.png",
+      "mimetype": "image/png",
+      "size": 190391,
+      "filename": "1779819665629-698666258.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665629-698666258.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002519.png",
+      "mimetype": "image/png",
+      "size": 131995,
+      "filename": "1779819665631-249037255.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665631-249037255.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002522.png",
+      "mimetype": "image/png",
+      "size": 247501,
+      "filename": "1779819665633-232556428.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665633-232556428.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002526.png",
+      "mimetype": "image/png",
+      "size": 286094,
+      "filename": "1779819665636-31332856.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665636-31332856.png"
+    },
+    {
+      "fieldname": "images",
+      "originalname": "Ekran gÃ¶rÃ¼ntÃ¼sÃ¼ 2026-05-22 002530.png",
+      "mimetype": "image/png",
+      "size": 178585,
+      "filename": "1779819665638-639988370.png",
+      "path": "C:\\Users\\Ýbrahim Mert Avcu\\Desktop\\Codex-proje\\JETLE\\uploads\\1779819665638-639988370.png"
+    }
+  ]
+}
+UPLOAD_RESPONSE_READY {
+  "urls": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "thumbnailUrls": [],
+  "publicIds": [],
+  "assets": [
+    {
+      "url": "/uploads/1779819665598-704764789.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665612-112990983.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665622-355465525.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665625-518175573.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665626-417768086.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665629-698666258.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665631-249037255.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665633-232556428.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665636-31332856.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665638-639988370.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    }
+  ],
+  "provider": "local"
+}
+UPLOAD_RESPONSE {
+  "urls": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "thumbnailUrls": [],
+  "publicIds": [],
+  "assets": [
+    {
+      "url": "/uploads/1779819665598-704764789.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665612-112990983.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665622-355465525.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665625-518175573.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665626-417768086.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665629-698666258.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665631-249037255.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665633-232556428.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665636-31332856.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    },
+    {
+      "url": "/uploads/1779819665638-639988370.png",
+      "publicId": "",
+      "provider": "local",
+      "thumbnailUrl": ""
+    }
+  ],
+  "provider": "local"
+}
+UPLOAD_ROUTE_SUCCESS
+REQ POST /api/listings/upload 200 126ms
+UPLOAD_GUARD_CHECK { key: '69ff967f286137d9def2c362', current: 0, max: 3 }
+UPLOAD_GUARD_OK { key: '69ff967f286137d9def2c362', nextCount: 1 }
+CREATE_REQ_BODY_RAW {
+  "title": "WTRETRE",
+  "description": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "desc": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "price": 2500000,
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "Otomobil",
+  "city": "Adýyaman",
+  "district": "Gerger",
+  "location": "Adýyaman / Gerger",
+  "features": [
+    "ESP / ESC",
+    "ASR / Çekiþ Kontrol",
+    "Yokuþ Kalkýþ Desteði",
+    "Þerit Takip Asistaný",
+    "Kör Nokta Uyarý",
+    "Çarpýþma Önleme Sistemi",
+    "Lastik Basýnç Sensörü",
+    "Yan Hava Yastýðý",
+    "Isofix",
+    "Gece Görüþ Sistemi",
+    "360 Kamera",
+    "Arka Kamera",
+    "Park Sensörü Ön",
+    "Deri Koltuk",
+    "Kumaþ Koltuk",
+    "Isýtmalý Koltuk",
+    "Masajlý Koltuk",
+    "Katlanýr Arka Koltuk",
+    "Kol Dayama",
+    "Start/Stop",
+    "Head-Up Display",
+    "Ambiyans Aydýnlatma",
+    "Elektrikli Bagaj",
+    "Kablosuz Þarj",
+    "LED Far",
+    "Matrix LED",
+    "Sunroof",
+    "Elektrikli Ayna",
+    "Katlanýr Ayna",
+    "Isýtmalý Ayna",
+    "Tavan Rayý",
+    "Spoiler",
+    "Çeki Demiri",
+    "Alaþým Jant",
+    "Adaptif Far",
+    "Bluetooth",
+    "Navigasyon",
+    "USB",
+    "AUX",
+    "Premium Ses Sistemi",
+    "Arka Eðlence Paketi",
+    "WiFi Hotspot",
+    "Adaptif Cruise",
+    "Soðutmalý Torpido",
+    "Yaðmur Sensörü",
+    "Far Sensörü",
+    "Otomatik Bagaj",
+    "Sürüþ Modlarý",
+    "Hýz Limitleyici"
+  ],
+  "damage": [
+    "roof:local",
+    "leftFrontFender:painted",
+    "leftRearFender:changed"
+  ],
+  "damageMap": {
+    "hood": "original",
+    "roof": "local",
+    "trunk": "original",
+    "leftFrontFender": "painted",
+    "rightFrontFender": "original",
+    "leftRearFender": "changed",
+    "rightRearFender": "original"
+  },
+  "brand": "BMW",
+  "series": "3 Serisi",
+  "model": "318d",
+  "year": 2020,
+  "km": 25000,
+  "fuel": "Benzin",
+  "transmission": "Manuel",
+  "bodyType": "Sedan",
+  "color": "Beyaz",
+  "engine": "2.0",
+  "enginePower": 15000,
+  "sellerType": "Sahibinden",
+  "vehicleCondition": "Ýkinci El",
+  "drivetrain": "Önden Çekiþ",
+  "torque": 420,
+  "fuelConsumption": "64/100",
+  "cityFuelConsumption": "7,8/100",
+  "highwayFuelConsumption": "5,4/100",
+  "combinedFuelConsumption": "6,1/100",
+  "emissionStandard": "Euro 3",
+  "plate": "34 ABC 34",
+  "hasarKaydi": "Var",
+  "warrantyStatus": "Var",
+  "isSwapEligibleVehicle": "Hayýr",
+  "isCreditEligibleVehicle": "Hayýr",
+  "firstOwner": "Evet",
+  "engineSize": "2.0",
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png"
+}
+DESCRIPTION_RAW {
+  "description": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "desc": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849"
+}
+DESCRIPTION_TYPE string
+DESCRIPTION_LENGTH 813
+DESCRIPTION_AFTER_TRIM SENA OTOMOTÝV'DEN
+
+-2019 MODEL-
+
+-AUDÝ A5-
+
+-QUATTRO SPORT-
+
+-40 TDI 2.0-190 PS-
+
+-72.000 KM'DE-
+
+-MATRÝX FARLAR-
+
+-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-
+
+-PANAROMÝK AÇILIR CAM TAVAN-
+
+-RECORE KOLTUKLAR-
+
+-ELEKTRÝKLÝ BAGAJ-
+
+-F1 VÝTES-
+
+-HAYALET EKRAN-
+
+-ÇÝFT NAVÝGASYON-
+
+-ÖZEL ÝÇ AMBÝYANS AYDINLATMA
+
+-KOLTUK ISITMA-
+
+-HIZ SABÝTLEME-
+
+-STAR STOP-
+
+-XENON FAR-
+
+-LED'LÝ GÜNDÜZ FARLARI-
+
+-YAÐMUR VE FAR SENSÖRÜ-
+
+ -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-
+
+ -BLUETOOTH-
+
+-CARPLAY-
+
+ -ÝÇ DIÞ AYDINLATMA-
+
+-KARARTILMIÞ ARKA CAMLAR-
+
+-DÝJÝTAL KLÝMA-
+
+-USB - AUX-
+
+--------------------------------------
+
+YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT
+
+
+
+EXPERTÝZ; 
+
+
+
+BOYA; SOL ÖN ÇAMURLUK
+
+DEÐÝÞEN; SOL ÖN KAPI
+
+TRAMER; 39.000 TL
+
+
+
+----------------------------------------
+
+
+
+DETAYLI BÝLGÝ ÝÇÝN 
+
+
+
+
+SENA KEKLÝK; 0532 307 6849
+DESCRIPTION_VALIDATION_RESULT {
+  "hasDescription": true,
+  "length": 813,
+  "min": 10,
+  "max": 5000
+}
+CREATE_CATEGORY_RAW {
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "Otomobil",
+  "type": ""
+}
+CREATE_MAIN_CATEGORY vasita
+CREATE_SUBCATEGORY Otomobil
+CATEGORY_STANDARDIZED {
+  "input": {
+    "category": "vasita",
+    "mainCategory": "vasita",
+    "subCategory": "Otomobil"
+  },
+  "output": {
+    "mainCategory": "vasita",
+    "subCategory": "Otomobil"
+  }
+}
+MODERATION_CREATE {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false
+}
+LISTING_APPROVAL_STATUS {
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+CREATE_REQ_BODY_NORMALIZED {
+  "title": "WTRETRE",
+  "description": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "desc": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "price": 2500000,
+  "category": "vasita",
+  "mainCategory": "vasita",
+  "subCategory": "Otomobil",
+  "city": "Adýyaman",
+  "district": "Gerger",
+  "location": "Adýyaman / Gerger",
+  "features": [
+    "ESP / ESC",
+    "ASR / Çekiþ Kontrol",
+    "Yokuþ Kalkýþ Desteði",
+    "Þerit Takip Asistaný",
+    "Kör Nokta Uyarý",
+    "Çarpýþma Önleme Sistemi",
+    "Lastik Basýnç Sensörü",
+    "Yan Hava Yastýðý",
+    "Isofix",
+    "Gece Görüþ Sistemi",
+    "360 Kamera",
+    "Arka Kamera",
+    "Park Sensörü Ön",
+    "Deri Koltuk",
+    "Kumaþ Koltuk",
+    "Isýtmalý Koltuk",
+    "Masajlý Koltuk",
+    "Katlanýr Arka Koltuk",
+    "Kol Dayama",
+    "Start/Stop",
+    "Head-Up Display",
+    "Ambiyans Aydýnlatma",
+    "Elektrikli Bagaj",
+    "Kablosuz Þarj",
+    "LED Far",
+    "Matrix LED",
+    "Sunroof",
+    "Elektrikli Ayna",
+    "Katlanýr Ayna",
+    "Isýtmalý Ayna",
+    "Tavan Rayý",
+    "Spoiler",
+    "Çeki Demiri",
+    "Alaþým Jant",
+    "Adaptif Far",
+    "Bluetooth",
+    "Navigasyon",
+    "USB",
+    "AUX",
+    "Premium Ses Sistemi",
+    "Arka Eðlence Paketi",
+    "WiFi Hotspot",
+    "Adaptif Cruise",
+    "Soðutmalý Torpido",
+    "Yaðmur Sensörü",
+    "Far Sensörü",
+    "Otomatik Bagaj",
+    "Sürüþ Modlarý",
+    "Hýz Limitleyici"
+  ],
+  "damage": [
+    "roof:local",
+    "leftFrontFender:painted",
+    "leftRearFender:changed"
+  ],
+  "damageMap": {
+    "hood": "original",
+    "roof": "local",
+    "trunk": "original",
+    "leftFrontFender": "painted",
+    "rightFrontFender": "original",
+    "leftRearFender": "changed",
+    "rightRearFender": "original"
+  },
+  "brand": "BMW",
+  "series": "3 Serisi",
+  "model": "318d",
+  "year": 2020,
+  "km": 25000,
+  "fuel": "Benzin",
+  "transmission": "Manuel",
+  "bodyType": "Sedan",
+  "color": "Beyaz",
+  "engine": "2.0",
+  "enginePower": 15000,
+  "sellerType": "Sahibinden",
+  "vehicleCondition": "Ýkinci El",
+  "drivetrain": "Önden Çekiþ",
+  "torque": 420,
+  "fuelConsumption": "64/100",
+  "cityFuelConsumption": "7,8/100",
+  "highwayFuelConsumption": "5,4/100",
+  "combinedFuelConsumption": "6,1/100",
+  "emissionStandard": "Euro 3",
+  "plate": "34 ABC 34",
+  "hasarKaydi": "Var",
+  "warrantyStatus": "Var",
+  "isSwapEligibleVehicle": "Hayýr",
+  "isCreditEligibleVehicle": "Hayýr",
+  "firstOwner": "Evet",
+  "engineSize": "2.0",
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png",
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "listingNo": "420724215",
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "user": "69ff967f286137d9def2c362",
+  "userEmail": "babacandir@gmail.com"
+}
+CREATE_MONGO_INPUT {
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "isShowcase": false,
+  "isFeatured": false,
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png"
+}
+CREATE_SAVED_LISTING {
+  "listingNo": "420724215",
+  "title": "WTRETRE",
+  "description": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "desc": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "price": 2500000,
+  "views": 0,
+  "location": "Adýyaman / Gerger",
+  "city": "Adýyaman",
+  "district": "Gerger",
+  "category": "vasita",
+  "subCategory": "Otomobil",
+  "brand": "BMW",
+  "series": "3 Serisi",
+  "model": "318d",
+  "year": 2020,
+  "km": 25000,
+  "fuel": "Benzin",
+  "transmission": "Manuel",
+  "bodyType": "Sedan",
+  "color": "Beyaz",
+  "engine": "2.0",
+  "engineSize": "2.0",
+  "enginePower": "15000",
+  "damage": [
+    "roof:local",
+    "leftFrontFender:painted",
+    "leftRearFender:changed"
+  ],
+  "sellerType": "Sahibinden",
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png",
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "features": [
+    "ESP / ESC",
+    "ASR / Çekiþ Kontrol",
+    "Yokuþ Kalkýþ Desteði",
+    "Þerit Takip Asistaný",
+    "Kör Nokta Uyarý",
+    "Çarpýþma Önleme Sistemi",
+    "Lastik Basýnç Sensörü",
+    "Yan Hava Yastýðý",
+    "Isofix",
+    "Gece Görüþ Sistemi",
+    "360 Kamera",
+    "Arka Kamera",
+    "Park Sensörü Ön",
+    "Deri Koltuk",
+    "Kumaþ Koltuk",
+    "Isýtmalý Koltuk",
+    "Masajlý Koltuk",
+    "Katlanýr Arka Koltuk",
+    "Kol Dayama",
+    "Start/Stop",
+    "Head-Up Display",
+    "Ambiyans Aydýnlatma",
+    "Elektrikli Bagaj",
+    "Kablosuz Þarj",
+    "LED Far",
+    "Matrix LED",
+    "Sunroof",
+    "Elektrikli Ayna",
+    "Katlanýr Ayna",
+    "Isýtmalý Ayna",
+    "Tavan Rayý",
+    "Spoiler",
+    "Çeki Demiri",
+    "Alaþým Jant",
+    "Adaptif Far",
+    "Bluetooth",
+    "Navigasyon",
+    "USB",
+    "AUX",
+    "Premium Ses Sistemi",
+    "Arka Eðlence Paketi",
+    "WiFi Hotspot",
+    "Adaptif Cruise",
+    "Soðutmalý Torpido",
+    "Yaðmur Sensörü",
+    "Far Sensörü",
+    "Otomatik Bagaj",
+    "Sürüþ Modlarý",
+    "Hýz Limitleyici"
+  ],
+  "damageMap": {
+    "hood": "original",
+    "roof": "local",
+    "trunk": "original",
+    "leftFrontFender": "painted",
+    "rightFrontFender": "original",
+    "leftRearFender": "changed",
+    "rightRearFender": "original"
+  },
+  "approved": false,
+  "status": "pending",
+  "isFeatured": false,
+  "isShowcase": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": false,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": "69ff967f286137d9def2c362",
+  "favorites": [],
+  "_id": "6a15e491b117a9afc3a7640e",
+  "expiresAt": "2026-06-25T18:21:05.781Z",
+  "createdAt": "2026-05-26T18:21:05.781Z",
+  "__v": 0
+}
+CREATE_SAVED_KEYS [
+  'listingNo',  'title',          'description',
+  'desc',       'price',          'views',
+  'location',   'city',           'district',
+  'category',   'subCategory',    'brand',
+  'series',     'model',          'year',
+  'km',         'fuel',           'transmission',
+  'bodyType',   'color',          'engine',
+  'engineSize', 'enginePower',    'damage',
+  'sellerType', 'image',          'coverImage',
+  'mainImage',  'images',         'gallery',
+  'photos',     'imagePublicIds', 'uploadProvider',
+  'features',   'damageMap',      'approved',
+  'status',     'isFeatured',     'isShowcase',
+  'isBoosted',  'isPremium',      'isActive',
+  'isDeleted',  'isSuspicious',   'user',
+  'favorites',  '_id',            'expiresAt',
+  'createdAt',  '__v'
+]
+LISTING_APPROVAL_STATUS {
+  "id": "6a15e491b117a9afc3a7640e",
+  "approved": false,
+  "status": "pending",
+  "isActive": false
+}
+MONGO_SAVED_RESULT {
+  id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png'
+}
+REQ POST /api/listings 200 281ms
+STATIC_REQUEST /listing-detail.html?id=6a15e491b117a9afc3a7640e
+REQ GET /listing-detail.html?id=6a15e491b117a9afc3a7640e 200 4ms
+STATIC_REQUEST /style.css?v=2
+STATIC_REQUEST /auth-global.js?v=2
+REQ GET /style.css?v=2 304 1ms
+REQ GET /auth-global.js?v=2 304 0ms
+DETAIL_ROUTE_ENTRY { id: '6a15e491b117a9afc3a7640e' }
+LISTING_ROUTE_MIDDLEWARE_STAGE detail_route_start
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+LISTING_ROUTE_MIDDLEWARE_STAGE after_findById_populate
+DETAIL_VISIBILITY_VALUES { status: 'pending', approved: false, isActive: false }
+DETAIL_VISIBILITY_CHECK {
+  "id": "6a15e491b117a9afc3a7640e",
+  "approved": false,
+  "status": "pending",
+  "isActive": false,
+  "hasApprovedField": true,
+  "hasStatusField": true,
+  "hasIsActiveField": true,
+  "isLegacyListing": false,
+  "publicVisible": false,
+  "isActiveExplicitFalse": true,
+  "isRejected": false,
+  "isPending": true,
+  "isDraft": false
+}
+DETAIL_VISIBILITY_RESULT {
+  id: '6a15e491b117a9afc3a7640e',
+  isExplicitlyBlocked: true,
+  isLegacyListing: false,
+  isPubliclyVisible: false
+}
+DETAIL_BLOCK_REASON {
+  id: '6a15e491b117a9afc3a7640e',
+  status: 'pending',
+  approved: false,
+  isActive: false,
+  isRejected: false,
+  isPending: true,
+  isDraft: false,
+  isActiveExplicitFalse: true
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE pending_visibility_check
+LISTING_ROUTE_MIDDLEWARE_STAGE before_toObject
+{
+  listingId: '6a15e491b117a9afc3a7640e',
+  status: 'pending',
+  userRole: 'admin',
+  allowPending: true
+}
+DETAIL_REQUEST_INSTANCE 1779819667858
+DB_RAW_LISTING {
+  _id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  listingNo: '420724215',
+  title: 'WTRETRE',
+  description: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  desc: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  price: 2500000,
+  views: 0,
+  location: 'Adýyaman / Gerger',
+  city: 'Adýyaman',
+  district: 'Gerger',
+  category: 'vasita',
+  subCategory: 'Otomobil',
+  brand: 'BMW',
+  series: '3 Serisi',
+  model: '318d',
+  year: 2020,
+  km: 25000,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Sedan',
+  color: 'Beyaz',
+  engine: '2.0',
+  engineSize: '2.0',
+  enginePower: '15000',
+  damage: [ 'roof:local', 'leftFrontFender:painted', 'leftRearFender:changed' ],
+  sellerType: 'Sahibinden',
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png',
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ESP / ESC',
+    'ASR / Çekiþ Kontrol',
+    'Yokuþ Kalkýþ Desteði',
+    'Þerit Takip Asistaný',
+    'Kör Nokta Uyarý',
+    'Çarpýþma Önleme Sistemi',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    'Isofix',
+    'Gece Görüþ Sistemi',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Ön',
+    'Deri Koltuk',
+    'Kumaþ Koltuk',
+    'Isýtmalý Koltuk',
+    'Masajlý Koltuk',
+    'Katlanýr Arka Koltuk',
+    'Kol Dayama',
+    'Start/Stop',
+    'Head-Up Display',
+    'Ambiyans Aydýnlatma',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'LED Far',
+    'Matrix LED',
+    'Sunroof',
+    'Elektrikli Ayna',
+    'Katlanýr Ayna',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Spoiler',
+    'Çeki Demiri',
+    'Alaþým Jant',
+    'Adaptif Far',
+    'Bluetooth',
+    'Navigasyon',
+    'USB',
+    'AUX',
+    'Premium Ses Sistemi',
+    'Arka Eðlence Paketi',
+    'WiFi Hotspot',
+    'Adaptif Cruise',
+    'Soðutmalý Torpido',
+    'Yaðmur Sensörü',
+    'Far Sensörü',
+    'Otomatik Bagaj',
+    'Sürüþ Modlarý',
+    'Hýz Limitleyici'
+  ],
+  damageMap: {
+    hood: 'original',
+    roof: 'local',
+    trunk: 'original',
+    leftFrontFender: 'painted',
+    rightFrontFender: 'original',
+    leftRearFender: 'changed',
+    rightRearFender: 'original'
+  },
+  approved: false,
+  status: 'pending',
+  isFeatured: false,
+  isShowcase: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: false,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-25T18:21:05.781Z,
+  createdAt: 2026-05-26T18:21:05.781Z,
+  __v: 0
+}
+DB_TO_OBJECT {
+  _id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  listingNo: '420724215',
+  title: 'WTRETRE',
+  description: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  desc: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  price: 2500000,
+  views: 0,
+  location: 'Adýyaman / Gerger',
+  city: 'Adýyaman',
+  district: 'Gerger',
+  category: 'vasita',
+  subCategory: 'Otomobil',
+  brand: 'BMW',
+  series: '3 Serisi',
+  model: '318d',
+  year: 2020,
+  km: 25000,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Sedan',
+  color: 'Beyaz',
+  engine: '2.0',
+  engineSize: '2.0',
+  enginePower: '15000',
+  damage: [ 'roof:local', 'leftFrontFender:painted', 'leftRearFender:changed' ],
+  sellerType: 'Sahibinden',
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png',
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ESP / ESC',
+    'ASR / Çekiþ Kontrol',
+    'Yokuþ Kalkýþ Desteði',
+    'Þerit Takip Asistaný',
+    'Kör Nokta Uyarý',
+    'Çarpýþma Önleme Sistemi',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    'Isofix',
+    'Gece Görüþ Sistemi',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Ön',
+    'Deri Koltuk',
+    'Kumaþ Koltuk',
+    'Isýtmalý Koltuk',
+    'Masajlý Koltuk',
+    'Katlanýr Arka Koltuk',
+    'Kol Dayama',
+    'Start/Stop',
+    'Head-Up Display',
+    'Ambiyans Aydýnlatma',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'LED Far',
+    'Matrix LED',
+    'Sunroof',
+    'Elektrikli Ayna',
+    'Katlanýr Ayna',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Spoiler',
+    'Çeki Demiri',
+    'Alaþým Jant',
+    'Adaptif Far',
+    'Bluetooth',
+    'Navigasyon',
+    'USB',
+    'AUX',
+    'Premium Ses Sistemi',
+    'Arka Eðlence Paketi',
+    'WiFi Hotspot',
+    'Adaptif Cruise',
+    'Soðutmalý Torpido',
+    'Yaðmur Sensörü',
+    'Far Sensörü',
+    'Otomatik Bagaj',
+    'Sürüþ Modlarý',
+    'Hýz Limitleyici'
+  ],
+  damageMap: {
+    hood: 'original',
+    roof: 'local',
+    trunk: 'original',
+    leftFrontFender: 'painted',
+    rightFrontFender: 'original',
+    leftRearFender: 'changed',
+    rightRearFender: 'original'
+  },
+  approved: false,
+  status: 'pending',
+  isFeatured: false,
+  isShowcase: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: false,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-25T18:21:05.781Z,
+  createdAt: 2026-05-26T18:21:05.781Z,
+  __v: 0
+}
+DETAIL_DB_LISTING_RAW {
+  "_id": "6a15e491b117a9afc3a7640e",
+  "listingNo": "420724215",
+  "title": "WTRETRE",
+  "description": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "desc": "SENA OTOMOTÝV'DEN\n\n-2019 MODEL-\n\n-AUDÝ A5-\n\n-QUATTRO SPORT-\n\n-40 TDI 2.0-190 PS-\n\n-72.000 KM'DE-\n\n-MATRÝX FARLAR-\n\n-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n\n-PANAROMÝK AÇILIR CAM TAVAN-\n\n-RECORE KOLTUKLAR-\n\n-ELEKTRÝKLÝ BAGAJ-\n\n-F1 VÝTES-\n\n-HAYALET EKRAN-\n\n-ÇÝFT NAVÝGASYON-\n\n-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n\n-KOLTUK ISITMA-\n\n-HIZ SABÝTLEME-\n\n-STAR STOP-\n\n-XENON FAR-\n\n-LED'LÝ GÜNDÜZ FARLARI-\n\n-YAÐMUR VE FAR SENSÖRÜ-\n\n -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n\n -BLUETOOTH-\n\n-CARPLAY-\n\n -ÝÇ DIÞ AYDINLATMA-\n\n-KARARTILMIÞ ARKA CAMLAR-\n\n-DÝJÝTAL KLÝMA-\n\n-USB - AUX-\n\n--------------------------------------\n\nYEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n\n\n\nEXPERTÝZ; \n\n\n\nBOYA; SOL ÖN ÇAMURLUK\n\nDEÐÝÞEN; SOL ÖN KAPI\n\nTRAMER; 39.000 TL\n\n\n\n----------------------------------------\n\n\n\nDETAYLI BÝLGÝ ÝÇÝN \n\n\n\n\nSENA KEKLÝK; 0532 307 6849",
+  "price": 2500000,
+  "views": 0,
+  "location": "Adýyaman / Gerger",
+  "city": "Adýyaman",
+  "district": "Gerger",
+  "category": "vasita",
+  "subCategory": "Otomobil",
+  "brand": "BMW",
+  "series": "3 Serisi",
+  "model": "318d",
+  "year": 2020,
+  "km": 25000,
+  "fuel": "Benzin",
+  "transmission": "Manuel",
+  "bodyType": "Sedan",
+  "color": "Beyaz",
+  "engine": "2.0",
+  "engineSize": "2.0",
+  "enginePower": "15000",
+  "damage": [
+    "roof:local",
+    "leftFrontFender:painted",
+    "leftRearFender:changed"
+  ],
+  "sellerType": "Sahibinden",
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png",
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "imagePublicIds": [],
+  "uploadProvider": "local",
+  "features": [
+    "ESP / ESC",
+    "ASR / Çekiþ Kontrol",
+    "Yokuþ Kalkýþ Desteði",
+    "Þerit Takip Asistaný",
+    "Kör Nokta Uyarý",
+    "Çarpýþma Önleme Sistemi",
+    "Lastik Basýnç Sensörü",
+    "Yan Hava Yastýðý",
+    "Isofix",
+    "Gece Görüþ Sistemi",
+    "360 Kamera",
+    "Arka Kamera",
+    "Park Sensörü Ön",
+    "Deri Koltuk",
+    "Kumaþ Koltuk",
+    "Isýtmalý Koltuk",
+    "Masajlý Koltuk",
+    "Katlanýr Arka Koltuk",
+    "Kol Dayama",
+    "Start/Stop",
+    "Head-Up Display",
+    "Ambiyans Aydýnlatma",
+    "Elektrikli Bagaj",
+    "Kablosuz Þarj",
+    "LED Far",
+    "Matrix LED",
+    "Sunroof",
+    "Elektrikli Ayna",
+    "Katlanýr Ayna",
+    "Isýtmalý Ayna",
+    "Tavan Rayý",
+    "Spoiler",
+    "Çeki Demiri",
+    "Alaþým Jant",
+    "Adaptif Far",
+    "Bluetooth",
+    "Navigasyon",
+    "USB",
+    "AUX",
+    "Premium Ses Sistemi",
+    "Arka Eðlence Paketi",
+    "WiFi Hotspot",
+    "Adaptif Cruise",
+    "Soðutmalý Torpido",
+    "Yaðmur Sensörü",
+    "Far Sensörü",
+    "Otomatik Bagaj",
+    "Sürüþ Modlarý",
+    "Hýz Limitleyici"
+  ],
+  "damageMap": {
+    "hood": "original",
+    "roof": "local",
+    "trunk": "original",
+    "leftFrontFender": "painted",
+    "rightFrontFender": "original",
+    "leftRearFender": "changed",
+    "rightRearFender": "original"
+  },
+  "approved": false,
+  "status": "pending",
+  "isFeatured": false,
+  "isShowcase": false,
+  "isBoosted": false,
+  "isPremium": false,
+  "isActive": false,
+  "isDeleted": false,
+  "isSuspicious": false,
+  "user": {
+    "resetPasswordToken": "",
+    "resetPasswordExpire": null,
+    "_id": "69ff967f286137d9def2c362",
+    "email": "babacandir@gmail.com",
+    "__v": 2,
+    "badges": [],
+    "banned": false,
+    "createdAt": "2026-05-09T20:18:06.587Z",
+    "favorites": [],
+    "name": "Admin",
+    "password": "$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe",
+    "role": "admin",
+    "city": "",
+    "district": "",
+    "isVerified": false,
+    "phone": "",
+    "updatedAt": "2026-05-21T20:39:44.297Z",
+    "username": "",
+    "verifiedBadge": false
+  },
+  "favorites": [],
+  "expiresAt": "2026-06-25T18:21:05.781Z",
+  "createdAt": "2026-05-26T18:21:05.781Z",
+  "__v": 0
+}
+PRE_RESPONSE_OBJECT {
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png'
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE response_listing_built
+FINAL_RESPONSE_OBJECT {
+  _id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  listingNo: '420724215',
+  title: 'WTRETRE',
+  description: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  desc: "SENA OTOMOTÝV'DEN\n" +
+    '\n' +
+    '-2019 MODEL-\n' +
+    '\n' +
+    '-AUDÝ A5-\n' +
+    '\n' +
+    '-QUATTRO SPORT-\n' +
+    '\n' +
+    '-40 TDI 2.0-190 PS-\n' +
+    '\n' +
+    "-72.000 KM'DE-\n" +
+    '\n' +
+    '-MATRÝX FARLAR-\n' +
+    '\n' +
+    '-S LINE SPOR DERÝ KESÝK DÝREKSÝYON-\n' +
+    '\n' +
+    '-PANAROMÝK AÇILIR CAM TAVAN-\n' +
+    '\n' +
+    '-RECORE KOLTUKLAR-\n' +
+    '\n' +
+    '-ELEKTRÝKLÝ BAGAJ-\n' +
+    '\n' +
+    '-F1 VÝTES-\n' +
+    '\n' +
+    '-HAYALET EKRAN-\n' +
+    '\n' +
+    '-ÇÝFT NAVÝGASYON-\n' +
+    '\n' +
+    '-ÖZEL ÝÇ AMBÝYANS AYDINLATMA\n' +
+    '\n' +
+    '-KOLTUK ISITMA-\n' +
+    '\n' +
+    '-HIZ SABÝTLEME-\n' +
+    '\n' +
+    '-STAR STOP-\n' +
+    '\n' +
+    '-XENON FAR-\n' +
+    '\n' +
+    "-LED'LÝ GÜNDÜZ FARLARI-\n" +
+    '\n' +
+    '-YAÐMUR VE FAR SENSÖRÜ-\n' +
+    '\n' +
+    ' -ELEKTRÝKLÝ KATLANIR ISITMALI YAN AYNALAR-\n' +
+    '\n' +
+    ' -BLUETOOTH-\n' +
+    '\n' +
+    '-CARPLAY-\n' +
+    '\n' +
+    ' -ÝÇ DIÞ AYDINLATMA-\n' +
+    '\n' +
+    '-KARARTILMIÞ ARKA CAMLAR-\n' +
+    '\n' +
+    '-DÝJÝTAL KLÝMA-\n' +
+    '\n' +
+    '-USB - AUX-\n' +
+    '\n' +
+    '--------------------------------------\n' +
+    '\n' +
+    'YEDEK ANAHTAR VE KÝTAPÇIKLARI MEVCUT\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'EXPERTÝZ; \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'BOYA; SOL ÖN ÇAMURLUK\n' +
+    '\n' +
+    'DEÐÝÞEN; SOL ÖN KAPI\n' +
+    '\n' +
+    'TRAMER; 39.000 TL\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '----------------------------------------\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'DETAYLI BÝLGÝ ÝÇÝN \n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    'SENA KEKLÝK; 0532 307 6849',
+  price: 2500000,
+  views: 0,
+  location: 'Adýyaman / Gerger',
+  city: 'Adýyaman',
+  district: 'Gerger',
+  category: 'vasita',
+  subCategory: 'Otomobil',
+  brand: 'BMW',
+  series: '3 Serisi',
+  model: '318d',
+  year: 2020,
+  km: 25000,
+  fuel: 'Benzin',
+  transmission: 'Manuel',
+  bodyType: 'Sedan',
+  color: 'Beyaz',
+  engine: '2.0',
+  engineSize: '2.0',
+  enginePower: '15000',
+  damage: [ 'roof:local', 'leftFrontFender:painted', 'leftRearFender:changed' ],
+  sellerType: 'Sahibinden',
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png',
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  imagePublicIds: [],
+  uploadProvider: 'local',
+  features: [
+    'ESP / ESC',
+    'ASR / Çekiþ Kontrol',
+    'Yokuþ Kalkýþ Desteði',
+    'Þerit Takip Asistaný',
+    'Kör Nokta Uyarý',
+    'Çarpýþma Önleme Sistemi',
+    'Lastik Basýnç Sensörü',
+    'Yan Hava Yastýðý',
+    'Isofix',
+    'Gece Görüþ Sistemi',
+    '360 Kamera',
+    'Arka Kamera',
+    'Park Sensörü Ön',
+    'Deri Koltuk',
+    'Kumaþ Koltuk',
+    'Isýtmalý Koltuk',
+    'Masajlý Koltuk',
+    'Katlanýr Arka Koltuk',
+    'Kol Dayama',
+    'Start/Stop',
+    'Head-Up Display',
+    'Ambiyans Aydýnlatma',
+    'Elektrikli Bagaj',
+    'Kablosuz Þarj',
+    'LED Far',
+    'Matrix LED',
+    'Sunroof',
+    'Elektrikli Ayna',
+    'Katlanýr Ayna',
+    'Isýtmalý Ayna',
+    'Tavan Rayý',
+    'Spoiler',
+    'Çeki Demiri',
+    'Alaþým Jant',
+    'Adaptif Far',
+    'Bluetooth',
+    'Navigasyon',
+    'USB',
+    'AUX',
+    'Premium Ses Sistemi',
+    'Arka Eðlence Paketi',
+    'WiFi Hotspot',
+    'Adaptif Cruise',
+    'Soðutmalý Torpido',
+    'Yaðmur Sensörü',
+    'Far Sensörü',
+    'Otomatik Bagaj',
+    'Sürüþ Modlarý',
+    'Hýz Limitleyici'
+  ],
+  damageMap: {
+    hood: 'original',
+    roof: 'local',
+    trunk: 'original',
+    leftFrontFender: 'painted',
+    rightFrontFender: 'original',
+    leftRearFender: 'changed',
+    rightRearFender: 'original'
+  },
+  approved: false,
+  status: 'pending',
+  isFeatured: false,
+  isShowcase: false,
+  isBoosted: false,
+  isPremium: false,
+  isActive: false,
+  isDeleted: false,
+  isSuspicious: false,
+  user: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  },
+  favorites: [],
+  expiresAt: 2026-06-25T18:21:05.781Z,
+  createdAt: 2026-05-26T18:21:05.781Z,
+  __v: 0,
+  seller: {
+    resetPasswordToken: '',
+    resetPasswordExpire: null,
+    _id: new ObjectId('69ff967f286137d9def2c362'),
+    email: 'babacandir@gmail.com',
+    __v: 2,
+    badges: [],
+    banned: false,
+    createdAt: 2026-05-09T20:18:06.587Z,
+    favorites: [],
+    name: 'Admin',
+    password: '$2a$10$Gu.W3kbnacBhMI1EZL2cVu.IHcYZdN/8JUQERS7u0zYb05ZpoW7Fe',
+    role: 'admin',
+    city: '',
+    district: '',
+    isVerified: false,
+    phone: '',
+    updatedAt: 2026-05-21T20:39:44.297Z,
+    username: '',
+    verifiedBadge: false
+  }
+}
+DETAIL_ROUTE_RESULT {
+  id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png'
+}
+FINAL_ROUTE_RESPONSE {
+  id: new ObjectId('6a15e491b117a9afc3a7640e'),
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png'
+}
+LIVE_DETAIL_RESPONSE {
+  "id": "6a15e491b117a9afc3a7640e",
+  "images": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "photos": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "gallery": [
+    "/uploads/1779819665598-704764789.png",
+    "/uploads/1779819665612-112990983.png",
+    "/uploads/1779819665622-355465525.png",
+    "/uploads/1779819665625-518175573.png",
+    "/uploads/1779819665626-417768086.png",
+    "/uploads/1779819665629-698666258.png",
+    "/uploads/1779819665631-249037255.png",
+    "/uploads/1779819665633-232556428.png",
+    "/uploads/1779819665636-31332856.png",
+    "/uploads/1779819665638-639988370.png"
+  ],
+  "image": "/uploads/1779819665598-704764789.png",
+  "coverImage": "/uploads/1779819665598-704764789.png",
+  "mainImage": "/uploads/1779819665598-704764789.png"
+}
+FINAL_ROUTE_RESPONSE_KEYS [
+  '_id',            'listingNo',  'title',
+  'description',    'desc',       'price',
+  'views',          'location',   'city',
+  'district',       'category',   'subCategory',
+  'brand',          'series',     'model',
+  'year',           'km',         'fuel',
+  'transmission',   'bodyType',   'color',
+  'engine',         'engineSize', 'enginePower',
+  'damage',         'sellerType', 'image',
+  'coverImage',     'mainImage',  'images',
+  'gallery',        'photos',     'imagePublicIds',
+  'uploadProvider', 'features',   'damageMap',
+  'approved',       'status',     'isFeatured',
+  'isShowcase',     'isBoosted',  'isPremium',
+  'isActive',       'isDeleted',  'isSuspicious',
+  'user',           'favorites',  'expiresAt',
+  'createdAt',      '__v',        'seller'
+]
+FINAL_RESPONSE_MEDIA {
+  images: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  gallery: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  photos: [
+    '/uploads/1779819665598-704764789.png',
+    '/uploads/1779819665612-112990983.png',
+    '/uploads/1779819665622-355465525.png',
+    '/uploads/1779819665625-518175573.png',
+    '/uploads/1779819665626-417768086.png',
+    '/uploads/1779819665629-698666258.png',
+    '/uploads/1779819665631-249037255.png',
+    '/uploads/1779819665633-232556428.png',
+    '/uploads/1779819665636-31332856.png',
+    '/uploads/1779819665638-639988370.png'
+  ],
+  image: '/uploads/1779819665598-704764789.png',
+  coverImage: '/uploads/1779819665598-704764789.png',
+  mainImage: '/uploads/1779819665598-704764789.png'
+}
+LISTING_ROUTE_MIDDLEWARE_STAGE before_res_json
+DETAIL_FETCH_ROUTE_OK { id: '6a15e491b117a9afc3a7640e', publicVisible: false }
+REQ GET /api/listings/6a15e491b117a9afc3a7640e 200 205ms
+STATIC_REQUEST /uploads/1779819665598-704764789.png
+STATIC_REQUEST /uploads/1779819665612-112990983.png
+STATIC_REQUEST /uploads/1779819665622-355465525.png
+STATIC_REQUEST /uploads/1779819665625-518175573.png
+STATIC_REQUEST /uploads/1779819665626-417768086.png
+REQ GET /uploads/1779819665625-518175573.png 200 13ms
+STATIC_REQUEST /uploads/1779819665631-249037255.png
+REQ GET /uploads/1779819665622-355465525.png 200 27ms
+REQ GET /uploads/1779819665612-112990983.png 200 35ms
+STATIC_REQUEST /uploads/1779819665636-31332856.png
+REQ GET /uploads/1779819665626-417768086.png 200 30ms
+REQ GET /uploads/1779819665598-704764789.png 200 40ms
+STATIC_REQUEST /uploads/1779819665629-698666258.png
+STATIC_REQUEST /uploads/1779819665638-639988370.png
+REQ GET /uploads/1779819665631-249037255.png 200 17ms
+STATIC_REQUEST /uploads/1779819665633-232556428.png
+REQ GET /uploads/1779819665629-698666258.png 200 11ms
+REQ GET /uploads/1779819665638-639988370.png 200 11ms
+REQ GET /uploads/1779819665636-31332856.png 200 16ms
+REQ GET /uploads/1779819665633-232556428.png 200 10ms
+REQ GET /api/listings?limit=60 304 214ms
+STATIC_REQUEST /index.html
+REQ GET /index.html 200 2ms
+STATIC_REQUEST /style.css?v=2
+REQ GET /style.css?v=2 304 1ms
+STATIC_REQUEST /auth-global.js?v=2
+REQ GET /auth-global.js?v=2 304 1ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+REQ GET /api/listings?showcase=true 304 213ms
+REQ GET /api/listings?featured=true 304 222ms
+REQ GET /api/listings?normal=true 304 230ms
+REQ GET /api/listings 200 237ms
+STATIC_REQUEST /uploads/1779819665598-704764789.png
+REQ GET /uploads/1779819665598-704764789.png 304 2ms
+STATIC_REQUEST /uploads/1779819665612-112990983.png
+STATIC_REQUEST /uploads/1779819665622-355465525.png
+STATIC_REQUEST /uploads/1779819665625-518175573.png
+STATIC_REQUEST /uploads/1779819665626-417768086.png
+STATIC_REQUEST /uploads/1779819665629-698666258.png
+REQ GET /uploads/1779819665612-112990983.png 304 8ms
+REQ GET /uploads/1779819665622-355465525.png 304 7ms
+STATIC_REQUEST /uploads/1779819665631-249037255.png
+STATIC_REQUEST /uploads/1779819665636-31332856.png
+REQ GET /uploads/1779819665629-698666258.png 304 6ms
+REQ GET /uploads/1779819665626-417768086.png 304 7ms
+REQ GET /uploads/1779819665625-518175573.png 304 7ms
+STATIC_REQUEST /favicon.ico
+STATIC_REQUEST /uploads/1779819665638-639988370.png
+REQ GET /uploads/1779819665631-249037255.png 304 3ms
+REQ GET /uploads/1779819665636-31332856.png 304 3ms
+STATIC_REQUEST /uploads/1779819665633-232556428.png
+REQ GET /favicon.ico 304 3ms
+REQ GET /uploads/1779819665638-639988370.png 304 2ms
+REQ GET /uploads/1779819665633-232556428.png 304 1ms
+REQ GET /api/listings?limit=60 304 216ms
+STATIC_REQUEST /create-listing-v3.html
+REQ GET /create-listing-v3.html 200 1ms
+STATIC_REQUEST /style.css?v=2
+REQ GET /style.css?v=2 304 1ms
+STATIC_REQUEST /admin.html?username=babacandir%40gmail.com&password=Jetle3080
+REQ GET /admin.html?username=babacandir%40gmail.com&password=Jetle3080 200 3ms
+STATIC_REQUEST /admin.js
+REQ GET /admin.js 304 1ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 2ms
+LOGIN ATTEMPT: {
+  email: 'babacandir@gmail.com',
+  hasPassword: true,
+  isProduction: false
+}
+LOGIN STEP user_lookup_start: { email: 'babacandir@gmail.com' }
+LOGIN STEP user_lookup_ok: { found: true, role: 'admin', banned: false, hasPassword: true }
+LOGIN STEP password_mode: { hasBcryptPassword: true, storedLength: 60 }
+LOGIN STEP bcrypt_compare_ok: { ok: true }
+LOGIN STEP password_result: {
+  email: 'babacandir@gmail.com',
+  passwordMatches: true,
+  hasBcryptPassword: true,
+  isLegacyPlaintext: false
+}
+LOGIN STEP token_sign_start: { userId: '69ff967f286137d9def2c362', role: 'admin' }
+LOGIN STEP token_sign_ok: { tokenLength: 191 }
+REQ POST /api/auth/login 200 162ms
+STATIC_REQUEST /jetle-v2/admin-dashboard.html
+REQ GET /jetle-v2/admin-dashboard.html 200 2ms
+STATIC_REQUEST /favicon.ico
+REQ GET /favicon.ico 304 1ms
+REQ GET /api/admin/stats 200 738ms
+REQ GET /api/admin/analytics 200 197ms
+REQ GET /api/admin/notifications 200 212ms
+ADMIN_PENDING_COUNT 4
+MODERATION_PENDING_VISIBLE {
+  "count": 4,
+  "ids": [
+    "6a15e491b117a9afc3a7640e",
+    "6a15e2edb117a9afc3a76406",
+    "6a15ddacb117a9afc3a763f8",
+    "6a15ddacb117a9afc3a763f2"
+  ]
+}
+REQ GET /api/admin/listings?status=pending 200 271ms
+REQ GET /api/admin/stats 200 621ms
+STATIC_REQUEST /uploads/1779819665598-704764789.png
+REQ GET /uploads/1779819665598-704764789.png 304 0ms
+REQ DELETE /api/admin/delete/6a15ddacb117a9afc3a763f2 200 271ms
+ADMIN_PENDING_COUNT 3
+MODERATION_PENDING_VISIBLE {
+  "count": 3,
+  "ids": [
+    "6a15e491b117a9afc3a7640e",
+    "6a15e2edb117a9afc3a76406",
+    "6a15ddacb117a9afc3a763f8"
+  ]
+}
+REQ GET /api/admin/listings?status=pending 200 257ms
+

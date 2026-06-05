@@ -16,6 +16,7 @@ const ListingSchema = new mongoose.Schema({
   location: String,
   city: String,
   district: String,
+  neighborhood: String,
   category: String,
   subCategory: String,
   brand: String,

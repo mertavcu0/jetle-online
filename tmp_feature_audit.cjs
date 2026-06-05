@@ -1,0 +1,27 @@
+﻿const path = require("path");
+require("./jetle-online/backend/node_modules/dotenv").config({ path: path.resolve("jetle-online/backend/.env") });
+const mongoose = require("./jetle-online/backend/node_modules/mongoose");
+const Listing = require("./jetle-online/backend/models/Listing");
+(async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    const listing = await Listing.findOne({ title: /WTRETRE/i }).lean();
+    if (!listing) {
+      console.log(JSON.stringify({ found: false }));
+      return;
+    }
+    console.log(JSON.stringify({
+      found: true,
+      id: String(listing._id),
+      features: listing.features,
+      options: listing.options,
+      equipment: listing.equipment,
+      selectedFeatures: listing.selectedFeatures
+    }, null, 2));
+  } catch (err) {
+    console.error(err.message);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.disconnect().catch(() => {});
+  }
+})();
