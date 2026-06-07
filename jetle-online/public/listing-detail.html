@@ -211,11 +211,11 @@
 
     .listing-header h1 {
       margin: 0;
-      font-size: clamp(29px, 3vw, 38px);
+      font-size: clamp(24px, 2.2vw, 30px);
       line-height: 1.08;
       letter-spacing: 0;
       max-width: 840px;
-      font-weight: 800;
+      font-weight: 600;
       color: #111827;
     }
 
@@ -353,8 +353,8 @@
 
     .detail-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.52fr) minmax(280px, 340px) minmax(268px, 312px);
-      gap: 10px;
+      grid-template-columns: minmax(0, 1.86fr) minmax(285px, 0.72fr) minmax(280px, 0.56fr);
+      gap: 14px;
       align-items: start;
     }
 
@@ -368,35 +368,40 @@
 
     .left {
       background: #fff;
-      padding: 12px 12px 6px;
-      border-radius: 10px;
-      border: 1px solid rgba(226, 232, 240, 0.88);
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
+      padding: 4px 4px 4px;
+      border-radius: 6px;
+      border: 1px solid rgba(226, 232, 240, 0.72);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
     }
 
     .slider {
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      height: 420px;
-      max-height: 420px;
-      border-radius: 20px;
+      height: auto;
+      max-height: none;
+      aspect-ratio: 16 / 10;
+      border-radius: 6px;
       overflow: hidden;
       isolation: isolate;
-      background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.06),
-        0 18px 44px rgba(15, 23, 42, 0.24);
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.55);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.035);
     }
 
     .slider img,
     .main-img {
       width: 100%;
-      height: 420px;
-      max-height: 420px;
+      height: 100%;
+      max-height: none;
       object-fit: contain;
-      border-radius: 20px;
+      object-position: center center;
+      border-radius: 4px;
       display: block;
       background: transparent;
+      margin: 0 auto;
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
@@ -433,6 +438,20 @@
       color: #64748b;
       margin-top: 4px;
       padding: 0 2px;
+    }
+
+    #imageCount {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
     }
 
     .slider button {
@@ -481,38 +500,92 @@
 
     #thumbnails,
     .gallery {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      overflow-x: auto;
-      padding: 2px 0 0;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      column-gap: 4px;
+      row-gap: 4px;
+      margin-top: 4px;
+      overflow: visible;
+      padding: 0;
     }
 
     #thumbnails img,
     .gallery img {
-      width: 92px;
-      height: 64px;
+      width: 100%;
+      height: 58px;
       object-fit: cover;
       cursor: pointer;
-      border-radius: 10px;
+      border-radius: 4px;
       border: 2px solid rgba(148,163,184,0.18);
-      flex: 0 0 auto;
       background: #e5e7eb;
       transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
 
     #thumbnails img:hover,
     .gallery img:hover {
-      border-color: rgba(37,99,235,0.55);
+      border-color: rgba(37,99,235,0.72);
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(15,23,42,0.14);
+      box-shadow: 0 6px 16px rgba(15,23,42,0.14);
+      filter: saturate(1.02);
     }
 
     #thumbnails img.active,
     .gallery img.active {
       border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.16);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.22);
       transform: translateY(-1px);
+    }
+
+    .thumb-pager {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .thumb-pager[hidden] {
+      display: none !important;
+    }
+
+    .thumb-pager-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      background: #fff;
+      color: #374151;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .thumb-pager-btn:disabled {
+      opacity: 0.42;
+      cursor: default;
+    }
+
+    .thumb-pager-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .thumb-pager-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      border: none;
+      padding: 0;
+      background: #cbd5e1;
+      cursor: pointer;
+    }
+
+    .thumb-pager-dot.active {
+      background: #2563eb;
     }
 
     .gallery-modal {
@@ -522,9 +595,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background: rgba(3, 7, 18, 0.92);
-      backdrop-filter: blur(4px);
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.95);
     }
 
     .gallery-modal.open {
@@ -533,53 +605,47 @@
 
     .gallery-modal-dialog {
       position: relative;
-      width: min(1180px, 100%);
-      max-height: calc(100vh - 48px);
+      width: min(1440px, 100%);
+      height: min(92vh, 100%);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 8px;
     }
 
     .gallery-modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      color: #fff;
-    }
-
-    .gallery-modal-title {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: 0;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      z-index: 4;
     }
 
     .gallery-modal-counter {
-      margin-left: auto;
       font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.82);
+      font-weight: 600;
+      color: rgba(255,255,255,0.84);
+      letter-spacing: 0;
     }
 
     .gallery-modal-close {
-      width: 42px;
-      height: 42px;
+      width: 28px;
+      height: 28px;
       border: none;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-      color: #fff;
-      font-size: 28px;
+      padding: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.84);
+      font-size: 24px;
+      font-weight: 300;
       line-height: 1;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition: color 0.2s ease, transform 0.2s ease;
     }
 
     .gallery-modal-close:hover {
-      background: rgba(255,255,255,0.22);
-      transform: scale(1.04);
+      color: #fff;
+      transform: scale(1.06);
     }
 
     .gallery-modal-stage {
@@ -589,10 +655,10 @@
       justify-content: center;
       min-height: 0;
       flex: 1;
-      background: rgba(17, 24, 39, 0.8);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+      background: transparent;
+      border-radius: 0;
+      overflow: visible;
+      box-shadow: none;
     }
 
     .gallery-modal-image {
@@ -600,7 +666,7 @@
       width: 100%;
       max-width: 100%;
       height: auto;
-      max-height: calc(100vh - 220px);
+      max-height: calc(100vh - 168px);
       object-fit: contain;
       margin: 0 auto;
       cursor: zoom-in;
@@ -618,66 +684,88 @@
       top: 50%;
       transform: translateY(-50%);
       width: 52px;
-      height: 52px;
+      height: 72px;
       border: none;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.5);
+      border-radius: 14px;
+      background: rgba(18, 18, 18, 0.38);
       color: #fff;
-      font-size: 40px;
-      font-weight: 700;
+      font-size: 34px;
+      font-weight: 300;
       line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 2;
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
     }
 
     .gallery-modal-nav:hover {
-      background: rgba(0,0,0,0.72);
-      transform: translateY(-50%) scale(1.04);
+      background: rgba(18, 18, 18, 0.6);
+      color: #ffffff;
+      transform: translateY(-50%);
     }
 
     .gallery-modal-nav.prev {
-      left: 18px;
+      left: 12px;
     }
 
     .gallery-modal-nav.next {
-      right: 18px;
+      right: 12px;
+    }
+
+    .gallery-modal-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      max-width: min(1080px, 100%);
+      margin: 0 auto;
+      gap: 6px;
+    }
+
+    .gallery-modal-footer .gallery-modal-counter {
+      align-self: flex-start;
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
     }
 
     .gallery-modal-thumbs {
       display: flex;
-      gap: 10px;
+      gap: 6px;
       overflow-x: auto;
-      padding: 2px 2px 8px;
+      width: 100%;
+      max-width: 100%;
+      padding: 1px 1px 4px;
       scrollbar-width: thin;
+      scroll-behavior: smooth;
     }
 
     .gallery-modal-thumbs img {
-      width: 92px;
-      height: 68px;
+      width: 88px;
+      height: 62px;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: 5px;
       border: 2px solid rgba(255,255,255,0.18);
       cursor: pointer;
       flex: 0 0 auto;
-      background: rgba(255,255,255,0.08);
-      transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+      background: rgba(255,255,255,0.04);
+      transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
       opacity: 0.82;
     }
 
     .gallery-modal-thumbs img:hover {
-      border-color: rgba(96,165,250,0.9);
+      border-color: rgba(96,165,250,0.96);
       opacity: 1;
       transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
     .gallery-modal-thumbs img.active {
       border-color: #60a5fa;
       opacity: 1;
-      box-shadow: 0 0 0 2px rgba(96,165,250,0.2);
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.28);
     }
 
     .right {
@@ -688,7 +776,7 @@
 
     .right-panel {
       width: 100%;
-      max-width: 332px;
+      max-width: 408px;
       align-self: start;
       position: sticky;
       top: 16px;
@@ -724,25 +812,26 @@
     .listing-info-box {
       display: block !important;
       margin-top: 0;
-      border-radius: 8px;
-      padding: 8px 0 0;
+      border-radius: 6px;
+      padding: 2px 0 0;
       border: 1px solid rgba(226, 232, 240, 0.95);
       box-shadow: none;
       background: #fff;
     }
 
     .listing-info-box h4 {
-      margin: 0 12px 8px;
-      font-size: 15px;
+      margin: 0 10px 6px;
+      font-size: 11px;
       font-weight: 800;
-      color: #111827;
+      color: #555;
       letter-spacing: 0;
+      line-height: 1.2;
     }
 
     .listing-info-box .right-column-tools {
       gap: 4px;
-      padding: 0 12px 8px;
-      margin-bottom: 4px;
+      padding: 0 10px 6px;
+      margin-bottom: 0;
       border-bottom: 1px solid #edf2f7;
     }
 
@@ -800,34 +889,80 @@
 
     .seller-card {
       display: grid;
-      gap: 12px;
-      padding: 15px 16px;
+      gap: 8px;
+      padding: 8px 9px;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(15, 23, 42, 0.04);
     }
 
     .seller-header {
       display: grid;
-      gap: 4px;
+      gap: 6px;
       margin-bottom: 0;
+    }
+
+    .seller-identity {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 7px;
+      align-items: center;
+    }
+
+    .seller-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      font-size: 0;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .seller-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .seller-avatar svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      color: #9ca3af;
     }
 
     .seller-header-main {
       display: grid;
-      gap: 4px;
+      gap: 3px;
       min-width: 0;
     }
 
     .seller-header strong {
-      font-size: 19px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 600;
       color: #0f172a;
       line-height: 1.15;
     }
 
     .seller-role-line {
-      color: #6b7280;
-      font-size: 12px;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .seller-membership {
+      color: #94a3b8;
+      font-size: 10px;
       font-weight: 600;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .seller-badges {
@@ -838,18 +973,35 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       margin-bottom: 0;
       color: #64748b;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 600;
     }
 
     .seller-meta span:first-child,
+    .seller-meta span:last-child,
     .seller-trust-badge,
     .seller-card > .badge,
     .btn-boost {
       display: none !important;
+    }
+
+    .seller-company-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      width: fit-content;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
     }
 
     .seller-type-badge,
@@ -918,10 +1070,10 @@
 
     .seller-link-row a {
       color: #2563eb;
-      font-weight: 700;
+      font-weight: 600;
       text-decoration: none;
-      font-size: 12px;
-      line-height: 1.3;
+      font-size: 11px;
+      line-height: 1.2;
       transition: color 0.18s ease;
     }
 
@@ -972,13 +1124,18 @@
     .btn-primary,
     .btn-secondary {
       width: 100%;
-      min-height: 42px;
-      padding: 10px 12px;
-      border-radius: 10px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
       transition: all 0.2s ease;
-      font-size: 13px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-sizing: border-box;
     }
 
     .btn-primary {
@@ -1042,30 +1199,35 @@
     .seller-actions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 5px;
       margin-top: 0;
     }
 
     .seller-contact-stack {
       display: grid;
-      gap: 10px;
+      gap: 5px;
     }
 
     .seller-phone-panel {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid #dbe4f0;
-      border-radius: 10px;
+      display: grid;
+      gap: 4px;
+      padding: 7px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
       background: #f8fafc;
+    }
+
+    .seller-phone-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 6px;
+      align-items: center;
     }
 
     .seller-phone-label {
       color: #64748b;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 10px;
+      font-weight: 500;
       text-transform: none;
       letter-spacing: 0;
       white-space: nowrap;
@@ -1074,14 +1236,14 @@
     .seller-phone-value {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
       flex: 1;
       color: #0f172a;
-      font-size: 17px;
+      font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.02em;
-      line-height: 1.2;
-      text-align: right;
+      letter-spacing: 0;
+      line-height: 1.1;
+      text-align: left;
       white-space: nowrap;
     }
 
@@ -1090,6 +1252,57 @@
       font-size: 14px;
       font-weight: 700;
       letter-spacing: 0;
+    }
+
+    .safe-shopping-card {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fafcff;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .safe-shopping-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      color: #2d3748;
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.8;
+      letter-spacing: 0;
+    }
+
+    .safe-shopping-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .safe-shopping-card p {
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .safe-shopping-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      color: #4b5563;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .safe-shopping-link:hover {
+      color: #374151;
+      text-decoration: underline;
     }
 
     .btn-secondary.revealed {
@@ -1297,13 +1510,15 @@
     }
 
     .section-card-head {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .section-card-head h3 {
-      margin: 0 0 4px;
-      font-size: 18px;
-      color: #0f172a;
+      margin: 0 0 2px;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: #4b5563;
     }
 
     .section-card-head p {
@@ -1389,9 +1604,7 @@
     }
 
     .marketplace-blocks {
-      margin-top: 6px;
-      display: grid;
-      gap: 4px;
+      display: none;
     }
 
     .marketplace-block {
@@ -1573,7 +1786,7 @@
     }
 
     .feature-group {
-      padding: 0 0 22px;
+      padding: 0 0 14px;
       border: 0;
       border-bottom: 1px solid #e5e7eb;
       background: transparent;
@@ -1582,33 +1795,45 @@
     }
 
     .feature-group h5 {
-      margin: 0 0 16px;
-      font-size: 20px;
+      margin: 0 0 10px;
+      font-size: 15px;
       color: #0f172a;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+      text-transform: none;
+      letter-spacing: 0;
       font-weight: 800;
     }
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px 28px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px 18px;
       align-items: start;
     }
 
     .feature-item {
-      position: static;
-      padding-left: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
       color: #374151;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
-      line-height: 1.65;
+      line-height: 1.4;
       word-break: normal;
       overflow-wrap: break-word;
       hyphens: none;
       max-width: 100%;
       min-width: 0;
+    }
+
+    .feature-item::before {
+      content: "✓";
+      flex: 0 0 auto;
+      margin-top: 1px;
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.9;
+      line-height: 1;
     }
 
     @media (max-width: 1180px) {
@@ -1622,6 +1847,22 @@
         grid-template-columns: 1fr;
         gap: 10px 0;
       }
+
+      .estate-inline-features .feature-category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .estate-inline-features .feature-category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 840px) {
+      .estate-inline-features .feature-category-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .feature-panel-grid {
@@ -1633,8 +1874,107 @@
     .feature-category-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 22px;
+      gap: 14px;
       align-items: start;
+    }
+
+    .estate-inline-features {
+      margin-top: 28px;
+      margin-bottom: 20px;
+    }
+
+    .estate-inline-features .section-card-head {
+      margin-bottom: 10px;
+    }
+
+    .listing-video-card {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #eceff3;
+    }
+
+    .listing-video-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border: 1px solid #e7eaf0;
+      border-radius: 8px;
+      background: #0f172a;
+    }
+
+    .listing-video-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .listing-video-link {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 10px;
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .listing-video-link:hover {
+      text-decoration: underline;
+    }
+
+    .estate-inline-features .feature-category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+      align-items: start;
+    }
+
+    .estate-inline-features .feature-group {
+      padding: 8px 10px;
+      border: 1px solid #e6ebf1;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .estate-inline-features .feature-group h5 {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #3b82f6;
+    }
+
+    .estate-inline-features .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 12px;
+    }
+
+    .estate-inline-features .feature-item {
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.3;
+      gap: 5px;
+    }
+
+    .estate-inline-features .feature-item::before {
+      color: #5f8a5f;
+      font-size: 9px;
+      margin-top: 0;
+    }
+
+    .estate-inline-features .feature-panel-flat {
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .features-inline-note {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .details-box {
@@ -1674,17 +2014,19 @@
 
     .details-grid {
       display: block;
-      padding: 0 12px 8px;
+      padding: 3px 9px 7px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
     }
 
     .details-grid div {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      min-height: 32px;
-      padding: 6px 0;
-      font-size: 11px;
+      gap: 10px;
+      min-height: 27px;
+      padding: 4px 0;
+      font-size: 10px;
       color: #111827;
       box-sizing: border-box;
       border-bottom: 1px solid #edf2f7;
@@ -1703,28 +2045,28 @@
     .details-grid strong {
       display: block;
       margin-bottom: 0;
-      flex: 0 0 42%;
-      color: #6b7280;
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      flex: 0 0 45%;
+      color: #555;
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1.25;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
     }
 
     .details-grid span {
       display: block;
       flex: 1;
       text-align: right;
-      color: #111827;
-      font-size: 12px;
+      color: #3f3f46;
+      font-size: 10px;
       font-weight: 700;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: normal;
+      line-height: 1.25;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      word-break: break-word;
     }
 
     .details-grid [hidden] {
@@ -1944,6 +2286,7 @@
 
       .slider {
         height: 300px;
+        border-radius: 10px;
       }
 
       .slider button {
@@ -1962,13 +2305,13 @@
 
       #thumbnails,
       .gallery {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px;
       margin-top: 8px;
       }
 
       #thumbnails img,
       .gallery img {
-        width: 76px;
         height: 58px;
       }
 
@@ -1982,17 +2325,13 @@
       }
 
       .gallery-modal {
-        padding: 12px;
+        padding: 6px;
       }
 
       .gallery-modal-dialog {
         width: 100%;
-        max-height: calc(100vh - 24px);
-        gap: 12px;
-      }
-
-      .gallery-modal-title {
-        font-size: 16px;
+        height: min(96vh, 100%);
+        gap: 10px;
       }
 
       .gallery-modal-counter {
@@ -2000,23 +2339,23 @@
       }
 
       .gallery-modal-close {
-        width: 38px;
-        height: 38px;
-        font-size: 24px;
+        width: 26px;
+        height: 26px;
+        font-size: 22px;
       }
 
       .gallery-modal-stage {
-        border-radius: 14px;
+        border-radius: 0;
       }
 
       .gallery-modal-image {
-        max-height: calc(100vh - 250px);
+        max-height: calc(100vh - 212px);
       }
 
       .gallery-modal-nav {
-        width: 40px;
-        height: 40px;
-        font-size: 28px;
+        width: 38px;
+        height: 54px;
+        font-size: 26px;
       }
 
       .gallery-modal-nav.prev {
@@ -2028,12 +2367,13 @@
       }
 
       .gallery-modal-thumbs {
-        gap: 8px;
+        gap: 6px;
+        max-width: 100%;
       }
 
       .gallery-modal-thumbs img {
-        width: 74px;
-        height: 56px;
+        width: 68px;
+        height: 50px;
       }
     }
 
@@ -2093,7 +2433,14 @@
       }
 
       #thumbnails {
+        display: grid;
         margin-top: 4px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow: visible;
+      }
+
+      .thumb-pager {
+        display: flex !important;
       }
 
       .listing-info-box {
@@ -2318,6 +2665,23 @@
                 <h3>Açıklama</h3>
               </div>
               <p id="descText"></p>
+              <div id="listingVideoSection" class="listing-video-card" hidden>
+                <div class="section-card-head">
+                  <h3>Video</h3>
+                </div>
+                <div class="listing-video-frame">
+                  <iframe
+                    id="listingVideoFrame"
+                    src=""
+                    title="İlan videosu"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+                <a id="listingVideoLink" class="listing-video-link" href="#" target="_blank" rel="noopener noreferrer">Videoyu yeni sekmede aç</a>
+              </div>
+              <div id="estateFeaturesInline" class="estate-inline-features" hidden></div>
             </div>
 
             <div class="tab-content" id="tech">
@@ -2346,6 +2710,12 @@
                 <div class="spec-item"><strong>Boya</strong><span id="techPaint">-</span></div>
                 <div class="spec-item"><strong>Değişen</strong><span id="techChanged">-</span></div>
                 <div class="spec-item"><strong>Ekspertiz Özeti</strong><span id="techExpertiseSummary">-</span></div>
+                <div class="spec-item"><strong>m² (Brüt)</strong><span id="techGrossM2">-</span></div>
+                <div class="spec-item"><strong>m² (Net)</strong><span id="techNetM2">-</span></div>
+                <div class="spec-item"><strong>Mutfak</strong><span id="techKitchenType">-</span></div>
+                <div class="spec-item"><strong>Asansör</strong><span id="techElevator">-</span></div>
+                <div class="spec-item"><strong>Otopark</strong><span id="techParkingType">-</span></div>
+                <div class="spec-item"><strong>Enerji Kimlik Belgesi</strong><span id="techEnergyCertificate">-</span></div>
               </div>
             </div>
 
@@ -2409,11 +2779,14 @@
               <button class="price-tool" type="button" data-action="print-listing">Yazdır</button>
             </div>
           </div>
+          <h4>Teknik Bilgiler</h4>
           <div class="details-grid">
             <div><strong>İlan No:</strong> <span id="listingNo"></span></div>
             <div><strong>Yayın Tarihi:</strong> <span id="listingDate"></span></div>
             <div id="updatedAtRow" hidden><strong>Güncelleme:</strong> <span></span></div>
             <div><strong>Durum:</strong> <span id="condition">İkinci El</span></div>
+            <div id="estateTypeRow" hidden><strong>Emlak Tipi:</strong> <span></span></div>
+            <div id="housingTypeRow" hidden><strong>Konut Tipi:</strong> <span></span></div>
             <div id="brandRow" hidden><strong>Marka:</strong> <span></span></div>
             <div id="seriesRow" hidden><strong>Seri:</strong> <span></span></div>
             <div id="modelRow" hidden><strong>Model:</strong> <span></span></div>
@@ -2434,6 +2807,62 @@
             <div id="paintRow" hidden><strong>Boya:</strong> <span></span></div>
             <div id="changedRow" hidden><strong>Değişen:</strong> <span></span></div>
             <div id="expertiseSummaryRow" hidden><strong>Ekspertiz Özeti:</strong> <span></span></div>
+            <div id="grossM2Row" hidden><strong>m² (Brüt):</strong> <span></span></div>
+            <div id="netM2Row" hidden><strong>m² (Net):</strong> <span></span></div>
+            <div id="m2Row" hidden><strong>m²:</strong> <span></span></div>
+            <div id="unitPriceRow" hidden><strong>m² Fiyatı:</strong> <span></span></div>
+            <div id="roomsRow" hidden><strong>Oda Sayısı:</strong> <span></span></div>
+            <div id="ageRow" hidden><strong>Bina Yaşı:</strong> <span></span></div>
+            <div id="floorRow" hidden><strong>Bulunduğu Kat:</strong> <span></span></div>
+            <div id="totalFloorsRow" hidden><strong>Kat Sayısı:</strong> <span></span></div>
+            <div id="openAreaM2Row" hidden><strong>Açık Alan m²:</strong> <span></span></div>
+            <div id="landShareM2Row" hidden><strong>Arsa Payı m²:</strong> <span></span></div>
+            <div id="sectionCountRow" hidden><strong>Bölme / Salon Sayısı:</strong> <span></span></div>
+            <div id="wcCountRow" hidden><strong>WC Sayısı:</strong> <span></span></div>
+            <div id="heatingTypeRow" hidden><strong>Isıtma:</strong> <span></span></div>
+            <div id="kitchenTypeRow" hidden><strong>Mutfak:</strong> <span></span></div>
+            <div id="balconyCountRow" hidden><strong>Balkon:</strong> <span></span></div>
+            <div id="elevatorRow" hidden><strong>Asansör:</strong> <span></span></div>
+            <div id="parkingTypeRow" hidden><strong>Otopark:</strong> <span></span></div>
+            <div id="isFurnishedRow" hidden><strong>Eşyalı:</strong> <span></span></div>
+            <div id="residenceUsageStatusRow" hidden><strong>Kullanım Durumu:</strong> <span></span></div>
+            <div id="isInSiteRow" hidden><strong>Site İçerisinde:</strong> <span></span></div>
+            <div id="duesRow" hidden><strong>Aidat:</strong> <span></span></div>
+            <div id="depositRow" hidden><strong>Depozito:</strong> <span></span></div>
+            <div id="bathroomsRow" hidden><strong>Banyo Sayısı:</strong> <span></span></div>
+            <div id="energyCertificateRow" hidden><strong>Enerji Kimlik Belgesi:</strong> <span></span></div>
+            <div id="residenceTitleDeedStatusRow" hidden><strong>Tapu Durumu:</strong> <span></span></div>
+            <div id="facadeRow" hidden><strong>Cephe:</strong> <span></span></div>
+            <div id="zoningStatusRow" hidden><strong>İmar Durumu:</strong> <span></span></div>
+            <div id="arsaStatusRow" hidden><strong>Arsa Türü:</strong> <span></span></div>
+            <div id="titleDeedStatusRow" hidden><strong>Tapu Durumu:</strong> <span></span></div>
+            <div id="isMortgageEligibleRow" hidden><strong>Krediye Uygun:</strong> <span></span></div>
+            <div id="isSwapEligibleRow" hidden><strong>Takasa Uygun:</strong> <span></span></div>
+            <div id="kaksRow" hidden><strong>KAKS (Emsal):</strong> <span></span></div>
+            <div id="gabariRow" hidden><strong>Gabari:</strong> <span></span></div>
+            <div id="adaNoRow" hidden><strong>Ada No:</strong> <span></span></div>
+            <div id="parselNoRow" hidden><strong>Parsel No:</strong> <span></span></div>
+            <div id="paftaNoRow" hidden><strong>Pafta No:</strong> <span></span></div>
+            <div id="roadFrontageRow" hidden><strong>Yola Cephe:</strong> <span></span></div>
+            <div id="roadOpenedRow" hidden><strong>Yolu Açılmış:</strong> <span></span></div>
+            <div id="flatExchangeEligibleRow" hidden><strong>Kat Karşılığına Uygun:</strong> <span></span></div>
+            <div id="flatExchangeRatioRow" hidden><strong>Verilecek Daire Oranı:</strong> <span></span></div>
+            <div id="constructionFloorCountRow" hidden><strong>Kat Adedi:</strong> <span></span></div>
+            <div id="constructionRightRow" hidden><strong>İnşaat Hakkı:</strong> <span></span></div>
+            <div id="contractorOfferOpenRow" hidden><strong>Müteahhit Teklifine Açık:</strong> <span></span></div>
+            <div id="electricInfrastructureRow" hidden><strong>Elektrik:</strong> <span></span></div>
+            <div id="waterInfrastructureRow" hidden><strong>Su:</strong> <span></span></div>
+            <div id="sewerageInfrastructureRow" hidden><strong>Kanalizasyon:</strong> <span></span></div>
+            <div id="naturalGasInfrastructureRow" hidden><strong>Doğalgaz:</strong> <span></span></div>
+            <div id="parcelQueryLinkRow" hidden><strong>Parsel Sorgu:</strong> <span></span></div>
+            <div id="workplaceTypeRow" hidden><strong>İşyeri Türü:</strong> <span></span></div>
+            <div id="workplaceTitleDeedStatusRow" hidden><strong>İşyeri Tapu Durumu:</strong> <span></span></div>
+            <div id="workplaceParkingRow" hidden><strong>İşyeri Otopark:</strong> <span></span></div>
+            <div id="workplaceElevatorRow" hidden><strong>İşyeri Asansör:</strong> <span></span></div>
+            <div id="workplaceGeneratorRow" hidden><strong>İşyeri Jeneratör:</strong> <span></span></div>
+            <div id="usageSuitabilityRow" hidden><strong>Kullanıma Uygunluk:</strong> <span></span></div>
+            <div id="usageStatusRow" hidden><strong>Kullanım Durumu:</strong> <span></span></div>
+            <div id="showcaseMetersRow" hidden><strong>Vitrin Cephesi:</strong> <span></span></div>
           </div>
         </div>
 
@@ -2441,6 +2870,11 @@
           <div class="seller-box">
             <div class="user-box"></div>
           </div>
+          <aside class="safe-shopping-card" aria-label="Güvenli alışveriş kutusu">
+            <div class="safe-shopping-kicker">🛡️ Güvenli Alışveriş</div>
+            <p>Jetle Güven Merkezi üzerinden güvenlik önerilerini inceleyin.</p>
+            <a class="safe-shopping-link" href="/guvenli-alisveris.html">Detaylı Bilgi İçin Tıklayın</a>
+          </aside>
         </div>
       </div>
     </div>
@@ -2448,8 +2882,6 @@
   <div id="galleryModal" class="gallery-modal" aria-hidden="true">
     <div class="gallery-modal-dialog" role="dialog" aria-modal="true" aria-label="Büyük Fotoğraf">
       <div class="gallery-modal-header">
-        <div class="gallery-modal-title">Büyük Fotoğraf</div>
-        <div id="galleryModalCounter" class="gallery-modal-counter">1 / 1</div>
         <button id="galleryModalClose" type="button" class="gallery-modal-close" aria-label="Kapat">×</button>
       </div>
       <div class="gallery-modal-stage">
@@ -2457,8 +2889,11 @@
         <img id="galleryModalImage" class="gallery-modal-image" src="" alt="Büyük fotoğraf">
         <button id="galleryModalNext" type="button" class="gallery-modal-nav next" aria-label="Sonraki fotoğraf">&rsaquo;</button>
       </div>
-      <div id="galleryModalThumbs" class="gallery-modal-thumbs"></div>
-    </div>
+      <div class="gallery-modal-footer">
+        <div id="galleryModalBottomCounter" class="gallery-modal-counter">1/1</div>
+        <div id="galleryModalThumbs" class="gallery-modal-thumbs"></div>
+      </div>
+  </div>
   </div>
 
   <footer class="footer">
@@ -2506,6 +2941,7 @@
       let images = [];
       let galleryImages = [];
       let currentIndex = 0;
+      let thumbPage = 0;
       let galleryModalOpen = false;
       let galleryModalBound = false;
       let galleryShowImage = null;
@@ -2620,12 +3056,97 @@
           imageCount: document.getElementById("imageCount"),
           modal: document.getElementById("galleryModal"),
           modalImage: document.getElementById("galleryModalImage"),
-          modalCounter: document.getElementById("galleryModalCounter"),
+          modalBottomCounter: document.getElementById("galleryModalBottomCounter"),
           modalThumbs: document.getElementById("galleryModalThumbs"),
           modalPrev: document.getElementById("galleryModalPrev"),
           modalNext: document.getElementById("galleryModalNext"),
           modalClose: document.getElementById("galleryModalClose")
         };
+      }
+
+      function formatGalleryCounter(index, total) {
+        const safeTotal = total || 1;
+        const safeIndex = typeof index === "number" ? index + 1 : 1;
+        return `${safeIndex}/${safeTotal}`;
+      }
+
+      function isMobileThumbLayout() {
+        return window.matchMedia("(max-width: 768px)").matches;
+      }
+
+      function getThumbGridConfig() {
+        if (window.matchMedia("(max-width: 768px)").matches) {
+          return { columns: 3, perPage: 6 };
+        }
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          return { columns: 4, perPage: 8 };
+        }
+        return { columns: 5, perPage: 10 };
+      }
+
+      function ensureThumbPager(root) {
+        if (!root) return null;
+        let pager = root.parentElement?.querySelector(".thumb-pager");
+        if (pager) return pager;
+        pager = document.createElement("div");
+        pager.className = "thumb-pager";
+        pager.innerHTML = `
+          <button type="button" class="thumb-pager-btn thumb-pager-prev" aria-label="Önceki küçük görseller">&lsaquo;</button>
+          <div class="thumb-pager-dots" aria-label="Küçük görsel sayfaları"></div>
+          <button type="button" class="thumb-pager-btn thumb-pager-next" aria-label="Sonraki küçük görseller">&rsaquo;</button>
+        `;
+        root.insertAdjacentElement("afterend", pager);
+        return pager;
+      }
+
+      function renderThumbPager(root, media) {
+        if (!root || root.id !== "thumbnails") return;
+        const pager = ensureThumbPager(root);
+        if (!pager) return;
+        const { perPage } = getThumbGridConfig();
+        const totalPages = Math.ceil((media?.length || 0) / perPage);
+        const dots = pager.querySelector(".thumb-pager-dots");
+        const prevBtn = pager.querySelector(".thumb-pager-prev");
+        const nextBtn = pager.querySelector(".thumb-pager-next");
+
+        if (totalPages <= 1) {
+          pager.hidden = true;
+          return;
+        }
+
+        pager.hidden = false;
+        if (dots) {
+          dots.innerHTML = "";
+          for (let page = 0; page < totalPages; page += 1) {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = `thumb-pager-dot${page === thumbPage ? " active" : ""}`;
+            dot.setAttribute("aria-label", `${page + 1}. küçük görsel sayfası`);
+            dot.addEventListener("click", () => {
+              thumbPage = page;
+              renderThumbStrip(root, media, (index) => setMainImage(media, index), currentIndex, { preservePage: true });
+            });
+            dots.appendChild(dot);
+          }
+        }
+
+        if (prevBtn) {
+          prevBtn.disabled = thumbPage <= 0;
+          prevBtn.onclick = () => {
+            if (thumbPage <= 0) return;
+            thumbPage -= 1;
+            renderThumbStrip(root, media, (index) => setMainImage(media, index), currentIndex, { preservePage: true });
+          };
+        }
+
+        if (nextBtn) {
+          nextBtn.disabled = thumbPage >= totalPages - 1;
+          nextBtn.onclick = () => {
+            if (thumbPage >= totalPages - 1) return;
+            thumbPage += 1;
+            renderThumbStrip(root, media, (index) => setMainImage(media, index), currentIndex, { preservePage: true });
+          };
+        }
       }
 
       function getNoImageText() {
@@ -2669,14 +3190,24 @@
         const { thumbs, modalThumbs } = getGalleryElements();
 
         if (thumbs) {
+          const desktopPaged = thumbs.dataset.paged === "true";
+          const expectedPage = Math.floor(currentIndex / 8);
+          if (desktopPaged && expectedPage !== Number(thumbs.dataset.page || "0") && galleryImages.length) {
+            thumbPage = expectedPage;
+            renderThumbStrip(thumbs, galleryImages, (index) => setMainImage(galleryImages, index), currentIndex);
+          }
           thumbs.querySelectorAll("img").forEach((thumb, index) => {
-            thumb.classList.toggle("active", index === currentIndex);
+            const absoluteIndex = Number(thumb.dataset.index ?? index);
+            thumb.classList.toggle("active", absoluteIndex === currentIndex);
           });
         }
 
         if (modalThumbs) {
           modalThumbs.querySelectorAll("img").forEach((thumb, index) => {
             thumb.classList.toggle("active", index === currentIndex);
+            if (index === currentIndex) {
+              thumb.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+            }
           });
         }
       }
@@ -2746,15 +3277,19 @@
       }
 
       function syncModalImage(src) {
-        const { modalImage, modalCounter } = getGalleryElements();
+        const { modalImage, modalBottomCounter, imageCount } = getGalleryElements();
         if (!modalImage) return;
 
         galleryZoomed = false;
         modalImage.classList.remove("zoomed");
         modalImage.src = src;
         modalImage.alt = `Büyük fotoğraf ${currentIndex + 1}`;
-        if (modalCounter) {
-          modalCounter.textContent = `${currentIndex + 1} / ${galleryImages.length || 1}`;
+        const counterText = formatGalleryCounter(currentIndex, galleryImages.length || 1);
+        if (modalBottomCounter) {
+          modalBottomCounter.textContent = counterText;
+        }
+        if (imageCount) {
+          imageCount.textContent = counterText;
         }
       }
 
@@ -2800,6 +3335,7 @@
         if (!Array.isArray(media) || !media.length) return;
         currentIndex = ((index % media.length) + media.length) % media.length;
         const src = media[currentIndex];
+        const { imageCount } = getGalleryElements();
 
         logGalleryLayout("before-setMainImage", {
           requestedIndex: index,
@@ -2807,6 +3343,9 @@
           src
         });
         syncMainImage(src);
+        if (imageCount) {
+          imageCount.textContent = formatGalleryCounter(currentIndex, media.length);
+        }
         updateSelectedThumbs();
         preloadAdjacentImages();
         logGalleryLayout("after-setMainImage", {
@@ -2826,17 +3365,34 @@
         });
       }
 
-      function renderThumbStrip(root, media, clickHandler, activeIndex) {
+      function renderThumbStrip(root, media, clickHandler, activeIndex, options = {}) {
         if (!root) return;
         const fragment = document.createDocumentFragment();
         root.innerHTML = "";
+        root.dataset.paged = "false";
+        root.dataset.page = "0";
+        const preservePage = Boolean(options.preservePage);
 
-        media.forEach((src, index) => {
+        let items = media.map((src, index) => ({ src, index }));
+        if (root.id === "thumbnails") {
+          const { perPage } = getThumbGridConfig();
+          const totalPages = Math.max(1, Math.ceil(media.length / perPage));
+          const activePage = Math.floor(activeIndex / perPage);
+          thumbPage = Math.min(Math.max(thumbPage, 0), totalPages - 1);
+          if (!preservePage && activePage !== thumbPage) thumbPage = activePage;
+          const start = thumbPage * perPage;
+          items = items.slice(start, start + perPage);
+          root.dataset.paged = "true";
+          root.dataset.page = String(thumbPage);
+        }
+
+        items.forEach(({ src, index }) => {
           const thumb = document.createElement("img");
           thumb.src = src;
           thumb.alt = `Küçük görsel ${index + 1}`;
           thumb.loading = "lazy";
           thumb.decoding = "async";
+          thumb.dataset.index = String(index);
           if (index === activeIndex) thumb.classList.add("active");
           thumb.onerror = () => thumb.remove();
           thumb.addEventListener("click", () => {
@@ -2850,6 +3406,7 @@
         });
 
         root.appendChild(fragment);
+        renderThumbPager(root, media);
       }
 
       function closeGalleryModal() {
@@ -2872,7 +3429,6 @@
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
         setMainImage(galleryImages, typeof index === "number" ? index : currentIndex);
-        enterGalleryFullscreen();
         logMedia("LIGHTBOX_READY", {
           count: galleryImages.length,
           currentIndex
@@ -2882,7 +3438,7 @@
           currentIndex,
           keyboard: true,
           swipe: true,
-          fullscreen: true,
+          fullscreen: false,
           zoom: true
         });
       }
@@ -2971,9 +3527,10 @@
         images = media.slice();
         galleryImages = media.slice();
         currentIndex = 0;
+        thumbPage = 0;
 
         if (imageCount) {
-          imageCount.textContent = media.length ? `${media.length} Fotoğraf` : "Fotoğraf yok";
+          imageCount.textContent = media.length ? formatGalleryCounter(0, media.length) : "Fotoğraf yok";
         }
 
         if (!media.length) {
@@ -3014,6 +3571,14 @@
 
         galleryShowImage = (index) => setMainImage(media, index);
         bindGalleryModalEvents();
+        if (!window.__jetleThumbResizeBound) {
+          window.__jetleThumbResizeBound = true;
+          window.addEventListener("resize", () => {
+            const { thumbs } = getGalleryElements();
+            if (!thumbs || !galleryImages.length) return;
+            renderThumbStrip(thumbs, galleryImages, (index) => setMainImage(galleryImages, index), currentIndex);
+          });
+        }
         setMainImage(media, 0);
 
         logMedia("MARKETPLACE_GALLERY_OK", {
@@ -3074,8 +3639,14 @@
         listing.kimden ||
         (listing.isDealer ? "Yetkili Bayi" : "")
       ).trim();
-      const sellerRoleLabel = /kurumsal|bayi/i.test(sellerTypeLabel) ? "Kurumsal Satıcı" : "Bireysel Üye";
+      const isCorporateSeller = /kurumsal|bayi/i.test(sellerTypeLabel);
+      const sellerRoleLabel = isCorporateSeller ? "Kurumsal Satıcı" : "Bireysel Üye";
       const sellerProfileId = listingUserId || String(user?._id || "");
+      const sellerAvatar = user?.avatarUrl || seller?.avatarUrl || listing.user?.avatarUrl || listing.seller?.avatarUrl || "";
+      const sellerPhone = formatPhoneNumber(listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor";
+      const sellerListingsHref = sellerProfileId ? `/profile.html?id=${encodeURIComponent(sellerProfileId)}` : `/listings.html`;
+      const workPhone = isCorporateSeller ? sellerPhone : "(312) xxx xx xx";
+      const mobilePhone = /^0?5\d{2}/.test(String((listing.phone || listing.user?.phone || listing.seller?.phone || "")).replace(/\D+/g, "")) ? sellerPhone : "(5xx) xxx xx xx";
       console.log("MESSAGE_AUTH_STATE", {
         currentUserId,
         currentUserEmail,
@@ -3112,36 +3683,24 @@
       userBox.innerHTML = `
         <div class="seller-card">
           <div class="seller-header">
-            <div class="seller-header-main">
-              <strong>${sellerName || "Bilinmeyen kullanıcı"}</strong>
-              <div class="seller-role-line">${sellerRoleLabel}</div>
+            <div class="seller-identity">
+              <div class="seller-avatar">
+                ${sellerAvatar ? `<img src="${sellerAvatar}" alt="${sellerName || "Satıcı"}">` : `
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M12 12c2.761 0 5-2.462 5-5.5S14.761 1 12 1 7 3.462 7 6.5 9.239 12 12 12Zm0 2c-4.418 0-8 2.91-8 6.5 0 .829.672 1.5 1.5 1.5h13c.828 0 1.5-.671 1.5-1.5 0-3.59-3.582-6.5-8-6.5Z"/>
+                  </svg>
+                `}
+              </div>
+              <div class="seller-header-main">
+                <strong>${sellerName || "Bilinmeyen kullanıcı"}</strong>
+                <div class="seller-role-line">${sellerRoleLabel}</div>
+                <div class="seller-membership">Üyelik: ${sellerCreatedAt ? formatDate(sellerCreatedAt) : "Yeni"}</div>
+              </div>
             </div>
+            ${isCorporateSeller ? `<div class="seller-company-badge">Kurumsal Hesap</div>` : ""}
           </div>
           <div class="seller-meta">
-            <span>${sellerCity}</span>
-            <span>Üye: ${sellerCreatedAt ? formatDate(sellerCreatedAt) : "Yeni"}</span>
-          </div>
-          <div class="seller-stat-grid">
-            <div class="seller-stat-card">
-              <span>Üyelik Yılı</span>
-              <strong>${sellerMemberYear || "Yeni Üye"}</strong>
-            </div>
-            <div class="seller-stat-card">
-              <span>Satıcı Tipi</span>
-              <strong>${sellerRoleLabel}</strong>
-            </div>
-            <div class="seller-stat-card">
-              <span>Konum</span>
-              <strong>${sellerCity || "Türkiye"}</strong>
-            </div>
-            <div class="seller-stat-card">
-              <span>Durum</span>
-              <strong>${isVerifiedSeller ? "Doğrulanmış Profil" : "Mesajlara Açık"}</strong>
-            </div>
-          </div>
-          <div class="seller-link-row">
-            <span>Satıcı profilini inceleyin</span>
-            ${sellerProfileId ? `<a href="/profile.html?id=${encodeURIComponent(sellerProfileId)}">Tüm ilanlarını gör →</a>` : `<a href="/listings.html">Tüm ilanlarını gör →</a>`}
+            <span>${sellerCity || "Türkiye"}</span>
           </div>
           <div class="seller-actions">
             ${canManageListing
@@ -3156,11 +3715,36 @@
               `
               : `
                 <div class="seller-contact-stack">
-                  <button class="btn-primary" type="button" data-action="open-messages">Satıcıya Mesaj Gönder</button>
-                  <div class="seller-phone-panel">
-                    <div class="seller-phone-label">Telefon Numarası</div>
-                    <div id="sellerPhoneValue" class="seller-phone-value">${formatPhoneNumber(listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor"}</div>
-                  </div>
+                  ${isCorporateSeller ? `
+                    <div class="seller-phone-panel">
+                      <div class="seller-phone-row">
+                        <div class="seller-phone-label">İş:</div>
+                        <div class="seller-phone-value">${workPhone}</div>
+                      </div>
+                      <div class="seller-phone-row">
+                        <div class="seller-phone-label">Cep:</div>
+                        <div id="sellerPhoneValue" class="seller-phone-value">${mobilePhone}</div>
+                      </div>
+                    </div>
+                    <div class="seller-link-row">
+                      <a href="${sellerListingsHref}">Tüm ilanları gör →</a>
+                    </div>
+                  ` : `
+                    <div class="seller-phone-panel">
+                      <div class="seller-phone-row">
+                        <div class="seller-phone-label">İş:</div>
+                        <div class="seller-phone-value">(312) xxx xx xx</div>
+                      </div>
+                      <div class="seller-phone-row">
+                        <div class="seller-phone-label">Cep:</div>
+                        <div id="sellerPhoneValue" class="seller-phone-value">${mobilePhone}</div>
+                      </div>
+                    </div>
+                    <div class="seller-link-row">
+                      <a href="${sellerListingsHref}">Tüm ilanları gör →</a>
+                    </div>
+                    <button class="btn-primary" type="button" data-action="open-messages">Mesaj Gönder</button>
+                  `}
                 </div>
               `}
           </div>
@@ -3814,14 +4398,23 @@
           techFromWho: listing.fromWho || listing.kimden || listing.sellerType,
           techPaint: listing.paint || listing.paintedParts,
           techChanged: listing.changedParts || listing.changed,
-          techExpertiseSummary: listing.expertiseSummary || listing.expertise || listing.inspection
+          techExpertiseSummary: listing.expertiseSummary || listing.expertise || listing.inspection,
+          techGrossM2: listing.grossM2,
+          techNetM2: listing.netM2,
+          techKitchenType: listing.kitchenType,
+          techElevator: listing.elevator,
+          techParkingType: listing.parkingType,
+          techEnergyCertificate: listing.energyCertificate
         };
 
         Object.entries(techFields).forEach(([id, value]) => {
           const node = document.getElementById(id);
           if (!node) return;
           const wrapper = node.closest(".spec-item");
-          const text = typeof formatValue === "function" ? formatValue(value) : String(value || "").trim();
+          const numericValue = Number(value);
+          const text = id === "techKm" && Number.isFinite(numericValue) && numericValue > 0
+            ? numericValue.toLocaleString("tr-TR")
+            : (typeof formatValue === "function" ? formatValue(value) : String(value || "").trim());
           if (wrapper) wrapper.hidden = !text;
           node.textContent = text || "-";
         });
@@ -3880,13 +4473,168 @@
         return fallback;
       }
 
+      function isRealEstateListing(listing) {
+        const category = formatField(listing?.category).toLowerCase();
+        const mainCategory = formatField(listing?.mainCategory).toLowerCase();
+        return category === "emlak" || mainCategory === "emlak";
+      }
+
       function setRowValue(rowId, value) {
         const row = document.getElementById(rowId);
         if (!row) return;
-        const text = formatField(value);
+        const numericValue = Number(value);
+        const text = rowId === "kmRow" && Number.isFinite(numericValue) && numericValue > 0
+          ? numericValue.toLocaleString("tr-TR")
+          : formatField(value);
         row.hidden = !text;
         const target = row.querySelector("span");
         if (target) target.textContent = text;
+      }
+
+      function setRowLinkValue(rowId, href, label = "Görüntüle") {
+        const row = document.getElementById(rowId);
+        if (!row) return;
+        const url = formatField(href);
+        row.hidden = !url;
+        const target = row.querySelector("span");
+        if (!target) return;
+        if (!url) {
+          target.textContent = "";
+          return;
+        }
+        target.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      }
+
+      function formatTl(value) {
+        const numericValue = Number(value);
+        if (value == null || String(value).trim() === "") return "";
+        return Number.isFinite(numericValue)
+          ? `${numericValue.toLocaleString("tr-TR")} TL`
+          : formatField(value);
+      }
+
+      function formatSquareMeters(value) {
+        const text = formatField(value);
+        return text ? `${text} m²` : "";
+      }
+
+      function formatBooleanText(value) {
+        const text = formatField(value);
+        if (!text) return "";
+        const normalized = text.toLocaleLowerCase("tr-TR");
+        if (["true", "evet", "var", "uygun", "açık", "acik"].includes(normalized)) return "Evet";
+        if (["false", "hayır", "hayir", "yok", "uygun değil", "uygun degil", "kapalı", "kapali"].includes(normalized)) return "Hayır";
+        return text;
+      }
+
+      function getVideoEmbedUrl(url) {
+        const text = formatField(url);
+        if (!text) return "";
+        const youtubeMatch = text.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&#?/]+)/i);
+        if (youtubeMatch?.[1]) {
+          return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+        }
+        return "";
+      }
+
+      function renderListingVideo(listing) {
+        const section = document.getElementById("listingVideoSection");
+        const frame = document.getElementById("listingVideoFrame");
+        const link = document.getElementById("listingVideoLink");
+        if (!section || !frame || !link) return;
+        const url = formatField(listing?.videoUrl);
+        const embedUrl = getVideoEmbedUrl(url);
+        if (!url || !embedUrl) {
+          section.hidden = true;
+          frame.src = "";
+          link.href = "#";
+          return;
+        }
+        section.hidden = false;
+        frame.src = embedUrl;
+        link.href = url;
+      }
+
+      function forceEstateRow(rowId, value) {
+        const row = document.getElementById(rowId);
+        if (!row) return;
+        const text = formatField(value);
+        const target = row.querySelector("span");
+        if (target) target.textContent = text;
+        if (text) {
+          row.hidden = false;
+          row.removeAttribute("hidden");
+          row.style.removeProperty("display");
+        } else {
+          row.hidden = true;
+        }
+      }
+
+      function renderEstateDetailsRows(listing) {
+        const isEstate = isRealEstateListing(listing);
+        if (!isEstate) return;
+
+        [
+          ["estateTypeRow", listing.subCategory || listing.estateType],
+          ["housingTypeRow", listing.housingType],
+          ["grossM2Row", formatSquareMeters(listing.grossM2)],
+          ["netM2Row", formatSquareMeters(listing.netM2)],
+          ["m2Row", formatSquareMeters(listing.m2)],
+          ["unitPriceRow", formatTl(listing.unitPrice)],
+          ["roomsRow", listing.rooms],
+          ["ageRow", listing.age],
+          ["floorRow", listing.floor],
+          ["totalFloorsRow", listing.totalFloors],
+          ["openAreaM2Row", formatSquareMeters(listing.openAreaM2)],
+          ["landShareM2Row", formatSquareMeters(listing.landShareM2)],
+          ["sectionCountRow", listing.sectionCount],
+          ["wcCountRow", listing.wcCount],
+          ["heatingTypeRow", listing.heatingType],
+          ["kitchenTypeRow", listing.kitchenType],
+          ["balconyCountRow", listing.balconyCount],
+          ["elevatorRow", listing.elevator],
+          ["parkingTypeRow", listing.parkingType],
+          ["isFurnishedRow", listing.isFurnished],
+          ["residenceUsageStatusRow", listing.residenceUsageStatus],
+          ["isInSiteRow", listing.isInSite],
+          ["duesRow", formatTl(listing.dues)],
+          ["depositRow", formatTl(listing.deposit)],
+          ["bathroomsRow", listing.bathrooms],
+          ["energyCertificateRow", listing.energyCertificate],
+          ["residenceTitleDeedStatusRow", listing.residenceTitleDeedStatus],
+          ["facadeRow", listing.facade],
+          ["zoningStatusRow", listing.zoningStatus],
+          ["arsaStatusRow", listing.arsaStatus],
+          ["titleDeedStatusRow", listing.titleDeedStatus],
+          ["isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible)],
+          ["isSwapEligibleRow", formatBooleanText(listing.isSwapEligible)],
+          ["kaksRow", listing.kaks],
+          ["gabariRow", listing.gabari],
+          ["adaNoRow", listing.adaNo],
+          ["parselNoRow", listing.parselNo],
+          ["paftaNoRow", listing.paftaNo],
+          ["roadFrontageRow", formatBooleanText(listing.roadFrontage)],
+          ["roadOpenedRow", formatBooleanText(listing.roadOpened)],
+          ["flatExchangeEligibleRow", formatBooleanText(listing.flatExchangeEligible)],
+          ["flatExchangeRatioRow", listing.flatExchangeRatio],
+          ["constructionFloorCountRow", listing.constructionFloorCount],
+          ["constructionRightRow", listing.constructionRight],
+          ["contractorOfferOpenRow", formatBooleanText(listing.contractorOfferOpen)],
+          ["electricInfrastructureRow", formatBooleanText(listing.electricInfrastructure)],
+          ["waterInfrastructureRow", formatBooleanText(listing.waterInfrastructure)],
+          ["sewerageInfrastructureRow", formatBooleanText(listing.sewerageInfrastructure)],
+          ["naturalGasInfrastructureRow", formatBooleanText(listing.naturalGasInfrastructure)],
+          ["workplaceTypeRow", listing.workplaceType],
+          ["workplaceTitleDeedStatusRow", listing.workplaceTitleDeedStatus],
+          ["workplaceParkingRow", listing.workplaceParking],
+          ["workplaceElevatorRow", listing.workplaceElevator],
+          ["workplaceGeneratorRow", listing.workplaceGenerator],
+          ["usageSuitabilityRow", listing.usageSuitability],
+          ["usageStatusRow", listing.usageStatus],
+          ["showcaseMetersRow", formatSquareMeters(listing.showcaseMeters)]
+        ].forEach(([rowId, value]) => forceEstateRow(rowId, value));
+
+        setRowLinkValue("parcelQueryLinkRow", listing.parcelQueryLink, "Parsel sorgu bağlantısı");
       }
 
       function asFeatureList(value) {
@@ -3901,7 +4649,7 @@
           .filter(Boolean);
       }
 
-      const FEATURE_CATEGORY_RULES = [
+      const VEHICLE_FEATURE_CATEGORY_RULES = [
         {
           key: "Güvenlik",
           patterns: [
@@ -3952,6 +4700,60 @@
         }
       ];
 
+      const ESTATE_FEATURE_CATEGORY_RULES = [
+        {
+          key: "İç Özellikler",
+          patterns: [
+            "asansör", "balkon", "ebeveyn bany", "duşakabin", "camasir odasi", "çamaşır odası",
+            "giyinme odasi", "giyinme odası", "ankastre", "amerikan mutfak", "açık mutfak", "acik mutfak",
+            "kapali mutfak", "kapalı mutfak", "ayri mutfak", "ayrı mutfak", "klima", "şömine", "somine",
+            "jakuzi", "sauna", "ebeveyn", "set üstü ocak", "fiber", "wi-fi", "wifi", "intercom",
+            "çelik kapı", "celik kapi", "duvar kağıdı", "duvar kagidi", "vestiyer", "panjur", "spot aydinlatma",
+            "beyaz eşya", "beyaz esya", "eşyalı", "esyali", "görüntülü diafon", "hilton banyo", "laminat"
+          ]
+        },
+        {
+          key: "Dış Özellikler",
+          patterns: [
+            "otopark", "açık otopark", "acik otopark", "kapalı otopark", "kapali otopark", "güvenlik", "guvenlik",
+            "kapici", "jenerator", "jeneratör", "ısı yalıtım", "isi yalitim", "ses yalıtım", "ses yalitim",
+            "uydu", "yüzme havuzu", "yuzme havuzu", "spor alani", "spor alanı", "site içinde", "site icinde",
+            "çocuk parkı", "cocuk parki", "hamam", "buhar odası", "buhar odasi"
+          ]
+        },
+        {
+          key: "Muhit",
+          patterns: [
+            "alışveriş", "alisveris", "avm", "belediye", "cami", "cem", "eczane", "eğlence merkezi", "eglence merkezi",
+            "fuar", "hastane", "kilise", "lise", "market", "okul", "park", "polis merkezi", "sağlık ocağı",
+            "saglik ocagi", "spor salonu", "üniversite", "universite", "itfaiye"
+          ]
+        },
+        {
+          key: "Ulaşım",
+          patterns: [
+            "anayol", "boğaz köprü", "bogaz kopru", "cadde", "dolmuş", "dolmus", "e-5", "havaalanı", "havaalani",
+            "iskele", "metro", "metrobüs", "metrobus", "minibüs", "minibus", "otobüs", "otobus", "sahil",
+            "teleferik", "tem", "tramvay", "tren"
+          ]
+        },
+        {
+          key: "Manzara",
+          patterns: [
+            "boğaz", "bogaz", "deniz", "doğa", "doga", "göl", "gol", "orman", "park", "şehir", "sehir"
+          ]
+        },
+        {
+          key: "Konut Tipi",
+          patterns: [
+            "villa", "müstakil", "mustakil", "rezidans", "dubleks", "duplex", "triplex", "tripleks",
+            "loft", "bahçe dubleksi", "bahce dubleksi", "çatı dubleksi", "cati dubleksi", "ara kat",
+            "giriş katı", "giris kati", "en üst kat", "en ust kat", "yalı", "yali", "yalı dairesi",
+            "çiftlik evi", "ciftlik evi", "köşk", "kosk", "konak"
+          ]
+        }
+      ];
+
       const FEATURE_LABEL_REPLACEMENTS = [
         [/^gece görüş sistemi$/i, "Gece Görüş Sistemi"],
         [/^gece görüx sistemi$/i, "Gece Görüş Sistemi"],
@@ -3991,15 +4793,18 @@
         return matched ? matched[1] : cleaned;
       }
 
-      function categorizeFeatures(features) {
+      function categorizeFeatures(features, listing = {}) {
+        const featureRules = isRealEstateListing(listing)
+          ? ESTATE_FEATURE_CATEGORY_RULES
+          : VEHICLE_FEATURE_CATEGORY_RULES;
         const grouped = new Map(
-          FEATURE_CATEGORY_RULES.map((rule) => [rule.key, []]).concat([["Diğer Özellikler", []]])
+          featureRules.map((rule) => [rule.key, []]).concat([["Diğer Özellikler", []]])
         );
 
         features.forEach((feature) => {
           const label = normalizeFeatureLabel(feature);
           const normalized = normalizeFeatureValue(label);
-          const matchedRule = FEATURE_CATEGORY_RULES.find((rule) =>
+          const matchedRule = featureRules.find((rule) =>
             rule.patterns.some((pattern) => normalized.includes(pattern))
           );
           const bucket = matchedRule ? matchedRule.key : "Diğer Özellikler";
@@ -4035,17 +4840,28 @@
         buttons.forEach((button) => {
           button.onclick = () => {
             const tabId = button.dataset.tab;
+            const currentListing = window.resolvedListing || window.listingData || {};
             console.log("DETAIL_TAB_CLICK", {
               tabId,
               buttonText: String(button.textContent || "").trim()
             });
+            if (tabId === "features" && isRealEstateListing(currentListing)) {
+              const descButton = document.querySelector('.tab[data-tab="desc"]');
+              descButton?.click();
+              window.setTimeout(() => {
+                document.getElementById("estateFeaturesInline")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+              }, 40);
+              return;
+            }
             buttons.forEach((item) => item.classList.toggle("active", item === button));
             panels.forEach((panel) => panel.classList.toggle("active", panel.id === tabId));
             console.log("DETAIL_TAB_ACTIVATION_DONE", {
               activeTabId: tabId,
               activePanels: panels.filter((panel) => panel.classList.contains("active")).map((panel) => panel.id)
             });
-            const currentListing = window.resolvedListing || window.listingData || {};
             if (tabId === "features") {
               renderFeatures(currentListing);
             }
@@ -4054,6 +4870,42 @@
             }
           };
         });
+      }
+
+      function syncCategoryTabs(listing) {
+        const isRealEstate = isRealEstateListing(listing);
+        const techButton = document.querySelector('.tab[data-tab="tech"]');
+        const featuresButton = document.querySelector('.tab[data-tab="features"]');
+        const expertiseButton = document.querySelector('.tab[data-tab="expertise"]');
+        const techPanel = document.getElementById("tech");
+        const featuresPanel = document.getElementById("features");
+        const expertisePanel = document.getElementById("expertise");
+
+        if (techButton) techButton.hidden = isRealEstate;
+        if (featuresButton) featuresButton.hidden = isRealEstate;
+        if (expertiseButton) expertiseButton.hidden = isRealEstate;
+
+        if (techPanel) {
+          techPanel.hidden = isRealEstate;
+          if (isRealEstate) techPanel.classList.remove("active");
+        }
+        if (featuresPanel) {
+          featuresPanel.hidden = isRealEstate;
+          if (isRealEstate) featuresPanel.classList.remove("active");
+        }
+        if (expertisePanel) {
+          expertisePanel.hidden = isRealEstate;
+          if (isRealEstate) expertisePanel.classList.remove("active");
+        }
+
+        if (isRealEstate && (
+          expertiseButton?.classList.contains("active") ||
+          techButton?.classList.contains("active") ||
+          featuresButton?.classList.contains("active")
+        )) {
+          const descButton = document.querySelector('.tab[data-tab="desc"]');
+          descButton?.click();
+        }
       }
 
       function resolveListing(raw) {
@@ -4110,8 +4962,11 @@
 
         const descText = document.getElementById("descText");
         if (descText) descText.textContent = formatField(listing.description || listing.desc);
+        renderListingVideo(listing);
 
         setRowValue("updatedAtRow", listing.updatedAt ? formatDate(listing.updatedAt) : "");
+        setRowValue("estateTypeRow", listing.subCategory || listing.estateType);
+        setRowValue("housingTypeRow", listing.housingType);
         setRowValue("brandRow", listing.brand);
         setRowValue("seriesRow", listing.series);
         setRowValue("modelRow", listing.model);
@@ -4132,6 +4987,63 @@
         setRowValue("paintRow", listing.paint || listing.paintedParts);
         setRowValue("changedRow", listing.changedParts || listing.changed);
         setRowValue("expertiseSummaryRow", listing.expertiseSummary || listing.expertise || listing.inspection);
+        setRowValue("m2Row", formatSquareMeters(listing.m2));
+        setRowValue("unitPriceRow", formatTl(listing.unitPrice));
+        setRowValue("grossM2Row", formatSquareMeters(listing.grossM2));
+        setRowValue("netM2Row", formatSquareMeters(listing.netM2));
+        setRowValue("roomsRow", listing.rooms);
+        setRowValue("ageRow", listing.age);
+        setRowValue("floorRow", listing.floor);
+        setRowValue("totalFloorsRow", listing.totalFloors);
+        setRowValue("openAreaM2Row", formatSquareMeters(listing.openAreaM2));
+        setRowValue("landShareM2Row", formatSquareMeters(listing.landShareM2));
+        setRowValue("sectionCountRow", listing.sectionCount);
+        setRowValue("wcCountRow", listing.wcCount);
+        setRowValue("heatingTypeRow", listing.heatingType);
+        setRowValue("kitchenTypeRow", listing.kitchenType);
+        setRowValue("balconyCountRow", listing.balconyCount);
+        setRowValue("elevatorRow", listing.elevator);
+        setRowValue("parkingTypeRow", listing.parkingType);
+        setRowValue("isFurnishedRow", listing.isFurnished);
+        setRowValue("residenceUsageStatusRow", listing.residenceUsageStatus);
+        setRowValue("isInSiteRow", listing.isInSite);
+        setRowValue("duesRow", formatTl(listing.dues));
+        setRowValue("depositRow", formatTl(listing.deposit));
+        setRowValue("bathroomsRow", listing.bathrooms);
+        setRowValue("energyCertificateRow", listing.energyCertificate);
+        setRowValue("residenceTitleDeedStatusRow", listing.residenceTitleDeedStatus);
+        setRowValue("facadeRow", listing.facade);
+        setRowValue("zoningStatusRow", listing.zoningStatus);
+        setRowValue("arsaStatusRow", listing.arsaStatus);
+        setRowValue("titleDeedStatusRow", listing.titleDeedStatus);
+        setRowValue("isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible));
+        setRowValue("isSwapEligibleRow", formatBooleanText(listing.isSwapEligible));
+        setRowValue("kaksRow", listing.kaks);
+        setRowValue("gabariRow", listing.gabari);
+        setRowValue("adaNoRow", listing.adaNo);
+        setRowValue("parselNoRow", listing.parselNo);
+        setRowValue("paftaNoRow", listing.paftaNo);
+        setRowValue("roadFrontageRow", formatBooleanText(listing.roadFrontage));
+        setRowValue("roadOpenedRow", formatBooleanText(listing.roadOpened));
+        setRowValue("flatExchangeEligibleRow", formatBooleanText(listing.flatExchangeEligible));
+        setRowValue("flatExchangeRatioRow", listing.flatExchangeRatio);
+        setRowValue("constructionFloorCountRow", listing.constructionFloorCount);
+        setRowValue("constructionRightRow", listing.constructionRight);
+        setRowValue("contractorOfferOpenRow", formatBooleanText(listing.contractorOfferOpen));
+        setRowValue("electricInfrastructureRow", formatBooleanText(listing.electricInfrastructure));
+        setRowValue("waterInfrastructureRow", formatBooleanText(listing.waterInfrastructure));
+        setRowValue("sewerageInfrastructureRow", formatBooleanText(listing.sewerageInfrastructure));
+        setRowValue("naturalGasInfrastructureRow", formatBooleanText(listing.naturalGasInfrastructure));
+        setRowLinkValue("parcelQueryLinkRow", listing.parcelQueryLink, "Parsel sorgu bağlantısı");
+        setRowValue("workplaceTypeRow", listing.workplaceType);
+        setRowValue("workplaceTitleDeedStatusRow", listing.workplaceTitleDeedStatus);
+        setRowValue("workplaceParkingRow", listing.workplaceParking);
+        setRowValue("workplaceElevatorRow", listing.workplaceElevator);
+        setRowValue("workplaceGeneratorRow", listing.workplaceGenerator);
+        setRowValue("usageSuitabilityRow", listing.usageSuitability);
+        setRowValue("usageStatusRow", listing.usageStatus);
+        setRowValue("showcaseMetersRow", formatSquareMeters(listing.showcaseMeters));
+        renderEstateDetailsRows(listing);
       }
 
       function renderSpecs(listing) {
@@ -4157,7 +5069,17 @@
 
       function renderFeatures(listing) {
         const root = document.getElementById("features");
+        const estateInlineRoot = document.getElementById("estateFeaturesInline");
         if (!root) return;
+
+        console.log("FEATURE_RENDER_START", {
+          id: String(listing?._id || listing?.id || ""),
+          title: String(listing?.title || "")
+        });
+        console.log("FEATURES_RAW", listing?.features);
+        console.log("OPTIONS_RAW", listing?.options);
+        console.log("EQUIPMENT_RAW", listing?.equipment);
+        console.log("SELECTED_FEATURES_RAW", listing?.selectedFeatures);
 
         const featureValues = [
           ...asFeatureList(listing.features),
@@ -4165,29 +5087,75 @@
           ...asFeatureList(listing.equipment),
           ...asFeatureList(listing.selectedFeatures)
         ];
+        console.log("FEATURE_VALUES", featureValues);
+        console.log("FEATURE_VALUES_LENGTH", featureValues.length);
 
         const uniqueFeatures = [...new Set(featureValues)];
-        const categorizedFeatures = categorizeFeatures(uniqueFeatures);
+        const categorizedFeatures = categorizeFeatures(uniqueFeatures, listing);
+        const featureDebugPayload = {
+          id: String(listing?._id || listing?.id || ""),
+          title: String(listing?.title || ""),
+          featuresRaw: listing?.features ?? null,
+          optionsRaw: listing?.options ?? null,
+          equipmentRaw: listing?.equipment ?? null,
+          selectedFeaturesRaw: listing?.selectedFeatures ?? null,
+          featureValues,
+          featureValuesLength: featureValues.length,
+          uniqueFeatures
+        };
+        root.setAttribute("data-feature-debug", encodeURIComponent(JSON.stringify(featureDebugPayload)));
+        console.log("UNIQUE_FEATURES", uniqueFeatures);
+        if (!featureValues.length) {
+          console.log("FEATURE_EMPTY_BREAKDOWN", {
+            featuresRaw: listing?.features,
+            optionsRaw: listing?.options,
+            equipmentRaw: listing?.equipment,
+            selectedFeaturesRaw: listing?.selectedFeatures,
+            featuresList: asFeatureList(listing.features),
+            optionsList: asFeatureList(listing.options),
+            equipmentList: asFeatureList(listing.equipment),
+            selectedFeaturesList: asFeatureList(listing.selectedFeatures)
+          });
+        }
         console.log("DETAIL_FEATURE_COUNT", uniqueFeatures.length);
         console.log("DETAIL_FEATURE_RENDER", uniqueFeatures);
-
-        root.innerHTML = categorizedFeatures.length
+        const isRealEstate = isRealEstateListing(listing);
+        const featuresMarkup = categorizedFeatures.length
           ? `
             <div class="section-card-head">
               <h3>Özellikler</h3>
             </div>
-            <div class="feature-category-grid">
-              ${categorizedFeatures.map((group) => `
-                <section class="feature-group">
-                  <h5>${group.title}</h5>
-                  <div class="feature-grid">
-                    ${group.items.map((feature) => `
-                      <div class="feature-item">${feature}</div>
+            ${isRealEstate
+              ? `
+                <div class="feature-panel-flat">
+                  <div class="feature-category-grid">
+                    ${categorizedFeatures.map((group) => `
+                      <section class="feature-group">
+                        <h5>${group.title}</h5>
+                        <div class="feature-grid">
+                          ${group.items.map((feature) => `
+                            <div class="feature-item"><span>${feature}</span></div>
+                          `).join("")}
+                        </div>
+                      </section>
                     `).join("")}
                   </div>
-                </section>
-              `).join("")}
-            </div>
+                </div>
+              `
+              : `
+                <div class="feature-category-grid">
+                  ${categorizedFeatures.map((group) => `
+                    <section class="feature-group">
+                      <h5>${group.title}</h5>
+                      <div class="feature-grid">
+                        ${group.items.map((feature) => `
+                          <div class="feature-item"><span>${feature}</span></div>
+                        `).join("")}
+                      </div>
+                    </section>
+                  `).join("")}
+                </div>
+              `}
           `
           : `
             <div class="section-card-head">
@@ -4195,6 +5163,24 @@
             </div>
             <p id="featuresText">Bu ilan için özellik bilgisi bulunmuyor.</p>
           `;
+
+        if (isRealEstate && estateInlineRoot) {
+          estateInlineRoot.hidden = false;
+          estateInlineRoot.innerHTML = featuresMarkup;
+          root.hidden = true;
+          root.innerHTML = `<p class="features-inline-note">Emlak özellikleri açıklama bölümünün altında gösteriliyor.</p>`;
+        } else {
+          if (estateInlineRoot) {
+            estateInlineRoot.hidden = true;
+            estateInlineRoot.innerHTML = "";
+          }
+          root.hidden = false;
+          root.innerHTML = featuresMarkup;
+        }
+        console.log("FEATURE_RENDER_END", {
+          id: String(listing?._id || listing?.id || ""),
+          count: uniqueFeatures.length
+        });
       }
 
       function renderExpertise(listing) {
@@ -4387,6 +5373,7 @@
         }
 
         window.resolvedListing = listing;
+        syncCategoryTabs(listing);
 
         renderHeader(listing);
         syncFavoriteButtons(String(listing._id || listing.id || "").trim());
@@ -4397,7 +5384,9 @@
         });
         renderSpecs(listing);
         renderFeatures(listing);
-        renderExpertise(listing);
+        if (!isRealEstateListing(listing)) {
+          renderExpertise(listing);
+        }
         bindTabs();
         await renderRelatedListings(listing);
         applyMobileDetailOrder();

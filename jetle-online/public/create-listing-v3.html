@@ -174,7 +174,14 @@
       border: 1px solid #e5e7eb;
       border-radius: 6px;
       background: #fff;
+      min-height: 356px;
       transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .category-selection-screen.is-exiting {
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
     }
 
     .category-selection-screen[hidden] {
@@ -200,10 +207,40 @@
       color: #6b7280;
     }
 
+      .category-flow-columns {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      align-items: start;
+      min-height: 304px;
+    }
+
+    .category-flow-column {
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fcfcfd;
+      min-height: 304px;
+      max-height: 304px;
+      overflow-y: auto;
+      align-content: start;
+    }
+
+    .category-flow-column[hidden] {
+      display: none;
+    }
+
+    .category-flow-column-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+    }
+
     .category-flow-cards,
     .category-flow-subcards {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
     }
 
@@ -211,11 +248,11 @@
     .category-flow-subcard {
       display: grid;
       gap: 2px;
-      min-height: 62px;
+      min-height: 54px;
       padding: 8px 9px;
       border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      background: #fafafa;
+      border-radius: 5px;
+      background: #fff;
       color: #111827;
       text-align: left;
       cursor: pointer;
@@ -265,17 +302,6 @@
       display: none;
     }
 
-    .category-flow-subsection {
-      display: grid;
-      gap: 8px;
-      border-top: 1px solid #eef2f7;
-      padding-top: 8px;
-    }
-
-    .category-flow-subsection[hidden] {
-      display: none;
-    }
-
     .category-flow-subsection-head {
       display: flex;
       align-items: center;
@@ -299,7 +325,22 @@
     }
 
     .listing-form-flow {
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+
+    .listing-form-flow-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .listing-form-flow.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .listing-form-flow[hidden] {
@@ -966,6 +1007,19 @@
       color: #0f172a;
     }
 
+    .btn-step-ghost {
+      background: transparent;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+      padding: 8px 11px;
+      font-weight: 700;
+    }
+
+    .btn-step-ghost:hover:not(:disabled) {
+      background: #f8fafc;
+      color: #334155;
+    }
+
     .btn-step:disabled {
       opacity: 0.55;
       cursor: not-allowed;
@@ -1031,9 +1085,9 @@
     .photo-upload-wrap,
     .video-upload-panel {
       border: 1px solid #e5e7eb;
-      border-radius: 7px;
+      border-radius: 10px;
       background: #fff;
-      padding: 9px;
+      padding: 12px;
       box-shadow: none;
       transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
     }
@@ -1044,89 +1098,147 @@
       box-shadow: none;
     }
 
-    .photo-upload-wrap.drag-over {
-      border-color: #cbd5e1;
-      background: #f8fafc;
-      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
-      transform: scale(1.003);
+    .photo-upload-wrap.drag-over,
+    .video-upload-panel.drag-over {
+      border-color: #93c5fd;
+      background: #f8fbff;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+      transform: translateY(-1px);
     }
 
     .photo-upload-head {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: flex-end;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .photo-drop-label {
+    .photo-upload-surface,
+    .video-upload-surface {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      gap: 8px;
-      margin-bottom: 0;
+      justify-items: center;
+      gap: 12px;
+      padding: 24px 18px 20px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fbfdff 0%, #f8fbff 100%);
       cursor: pointer;
-      align-items: start;
+      text-align: center;
+      transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
     }
 
-    .photo-drop-label::before {
-      content: "";
+    .photo-upload-surface:hover,
+    .video-upload-surface:hover {
+      border-color: #93c5fd;
+      background: #f8fbff;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+    }
+
+    .photo-upload-wrap.drag-over .photo-upload-surface,
+    .video-upload-panel.drag-over .video-upload-surface {
+      border-color: #60a5fa;
+      background: #f4f8ff;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+    }
+
+    .photo-upload-icon,
+    .video-upload-icon {
+      width: 60px;
+      height: 60px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      background:
-        linear-gradient(#cbd5e1, #cbd5e1) center 10px / 14px 2px no-repeat,
-        linear-gradient(135deg, transparent 48%, #cbd5e1 49%, #cbd5e1 53%, transparent 54%) center 18px / 18px 9px no-repeat,
-        linear-gradient(#e5e7eb, #e5e7eb) center / 20px 14px no-repeat,
-        #f3f4f6;
-      box-shadow: inset 0 0 0 1px #d1d5db;
+      color: #2563eb;
     }
 
-    .photo-drop-label strong {
+    .photo-upload-icon svg,
+    .video-upload-icon svg {
+      width: 56px;
+      height: 56px;
       display: block;
-      font-size: 14px;
-      color: #0f172a;
-      margin-bottom: 2px;
-      line-height: 1.25;
     }
 
-    .photo-drop-meta {
+    .photo-upload-copy,
+    .video-upload-copy {
       display: grid;
-      gap: 1px;
+      gap: 4px;
+      justify-items: center;
     }
 
-    .photo-drop-meta span {
-      color: #64748b;
+    .photo-upload-copy strong,
+    .video-upload-copy strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .photo-upload-copy span,
+    .video-upload-copy span {
+      display: block;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .photo-upload-copy small,
+    .video-upload-copy small {
+      display: block;
+      color: #94a3b8;
       font-size: 11px;
       line-height: 1.4;
+    }
+
+    .photo-upload-cta,
+    .video-upload-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #2f6df6;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 22px rgba(47, 109, 246, 0.18);
+      transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .photo-upload-surface:hover .photo-upload-cta,
+    .video-upload-surface:hover .video-upload-cta {
+      background: #245be0;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(47, 109, 246, 0.22);
     }
 
     .photo-upload-counter {
       flex: 0 0 auto;
       display: inline-flex;
       align-items: center;
-      min-height: 24px;
-      padding: 0 8px;
+      min-height: 28px;
+      padding: 0 10px;
       border-radius: 999px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       color: #475569;
       font-size: 11px;
       font-weight: 700;
     }
 
-    .photo-upload-note {
-      margin: 0 0 8px;
-      color: #64748b;
-      font-size: 10px;
-    }
-
     .photo-input-hidden {
-      width: auto;
-      min-width: 130px;
-      margin-bottom: 8px;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+      pointer-events: none;
     }
 
     .create-v3-gallery-placeholders {
@@ -1274,45 +1386,23 @@
 
     .video-upload-panel {
       display: grid;
-      gap: 7px;
+      gap: 12px;
     }
 
     .video-upload-head {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .video-upload-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #f3f4f6;
-      color: #334155;
-      font-size: 13px;
-      flex: 0 0 auto;
-      box-shadow: inset 0 0 0 1px #e5e7eb;
-    }
-
-    .video-upload-copy strong {
       display: block;
-      font-size: 13px;
-      color: #0f172a;
-      margin-bottom: 2px;
     }
 
-    .video-upload-copy span {
-      display: block;
-      color: #64748b;
+    .video-upload-link-row {
+      display: grid;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .video-upload-link-row label {
       font-size: 11px;
-      line-height: 1.35;
-    }
-
-    .video-upload-panel .form-grid {
-      margin-top: 0;
+      font-weight: 800;
+      color: #475569;
     }
 
     #videoPreview {
@@ -1491,6 +1581,10 @@
     }
 
     .category-feature-group.ev-hidden {
+      display: none !important;
+    }
+
+    .category-feature-group.estate-subtype-hidden {
       display: none !important;
     }
 
@@ -2028,6 +2122,20 @@
     }
 
     @media (max-width: 900px) {
+      .category-selection-screen {
+        min-height: 0;
+      }
+
+      .category-flow-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-height: 0;
+      }
+
+      .category-flow-column {
+        min-height: 0;
+        max-height: none;
+      }
+
       .category-flow-cards,
       .category-flow-subcards,
       .create-v3-gallery-placeholders,
@@ -2042,9 +2150,21 @@
     }
 
     @media (max-width: 760px) {
+      .category-flow-columns,
       .category-flow-cards,
       .category-flow-subcards {
         grid-template-columns: minmax(0, 1fr);
+      }
+
+      .category-selection-screen,
+      .category-flow-columns,
+      .category-flow-column {
+        min-height: 0;
+        max-height: none;
+      }
+
+      .category-flow-column {
+        overflow: visible;
       }
 
       .create-v3-shell,
@@ -2145,8 +2265,16 @@
         margin-top: 10px;
       }
 
-      .photo-drop-label {
-        grid-template-columns: 1fr;
+      .photo-upload-surface {
+        padding: 18px 14px 16px;
+      }
+
+      .photo-upload-copy strong {
+        font-size: 16px;
+      }
+
+      .photo-upload-copy span {
+        font-size: 12px;
       }
 
       .create-v3-gallery-placeholders,
@@ -2198,45 +2326,55 @@
             <p>İlanınıza en uygun alanı seçerek devam edin.</p>
           </div>
 
-          <div class="category-flow-cards" id="categoryFlowCards">
-            <button type="button" class="category-flow-card" data-category-key="vasita">
-              <span class="category-flow-icon" aria-hidden="true">ğŸš—</span>
-              <span class="category-flow-title">Vasıta</span>
-              <span class="category-flow-copy">Otomobil ve ticari araç ilanları</span>
-            </button>
-            <button type="button" class="category-flow-card" data-category-key="emlak">
-              <span class="category-flow-icon" aria-hidden="true">ğŸ </span>
-              <span class="category-flow-title">Emlak</span>
-              <span class="category-flow-copy">Konut, arsa ve işyeri ilanları</span>
-            </button>
-            <button type="button" class="category-flow-card" data-category-key="elektronik">
-              <span class="category-flow-icon" aria-hidden="true">ğŸ“±</span>
-              <span class="category-flow-title">Elektronik</span>
-              <span class="category-flow-copy">Telefon, laptop ve diğer cihazlar</span>
-            </button>
-            <button type="button" class="category-flow-card is-disabled" disabled aria-disabled="true">
-              <span class="category-flow-icon" aria-hidden="true">ğŸ›µ</span>
-              <span class="category-flow-title">Motosiklet</span>
-              <span class="category-flow-copy"></span>
-            </button>
-            <button type="button" class="category-flow-card is-disabled" disabled aria-disabled="true">
-              <span class="category-flow-icon" aria-hidden="true">ğŸ§°</span>
-              <span class="category-flow-title">Yedek Parça</span>
-              <span class="category-flow-copy"></span>
-            </button>
-          </div>
+          <div class="category-flow-columns">
+            <section class="category-flow-column is-active">
+              <strong class="category-flow-column-title">Kategori</strong>
+              <div class="category-flow-cards" id="categoryFlowCards">
+                <button type="button" class="category-flow-card" data-category-key="emlak">
+                  <span class="category-flow-title">Emlak</span>
+                  <span class="category-flow-copy">Konut, arsa ve iş yeri ilanları</span>
+                </button>
+                <button type="button" class="category-flow-card" data-category-key="vasita">
+                  <span class="category-flow-title">Vasıta</span>
+                  <span class="category-flow-copy">Otomobil ve ticari araç ilanları</span>
+                </button>
+                <button type="button" class="category-flow-card" data-category-key="elektronik">
+                  <span class="category-flow-title">Elektronik</span>
+                  <span class="category-flow-copy">Telefon, laptop ve diğer cihazlar</span>
+                </button>
+              </div>
+            </section>
 
-          <div id="categoryFlowSubsection" class="category-flow-subsection" hidden>
-            <div class="category-flow-subsection-head">
-              <strong id="categoryFlowSubheading">Alt kategori seçin</strong>
-              <button type="button" class="category-flow-back" id="categoryFlowBack">Kategoriye dön</button>
-            </div>
-            <div class="category-flow-subcards" id="categoryFlowSubcards"></div>
+            <section id="categoryFlowLevel2" class="category-flow-column" hidden>
+              <div class="category-flow-subsection-head">
+                <strong id="categoryFlowLevel2Heading" class="category-flow-column-title">Alt kategori</strong>
+                <button type="button" class="category-flow-back" id="categoryFlowBack">Geri</button>
+              </div>
+              <div class="category-flow-subcards" id="categoryFlowLevel2Cards"></div>
+            </section>
+
+            <section id="categoryFlowLevel3" class="category-flow-column" hidden>
+              <strong id="categoryFlowLevel3Heading" class="category-flow-column-title">İşlem Türü</strong>
+              <div class="category-flow-subcards" id="categoryFlowLevel3Cards"></div>
+            </section>
+
+            <section id="categoryFlowLevel4" class="category-flow-column" hidden>
+              <strong id="categoryFlowLevel4Heading" class="category-flow-column-title">Emlak Tipi</strong>
+              <div class="category-flow-subcards" id="categoryFlowLevel4Cards"></div>
+            </section>
+
+            <section id="categoryFlowLevel5" class="category-flow-column" hidden>
+              <strong id="categoryFlowLevel5Heading" class="category-flow-column-title">Konut Tipi</strong>
+              <div class="category-flow-subcards" id="categoryFlowLevel5Cards"></div>
+            </section>
           </div>
         </div>
         <!-- CATEGORY FLOW UPGRADE END -->
         <div id="listingFormFlow" class="listing-form-flow" hidden>
-        <div class="create-v3-eyebrow">İlan ver</div>
+        <div class="listing-form-flow-head">
+          <div class="create-v3-eyebrow">İlan ver</div>
+          <button type="button" class="btn-step btn-step-ghost" id="btnClearDraft">Taslağı Temizle</button>
+        </div>
         <div class="create-v3-progress" role="tablist" aria-label="İlan verme adımları">
           <div class="step-progress-item active" data-step-indicator="1">
             <span>1</span>
@@ -2287,6 +2425,11 @@
               </div>
 
               <div class="field-group">
+                <label for="price" id="priceLabel">Fiyat</label>
+                <input type="text" id="price" name="price" inputmode="numeric" autocomplete="off">
+              </div>
+
+              <div class="field-group">
                 <label for="city">Şehir</label>
                 <select id="city" name="city">
                   <option value="">Şehir seçin</option>
@@ -2305,6 +2448,16 @@
                 <select id="neighborhood" name="neighborhood" disabled>
                   <option value="">Önce ilçe seçin</option>
                 </select>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="description">Açıklama</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  required
+                  placeholder="İlan açıklamasını buraya yazın"
+                ></textarea>
               </div>
             </div>
 
@@ -2503,19 +2656,19 @@
                   <label class="feature-check"><input type="checkbox" id="estate_feat_wifi"><span class="feature-label">WiFi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_built_in_kitchen"><span class="feature-label">Ankastre Mutfak</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_balcony"><span class="feature-label">Balkon</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_barbecue"><span class="feature-label">Barbekü</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_barbecue"><span class="feature-label">Barbekü</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_white_goods"><span class="feature-label">Beyaz Eşya</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_dishwasher"><span class="feature-label">Bulaşık Makinesi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_washing_machine"><span class="feature-label">Çamaşır Makinesi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_shower_cabin"><span class="feature-label">Duşakabin</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_parent_bathroom"><span class="feature-label">Ebeveyn Banyosu</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_fiber"><span class="feature-label">Fiber İnternet</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_dressing_room"><span class="feature-label">Giyinme Odası</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_video_intercom"><span class="feature-label">Görüntülü Diafon</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_hilton_bathroom"><span class="feature-label">Hilton Banyo</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_intercom"><span class="feature-label">Intercom</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_dressing_room"><span class="feature-label">Giyinme Odası</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_video_intercom"><span class="feature-label">Görüntülü Diafon</span></label>
+                  <label class="feature-check estate-hide-for-yazlik estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_hilton_bathroom"><span class="feature-label">Hilton Banyo</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_intercom"><span class="feature-label">Intercom</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_double_glazing"><span class="feature-label">Isıcam</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_jacuzzi"><span class="feature-label">Jakuzi</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_jacuzzi"><span class="feature-label">Jakuzi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_cellar"><span class="feature-label">Kiler</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_air_conditioning"><span class="feature-label">Klima</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_laminate"><span class="feature-label">Laminat Zemin</span></label>
@@ -2538,22 +2691,22 @@
                 <summary><h3>Dış Özellikler</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_lift"><span class="feature-label">Asansör</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_villa_open_parking"><span class="feature-label">Açık Otopark</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_playground"><span class="feature-label">Çocuk Parkı</span></label>
+                  <label class="feature-check estate-hide-for-yali estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_playground"><span class="feature-label">Çocuk Parkı</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_security"><span class="feature-label">Güvenlik</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_camera_security"><span class="feature-label">Güvenlik Kamerası</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_generator"><span class="feature-label">Jeneratör</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_cable_tv"><span class="feature-label">Kablo TV</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_nursery"><span class="feature-label">Kreş</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_game_park"><span class="feature-label">Oyun Parkı</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_cable_tv"><span class="feature-label">Kablo TV</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_nursery"><span class="feature-label">Kreş</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali"><input type="checkbox" id="estate_feat_game_park"><span class="feature-label">Oyun Parkı</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_parking"><span class="feature-label">Otopark</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_sports_area"><span class="feature-label">Spor Alanı</span></label>
+                  <label class="feature-check estate-hide-for-yali estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_sports_area"><span class="feature-label">Spor Alanı</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_water_tank"><span class="feature-label">Su Deposu</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_tennis_court"><span class="feature-label">Tenis Kortu</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_tennis_court"><span class="feature-label">Tenis Kortu</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_satellite"><span class="feature-label">Uydu</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_fire_escape"><span class="feature-label">Yangın Merdiveni</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_pool"><span class="feature-label">Yüzme Havuzu</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_pool"><span class="feature-label">Yüzme Havuzu</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_sound_insulation"><span class="feature-label">Ses Yalıtımı</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_heat_insulation"><span class="feature-label">Isı Yalıtımı</span></label>
                 </div>
@@ -2565,22 +2718,25 @@
                   <label class="feature-check"><input type="checkbox" id="estate_feat_mall"><span class="feature-label">Alışveriş Merkezi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_municipality"><span class="feature-label">Belediye</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_mosque"><span class="feature-label">Cami</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_sea"><span class="feature-label">Deniz</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_sea"><span class="feature-label">Deniz</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_pharmacy"><span class="feature-label">Eczane</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_entertainment"><span class="feature-label">Eğlence Merkezi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_hospital"><span class="feature-label">Hastane</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_primary_school"><span class="feature-label">İlkokul</span></label>
+                  <label class="feature-check estate-hide-for-yali"><input type="checkbox" id="estate_feat_primary_school"><span class="feature-label">İlkokul</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_fire_department"><span class="feature-label">İtfaiye</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_high_school"><span class="feature-label">Lise</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_market"><span class="feature-label">Market</span></label>
+                  <label class="feature-check estate-hide-for-yali"><input type="checkbox" id="estate_feat_high_school"><span class="feature-label">Lise</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak"><input type="checkbox" id="estate_feat_market"><span class="feature-label">Market</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_highway"><span class="feature-label">Otoyol</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_park"><span class="feature-label">Park</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_police"><span class="feature-label">Polis Merkezi</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_health_center"><span class="feature-label">Sağlık Ocağı</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_bazaar"><span class="feature-label">Semt Pazarı</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_gym"><span class="feature-label">Spor Salonu</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_public_transport"><span class="feature-label">Toplu Ulaşım</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_university"><span class="feature-label">Üniversite</span></label>
+                  <label class="feature-check estate-hide-for-yali"><input type="checkbox" id="estate_feat_bazaar"><span class="feature-label">Semt Pazarı</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_gym"><span class="feature-label">Spor Salonu</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali"><input type="checkbox" id="estate_feat_public_transport"><span class="feature-label">Toplu Ulaşım</span></label>
+                  <label class="feature-check estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_university"><span class="feature-label">Üniversite</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_marina"><span class="feature-label">Marina</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_neighborhood_coast"><span class="feature-label">Sahil</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_beach"><span class="feature-label">Plaj</span></label>
                 </div>
               </details>
 
@@ -2588,21 +2744,21 @@
                 <summary><h3>Ulaşım</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_main_road"><span class="feature-label">Anayol</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_eurasia_tunnel"><span class="feature-label">Avrasya Tüneli</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_bridge"><span class="feature-label">Boğaz Köprüsü</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_eurasia_tunnel"><span class="feature-label">Avrasya Tüneli</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_bridge"><span class="feature-label">Boğaz Köprüsü</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_street"><span class="feature-label">Cadde</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_sea_bus"><span class="feature-label">Deniz Otobüsü</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_dolmus"><span class="feature-label">Dolmuş</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_e5"><span class="feature-label">E-5</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_airport"><span class="feature-label">Havaalanı</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_marmaray"><span class="feature-label">Marmaray</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_metro"><span class="feature-label">Metro</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_metrobus"><span class="feature-label">Metrobüs</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_minibus"><span class="feature-label">Minibüs</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_bus_stop"><span class="feature-label">Otobüs Durağı</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_sea_bus"><span class="feature-label">Deniz Otobüsü</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali"><input type="checkbox" id="estate_feat_dolmus"><span class="feature-label">Dolmuş</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_e5"><span class="feature-label">E-5</span></label>
+                  <label class="feature-check estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_airport"><span class="feature-label">Havaalanı</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_marmaray"><span class="feature-label">Marmaray</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_metro"><span class="feature-label">Metro</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_metrobus"><span class="feature-label">Metrobüs</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali"><input type="checkbox" id="estate_feat_minibus"><span class="feature-label">Minibüs</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_bus_stop"><span class="feature-label">Otobüs Durağı</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_coast"><span class="feature-label">Sahil</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_tem"><span class="feature-label">TEM</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_tram"><span class="feature-label">Tramvay</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_tem"><span class="feature-label">TEM</span></label>
+                  <label class="feature-check estate-hide-for-kosk-konak estate-hide-for-yali estate-hide-for-yazlik"><input type="checkbox" id="estate_feat_tram"><span class="feature-label">Tramvay</span></label>
                 </div>
               </details>
 
@@ -2616,24 +2772,465 @@
                   <label class="feature-check"><input type="checkbox" id="estate_feat_view_pool"><span class="feature-label">Havuz</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_view_green"><span class="feature-label">Park & Yeşil Alan</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_view_city"><span class="feature-label">Şehir</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_forest"><span class="feature-label">Orman</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_mountain"><span class="feature-label">Dağ</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_view_historic"><span class="feature-label">Tarihi Doku</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_view_marina"><span class="feature-label">Marina</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_view_harbor"><span class="feature-label">Liman</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_view_bay"><span class="feature-label">Koy</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_view_island"><span class="feature-label">Ada</span></label>
+                  <label class="feature-check estate-hide-for-kooperatif"><input type="checkbox" id="estate_feat_view_sunset"><span class="feature-label">Gün Batımı</span></label>
                 </div>
               </details>
 
-              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateResidence" open>
-                <summary><h3>Konut Tipi</h3></summary>
+              <details class="features-block category-feature-group category-emlak" id="featureBlockEstateFacade" open>
+                <summary><h3>Cephe</h3></summary>
                 <div class="features-grid-4">
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_mid_floor"><span class="feature-label">Ara Kat</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_garden_duplex"><span class="feature-label">Bahçe Dubleksi</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_garden_floor"><span class="feature-label">Bahçe Katı</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_roof_duplex"><span class="feature-label">Çatı Dubleksi</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_duplex"><span class="feature-label">Duplex</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_top_floor"><span class="feature-label">En Üst Kat</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_ground_floor"><span class="feature-label">Giriş Katı</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_loft"><span class="feature-label">Loft</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_detached_house"><span class="feature-label">Müstakil Ev</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence"><span class="feature-label">Rezidans</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_triplex"><span class="feature-label">Tripleks</span></label>
-                  <label class="feature-check"><input type="checkbox" id="estate_feat_villa"><span class="feature-label">Villa</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_north"><span class="feature-label">Kuzey</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_south"><span class="feature-label">Güney</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_east"><span class="feature-label">Doğu</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_west"><span class="feature-label">Batı</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_northeast"><span class="feature-label">Kuzeydoğu</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_northwest"><span class="feature-label">Kuzeybatı</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_southeast"><span class="feature-label">Güneydoğu</span></label>
+                  <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_southwest"><span class="feature-label">Güneybatı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-villa" id="featureBlockEstateVillaAmenities" open>
+                <summary><h3>Villa Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_private_pool"><span class="feature-label">Özel Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_indoor_pool"><span class="feature-label">Kapalı Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_outdoor_pool"><span class="feature-label">Açık Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_closed_garage"><span class="feature-label">Kapalı Garaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_villa_open_parking_plus"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_winter_garden"><span class="feature-label">Kış Bahçesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_annex"><span class="feature-label">Müştemilat</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_garden_irrigation"><span class="feature-label">Bahçe Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_private_security"><span class="feature-label">Özel Güvenlik</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-residence" id="featureBlockEstateResidenceAmenities" open>
+                <summary><h3>Residence Hizmetleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_spa"><span class="feature-label">Spa</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_fitness"><span class="feature-label">Fitness</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_vale"><span class="feature-label">Vale</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_concierge"><span class="feature-label">Concierge</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_housekeeping"><span class="feature-label">Housekeeping</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_reception"><span class="feature-label">7/24 Resepsiyon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_card_access"><span class="feature-label">Kartlı Geçiş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_security"><span class="feature-label">Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_central_ac"><span class="feature-label">Merkezi Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_central_heating"><span class="feature-label">Merkezi Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_open_parking_residence"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_hydrofor"><span class="feature-label">Hidrofor</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_fire_escape"><span class="feature-label">Yangın Merdiveni</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_site_staff"><span class="feature-label">Site Görevlisi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_guest_parking"><span class="feature-label">Misafir Otoparkı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_sauna"><span class="feature-label">Sauna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_turkish_bath"><span class="feature-label">Türk Hamamı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_steam_room"><span class="feature-label">Buhar Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_indoor_swimming_pool"><span class="feature-label">Kapalı Yüzme Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_outdoor_swimming_pool"><span class="feature-label">Açık Yüzme Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_child_pool"><span class="feature-label">Çocuk Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_child_playground"><span class="feature-label">Çocuk Oyun Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_walking_track"><span class="feature-label">Yürüyüş Parkuru</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_basketball"><span class="feature-label">Basketbol Sahası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_tennis"><span class="feature-label">Tenis Kortu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_gym"><span class="feature-label">Kapalı Spor Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_child_club"><span class="feature-label">Çocuk Kulübü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_mescit"><span class="feature-label">Mescit</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_nursery"><span class="feature-label">Kreş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_residence_market"><span class="feature-label">Market</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_cafeteria"><span class="feature-label">Kafeterya</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_restaurant"><span class="feature-label">Restoran</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_meeting_room"><span class="feature-label">Toplantı Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_technical_service"><span class="feature-label">Teknik Servis</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-mustakil-ev" id="featureBlockEstateDetachedAmenities" open>
+                <summary><h3>Müstakil Ev Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_garden"><span class="feature-label">Bahçe</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_garage"><span class="feature-label">Garaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_storage"><span class="feature-label">Depo</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_water_tank"><span class="feature-label">Su Deposu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_hobby_room"><span class="feature-label">Hobi Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_annex"><span class="feature-label">Müştemilat</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_winter_garden"><span class="feature-label">Kış Bahçesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_closed_garage"><span class="feature-label">Kapalı Garaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_outdoor_pool"><span class="feature-label">Açık Yüzme Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_indoor_pool"><span class="feature-label">Kapalı Yüzme Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_barbecue"><span class="feature-label">Barbekü Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_irrigation"><span class="feature-label">Bahçe Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_security"><span class="feature-label">Özel Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_child_playground"><span class="feature-label">Çocuk Oyun Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_fruit_trees"><span class="feature-label">Meyve Ağaçları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_animal_shelter"><span class="feature-label">Hayvan Barınağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_barn"><span class="feature-label">Ahır</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_greenhouse"><span class="feature-label">Sera</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_well"><span class="feature-label">Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_solar"><span class="feature-label">Güneş Enerjisi Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_veranda"><span class="feature-label">Veranda</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_terrace"><span class="feature-label">Teras</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_fireplace"><span class="feature-label">Şömine</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_underfloor_heating"><span class="feature-label">Yerden Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_hydrofor"><span class="feature-label">Hidrofor</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_rainwater_tank"><span class="feature-label">Yağmur Suyu Deposu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_ev_charge"><span class="feature-label">Elektrikli Araç Şarj İstasyonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_auto_irrigation"><span class="feature-label">Otomatik Sulama</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_guard_booth"><span class="feature-label">Güvenlik Kulübesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_guest_house"><span class="feature-label">Misafir Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_study_room"><span class="feature-label">Çalışma Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mustakil_laundry_room"><span class="feature-label">Çamaşır Odası</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-ciftlik-evi" id="featureBlockEstateFarmAmenities" open>
+                <summary><h3>Çiftlik Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_barn"><span class="feature-label">Ahır</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_pen"><span class="feature-label">Ağıl</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_coop"><span class="feature-label">Kümes</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_hayloft"><span class="feature-label">Samanlık</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_tractor_garage"><span class="feature-label">Traktör Garajı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_fruit_garden"><span class="feature-label">Meyve Bahçesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_olive_grove"><span class="feature-label">Zeytinlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_vineyard"><span class="feature-label">Bağ</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_greenhouse_area"><span class="feature-label">Seracılık Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_animal_shelter"><span class="feature-label">Hayvan Barınağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_storage"><span class="feature-label">Depo</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_irrigation"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_artesian_well"><span class="feature-label">Artezyen Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_water_well"><span class="feature-label">Su Kuyusu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_agri_power"><span class="feature-label">Tarım Elektriği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_breeding"><span class="feature-label">Hayvancılığa Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_organic"><span class="feature-label">Organik Tarıma Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_tractor_entry"><span class="feature-label">Traktör Girişi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_storage_area"><span class="feature-label">Depolama Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_artesian"><span class="feature-label">Artezyen</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_greenhouse"><span class="feature-label">Seracılık</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_irrigation_system"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_farm_water_source"><span class="feature-label">Su Kuyusu</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-kosk-konak" id="featureBlockEstateKoskKonakAmenities" open>
+                <summary><h3>Köşk &amp; Konak Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_guest_house"><span class="feature-label">Misafir Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_staff_house"><span class="feature-label">Hizmetli Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_fireplace_hall"><span class="feature-label">Şömine Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_library"><span class="feature-label">Kütüphane</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_wine_cellar"><span class="feature-label">Şarap Mahzeni</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_courtyard"><span class="feature-label">Avlu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_security"><span class="feature-label">Özel Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_hobby_room"><span class="feature-label">Hobi Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_billiard"><span class="feature-label">Bilardo Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_cinema"><span class="feature-label">Sinema Odası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_hammam"><span class="feature-label">Türk Hamamı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_sauna"><span class="feature-label">Sauna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_indoor_pool"><span class="feature-label">Kapalı Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_outdoor_pool"><span class="feature-label">Açık Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_fitness"><span class="feature-label">Fitness Salonu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_private_garage"><span class="feature-label">Müstakil Garaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_multi_garage"><span class="feature-label">Çoklu Araç Garajı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_private_pier"><span class="feature-label">Özel İskele</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_seafront"><span class="feature-label">Deniz Cephesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_historic"><span class="feature-label">Tarihi Yapı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_protected"><span class="feature-label">Koruma Altında Yapı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_mansion_elevator"><span class="feature-label">Asansör</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-yali" id="featureBlockEstateYaliAmenities" open>
+                <summary><h3>Yalı Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_private_pier"><span class="feature-label">Özel İskele</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_seafront"><span class="feature-label">Deniz Cephesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_bosphorus_front"><span class="feature-label">Boğaz Cephesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_coastal_rights"><span class="feature-label">Kıyı Kullanım Hakkı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_boat_mooring"><span class="feature-label">Tekne Bağlama Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_yacht_mooring"><span class="feature-label">Yat Bağlama Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_private_beach"><span class="feature-label">Özel Plaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_endless_sea_view"><span class="feature-label">Sonsuz Deniz Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_panorama_bosphorus"><span class="feature-label">Panoramik Boğaz Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_outdoor_pool"><span class="feature-label">Açık Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_indoor_pool"><span class="feature-label">Kapalı Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_sauna"><span class="feature-label">Sauna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_hammam"><span class="feature-label">Türk Hamamı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_fireplace"><span class="feature-label">Şömine</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_staff_house"><span class="feature-label">Hizmetli Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_guest_house"><span class="feature-label">Misafir Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_multi_garage"><span class="feature-label">Çoklu Araç Garajı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_camera"><span class="feature-label">Güvenlik Kamerası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_security"><span class="feature-label">Özel Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_elevator"><span class="feature-label">Asansör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_wine_cellar"><span class="feature-label">Şarap Mahzeni</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-yali-dairesi" id="featureBlockEstateYaliDairesiAmenities" open>
+                <summary><h3>Yalı Dairesi Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_seafront"><span class="feature-label">Deniz Cephesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_bosphorus_front"><span class="feature-label">Boğaz Cephesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_marina_view"><span class="feature-label">Marina Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_panorama_sea"><span class="feature-label">Panoramik Deniz Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_walk_to_coast"><span class="feature-label">Sahile Yürüme Mesafesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_private_beach"><span class="feature-label">Özel Plaj Kullanımı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_outdoor_pool"><span class="feature-label">Açık Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_indoor_pool"><span class="feature-label">Kapalı Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_sauna"><span class="feature-label">Sauna</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_fitness"><span class="feature-label">Fitness</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_hammam"><span class="feature-label">Türk Hamamı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_security"><span class="feature-label">Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_concierge"><span class="feature-label">Concierge</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_vale"><span class="feature-label">Vale</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_central_heating"><span class="feature-label">Merkezi Isıtma</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_central_ac"><span class="feature-label">Merkezi Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_yali_apartment_fiber"><span class="feature-label">Fiber İnternet</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-yazlik" id="featureBlockEstateYazlikAmenities" open>
+                <summary><h3>Yazlık Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_seafront"><span class="feature-label">Denize Sıfır</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_near_sea"><span class="feature-label">Denize Yakın</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_near_beach"><span class="feature-label">Plaja Yakın</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_private_beach"><span class="feature-label">Özel Plaj</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_pier"><span class="feature-label">İskele</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_near_marina"><span class="feature-label">Marina Yakını</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_sea_view"><span class="feature-label">Deniz Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_bay_view"><span class="feature-label">Koy Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_sunset_view"><span class="feature-label">Gün Batımı Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_island_view"><span class="feature-label">Ada Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_forest_view"><span class="feature-label">Orman Manzarası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_garden"><span class="feature-label">Bahçe</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_private_garden"><span class="feature-label">Özel Bahçe</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_fruit_trees"><span class="feature-label">Meyve Ağaçları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_barbecue_area"><span class="feature-label">Barbekü Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_veranda"><span class="feature-label">Veranda</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_terrace"><span class="feature-label">Teras</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_roof_terrace"><span class="feature-label">Çatı Terası</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_outdoor_pool"><span class="feature-label">Açık Havuz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_child_pool"><span class="feature-label">Çocuk Havuzu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_jacuzzi"><span class="feature-label">Jakuzi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_security"><span class="feature-label">Güvenlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_alarm"><span class="feature-label">Alarm</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_fireplace"><span class="feature-label">Şömine</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_ac"><span class="feature-label">Klima</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_water_tank"><span class="feature-label">Su Deposu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_hydrofor"><span class="feature-label">Hidrofor</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_artesian"><span class="feature-label">Artezyen</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_solar"><span class="feature-label">Güneş Enerjisi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_summer_smart_home"><span class="feature-label">Akıllı Ev Sistemi</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-kooperatif" id="featureBlockEstateKooperatifAmenities" open>
+                <summary><h3>Kooperatif Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_share"><span class="feature-label">Kooperatif Hissesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_title_ready"><span class="feature-label">Tapu Devri Hazır</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_iskanli"><span class="feature-label">İskanlı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_iskansiz"><span class="feature-label">İskansız</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_usage_permit"><span class="feature-label">Yapı Kullanım İzin Belgesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_condominium_ready"><span class="feature-label">Kat Mülkiyetine Geçebilir</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_shared_garden"><span class="feature-label">Ortak Bahçe</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_shared_parking"><span class="feature-label">Ortak Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_management"><span class="feature-label">Site Yönetimi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_dues"><span class="feature-label">Aidatlı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_no_dues"><span class="feature-label">Aidatsız</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_elevator"><span class="feature-label">Asansörlü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_central_system"><span class="feature-label">Merkezi Sistem</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_security_staff"><span class="feature-label">Güvenlik Görevlisi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_camera"><span class="feature-label">Kamera Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_open_parking"><span class="feature-label">Açık Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_child_area"><span class="feature-label">Çocuk Oyun Alanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_coop_storage"><span class="feature-label">Depo Alanı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliInfrastructure" open>
+                <summary><h3>Altyapı</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_electricity"><span class="feature-label">Elektrik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_water"><span class="feature-label">Su</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_natural_gas"><span class="feature-label">Doğalgaz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_sewerage"><span class="feature-label">Kanalizasyon</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_phone_line"><span class="feature-label">Telefon Hattı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_fiber"><span class="feature-label">Fiber İnternet</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliTransport" open>
+                <summary><h3>Ulaşım</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_main_road"><span class="feature-label">Anayol</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_street"><span class="feature-label">Cadde</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_dolmus"><span class="feature-label">Dolmuş</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_minibus"><span class="feature-label">Minibüs</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_bus_stop"><span class="feature-label">Otobüs Durağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_metro"><span class="feature-label">Metro</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_marmaray"><span class="feature-label">Marmaray</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_tram"><span class="feature-label">Tramvay</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_airport"><span class="feature-label">Havaalanı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_e5"><span class="feature-label">E5</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_tem"><span class="feature-label">TEM</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliEnvironment" open>
+                <summary><h3>Çevre</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_hospital"><span class="feature-label">Hastane</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_health_center"><span class="feature-label">Sağlık Ocağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_pharmacy"><span class="feature-label">Eczane</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_market"><span class="feature-label">Market</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_municipality"><span class="feature-label">Belediye</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_primary_school"><span class="feature-label">İlkokul</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_high_school"><span class="feature-label">Lise</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_university"><span class="feature-label">Üniversite</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_park"><span class="feature-label">Park</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_marina"><span class="feature-label">Marina</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_coast"><span class="feature-label">Sahil</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliView" open>
+                <summary><h3>Manzara</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_sea"><span class="feature-label">Deniz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_bosporus"><span class="feature-label">Boğaz</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_lake"><span class="feature-label">Göl</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_nature"><span class="feature-label">Doğa</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_city"><span class="feature-label">Şehir</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_forest"><span class="feature-label">Orman</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_green"><span class="feature-label">Park ve Yeşil Alan</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliAmenities" open>
+                <summary><h3>Konut İmarlı Arsa Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_corner"><span class="feature-label">Köşe Parsel</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_ifrazli"><span class="feature-label">İfrazlı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_ifrazsiz"><span class="feature-label">İfrazsız</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_parcelled"><span class="feature-label">Parselli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_shared"><span class="feature-label">Hisseli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_detached_title"><span class="feature-label">Müstakil Tapulu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_flat_exchange"><span class="feature-label">Kat Karşılığına Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_commercial_project"><span class="feature-label">Ticari Projeye Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_villa"><span class="feature-label">Villa Yapımına Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_flat"><span class="feature-label">Konut Projesine Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_investment"><span class="feature-label">Yatırıma Uygun</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-ticari-imarli" id="featureBlockEstateArsaTicariImarliAmenities" open>
+                <summary><h3>Ticari İmarlı Arsa Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_corner"><span class="feature-label">Köşe Parsel</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_mall"><span class="feature-label">AVM Projesine Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_plaza"><span class="feature-label">Plaza Projesine Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_hotel"><span class="feature-label">Otel Projesine Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_fuel_station"><span class="feature-label">Akaryakıt İstasyonuna Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_factory"><span class="feature-label">Fabrika Yapımına Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_storage"><span class="feature-label">Depo Yapımına Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_logistics"><span class="feature-label">Lojistik Merkezi Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_commercial_industry_near"><span class="feature-label">Sanayi Bölgesine Yakın</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-tarla" id="featureBlockEstateArsaTarlaAmenities" open>
+                <summary><h3>Tarla Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_agriculture"><span class="feature-label">Tarıma Uygun</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_irrigation_system"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_artesian"><span class="feature-label">Artezyen</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_well"><span class="feature-label">Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_agri_power"><span class="feature-label">Tarım Elektriği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_tractor_road"><span class="feature-label">Traktör Yolu Var</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_fertile"><span class="feature-label">Verimli Toprak</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_sowable"><span class="feature-label">Ekim Yapılabilir</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_field_harvest"><span class="feature-label">Hasat Yapılabilir</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-bag" id="featureBlockEstateArsaBagAmenities" open>
+                <summary><h3>Bağ Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_grapes"><span class="feature-label">Üzüm Bağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_fruit_trees"><span class="feature-label">Meyve Ağaçları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_irrigation"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_well"><span class="feature-label">Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_agri_power"><span class="feature-label">Tarım Elektriği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_house"><span class="feature-label">Bağ Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_storage"><span class="feature-label">Depo</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_vineyard_tractor_entry"><span class="feature-label">Traktör Girişi</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-bahce" id="featureBlockEstateArsaBahceAmenities" open>
+                <summary><h3>Bahçe Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_orchard"><span class="feature-label">Meyve Bahçesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_irrigation"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_well"><span class="feature-label">Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_storage"><span class="feature-label">Depo</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_fenced"><span class="feature-label">Çitli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_road_front"><span class="feature-label">Yol Cepheli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_electricity"><span class="feature-label">Elektrik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_garden_water"><span class="feature-label">Su</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-ciftlik" id="featureBlockEstateArsaCiftlikAmenities" open>
+                <summary><h3>Çiftlik Arsası Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_barn"><span class="feature-label">Ahır</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_pen"><span class="feature-label">Ağıl</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_poultry"><span class="feature-label">Kümes</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_hayloft"><span class="feature-label">Samanlık</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_tractor_garage"><span class="feature-label">Traktör Garajı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_animal_shelter"><span class="feature-label">Hayvan Barınağı</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_irrigation"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_artesian"><span class="feature-label">Artezyen</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_water_well"><span class="feature-label">Su Kuyusu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_agri_power"><span class="feature-label">Tarım Elektriği</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_fruit_garden"><span class="feature-label">Meyve Bahçesi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_olive"><span class="feature-label">Zeytinlik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_vineyard"><span class="feature-label">Bağ</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_greenhouse_area"><span class="feature-label">Seracılık Alanı</span></label>
                 </div>
               </details>
 
@@ -2764,18 +3361,23 @@
             <div class="media-section-stack">
               <div class="photo-upload-wrap" id="photoDropZone">
                 <div class="photo-upload-head">
-                  <label for="images" class="photo-drop-label">
-                    <span class="photo-drop-meta">
-                      <strong>Fotoğraf Yükle</strong>
-                      <span>PNG, JPG, WEBP</span>
-                    </span>
-                  </label>
                   <div class="photo-upload-counter" id="photoCountText">0/30 fotoğraf</div>
                 </div>
-
-                <p class="photo-upload-note">
-                  <span>Dosya seç veya sürükle bırak</span>
-                </p>
+                <label for="images" class="photo-upload-surface">
+                  <span class="photo-upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M22 16.5L24.8 12H39.2L42 16.5H48C51.3137 16.5 54 19.1863 54 22.5V44.5C54 47.8137 51.3137 50.5 48 50.5H16C12.6863 50.5 10 47.8137 10 44.5V22.5C10 19.1863 12.6863 16.5 16 16.5H22Z" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+                      <circle cx="32" cy="33.5" r="10.5" stroke="currentColor" stroke-width="3.2"/>
+                      <circle cx="45.5" cy="24.5" r="2.2" fill="currentColor"/>
+                    </svg>
+                  </span>
+                  <span class="photo-upload-copy">
+                    <strong>Fotoğraf Yükle</strong>
+                    <span>Sürükle bırak veya fotoğraf seç</span>
+                    <small>PNG, JPG, WEBP</small>
+                  </span>
+                  <span class="photo-upload-cta">Fotoğraf Seç</span>
+                </label>
                 <input type="file" id="images" name="images" multiple accept="image/*" class="photo-input-hidden">
                 <div id="imagePreview" class="visually-hidden" aria-hidden="true"></div>
                 <div id="preview" class="preview-grid"></div>
@@ -2787,33 +3389,31 @@
                 </div>
               </div>
 
-              <div class="video-upload-panel">
-                <div class="video-upload-head">
-                  <span class="video-upload-icon" aria-hidden="true">▸</span>
-                  <div class="video-upload-copy">
-                    <strong>Video (Opsiyonel)</strong>
-                    <span>YouTube, MP4 veya MOV ekleyebilirsiniz.</span>
-                  </div>
-                </div>
-                <div class="form-grid">
-                  <div class="field-group">
-                    <label for="video">Video Yükle</label>
-                    <input type="file" id="video" accept="video/mp4,video/quicktime,video/*">
-                  </div>
-                  <div class="field-group">
-                    <label for="videoUrl">YouTube Bağlantısı</label>
-                    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=">
-                  </div>
+              <div class="video-upload-panel" id="videoDropZone">
+                <div class="video-upload-head"></div>
+                <label for="video" class="video-upload-surface">
+                  <span class="video-upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="10" y="14" width="44" height="36" rx="8" stroke="currentColor" stroke-width="3.2"/>
+                      <path d="M29 26.5V37.5L39 32L29 26.5Z" fill="currentColor"/>
+                    </svg>
+                  </span>
+                  <span class="video-upload-copy">
+                    <strong>Video Yükle (Opsiyonel)</strong>
+                    <span>MP4, MOV veya YouTube bağlantısı ekleyebilirsiniz</span>
+                  </span>
+                  <span class="video-upload-cta">Video Seç</span>
+                </label>
+                <input type="file" id="video" accept="video/mp4,video/quicktime,video/*" class="photo-input-hidden">
+                <div class="video-upload-link-row">
+                  <label for="videoUrl">YouTube Bağlantısı</label>
+                  <input type="url" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=">
                 </div>
                 <div id="videoPreview"></div>
               </div>
             </div>
 
             <div class="form-grid" style="margin-top:12px;">
-              <div class="field-group">
-                <label for="price">Fiyat</label>
-                <input type="text" id="price" name="price" inputmode="numeric" autocomplete="off">
-              </div>
               <div class="field-group">
                 <label for="subCategory">Alt kategori</label>
                 <input type="text" id="subCategory" name="subCategory">
@@ -2825,17 +3425,6 @@
               <button type="submit" class="btn-step btn-step-primary" id="submitBtn">İlanı Yayınla</button>
             </div>
             <div id="btnSubmitListing" class="visually-hidden" aria-hidden="true"></div>
-          </div>
-          <div class="form-grid persistent-description-field" id="step2DescriptionField">
-            <div class="field-group full-width">
-              <label for="description">Açıklama</label>
-              <textarea
-                id="description"
-                name="description"
-                required
-                placeholder="İlan açıklamasını buraya yazın"
-              ></textarea>
-            </div>
           </div>
         </form>
         </div>
@@ -2950,8 +3539,76 @@
   </script>
   <script>
     (function () {
+      const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
       const FEATURE_STATE_KEY = "jetle-create-listing-v3-feature-state";
       const FEATURE_PANEL_KEY = "jetle-create-listing-v3-feature-panels";
+
+      function readDraftObject() {
+        try {
+          const raw = localStorage.getItem(LISTING_DRAFT_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function persistDraftSelection(selection) {
+        try {
+          const current = readDraftObject() || {};
+          const next = {
+            ...current,
+            category: selection?.category || current.category || "",
+            subCategory: selection?.subcategory || current.subCategory || "",
+            estateType: selection?.estateType || current.estateType || "",
+            estateListingIntent: selection?.listingIntent || current.estateListingIntent || "",
+            housingType: selection?.housingType || current.housingType || "",
+            step: current.step || 1,
+            updatedAt: Date.now()
+          };
+          localStorage.setItem(LISTING_DRAFT_KEY, JSON.stringify(next));
+        } catch (error) {}
+      }
+
+      function buildSelectionFromDraft(draft) {
+        if (!draft?.category) return null;
+        if (draft.category === "Emlak") {
+          if (draft.estateType === "konut" && draft.subCategory) {
+            return {
+              category: "Emlak",
+              estateType: "konut",
+              listingIntent: draft.estateListingIntent || "Satılık Daire",
+              subcategory: draft.subCategory,
+              housingType: draft.housingType || ""
+            };
+          }
+          if (draft.estateType === "arsa") {
+            if (!(draft.subCategory || draft.arsaStatus)) return null;
+            return {
+              category: "Emlak",
+              estateType: "arsa",
+              listingIntent: draft.estateListingIntent || "Satılık",
+              subcategory: draft.subCategory || draft.arsaStatus || ""
+            };
+          }
+          if (draft.estateType === "isyeri") {
+            return {
+              category: "Emlak",
+              estateType: "isyeri",
+              listingIntent:
+                draft.estateListingIntent || "Satılık",
+              subcategory:
+                draft.subCategory || "İş Yeri"
+            };
+          }
+        }
+        if (draft.category === "Elektronik" && draft.subCategory) {
+          return { category: "Elektronik", subcategory: draft.subCategory };
+        }
+        if (draft.category === "Otomobil" && draft.subCategory) {
+          return { category: "Otomobil", subcategory: draft.subCategory };
+        }
+        return null;
+      }
 
       function normalizedCategory() {
         const category = (document.getElementById("category")?.value || "").trim();
@@ -2984,6 +3641,8 @@
             });
           }
         });
+
+        syncEstateSubtypeFeatureVisibility();
 
         const categoryChip = document.querySelector(".preview-chip.primary");
         if (categoryChip) {
@@ -3094,6 +3753,7 @@
             syncPreview();
             syncElectricFeatureVisibility();
             syncElectronicFeatureVisibility();
+            syncEstateSubtypeFeatureVisibility();
             renderPreviewFeatureBadges();
           }
         });
@@ -3104,6 +3764,7 @@
             toggleCategorySurfaces();
             syncElectricFeatureVisibility();
             syncElectronicFeatureVisibility();
+            syncEstateSubtypeFeatureVisibility();
             renderPreviewFeatureBadges();
           }
         });
@@ -3223,6 +3884,130 @@
         return (val("electronicType") || "").trim();
       }
 
+      function normalizedEstateSubTypeSelection() {
+        return (val("estateSubType") || val("subCategory") || "")
+          .trim()
+          .toLocaleLowerCase("tr")
+          .replace(/\s+/g, "-");
+      }
+
+      function syncEstateSubtypeFeatureVisibility() {
+        const current = normalizedCategory();
+        const subtype = normalizedEstateSubTypeSelection();
+        const estateType = String(val("estateType") || "").trim().toLocaleLowerCase("tr");
+        const isArsa = current === "emlak" && estateType === "arsa";
+        const allowedSubtypeClasses = new Set();
+
+        if (current === "emlak") {
+          if (subtype === "villa") {
+            allowedSubtypeClasses.add("estate-subtype-villa");
+          } else if (subtype === "residence") {
+            allowedSubtypeClasses.add("estate-subtype-residence");
+          } else if (subtype === "müstakil-ev" || subtype === "mustakil-ev") {
+            allowedSubtypeClasses.add("estate-subtype-mustakil-ev");
+          } else if (subtype === "çiftlik-evi" || subtype === "ciftlik-evi") {
+            allowedSubtypeClasses.add("estate-subtype-ciftlik-evi");
+          } else if (subtype === "köşk-&-konak" || subtype === "kosk-&-konak") {
+            allowedSubtypeClasses.add("estate-subtype-kosk-konak");
+          } else if (subtype === "yalı" || subtype === "yali") {
+            allowedSubtypeClasses.add("estate-subtype-yali");
+          } else if (subtype === "yalı-dairesi" || subtype === "yali-dairesi") {
+            allowedSubtypeClasses.add("estate-subtype-yali-dairesi");
+          } else if (subtype === "yazlık" || subtype === "yazlik") {
+            allowedSubtypeClasses.add("estate-subtype-yazlik");
+          } else if (subtype === "kooperatif") {
+            allowedSubtypeClasses.add("estate-subtype-kooperatif");
+          } else if (subtype === "konut-imarli") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-konut-imarli");
+          } else if (subtype === "ticari-imarli") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-ticari-imarli");
+          } else if (subtype === "tarla") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-tarla");
+          } else if (subtype === "bağ" || subtype === "bag") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-bag");
+          } else if (subtype === "bahçe" || subtype === "bahce") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-bahce");
+          } else if (subtype === "çiftlik" || subtype === "ciftlik") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-ciftlik");
+          }
+        }
+
+        document.querySelectorAll(".estate-feature-subtype").forEach((block) => {
+          const shouldShow =
+            current === "emlak" &&
+            allowedSubtypeClasses.size > 0 &&
+            [...allowedSubtypeClasses].some((className) => block.classList.contains(className));
+
+          block.classList.toggle("estate-subtype-hidden", !shouldShow);
+          block.classList.toggle("is-active", shouldShow);
+          block.hidden = !shouldShow;
+          block.style.display = shouldShow ? "" : "none";
+          block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+            input.disabled = !shouldShow;
+            if (!shouldShow) input.checked = false;
+          });
+        });
+
+        [
+          "featureBlockEstateInterior",
+          "featureBlockEstateExterior",
+          "featureBlockEstateEnvironment",
+          "featureBlockEstateTransport",
+          "featureBlockEstateView",
+          "featureBlockEstateFacade"
+        ].forEach((id) => {
+          const block = document.getElementById(id);
+          if (!block) return;
+          const shouldShow = !isArsa;
+          block.style.display = shouldShow ? "" : "none";
+          block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+            input.disabled = !shouldShow;
+            if (!shouldShow) input.checked = false;
+          });
+        });
+
+        const isKoskKonak = subtype === "köşk-&-konak" || subtype === "kosk-&-konak";
+        const isYali = subtype === "yalı" || subtype === "yali";
+        const isYazlik = subtype === "yazlık" || subtype === "yazlik";
+        const isKooperatif = subtype === "kooperatif";
+        document.querySelectorAll(".estate-hide-for-kosk-konak").forEach((label) => {
+          const shouldHide = current === "emlak" && isKoskKonak;
+          label.style.display = shouldHide ? "none" : "";
+          const input = label.querySelector("input[type='checkbox']");
+          if (input) {
+            input.disabled = shouldHide;
+            if (shouldHide) input.checked = false;
+          }
+        });
+        document.querySelectorAll(".estate-hide-for-yali").forEach((label) => {
+          const shouldHide = current === "emlak" && isYali;
+          label.style.display = shouldHide ? "none" : "";
+          const input = label.querySelector("input[type='checkbox']");
+          if (input) {
+            input.disabled = shouldHide;
+            if (shouldHide) input.checked = false;
+          }
+        });
+        document.querySelectorAll(".estate-hide-for-yazlik").forEach((label) => {
+          const shouldHide = current === "emlak" && isYazlik;
+          label.style.display = shouldHide ? "none" : "";
+          const input = label.querySelector("input[type='checkbox']");
+          if (input) {
+            input.disabled = shouldHide;
+            if (shouldHide) input.checked = false;
+          }
+        });
+        document.querySelectorAll(".estate-hide-for-kooperatif").forEach((label) => {
+          const shouldHide = current === "emlak" && isKooperatif;
+          label.style.display = shouldHide ? "none" : "";
+          const input = label.querySelector("input[type='checkbox']");
+          if (input) {
+            input.disabled = shouldHide;
+            if (shouldHide) input.checked = false;
+          }
+        });
+      }
+
       function isElectricVehicleSelection() {
         return normalizedCategory() === "auto" && /elektr/i.test(val("fuel"));
       }
@@ -3256,25 +4041,52 @@
         vasita: {
           category: "Otomobil",
           label: "Vasıta",
+          level2Heading: "Vasıta Tipi",
           subcategories: ["Otomobil", "SUV", "Pickup", "Ticari"]
         },
         emlak: {
           category: "Emlak",
           label: "Emlak",
-          subcategories: ["Satılık Daire", "Kiralık Daire", "Arsa", "İşyeri"]
+          level2Heading: "Kategori",
+          level2: [
+            { key: "konut", label: "Konut", estateType: "konut" },
+            { key: "arsa", label: "Arsa", estateType: "arsa", subcategory: "Arsa" },
+            { key: "isyeri", label: "İş Yeri", estateType: "isyeri", subcategory: "İş Yeri" }
+          ],
+          level3Heading: "İşlem Türü",
+          level3: {
+            konut: [
+              { key: "satilik", label: "Satılık", listingIntent: "Satılık Daire" },
+              { key: "kiralik", label: "Kiralık", listingIntent: "Kiralık Daire" }
+            ],
+            arsa: [
+              { key: "satilik", label: "Satılık", listingIntent: "Satılık" },
+              { key: "kiralik", label: "Kiralık", listingIntent: "Kiralık" },
+              { key: "kat-karsiligi-satilik", label: "Kat Karşılığı Satılık", listingIntent: "Kat Karşılığı Satılık" }
+            ],
+            isyeri: [
+              { key: "satilik", label: "Satılık", listingIntent: "Satılık" },
+              { key: "kiralik", label: "Kiralık", listingIntent: "Kiralık" },
+              { key: "devren", label: "Devren", listingIntent: "Devren" }
+            ]
+          },
+          level4HeadingByEstateCategory: {
+            konut: "Emlak Tipi",
+            arsa: "Arsa Tipi"
+          },
+          level4ByEstateCategory: {
+            konut: ["Daire", "Residence", "Villa", "Müstakil Ev", "Çiftlik Evi", "Köşk & Konak", "Yalı", "Yalı Dairesi", "Yazlık", "Kooperatif"],
+            arsa: ["Konut İmarlı", "Ticari İmarlı", "Sanayi İmarlı", "Tarla", "Bağ", "Bahçe", "Zeytinlik", "Çiftlik", "Hobi Bahçesi", "Turizm İmarlı", "Akaryakıt İmarlı", "Sağlık İmarlı", "Eğitim İmarlı", "Depolama İmarlı", "Karma İmarlı", "Muhtelif Arsa"]
+          },
+          level5Heading: "Konut Tipi",
+          level5: ["Standart Daire", "Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"]
         },
         elektronik: {
           category: "Elektronik",
           label: "Elektronik",
+          level2Heading: "Elektronik Tipi",
           subcategories: ["Telefon", "Laptop", "TV", "Kamera"]
         }
-      };
-
-      const estateTypeMap = {
-        "Satılık Daire": "konut",
-        "Kiralık Daire": "konut",
-        "Arsa": "arsa",
-        "İşyeri": "isyeri"
       };
 
       const electronicTypeMap = {
@@ -3288,14 +4100,42 @@
 
       function applyPendingCategorySelection() {
         if (!pendingCategoryFlowSelection) return;
-        const { category, subcategory } = pendingCategoryFlowSelection;
+        const { category, subcategory, estateType, listingIntent, housingType } = pendingCategoryFlowSelection;
 
         if (category === "Emlak") {
           const estateField = document.getElementById("estateType");
-          const estateType = estateTypeMap[subcategory];
+          const estateIntentField = document.getElementById("estateListingIntent");
+          const estateSubTypeField = document.getElementById("estateSubType");
+          const housingTypeField = document.getElementById("housingType");
+          const arsaStatusField = document.getElementById("arsaStatus");
+          if (estateIntentField) {
+            estateIntentField.value = listingIntent || "";
+          }
           if (estateField && estateType) {
             estateField.value = estateType;
             estateField.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          if (estateSubTypeField && subcategory) {
+            const optionValues = Array.from(estateSubTypeField.options).map((option) => option.value);
+            if (optionValues.includes(subcategory)) {
+              estateSubTypeField.value = subcategory;
+              estateSubTypeField.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          }
+          const generalSubCategoryField = document.getElementById("subCategory");
+          if (generalSubCategoryField && subcategory) {
+            generalSubCategoryField.value = subcategory;
+          }
+          if (arsaStatusField && estateType === "arsa") {
+            const optionValues = Array.from(arsaStatusField.options).map((option) => option.value);
+            if (optionValues.includes(subcategory)) {
+              arsaStatusField.value = subcategory;
+              arsaStatusField.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          }
+          if (housingTypeField) {
+            housingTypeField.value = housingType || "";
+            housingTypeField.dispatchEvent(new Event("change", { bubbles: true }));
           }
         }
 
@@ -3310,64 +4150,254 @@
       }
 
       function initCategoryFlow() {
+        const isEditMode = new URLSearchParams(window.location.search).has("edit");
         const selectionScreen = document.getElementById("categorySelectionScreen");
         const formFlow = document.getElementById("listingFormFlow");
         const layout = document.querySelector(".create-v3-layout");
         const previewColumn = document.querySelector(".create-v3-preview-column");
         const cardsWrap = document.getElementById("categoryFlowCards");
-        const subSection = document.getElementById("categoryFlowSubsection");
-        const subCardsWrap = document.getElementById("categoryFlowSubcards");
-        const subHeading = document.getElementById("categoryFlowSubheading");
+        const level2Section = document.getElementById("categoryFlowLevel2");
+        const level2CardsWrap = document.getElementById("categoryFlowLevel2Cards");
+        const level2Heading = document.getElementById("categoryFlowLevel2Heading");
+        const level3Section = document.getElementById("categoryFlowLevel3");
+        const level3CardsWrap = document.getElementById("categoryFlowLevel3Cards");
+        const level3Heading = document.getElementById("categoryFlowLevel3Heading");
+        const level4Section = document.getElementById("categoryFlowLevel4");
+        const level4CardsWrap = document.getElementById("categoryFlowLevel4Cards");
+        const level4Heading = document.getElementById("categoryFlowLevel4Heading");
+        const level5Section = document.getElementById("categoryFlowLevel5");
+        const level5CardsWrap = document.getElementById("categoryFlowLevel5Cards");
+        const level5Heading = document.getElementById("categoryFlowLevel5Heading");
         const backButton = document.getElementById("categoryFlowBack");
         const categoryField = document.getElementById("category");
         const subCategoryField = document.getElementById("subCategory");
         const step1Next = document.getElementById("btnStep1Next");
+        const clearDraftButton = document.getElementById("btnClearDraft");
 
-        if (!selectionScreen || !formFlow || !layout || !previewColumn || !cardsWrap || !subSection || !subCardsWrap || !subHeading || !backButton || !categoryField || !subCategoryField) {
+        if (!selectionScreen || !formFlow || !layout || !previewColumn || !cardsWrap || !level2Section || !level2CardsWrap || !level2Heading || !level3Section || !level3CardsWrap || !level3Heading || !level4Section || !level4CardsWrap || !level4Heading || !level5Section || !level5CardsWrap || !level5Heading || !backButton || !categoryField || !subCategoryField) {
           return;
         }
 
         layout.classList.add("category-flow-pending");
         previewColumn.classList.add("is-compact");
 
-        const renderSubcategories = (categoryKey) => {
+        let activeCategoryKey = "";
+        let activeEstateCategoryKey = "";
+        let activeEstateIntent = "";
+        let activeEstateSubtype = "";
+
+        const resetColumn = (section, cardsWrapEl) => {
+          section.hidden = true;
+          cardsWrapEl.innerHTML = "";
+        };
+
+        const syncBackButton = () => {
+          backButton.hidden = !(level2Section.hidden === false || level3Section.hidden === false || level4Section.hidden === false || level5Section.hidden === false);
+        };
+
+        const revealFormFlow = () => {
+          selectionScreen.classList.add("is-exiting");
+          formFlow.hidden = false;
+          formFlow.classList.remove("is-visible");
+          window.requestAnimationFrame(() => {
+            formFlow.classList.add("is-visible");
+          });
+          window.setTimeout(() => {
+            selectionScreen.hidden = true;
+            selectionScreen.classList.remove("is-exiting");
+          }, 180);
+          layout.classList.remove("category-flow-pending");
+          previewColumn.classList.remove("is-compact");
+        };
+
+        const finalizeSelection = (selection) => {
+          pendingCategoryFlowSelection = selection;
+          categoryField.value = selection.category;
+          subCategoryField.value = selection.subcategory || "";
+          persistDraftSelection(selection);
+          revealFormFlow();
+        };
+
+        const restoreDraftSelection = () => {
+          if (isEditMode) return false;
+          const draft = readDraftObject();
+          const selection = buildSelectionFromDraft(draft);
+          if (!draft || !selection) return false;
+          pendingCategoryFlowSelection = selection;
+          categoryField.value = selection.category;
+          subCategoryField.value = selection.subcategory || "";
+          revealFormFlow();
+          window.setTimeout(() => {
+            applyPendingCategorySelection();
+          }, 0);
+          return true;
+        };
+
+        const renderLevel4 = () => {
+          const config = categoryFlowConfig.emlak;
+          const level4HeadingText = config.level4HeadingByEstateCategory?.[activeEstateCategoryKey] || "Alt Tip";
+          const level4Items = config.level4ByEstateCategory?.[activeEstateCategoryKey] || [];
+          level4Heading.textContent = level4HeadingText;
+          level4CardsWrap.innerHTML = level4Items.map((typeLabel) => `
+            <button type="button" class="category-flow-subcard" data-estate-subtype="${typeLabel.replace(/"/g, "&quot;")}">${typeLabel}</button>
+          `).join("");
+          level4Section.hidden = false;
+          resetColumn(level5Section, level5CardsWrap);
+          level4CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
+            button.addEventListener("click", () => {
+              activeEstateSubtype = button.dataset.estateSubtype;
+              if (activeEstateCategoryKey === "konut" && activeEstateSubtype === "Daire") {
+                renderLevel5();
+                return;
+              }
+              finalizeSelection({
+                category: "Emlak",
+                estateType: activeEstateCategoryKey,
+                listingIntent: activeEstateIntent,
+                subcategory: activeEstateSubtype,
+                housingType: ""
+              });
+            });
+          });
+          syncBackButton();
+        };
+
+        const renderLevel5 = () => {
+          const config = categoryFlowConfig.emlak;
+          level5Heading.textContent = config.level5Heading;
+          level5CardsWrap.innerHTML = config.level5.map((typeLabel) => `
+            <button type="button" class="category-flow-subcard" data-housing-type="${typeLabel.replace(/"/g, "&quot;")}">${typeLabel}</button>
+          `).join("");
+          level5Section.hidden = false;
+          level5CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
+            button.addEventListener("click", () => {
+              finalizeSelection({
+                category: "Emlak",
+                estateType: "konut",
+                listingIntent: activeEstateIntent,
+                subcategory: "Daire",
+                housingType: button.dataset.housingType || ""
+              });
+            });
+          });
+          syncBackButton();
+        };
+
+        const renderLevel3 = () => {
+          const config = categoryFlowConfig.emlak;
+          level3Heading.textContent = config.level3Heading;
+          const level3Items = config.level3[activeEstateCategoryKey] || [];
+          level3CardsWrap.innerHTML = level3Items.map((item) => `
+            <button type="button" class="category-flow-subcard" data-estate-intent="${item.listingIntent.replace(/"/g, "&quot;")}">${item.label}</button>
+          `).join("");
+          level3Section.hidden = false;
+          resetColumn(level4Section, level4CardsWrap);
+          resetColumn(level5Section, level5CardsWrap);
+          level3CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
+            button.addEventListener("click", () => {
+              activeEstateIntent = button.dataset.estateIntent;
+              if (activeEstateCategoryKey === "konut" || activeEstateCategoryKey === "arsa") {
+                renderLevel4();
+                return;
+              }
+              finalizeSelection({
+                category: "Emlak",
+                estateType: activeEstateCategoryKey === "arsa" ? "arsa" : "isyeri",
+                listingIntent: activeEstateIntent,
+                subcategory: activeEstateCategoryKey === "arsa" ? "Arsa" : "İş Yeri",
+                housingType: ""
+              });
+            });
+          });
+          syncBackButton();
+        };
+
+        const renderLevel2 = (categoryKey) => {
           const config = categoryFlowConfig[categoryKey];
           if (!config) return;
+          activeCategoryKey = categoryKey;
+          activeEstateCategoryKey = "";
+          activeEstateIntent = "";
           cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((card) => {
             card.classList.toggle("is-active", card.dataset.categoryKey === categoryKey);
           });
-          subHeading.textContent = `${config.label} için alt kategori seçin`;
-          subCardsWrap.innerHTML = config.subcategories.map((sub) => `
-            <button type="button" class="category-flow-subcard" data-subcategory="${sub.replace(/"/g, "&quot;")}">${sub}</button>
-          `).join("");
-          subSection.hidden = false;
-          subCardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
+          level2Heading.textContent = config.level2Heading || "Alt kategori";
+          level2CardsWrap.innerHTML = (config.level2 || config.subcategories || []).map((item) => {
+            const label = typeof item === "string" ? item : item.label;
+            const value = typeof item === "string" ? item : item.key;
+            return `<button type="button" class="category-flow-subcard" data-level2-value="${String(value).replace(/"/g, "&quot;")}">${label}</button>`;
+          }).join("");
+          level2Section.hidden = false;
+          resetColumn(level3Section, level3CardsWrap);
+          resetColumn(level4Section, level4CardsWrap);
+          resetColumn(level5Section, level5CardsWrap);
+          level2CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
             button.addEventListener("click", () => {
-              pendingCategoryFlowSelection = {
+              if (categoryKey === "emlak") {
+                const selectedLevel2 = config.level2.find((item) => item.key === button.dataset.level2Value);
+                if (!selectedLevel2) return;
+                activeEstateCategoryKey = selectedLevel2.key;
+                renderLevel3();
+                return;
+              }
+              finalizeSelection({
                 category: config.category,
-                subcategory: button.dataset.subcategory
-              };
-              categoryField.value = config.category;
-              categoryField.dispatchEvent(new Event("change", { bubbles: true }));
-              subCategoryField.value = button.dataset.subcategory;
-              selectionScreen.hidden = true;
-              formFlow.hidden = false;
-              layout.classList.remove("category-flow-pending");
-              previewColumn.classList.remove("is-compact");
+                subcategory: button.dataset.level2Value
+              });
             });
           });
+          syncBackButton();
         };
 
-        cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((button) => {
-          button.addEventListener("click", () => renderSubcategories(button.dataset.categoryKey));
-        });
-
-        backButton.addEventListener("click", () => {
-          subSection.hidden = true;
-          subCardsWrap.innerHTML = "";
+        const resetToRoot = () => {
+          activeCategoryKey = "";
+          activeEstateCategoryKey = "";
+          activeEstateIntent = "";
+          activeEstateSubtype = "";
+          resetColumn(level2Section, level2CardsWrap);
+          resetColumn(level3Section, level3CardsWrap);
+          resetColumn(level4Section, level4CardsWrap);
+          resetColumn(level5Section, level5CardsWrap);
           cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((card) => {
             card.classList.remove("is-active");
           });
+          syncBackButton();
+        };
+
+        cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((button) => {
+          button.addEventListener("click", () => renderLevel2(button.dataset.categoryKey));
+        });
+
+        backButton.addEventListener("click", () => {
+          if (!level5Section.hidden) {
+            resetColumn(level5Section, level5CardsWrap);
+            activeEstateSubtype = "";
+            syncBackButton();
+            return;
+          }
+          if (!level4Section.hidden) {
+            resetColumn(level4Section, level4CardsWrap);
+            activeEstateIntent = "";
+            syncBackButton();
+            return;
+          }
+          if (!level3Section.hidden) {
+            resetColumn(level3Section, level3CardsWrap);
+            activeEstateCategoryKey = "";
+            syncBackButton();
+            return;
+          }
+          resetToRoot();
+        });
+
+        resetToRoot();
+        restoreDraftSelection();
+
+        clearDraftButton?.addEventListener("click", () => {
+          localStorage.removeItem(LISTING_DRAFT_KEY);
+          localStorage.removeItem(FEATURE_STATE_KEY);
+          localStorage.removeItem(FEATURE_PANEL_KEY);
+          window.location.reload();
         });
 
         step1Next?.addEventListener("click", () => {
@@ -3469,6 +4499,7 @@
           estateType === "arsa" ? "Arsa" :
           estateType === "isyeri" ? "İşyeri" :
           "";
+        const estateSubTypeText = val("subCategory") || estateTypeText;
         const title = titleRaw || "Başlık";
         const estatePreview =
           estateType === "arsa"
@@ -3541,7 +4572,7 @@
           ) :
           (val("km") || "KM");
         const year =
-          current === "emlak" ? (val("rooms") || estateTypeText || "İlan Tipi") :
+          current === "emlak" ? (val("rooms") || estateSubTypeText || "İlan Tipi") :
           current === "electronic" ? (
             electronicType === "telefon" ? (val("ram") || "RAM") :
             electronicType === "laptop" ? (val("ssdCapacity") || val("ram") || "Donanım") :
@@ -3574,7 +4605,7 @@
         const price = formatPrice(priceRaw);
         const metaLine = [
           location,
-          current === "emlak" ? estateTypeText :
+          current === "emlak" ? estateSubTypeText :
           current === "electronic" ? [electronicTypeText, brand, model].filter(Boolean).join(" ") :
           vehicleLine
         ].filter(Boolean).join(" • ");
@@ -3592,7 +4623,7 @@
 
         if (listingTypeChip) {
           listingTypeChip.textContent =
-            current === "emlak" ? (estateTypeText || "Emlak Tipi") :
+            current === "emlak" ? (estateSubTypeText || "Emlak Tipi") :
             current === "electronic" ? (electronicTypeText || "Elektronik Türü") :
             "Vitrin";
         }

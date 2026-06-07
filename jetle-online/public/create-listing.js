@@ -312,6 +312,7 @@
   const preview = $("preview");
   const videoInput = $("video");
   const videoPreview = $("videoPreview");
+  const videoDropZone = $("videoDropZone");
   const photoDropZone = $("photoDropZone");
   const photoCountText = $("photoCountText");
   const priceInput = $("price");
@@ -325,6 +326,7 @@
   const livePreviewMeta = $("livePreviewMeta");
   const livePreviewPrice = $("livePreviewPrice");
   const submitButton = $("submitBtn");
+  const clearDraftButton = $("btnClearDraft");
   const step1Message = $("step1Message");
   const step2Message = $("step2Message");
   const step1Next = $("btnStep1Next");
@@ -348,6 +350,8 @@
   const pageParams = new URLSearchParams(window.location.search);
   const editListingId = String(pageParams.get("edit") || "").trim();
   const isEditMode = Boolean(editListingId);
+  const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
+  const HOUSING_TYPE_OPTIONS = ["Standart Daire", "Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"];
 
   let currentStep = 0;
   let isRendering = false;
@@ -371,6 +375,85 @@
     degisen: "changed",
   };
   let currentDamageMode = "original";
+
+  function inferHousingTypeFromLegacySubCategory(value) {
+    const text = String(value || "").trim();
+    return HOUSING_TYPE_OPTIONS.includes(text) ? text : "";
+  }
+
+  function readListingDraft() {
+    try {
+      const raw = localStorage.getItem(LISTING_DRAFT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeListingDraft(draft) {
+    try {
+      localStorage.setItem(LISTING_DRAFT_KEY, JSON.stringify(draft));
+      window.__JETLE_CREATE_DRAFT = draft;
+    } catch (error) {}
+  }
+
+  function clearListingDraft() {
+    try {
+      localStorage.removeItem(LISTING_DRAFT_KEY);
+      delete window.__JETLE_CREATE_DRAFT;
+    } catch (error) {}
+  }
+
+  function buildListingDraft() {
+    return {
+      category: safeVal("category"),
+      subCategory: safeVal("subCategory"),
+      housingType: safeVal("housingType"),
+      estateType: safeVal("estateType"),
+      estateListingIntent: safeVal("estateListingIntent"),
+      title: safeVal("title").trim(),
+      price: safeVal("price"),
+      city: safeVal("city"),
+      district: safeVal("district"),
+      neighborhood: safeVal("neighborhood"),
+      description: safeVal("description").trim(),
+      step: Math.max(1, Number(currentStep) || 1),
+      updatedAt: Date.now()
+    };
+  }
+
+  function persistListingDraft(partial = {}) {
+    if (isEditMode) return;
+    const current = readListingDraft() || {};
+    writeListingDraft({
+      ...current,
+      ...buildListingDraft(),
+      ...partial,
+      updatedAt: Date.now()
+    });
+  }
+
+  async function restoreListingDraftIfNeeded() {
+    if (isEditMode) return null;
+    const draft = readListingDraft();
+    if (!draft) return null;
+    window.__JETLE_CREATE_DRAFT = draft;
+    setVal("category", draft.category || "");
+    setVal("subCategory", draft.subCategory || "");
+    setVal("housingType", draft.housingType || "");
+    setVal("title", draft.title || "");
+    setVal("price", draft.price || "");
+    setVal("city", draft.city || "");
+    populateDistricts();
+    setVal("district", draft.district || "");
+    if (draft.city) {
+      await loadNeighborhoodsForCity(draft.city || "");
+      await populateNeighborhoods(draft.neighborhood || "");
+    }
+    setVal("neighborhood", draft.neighborhood || "");
+    setVal("description", draft.description || "");
+    return draft;
+  }
 
   function digitsOnly(value) {
     return String(value || "").replace(/\D/g, "");
@@ -1001,21 +1084,54 @@
       ],
       isyeri: ["Kombi", "Merkezi", "Klima", "Yok"],
     };
+    const farmHouseStructureOptions = ["Betonarme", "Ahşap", "Taş Ev", "Çelik Konstrüksiyon", "Prefabrik", "Kerpiç", "Karma Yapı"];
+    const realEstateSubtypeOptions = {
+      konut: ["Daire", "Residence", "Villa", "Müstakil Ev", "Çiftlik Evi", "Köşk & Konak", "Yalı", "Yalı Dairesi", "Yazlık", "Kooperatif"],
+      isyeri: ["Ofis", "Dükkan", "Mağaza", "Depo", "Fabrika", "Atölye"],
+      arsa: ["Konut İmarlı", "Ticari İmarlı", "Sanayi İmarlı", "Tarla", "Bağ", "Bahçe", "Zeytinlik", "Çiftlik", "Hobi Bahçesi", "Turizm İmarlı", "Akaryakıt İmarlı", "Sağlık İmarlı", "Eğitim İmarlı", "Depolama İmarlı", "Karma İmarlı", "Muhtelif Arsa"],
+    };
 
     dynamicFields.innerHTML = `
       <div class="form-grid">
         <div class="field-group">
-          <label for="estateType">Emlak Tipi</label>
+          <label for="estateType">Kategori</label>
           <select id="estateType" name="estateType">
-            <option value="">Emlak tipi seçin</option>
+            <option value="">Kategori seçin</option>
             <option value="konut">Konut</option>
+            <option value="isyeri">İş Yeri</option>
             <option value="arsa">Arsa</option>
-            <option value="isyeri">İşyeri</option>
           </select>
         </div>
         <div class="field-group">
-          <label for="m2">m²</label>
+          <label for="estateSubType">Emlak Tipi</label>
+          <select id="estateSubType" name="estateSubType">
+            <option value="">Emlak tipi seçin</option>
+          </select>
+        </div>
+        <input type="hidden" id="estateListingIntent" name="estateListingIntent" value="">
+        <input type="hidden" id="housingType" name="housingType" value="">
+        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
+          <label>Temel Bilgiler</label>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-type-isyeri estate-subtype-ciftlik-evi" style="display:none;">
+          <label for="m2" id="m2Label">m²</label>
           <input type="number" id="m2" name="m2" placeholder="Örn. 120">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
+          <label for="unitPrice" id="unitPriceLabel">m² Fiyatı</label>
+          <input type="number" id="unitPrice" name="unitPrice" placeholder="Örn. 12500">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut">
+          <label for="grossM2">Brüt m²</label>
+          <input type="number" id="grossM2" name="grossM2" placeholder="Örn. 145">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut">
+          <label for="netM2">Net m²</label>
+          <input type="number" id="netM2" name="netM2" placeholder="Örn. 120">
         </div>
 
         <div class="field-group estate-type-group estate-type-konut">
@@ -1028,7 +1144,7 @@
           <input type="number" id="age" name="age" placeholder="Örn. 5">
         </div>
 
-        <div class="field-group estate-type-group estate-type-konut">
+        <div class="field-group estate-type-group estate-type-konut estate-hide-for-villa estate-hide-for-ciftlik">
           <label for="floor">Bulunduğu Kat</label>
           <input type="text" id="floor" name="floor" placeholder="Örn. 4">
         </div>
@@ -1036,6 +1152,26 @@
         <div class="field-group estate-type-group estate-type-konut">
           <label for="totalFloors">Kat Sayısı</label>
           <input type="number" id="totalFloors" name="totalFloors" placeholder="Örn. 12">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-mustakil-ev estate-subtype-ciftlik-evi" style="display:none;">
+          <label for="openAreaM2">Açık Alan m²</label>
+          <input type="number" id="openAreaM2" name="openAreaM2" placeholder="Örn. 350">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-mustakil-ev" style="display:none;">
+          <label for="landShareM2">Arsa Payı m²</label>
+          <input type="number" id="landShareM2" name="landShareM2" placeholder="Örn. 500">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-mustakil-ev" style="display:none;">
+          <label for="adaNo">Ada No</label>
+          <input type="text" id="adaNo" name="adaNo" placeholder="Örn. 145">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-mustakil-ev" style="display:none;">
+          <label for="parselNo">Parsel No</label>
+          <input type="text" id="parselNo" name="parselNo" placeholder="Örn. 12">
         </div>
 
         <div class="field-group estate-type-group estate-type-konut estate-type-isyeri" style="display:none;">
@@ -1056,6 +1192,51 @@
           </select>
         </div>
 
+        <div class="field-group estate-type-group estate-type-konut estate-hide-for-ciftlik">
+          <label for="kitchenType">Mutfak Tipi</label>
+          <select id="kitchenType" name="kitchenType">
+            <option value="">Seçin</option>
+            <option value="Açık (Amerikan)">Açık (Amerikan)</option>
+            <option value="Kapalı">Kapalı</option>
+            <option value="Ayrı Mutfak">Ayrı Mutfak</option>
+            <option value="Belirtilmemiş">Belirtilmemiş</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-hide-for-villa estate-hide-for-ciftlik">
+          <label for="elevator">Asansör</label>
+          <select id="elevator" name="elevator">
+            <option value="">Seçin</option>
+            <option value="Var">Var</option>
+            <option value="Yok">Yok</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-hide-for-ciftlik">
+          <label for="parkingType">Otopark</label>
+          <select id="parkingType" name="parkingType">
+            <option value="">Seçin</option>
+            <option value="Yok">Yok</option>
+            <option value="Açık Otopark">Açık Otopark</option>
+            <option value="Kapalı Otopark">Kapalı Otopark</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut">
+          <label for="energyCertificate">Enerji Kimlik Belgesi</label>
+          <select id="energyCertificate" name="energyCertificate">
+            <option value="">Seçin</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="G">G</option>
+            <option value="Belirtilmemiş">Belirtilmemiş</option>
+          </select>
+        </div>
+
         <div class="field-group estate-type-group estate-type-konut">
           <label for="residenceUsageStatus">Kullanım Durumu</label>
           <select id="residenceUsageStatus" name="residenceUsageStatus">
@@ -1066,6 +1247,20 @@
           </select>
         </div>
 
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-rental" style="display:none;">
+          <label for="tenantStatus">Kiracı Durumu</label>
+          <select id="tenantStatus" name="tenantStatus">
+            <option value="">Seçin</option>
+            <option value="Boş">Boş</option>
+            <option value="Kiracılı">Kiracılı</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-rental estate-rental-delivery" style="display:none;">
+          <label for="deliveryDate">Teslim Tarihi</label>
+          <input type="date" id="deliveryDate" name="deliveryDate">
+        </div>
+
         <div class="field-group estate-type-group estate-type-konut">
           <label for="residenceTitleDeedStatus">Tapu Durumu</label>
           <select id="residenceTitleDeedStatus" name="residenceTitleDeedStatus">
@@ -1074,6 +1269,7 @@
             <option value="Kat İrtifaklı">Kat İrtifaklı</option>
             <option value="Hisseli Tapu">Hisseli Tapu</option>
             <option value="Arsa Tapulu">Arsa Tapulu</option>
+            <option value="Belirtilmemiş">Belirtilmemiş</option>
           </select>
         </div>
 
@@ -1086,7 +1282,7 @@
           </select>
         </div>
 
-        <div class="field-group estate-type-group estate-type-konut">
+        <div class="field-group estate-type-group estate-type-konut estate-hide-for-ciftlik">
           <label for="isInSite">Site İçinde mi</label>
           <select id="isInSite" name="isInSite">
             <option value="">Seçin</option>
@@ -1095,9 +1291,24 @@
           </select>
         </div>
 
-        <div class="field-group estate-type-group estate-type-konut estate-type-isyeri" style="display:none;">
+        <div class="field-group estate-type-group estate-type-konut estate-type-isyeri estate-hide-for-ciftlik" style="display:none;">
           <label for="dues">Aidat</label>
           <input type="number" id="dues" name="dues" placeholder="Örn. 1500">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-rental" style="display:none;">
+          <label for="deposit">Depozito</label>
+          <input type="number" id="deposit" name="deposit" placeholder="Örn. 50000">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-rental" style="display:none;">
+          <label for="rentalPeriod">Kira Dönemi</label>
+          <select id="rentalPeriod" name="rentalPeriod">
+            <option value="">Seçin</option>
+            <option value="Aylık">Aylık</option>
+            <option value="Günlük">Günlük</option>
+            <option value="Yıllık">Yıllık</option>
+          </select>
         </div>
 
         <div class="field-group estate-type-group estate-type-konut">
@@ -1105,9 +1316,21 @@
           <input type="number" id="balconyCount" name="balconyCount" placeholder="Örn. 2">
         </div>
 
-        <div class="field-group estate-type-group estate-type-konut estate-type-isyeri" style="display:none;">
+        <div class="field-group estate-type-group estate-type-konut estate-type-isyeri estate-hide-for-ciftlik" style="display:none;">
           <label for="wcCount">WC Sayısı</label>
           <input type="number" id="wcCount" name="wcCount" placeholder="Örn. 2">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-ciftlik-evi" style="display:none;">
+          <label for="sectionCount" id="sectionCountLabel">Salon Sayısı</label>
+          <input type="number" id="sectionCount" name="sectionCount" placeholder="Örn. 2">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-ciftlik-evi" style="display:none;">
+          <label for="usageSuitability" id="usageSuitabilityLabel">Yapı Tipi</label>
+          <select id="usageSuitability" name="usageSuitability">
+            <option value="">Seçin</option>
+          </select>
         </div>
 
         <div class="field-group estate-type-group estate-type-konut">
@@ -1115,75 +1338,55 @@
           <input type="number" id="bathrooms" name="bathrooms" placeholder="Örn. 2">
         </div>
 
-        <div class="field-group estate-type-group estate-type-konut">
-          <label for="facade">Cephe</label>
-          <select id="facade" name="facade">
-            <option value="">Seçin</option>
-            <option value="Kuzey">Kuzey</option>
-            <option value="Güney">Güney</option>
-            <option value="Doğu">Doğu</option>
-            <option value="Batı">Batı</option>
-            <option value="Kuzeydoğu">Kuzeydoğu</option>
-            <option value="Kuzeybatı">Kuzeybatı</option>
-            <option value="Güneydoğu">Güneydoğu</option>
-            <option value="Güneybatı">Güneybatı</option>
-          </select>
-        </div>
+        <input type="hidden" id="facade" name="facade" value="">
 
-        <div class="field-group estate-type-group estate-type-konut">
-          <label for="isMortgageEligible">Krediye Uygun</label>
-          <select id="isMortgageEligible" name="isMortgageEligible">
-            <option value="">Seçin</option>
-            <option value="Evet">Evet</option>
-            <option value="Hayır">Hayır</option>
-          </select>
+        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
+          <label>İmar ve Tapu</label>
         </div>
-
-        <div class="field-group estate-type-group estate-type-konut estate-type-arsa estate-type-isyeri" style="display:none;">
-          <label for="isSwapEligible">Takasa Uygun</label>
-          <select id="isSwapEligible" name="isSwapEligible">
-            <option value="">Seçin</option>
-            <option value="Evet">Evet</option>
-            <option value="Hayır">Hayır</option>
-          </select>
-        </div>
-
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
           <label for="zoningStatus">İmar Durumu</label>
           <select id="zoningStatus" name="zoningStatus">
             <option value="">Seçin</option>
             <option value="Konut İmarlı">Konut İmarlı</option>
             <option value="Ticari İmarlı">Ticari İmarlı</option>
-            <option value="Villa İmarlı">Villa İmarlı</option>
             <option value="Sanayi İmarlı">Sanayi İmarlı</option>
             <option value="Tarla">Tarla</option>
-            <option value="Bağ & Bahçe">Bağ & Bahçe</option>
+            <option value="Bağ">Bağ</option>
+            <option value="Bahçe">Bahçe</option>
             <option value="Zeytinlik">Zeytinlik</option>
-            <option value="Tarım">Tarım</option>
-            <option value="Depolama">Depolama</option>
-            <option value="Turizm">Turizm</option>
-            <option value="Özel Kullanım">Özel Kullanım</option>
+            <option value="Çiftlik">Çiftlik</option>
+            <option value="Hobi Bahçesi">Hobi Bahçesi</option>
+            <option value="Turizm İmarlı">Turizm İmarlı</option>
+            <option value="Akaryakıt İmarlı">Akaryakıt İmarlı</option>
+            <option value="Sağlık İmarlı">Sağlık İmarlı</option>
+            <option value="Eğitim İmarlı">Eğitim İmarlı</option>
+            <option value="Depolama İmarlı">Depolama İmarlı</option>
+            <option value="Karma İmarlı">Karma İmarlı</option>
+            <option value="Muhtelif Arsa">Muhtelif Arsa</option>
           </select>
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="arsaStatus">Arsa Durumu</label>
+          <label for="arsaStatus">Arsa Türü</label>
           <select id="arsaStatus" name="arsaStatus">
             <option value="">Seçin</option>
-            <option value="Müstakil Parsel">Müstakil Parsel</option>
-            <option value="Hisseli Parsel">Hisseli Parsel</option>
-            <option value="Tahsisli">Tahsisli</option>
+            <option value="Konut İmarlı">Konut İmarlı</option>
+            <option value="Ticari İmarlı">Ticari İmarlı</option>
+            <option value="Sanayi İmarlı">Sanayi İmarlı</option>
+            <option value="Tarla">Tarla</option>
+            <option value="Bağ">Bağ</option>
+            <option value="Bahçe">Bahçe</option>
+            <option value="Zeytinlik">Zeytinlik</option>
+            <option value="Çiftlik">Çiftlik</option>
+            <option value="Hobi Bahçesi">Hobi Bahçesi</option>
+            <option value="Turizm İmarlı">Turizm İmarlı</option>
+            <option value="Akaryakıt İmarlı">Akaryakıt İmarlı</option>
+            <option value="Sağlık İmarlı">Sağlık İmarlı</option>
+            <option value="Eğitim İmarlı">Eğitim İmarlı</option>
+            <option value="Depolama İmarlı">Depolama İmarlı</option>
+            <option value="Karma İmarlı">Karma İmarlı</option>
+            <option value="Muhtelif Arsa">Muhtelif Arsa</option>
           </select>
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="gabari">Gabari</label>
-          <input type="text" id="gabari" name="gabari" placeholder="Örn. Serbest / 6.50">
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="kaks">KAKS</label>
-          <input type="text" id="kaks" name="kaks" placeholder="Örn. 1.20">
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
@@ -1201,6 +1404,16 @@
           <input type="text" id="paftaNo" name="paftaNo" placeholder="Örn. 27">
         </div>
 
+        <div class="field-group estate-type-group estate-type-arsa estate-hide-for-arsa-tarla" style="display:none;">
+          <label for="kaks">KAKS (Emsal)</label>
+          <input type="text" id="kaks" name="kaks" placeholder="Örn. 1.20">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-hide-for-arsa-tarla" style="display:none;">
+          <label for="gabari">Gabari</label>
+          <input type="text" id="gabari" name="gabari" placeholder="Örn. Serbest / 6.50">
+        </div>
+
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
           <label for="titleDeedStatus">Tapu Durumu</label>
           <select id="titleDeedStatus" name="titleDeedStatus">
@@ -1210,6 +1423,10 @@
             <option value="Hisseli Tapu">Hisseli Tapu</option>
             <option value="Arsa Tapulu">Arsa Tapulu</option>
           </select>
+        </div>
+
+        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
+          <label>Altyapı</label>
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
@@ -1224,15 +1441,6 @@
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
           <label for="roadOpened">Yolu Açılmış</label>
           <select id="roadOpened" name="roadOpened">
-            <option value="">Seçin</option>
-            <option value="Evet">Evet</option>
-            <option value="Hayır">Hayır</option>
-          </select>
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="flatExchangeEligible">Kat Karşılığı</label>
-          <select id="flatExchangeEligible" name="flatExchangeEligible">
             <option value="">Seçin</option>
             <option value="Evet">Evet</option>
             <option value="Hayır">Hayır</option>
@@ -1275,9 +1483,26 @@
           </select>
         </div>
 
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="unitPrice">m² Fiyatı</label>
-          <input type="number" id="unitPrice" name="unitPrice" placeholder="Örn. 12500">
+        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
+          <label>Diğer</label>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-sale estate-type-arsa" style="display:none;">
+          <label for="isMortgageEligible">Krediye Uygun</label>
+          <select id="isMortgageEligible" name="isMortgageEligible">
+            <option value="">Seçin</option>
+            <option value="Evet">Evet</option>
+            <option value="Hayır">Hayır</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-konut estate-subtype-sale estate-type-arsa estate-type-isyeri" style="display:none;">
+          <label for="isSwapEligible">Takasa Uygun</label>
+          <select id="isSwapEligible" name="isSwapEligible">
+            <option value="">Seçin</option>
+            <option value="Evet">Evet</option>
+            <option value="Hayır">Hayır</option>
+          </select>
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
@@ -1285,20 +1510,56 @@
           <input type="url" id="parcelQueryLink" name="parcelQueryLink" placeholder="https://parselsorgu.tkgm.gov.tr/">
         </div>
 
+        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
+          <label for="flatExchangeEligible">Kat Karşılığına Uygun</label>
+          <select id="flatExchangeEligible" name="flatExchangeEligible">
+            <option value="">Seçin</option>
+            <option value="Evet">Evet</option>
+            <option value="Hayır">Hayır</option>
+          </select>
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
+          <label for="flatExchangeRatio">Verilecek Daire Oranı</label>
+          <input type="text" id="flatExchangeRatio" name="flatExchangeRatio" placeholder="Örn. %40 veya 4 Daire">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
+          <label for="constructionFloorCount">Kat Adedi</label>
+          <input type="number" id="constructionFloorCount" name="constructionFloorCount" placeholder="Örn. 5">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
+          <label for="constructionRight">İnşaat Hakkı</label>
+          <input type="text" id="constructionRight" name="constructionRight" placeholder="Örn. 2500 m²">
+        </div>
+
+        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
+          <label for="contractorOfferOpen">Müteahhit Teklifine Açık</label>
+          <select id="contractorOfferOpen" name="contractorOfferOpen">
+            <option value="">Seçin</option>
+            <option value="Evet">Evet</option>
+            <option value="Hayır">Hayır</option>
+          </select>
+        </div>
+
+        <div class="field-group full-width estate-type-group estate-type-isyeri" style="display:none;">
+          <label>İşyeri Bilgileri</label>
+        </div>
         <div class="field-group estate-type-group estate-type-isyeri" style="display:none;">
           <label for="workplaceType">İşyeri Türü</label>
           <select id="workplaceType" name="workplaceType">
             <option value="">Seçin</option>
             <option value="Dükkan">Dükkan</option>
-            <option value="Mağaza">Mağaza</option>
             <option value="Ofis">Ofis</option>
-            <option value="Büro">Büro</option>
             <option value="Plaza Katı">Plaza Katı</option>
-            <option value="Cafe">Cafe</option>
-            <option value="Restaurant">Restaurant</option>
+            <option value="AVM Mağazası">AVM Mağazası</option>
+            <option value="Mağaza">Mağaza</option>
             <option value="Depo">Depo</option>
             <option value="Atölye">Atölye</option>
+            <option value="Fabrika">Fabrika</option>
             <option value="İmalathane">İmalathane</option>
+            <option value="Açık Alan">Açık Alan</option>
           </select>
         </div>
 
@@ -1393,10 +1654,23 @@
     `;
 
     const estateTypeField = field("estateType");
+    const estateSubTypeField = field("estateSubType");
     const estateFields = dynamicFields.querySelectorAll("input, select");
     const heatingTypeField = field("heatingType");
+    const m2Label = document.getElementById("m2Label");
+    const sectionCountLabel = document.getElementById("sectionCountLabel");
+    const usageSuitabilityLabel = document.getElementById("usageSuitabilityLabel");
+    const priceLabel = document.getElementById("priceLabel");
+    const unitPriceLabel = document.getElementById("unitPriceLabel");
     const arsaTapuField = field("titleDeedStatus");
+    const arsaStatusField = field("arsaStatus");
     const workplaceTapuField = field("workplaceTitleDeedStatus");
+    const usageSuitabilityField = field("usageSuitability");
+    const tenantStatusField = field("tenantStatus");
+    const estateListingIntentField = field("estateListingIntent");
+    const housingTypeField = field("housingType");
+    const generalSubCategoryField = field("subCategory");
+    const generalSubCategoryGroup = generalSubCategoryField?.closest(".field-group");
     const populateEstateSelect = (element, options) => {
       if (!element) return;
       const current = element.value;
@@ -1405,33 +1679,127 @@
     };
     const syncEstateTypeFields = () => {
       const currentType = safeVal("estateType");
+      const listingIntent = safeVal("estateListingIntent");
+      const selectedSubType = safeVal("subCategory");
+      const legacyHousingType = inferHousingTypeFromLegacySubCategory(selectedSubType);
+      const normalizedEstateSubType = String(estateSubTypeField?.value || selectedSubType || "")
+        .trim()
+        .toLocaleLowerCase("tr")
+        .replace(/\s+/g, "-");
+      const effectiveType =
+        currentType ||
+        (["Satılık", "Kiralık", "Kat Karşılığı Satılık"].includes(listingIntent) && selectedSubType === "Arsa" ? "arsa" :
+        ["Satılık", "Kiralık", "Devren"].includes(listingIntent) && selectedSubType === "İş Yeri" ? "isyeri" :
+        listingIntent === "Arsa" ? "arsa" :
+        listingIntent === "İşyeri" ? "isyeri" :
+        (listingIntent === "Satılık Daire" || listingIntent === "Kiralık Daire") ? "konut" :
+        ["Ofis", "Dükkan", "Mağaza", "Depo", "Fabrika", "Atölye"].includes(selectedSubType) ? "isyeri" :
+        realEstateSubtypeOptions.arsa.includes(selectedSubType) ? "arsa" :
+        selectedSubType ? "konut" :
+        "");
+      const isRentalResidence = effectiveType === "konut" && listingIntent === "Kiralık Daire";
+      const isArsaRental = effectiveType === "arsa" && listingIntent === "Kiralık";
+      const isArsaFlatExchange = effectiveType === "arsa" && listingIntent === "Kat Karşılığı Satılık";
+      const isTenantOccupied = safeVal("tenantStatus") === "Kiracılı";
+      populateEstateSelect(estateSubTypeField, realEstateSubtypeOptions[effectiveType] || []);
+      if (estateSubTypeField && !estateSubTypeField.value && realEstateSubtypeOptions[effectiveType]?.includes(selectedSubType)) {
+        estateSubTypeField.value = selectedSubType;
+      }
+      if (estateSubTypeField && effectiveType === "konut" && legacyHousingType) {
+        estateSubTypeField.value = "Daire";
+      }
+      if (estateSubTypeField && !realEstateSubtypeOptions[effectiveType]?.includes(estateSubTypeField.value)) {
+        estateSubTypeField.value =
+          effectiveType === "konut" && (listingIntent === "Satılık Daire" || listingIntent === "Kiralık Daire")
+            ? "Daire"
+            : "";
+      }
+      if (generalSubCategoryField) {
+        generalSubCategoryField.value = estateSubTypeField?.value || "";
+      }
+      if (housingTypeField && !housingTypeField.value && legacyHousingType) {
+        housingTypeField.value = legacyHousingType;
+      }
+      if (housingTypeField) {
+        if ((estateSubTypeField?.value || "") !== "Daire") {
+          housingTypeField.value = "";
+        } else if (!housingTypeField.value) {
+          housingTypeField.value = "Standart Daire";
+        }
+      }
       populateEstateSelect(
         heatingTypeField,
-        currentType === "isyeri" ? realEstateHeatingOptions.isyeri : realEstateHeatingOptions.konut
+        effectiveType === "isyeri" ? realEstateHeatingOptions.isyeri : realEstateHeatingOptions.konut
       );
       populateEstateSelect(
         arsaTapuField,
         ["Kat Mülkiyetli", "Kat İrtifaklı", "Hisseli Tapu", "Arsa Tapulu"]
       );
       populateEstateSelect(
+        arsaStatusField,
+        realEstateSubtypeOptions.arsa
+      );
+      populateEstateSelect(
         workplaceTapuField,
         ["Kat Mülkiyetli", "Kat İrtifaklı", "Hisseli"]
       );
+      if (generalSubCategoryGroup) {
+        generalSubCategoryGroup.style.display = "none";
+      }
       dynamicFields.querySelectorAll(".estate-type-group").forEach((group) => {
         const classes = group.classList;
         const isKonut = classes.contains("estate-type-konut");
         const isArsa = classes.contains("estate-type-arsa");
         const isIsyeri = classes.contains("estate-type-isyeri");
-        const show =
-          (!currentType && isKonut) ||
-          (currentType === "konut" && isKonut) ||
-          (currentType === "arsa" && isArsa) ||
-          (currentType === "isyeri" && isIsyeri);
+        const isRentalOnly = classes.contains("estate-subtype-rental");
+        const isSaleOnly = classes.contains("estate-subtype-sale");
+        const isRentalDelivery = classes.contains("estate-rental-delivery");
+        const isVillaOnly = classes.contains("estate-subtype-villa");
+        const isResidenceOnly = classes.contains("estate-subtype-residence");
+        const isMustakilOnly = classes.contains("estate-subtype-mustakil-ev");
+        const isCiftlikOnly = classes.contains("estate-subtype-ciftlik-evi");
+        const isArsaFlatExchangeOnly = classes.contains("estate-arsa-flat-exchange");
+        const isHiddenForVilla = classes.contains("estate-hide-for-villa");
+        const isHiddenForCiftlik = classes.contains("estate-hide-for-ciftlik");
+        const isHiddenForArsaTarla = classes.contains("estate-hide-for-arsa-tarla");
+        let show =
+          (!effectiveType && isKonut) ||
+          (effectiveType === "konut" && isKonut) ||
+          (effectiveType === "arsa" && isArsa) ||
+          (effectiveType === "isyeri" && isIsyeri);
+        if (show && effectiveType === "konut") {
+          if (isRentalOnly) show = isRentalResidence;
+          if (isSaleOnly) show = !isRentalResidence;
+          if (isRentalDelivery) show = isRentalResidence && isTenantOccupied;
+          if (isVillaOnly) show = normalizedEstateSubType === "villa";
+          if (isResidenceOnly) show = normalizedEstateSubType === "residence";
+          if (isMustakilOnly) show = normalizedEstateSubType === "müstakil-ev" || normalizedEstateSubType === "mustakil-ev";
+          if (isCiftlikOnly) show = normalizedEstateSubType === "çiftlik-evi" || normalizedEstateSubType === "ciftlik-evi";
+          if (isHiddenForVilla) show = normalizedEstateSubType !== "villa";
+          if (isHiddenForCiftlik) show = normalizedEstateSubType !== "çiftlik-evi" && normalizedEstateSubType !== "ciftlik-evi";
+        }
+        if (show && effectiveType === "arsa") {
+          if (isArsaFlatExchangeOnly) show = isArsaFlatExchange;
+          if (isHiddenForArsaTarla) show = normalizedEstateSubType !== "tarla";
+        }
         group.style.display = show ? "flex" : "none";
         group.querySelectorAll("input, select, textarea").forEach((control) => {
           control.disabled = !show;
+          if (!show && control !== tenantStatusField && control.id !== "estateType" && control.id !== "estateSubType" && control.id !== "estateListingIntent") {
+            control.value = "";
+          }
         });
       });
+      const isFarmHouse = normalizedEstateSubType === "çiftlik-evi" || normalizedEstateSubType === "ciftlik-evi";
+      if (m2Label) m2Label.textContent = isFarmHouse ? "Arazi m²" : "m²";
+      if (priceLabel) priceLabel.textContent = isArsaRental ? "Kira Bedeli" : "Fiyat";
+      if (unitPriceLabel) unitPriceLabel.textContent = "m² Fiyatı";
+      if (sectionCountLabel) sectionCountLabel.textContent = isFarmHouse ? "Salon Sayısı" : "Bölme Sayısı";
+      if (usageSuitabilityLabel) usageSuitabilityLabel.textContent = isFarmHouse ? "Yapı Tipi" : "Kullanıma Uygunluk";
+      populateEstateSelect(
+        usageSuitabilityField,
+        isFarmHouse ? farmHouseStructureOptions : ["Ofis", "Mağaza", "Cafe", "Market", "Sağlık", "Eğitim"]
+      );
       syncVisibilityRequirements();
     };
 
@@ -1439,10 +1807,47 @@
       fieldEl.addEventListener("input", () => {
         updateLivePreview();
         updateStepButtons();
+        persistListingDraft();
       });
       fieldEl.addEventListener("change", () => {
         updateLivePreview();
         updateStepButtons();
+        persistListingDraft();
+      });
+    });
+
+    estateSubTypeField?.addEventListener("change", () => {
+      if (generalSubCategoryField) {
+        generalSubCategoryField.value = estateSubTypeField.value;
+      }
+      syncEstateTypeFields();
+      updateLivePreview();
+      updateStepButtons();
+      persistListingDraft({
+        subCategory: estateSubTypeField.value,
+        housingType: safeVal("housingType"),
+        estateType: safeVal("estateType"),
+        estateListingIntent: safeVal("estateListingIntent")
+      });
+    });
+    arsaStatusField?.addEventListener("change", () => {
+      if (safeVal("estateType") !== "arsa") return;
+      if (estateSubTypeField) {
+        const optionValues = Array.from(estateSubTypeField.options).map((option) => option.value);
+        if (optionValues.includes(arsaStatusField.value)) {
+          estateSubTypeField.value = arsaStatusField.value;
+        }
+      }
+      if (generalSubCategoryField) {
+        generalSubCategoryField.value = arsaStatusField.value;
+      }
+      updateLivePreview();
+      updateStepButtons();
+      persistListingDraft({
+        subCategory: arsaStatusField.value,
+        arsaStatus: arsaStatusField.value,
+        estateType: safeVal("estateType"),
+        estateListingIntent: safeVal("estateListingIntent")
       });
     });
 
@@ -1450,8 +1855,25 @@
       syncEstateTypeFields();
       updateLivePreview();
       updateStepButtons();
+      persistListingDraft({
+        estateType: estateTypeField.value,
+        estateListingIntent: safeVal("estateListingIntent"),
+        subCategory: safeVal("subCategory")
+      });
+    });
+    tenantStatusField?.addEventListener("change", () => {
+      syncEstateTypeFields();
+      updateLivePreview();
+      updateStepButtons();
+      persistListingDraft();
     });
 
+    if (!estateListingIntentField?.value) {
+      const legacySubCategory = safeVal("subCategory");
+      if (["Satılık Daire", "Kiralık Daire", "Arsa", "İşyeri"].includes(legacySubCategory)) {
+        estateListingIntentField.value = legacySubCategory;
+      }
+    }
     syncEstateTypeFields();
   }
 
@@ -1699,12 +2121,8 @@
     }
     currentStep = step;
     console.log("SHOW STEP", step);
-    console.log("typeof renderVehicleFields", typeof renderVehicleFields);
     if (step === 2) {
-      console.log("CALLING renderVehicleFields");
-      if (typeof renderVehicleFields === "function") {
-        renderVehicleFields();
-      }
+      renderFields(true);
     }
     if (step === 3) {
       applyEditFeatureSelections();
@@ -1719,6 +2137,7 @@
       item.classList.toggle("active", order === step);
       item.classList.toggle("done", order < step);
     });
+    persistListingDraft({ step });
   }
 
   function markError(id) {
@@ -1975,19 +2394,21 @@
       "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support",
       "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel",
       "fsdSupportVehicle", "hybridType", "sellerType", "vehicleCondition", "rooms", "m2",
-      "age", "floor", "estateType", "dues", "bathrooms", "zoningStatus", "arsaStatus",
+      "grossM2", "netM2", "kitchenType", "elevator", "parkingType", "energyCertificate",
+      "age", "floor", "estateType", "dues", "deposit", "rentalPeriod", "tenantStatus", "deliveryDate", "bathrooms", "openAreaM2", "landShareM2", "zoningStatus", "arsaStatus",
       "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType",
       "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite",
       "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible",
       "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage",
-      "roadOpened", "flatExchangeEligible", "electricInfrastructure", "waterInfrastructure",
+      "roadOpened", "flatExchangeEligible", "flatExchangeRatio", "constructionFloorCount",
+      "constructionRight", "contractorOfferOpen", "electricInfrastructure", "waterInfrastructure",
       "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink",
       "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus",
       "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability",
       "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth",
       "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize",
       "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount",
-      "sensorSize", "subCategory"
+      "sensorSize", "subCategory", "housingType"
     ];
 
     if (field("brand") && listing.brand) {
@@ -2051,16 +2472,27 @@
     )];
   }
 
+  function selectedFacadeValues() {
+    return Array.from(document.querySelectorAll(".estate-facade-option:checked:not(:disabled)"))
+      .map((input) => input.closest("label")?.querySelector(".feature-label")?.textContent || input.closest("label")?.textContent || "")
+      .map((value) => String(value || "").trim())
+      .filter(Boolean);
+  }
+
   function applyEditFeatureSelections() {
     if (!isEditMode || !editingListing) return;
 
-    const selectedFeatures = featureValuesFromListing(editingListing);
+    const facadeValues = String(editingListing?.facade || "")
+      .split(",")
+      .map((value) => String(value || "").trim())
+      .filter(Boolean);
+    const selectedFeatures = [...new Set([...featureValuesFromListing(editingListing), ...facadeValues])];
     const normalizedSelected = new Set(
       selectedFeatures.map(normalizeFeatureText).filter(Boolean)
     );
 
     const featureInputs = Array.from(
-      document.querySelectorAll(".features-root .category-feature-group input[type='checkbox']")
+      document.querySelectorAll(".features-root .category-feature-group input[type='checkbox'], .estate-extra-feature input[type='checkbox']")
     );
 
     let matchedCount = 0;
@@ -2106,6 +2538,8 @@
     document.title = "İlan Düzenle - Jetle";
 
     const formCategory = inferEditFormCategory(listing);
+    const legacyHousingType = inferHousingTypeFromLegacySubCategory(listing.subCategory || "");
+    const normalizedSubCategory = legacyHousingType ? "Daire" : (listing.subCategory || "");
     setVal("category", formCategory);
     setVal("title", listing.title || "");
     setVal("description", listing.description || listing.desc || "");
@@ -2115,7 +2549,8 @@
     setVal("district", listing.district || "");
     await loadNeighborhoodsForCity(listing.city || "");
     await populateNeighborhoods(listing.neighborhood || "");
-    setVal("subCategory", listing.subCategory || "");
+    setVal("subCategory", normalizedSubCategory);
+    setVal("housingType", listing.housingType || legacyHousingType || "");
 
     if (categorySelect) {
       categorySelect.dispatchEvent(new Event("change", { bubbles: true }));
@@ -2130,10 +2565,24 @@
   }
 
   function collectFeatures() {
-    const features = Array.from(document.querySelectorAll('.features-root .category-feature-group.is-active input[type="checkbox"]:checked:not(:disabled)'))
-      .map((input) => input.closest("label")?.innerText.trim())
+    const checkedInputs = Array.from(
+      document.querySelectorAll('.features-root .category-feature-group input[type="checkbox"]:checked:not(:disabled), .estate-extra-feature input[type="checkbox"]:checked:not(:disabled)')
+    );
+    const features = checkedInputs
+      .map((input) => {
+        const labelText =
+          input.closest("label")?.querySelector(".feature-label")?.textContent ||
+          input.closest("label")?.textContent ||
+          input.getAttribute("aria-label") ||
+          input.value;
+        return String(labelText || "").trim();
+      })
       .filter(Boolean);
+
     console.log("COLLECT_FEATURES_RESULT", {
+      activeCategory: document.getElementById("category")?.value || "",
+      checkedCount: checkedInputs.length,
+      checkedIds: checkedInputs.map((input) => input.id),
       count: features.length,
       features
     });
@@ -2207,6 +2656,14 @@
       .filter(([, value]) => value && value !== "original")
       .map(([part, value]) => `${part}:${value}`);
     const selectedFeatures = collectFeatures();
+    const facadeSelections = selectedFacadeValues();
+    console.log("SUBMIT_FEATURE_PAYLOAD", {
+      category: safeVal("category"),
+      subCategory: safeVal("subCategory"),
+      estateType: safeVal("estateType"),
+      featureCount: selectedFeatures.length,
+      features: selectedFeatures
+    });
     const rawCategory = safeVal("category");
     const rawSubCategory = safeVal("subCategory");
     const mainCategory = inferMainCategory(rawCategory, rawSubCategory);
@@ -2229,6 +2686,7 @@
           ? `${safeVal("city")} / ${safeVal("district")}`
           : safeVal("city"),
       features: selectedFeatures,
+      facade: facadeSelections.join(", "),
       damage: selectedDamage,
       damageMap: collectDamageMap(),
     };
@@ -2243,7 +2701,7 @@
     console.log("CREATE_SELECTED_FEATURES", selectedFeatures);
     console.log("CREATE_PAYLOAD_FEATURES", payload.features);
 
-    ["brand", "series", "model", "year", "km", "fuel", "gear", "transmission", "bodyType", "color", "engine", "engineSize", "enginePower", "power", "sellerType", "vehicleCondition", "drivetrain", "torque", "fuelConsumption", "cityFuelConsumption", "highwayFuelConsumption", "combinedFuelConsumption", "emissionStandard", "plate", "hasarKaydi", "warrantyStatus", "isSwapEligibleVehicle", "isCreditEligibleVehicle", "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support", "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel", "fsdSupportVehicle", "hybridType", "rooms", "m2", "age", "floor", "estateType", "dues", "bathrooms", "zoningStatus", "arsaStatus", "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType", "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite", "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible", "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage", "roadOpened", "flatExchangeEligible", "electricInfrastructure", "waterInfrastructure", "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink", "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus", "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth", "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize", "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount", "sensorSize"].forEach((id) => {
+    ["brand", "series", "model", "year", "km", "fuel", "gear", "transmission", "bodyType", "color", "engine", "engineSize", "enginePower", "power", "sellerType", "vehicleCondition", "drivetrain", "torque", "fuelConsumption", "cityFuelConsumption", "highwayFuelConsumption", "combinedFuelConsumption", "emissionStandard", "plate", "hasarKaydi", "warrantyStatus", "isSwapEligibleVehicle", "isCreditEligibleVehicle", "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support", "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel", "fsdSupportVehicle", "hybridType", "rooms", "m2", "grossM2", "netM2", "kitchenType", "elevator", "parkingType", "energyCertificate", "age", "floor", "estateType", "housingType", "dues", "deposit", "rentalPeriod", "tenantStatus", "deliveryDate", "bathrooms", "openAreaM2", "landShareM2", "zoningStatus", "arsaStatus", "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType", "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite", "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible", "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage", "roadOpened", "flatExchangeEligible", "flatExchangeRatio", "constructionFloorCount", "constructionRight", "contractorOfferOpen", "electricInfrastructure", "waterInfrastructure", "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink", "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus", "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth", "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize", "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount", "sensorSize"].forEach((id) => {
       const element = field(id);
       if (element?.disabled) return;
       const value = safeVal(id);
@@ -2346,6 +2804,7 @@
       console.log("CREATE_REDIRECT_ID", data?.listing?._id || data?.listing?.id || data?._id || data?.id || "");
       alert(isEditMode ? "İlan başarıyla güncellendi." : "İlan başarıyla gönderildi.");
       if (listingId) {
+        clearListingDraft();
         window.location.href = `/listing-detail.html?id=${encodeURIComponent(listingId)}`;
       }
     } catch (err) {
@@ -2362,8 +2821,18 @@
 
   await loadCarData();
   populateCities();
-  showStep(1);
-  renderFields();
+  const restoredDraft = await restoreListingDraftIfNeeded();
+  const initialStep = Math.max(1, Number(restoredDraft?.step) || 1);
+  if (initialStep > 1) {
+    showStep(2);
+    renderFields(true);
+    if (initialStep !== 2) {
+      showStep(initialStep);
+    }
+  } else {
+    showStep(1);
+    renderFields();
+  }
   await loadEditListingIfNeeded();
   updateLivePreview();
   updateStepButtons();
@@ -2377,6 +2846,7 @@
     renderFields(true);
     updateLivePreview();
     updateStepButtons();
+    persistListingDraft({ category, subCategory: safeVal("subCategory"), housingType: safeVal("housingType") });
   });
 
   document.querySelector('[name="category"]')?.addEventListener("change", toggleSections);
@@ -2388,12 +2858,14 @@
     await loadNeighborhoodsForCity(safeVal("city"));
     updateLivePreview();
     updateStepButtons();
+    persistListingDraft({ city: safeVal("city"), district: "", neighborhood: "" });
   });
 
   if (districtInput) districtInput.addEventListener("change", async () => {
     await populateNeighborhoods();
     updateLivePreview();
     updateStepButtons();
+    persistListingDraft({ district: safeVal("district"), neighborhood: safeVal("neighborhood") });
   });
 
   [titleInput, descriptionInput, priceInput, districtInput, neighborhoodInput].forEach((element) => {
@@ -2402,10 +2874,12 @@
       if (element === priceInput) setVal("price", safeVal("price"));
       updateLivePreview();
       updateStepButtons();
+      persistListingDraft();
     });
     element?.addEventListener("change", () => {
       updateLivePreview();
       updateStepButtons();
+      persistListingDraft();
     });
   });
 
@@ -2417,6 +2891,7 @@
       clearError(event.target);
       updateLivePreview();
       updateStepButtons();
+      persistListingDraft();
     }
   });
   document.addEventListener("change", (event) => {
@@ -2424,6 +2899,7 @@
       clearError(event.target);
       updateLivePreview();
       updateStepButtons();
+      persistListingDraft();
     }
   });
 
@@ -2462,6 +2938,29 @@
     if (event.target?.id === "videoUrl") {
       renderVideoPreview(videoInput?.files?.[0], event.target.value);
     }
+  });
+  if (videoDropZone && videoInput) videoDropZone.addEventListener("click", (event) => {
+    if (event.target.closest("label, button, input, a, video")) return;
+    videoInput.click();
+  });
+  if (photoDropZone && imageInput) photoDropZone.addEventListener("click", (event) => {
+    if (event.target.closest("label, button, input, .remove-btn, .preview-item, .video-upload-panel")) return;
+    imageInput.click();
+  });
+  if (videoDropZone) videoDropZone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    videoDropZone.classList.add("drag-over");
+  });
+  if (videoDropZone) videoDropZone.addEventListener("dragleave", () => videoDropZone.classList.remove("drag-over"));
+  if (videoDropZone) videoDropZone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    videoDropZone.classList.remove("drag-over");
+    const file = Array.from(event.dataTransfer.files || []).find((item) => item.type.startsWith("video/"));
+    if (!file || !videoInput) return;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    videoInput.files = dt.files;
+    renderVideoPreview(videoInput.files?.[0], field("videoUrl")?.value || "");
   });
   if (photoDropZone) photoDropZone.addEventListener("dragover", (event) => {
     event.preventDefault();
