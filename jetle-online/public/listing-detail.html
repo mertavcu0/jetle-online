@@ -3643,10 +3643,8 @@
       const sellerRoleLabel = isCorporateSeller ? "Kurumsal Satıcı" : "Bireysel Üye";
       const sellerProfileId = listingUserId || String(user?._id || "");
       const sellerAvatar = user?.avatarUrl || seller?.avatarUrl || listing.user?.avatarUrl || listing.seller?.avatarUrl || "";
-      const sellerPhone = formatPhoneNumber(listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor";
+      const sellerPhone = formatPhoneNumber(listing.contactPhone || listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor";
       const sellerListingsHref = sellerProfileId ? `/profile.html?id=${encodeURIComponent(sellerProfileId)}` : `/listings.html`;
-      const workPhone = isCorporateSeller ? sellerPhone : "(312) xxx xx xx";
-      const mobilePhone = /^0?5\d{2}/.test(String((listing.phone || listing.user?.phone || listing.seller?.phone || "")).replace(/\D+/g, "")) ? sellerPhone : "(5xx) xxx xx xx";
       console.log("MESSAGE_AUTH_STATE", {
         currentUserId,
         currentUserEmail,
@@ -3715,36 +3713,16 @@
               `
               : `
                 <div class="seller-contact-stack">
-                  ${isCorporateSeller ? `
-                    <div class="seller-phone-panel">
-                      <div class="seller-phone-row">
-                        <div class="seller-phone-label">İş:</div>
-                        <div class="seller-phone-value">${workPhone}</div>
-                      </div>
-                      <div class="seller-phone-row">
-                        <div class="seller-phone-label">Cep:</div>
-                        <div id="sellerPhoneValue" class="seller-phone-value">${mobilePhone}</div>
-                      </div>
+                  <div class="seller-phone-panel">
+                    <div class="seller-phone-row">
+                      <div class="seller-phone-label">Telefon Numarası:</div>
+                      <div id="sellerPhoneValue" class="seller-phone-value">${sellerPhone}</div>
                     </div>
-                    <div class="seller-link-row">
-                      <a href="${sellerListingsHref}">Tüm ilanları gör →</a>
-                    </div>
-                  ` : `
-                    <div class="seller-phone-panel">
-                      <div class="seller-phone-row">
-                        <div class="seller-phone-label">İş:</div>
-                        <div class="seller-phone-value">(312) xxx xx xx</div>
-                      </div>
-                      <div class="seller-phone-row">
-                        <div class="seller-phone-label">Cep:</div>
-                        <div id="sellerPhoneValue" class="seller-phone-value">${mobilePhone}</div>
-                      </div>
-                    </div>
-                    <div class="seller-link-row">
-                      <a href="${sellerListingsHref}">Tüm ilanları gör →</a>
-                    </div>
-                    <button class="btn-primary" type="button" data-action="open-messages">Mesaj Gönder</button>
-                  `}
+                  </div>
+                  <div class="seller-link-row">
+                    <a href="${sellerListingsHref}">Tüm ilanları gör →</a>
+                  </div>
+                  ${isCorporateSeller ? "" : '<button class="btn-primary" type="button" data-action="open-messages">Mesaj Gönder</button>'}
                 </div>
               `}
           </div>

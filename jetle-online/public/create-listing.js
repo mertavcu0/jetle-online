@@ -316,6 +316,7 @@
   const photoDropZone = $("photoDropZone");
   const photoCountText = $("photoCountText");
   const priceInput = $("price");
+  const contactPhoneInput = $("contactPhone");
   const titleInput = $("title");
   const cityInput = $("city");
   const districtInput = $("district");
@@ -413,6 +414,7 @@
       estateListingIntent: safeVal("estateListingIntent"),
       title: safeVal("title").trim(),
       price: safeVal("price"),
+      contactPhone: safeVal("contactPhone"),
       city: safeVal("city"),
       district: safeVal("district"),
       neighborhood: safeVal("neighborhood"),
@@ -443,6 +445,7 @@
     setVal("housingType", draft.housingType || "");
     setVal("title", draft.title || "");
     setVal("price", draft.price || "");
+    setVal("contactPhone", draft.contactPhone || "");
     setVal("city", draft.city || "");
     populateDistricts();
     setVal("district", draft.district || "");
@@ -457,6 +460,17 @@
 
   function digitsOnly(value) {
     return String(value || "").replace(/\D/g, "");
+  }
+
+  function normalizeTrPhone(value) {
+    const digits = digitsOnly(value).slice(0, 11);
+    if (digits.length === 10 && digits.startsWith("5")) return `0${digits}`;
+    return digits;
+  }
+
+  function isValidTrPhone(value) {
+    const normalized = normalizeTrPhone(value);
+    return /^05\d{9}$/.test(normalized);
   }
 
   function formatThousands(value) {
@@ -2151,7 +2165,12 @@
 
   function step1Ready() {
     if (currentStep !== 1) return true;
-    return Boolean(safeVal("category") && (safeVal("title") || "").trim() && safeVal("city"));
+    return Boolean(
+      safeVal("category") &&
+      (safeVal("title") || "").trim() &&
+      safeVal("city") &&
+      isValidTrPhone(safeVal("contactPhone"))
+    );
   }
 
   function step2Ready() {
@@ -2178,7 +2197,7 @@
     const ready2 = step2Ready();
     if (step1Next) step1Next.disabled = !ready1;
     if (step2Next) step2Next.disabled = !ready2;
-    if (step1Message) step1Message.textContent = ready1 ? "" : "Kategori, başlık ve şehir dolmadan devam edemezsiniz.";
+    if (step1Message) step1Message.textContent = ready1 ? "" : "Kategori, başlık, şehir ve geçerli iletişim telefonu dolmadan devam edemezsiniz.";
     if (step2Message) step2Message.textContent = ready2 ? "" : "Detay alanlarını doldurun.";
 
     if (currentStep !== 5) return;
@@ -2187,13 +2206,19 @@
 
   function validateStep1() {
     let valid = true;
-    ["category", "title", "city"].forEach((id) => {
+    ["category", "title", "city", "contactPhone"].forEach((id) => {
       if (!safeVal(id).trim()) {
         markError(id);
         valid = false;
       }
     });
-    if (!valid) alert("Kategori, başlık ve şehir zorunlu.");
+    if (valid && !isValidTrPhone(safeVal("contactPhone"))) {
+      markError("contactPhone");
+      valid = false;
+      alert("Lütfen geçerli bir Türkiye telefon numarası girin.");
+    } else if (!valid) {
+      alert("Kategori, başlık, şehir ve iletişim telefonu zorunlu.");
+    }
     updateStepButtons();
     return valid;
   }
@@ -2408,7 +2433,7 @@
       "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth",
       "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize",
       "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount",
-      "sensorSize", "subCategory", "housingType"
+      "sensorSize", "subCategory", "housingType", "contactPhone"
     ];
 
     if (field("brand") && listing.brand) {
@@ -2680,6 +2705,7 @@
       city: safeVal("city"),
       district: safeVal("district"),
       neighborhood: safeVal("neighborhood"),
+      contactPhone: normalizeTrPhone(safeVal("contactPhone")),
       location: safeVal("neighborhood")
         ? `${safeVal("city")} / ${safeVal("district")} / ${safeVal("neighborhood")}`
         : safeVal("district")
@@ -2881,6 +2907,25 @@
       updateStepButtons();
       persistListingDraft();
     });
+  });
+
+  contactPhoneInput?.addEventListener("input", () => {
+    const normalized = normalizeTrPhone(contactPhoneInput.value);
+    if (contactPhoneInput.value !== normalized) {
+      contactPhoneInput.value = normalized;
+    }
+    clearError(contactPhoneInput);
+    updateStepButtons();
+    persistListingDraft();
+  });
+  contactPhoneInput?.addEventListener("change", () => {
+    const normalized = normalizeTrPhone(contactPhoneInput.value);
+    if (contactPhoneInput.value !== normalized) {
+      contactPhoneInput.value = normalized;
+    }
+    clearError(contactPhoneInput);
+    updateStepButtons();
+    persistListingDraft();
   });
 
   document.addEventListener("input", (event) => {
