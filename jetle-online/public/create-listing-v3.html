@@ -597,6 +597,22 @@
       min-height: 38px;
     }
 
+    .field-static-value {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12.5px;
+      line-height: 1.35;
+      font-weight: 600;
+      padding: 7px 9px;
+      box-sizing: border-box;
+    }
+
     .field-group textarea {
       min-height: 140px;
       resize: vertical;
@@ -3094,7 +3110,7 @@
                 </div>
               </details>
 
-              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliInfrastructure" open>
+              <details class="features-block category-feature-group category-emlak estate-feature-land-shared" id="featureBlockEstateArsaInfrastructure" open>
                 <summary><h3>Altyapı</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_electricity"><span class="feature-label">Elektrik</span></label>
@@ -3106,7 +3122,7 @@
                 </div>
               </details>
 
-              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliTransport" open>
+              <details class="features-block category-feature-group category-emlak estate-feature-land-shared" id="featureBlockEstateArsaTransport" open>
                 <summary><h3>Ulaşım</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_main_road"><span class="feature-label">Anayol</span></label>
@@ -3123,8 +3139,8 @@
                 </div>
               </details>
 
-              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliEnvironment" open>
-                <summary><h3>Çevre</h3></summary>
+              <details class="features-block category-feature-group category-emlak estate-feature-land-shared" id="featureBlockEstateArsaEnvironment" open>
+                <summary><h3>Çevre / Konum</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_hospital"><span class="feature-label">Hastane</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_health_center"><span class="feature-label">Sağlık Ocağı</span></label>
@@ -3140,7 +3156,7 @@
                 </div>
               </details>
 
-              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-konut-imarli" id="featureBlockEstateArsaKonutImarliView" open>
+              <details class="features-block category-feature-group category-emlak estate-feature-land-shared" id="featureBlockEstateArsaView" open>
                 <summary><h3>Manzara</h3></summary>
                 <div class="features-grid-4">
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_residential_view_sea"><span class="feature-label">Deniz</span></label>
@@ -3245,6 +3261,21 @@
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_olive"><span class="feature-label">Zeytinlik</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_vineyard"><span class="feature-label">Bağ</span></label>
                   <label class="feature-check"><input type="checkbox" id="estate_feat_land_farm_greenhouse_area"><span class="feature-label">Seracılık Alanı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-arsa-hobi-bahcesi" id="featureBlockEstateArsaHobiBahcesiAmenities" open>
+                <summary><h3>Hobi Bahçesi Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_fenced"><span class="feature-label">Çitli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_small_house"><span class="feature-label">Küçük Bahçe Evi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_irrigation"><span class="feature-label">Sulama Sistemi</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_well"><span class="feature-label">Kuyu</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_water"><span class="feature-label">Su</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_electricity"><span class="feature-label">Elektrik</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_tree"><span class="feature-label">Meyve Ağaçları</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_road_front"><span class="feature-label">Yol Cepheli</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_land_hobby_hobby_agriculture"><span class="feature-label">Hobi Tarımına Uygun</span></label>
                 </div>
               </details>
 
@@ -3899,7 +3930,7 @@
       }
 
       function normalizedEstateSubTypeSelection() {
-        return (val("estateSubType") || val("subCategory") || "")
+        return (val("estateSubType") || val("arsaStatus") || val("zoningStatus") || val("subCategory") || "")
           .trim()
           .toLocaleLowerCase("tr")
           .replace(/\s+/g, "-");
@@ -3910,9 +3941,10 @@
         const subtype = normalizedEstateSubTypeSelection();
         const estateType = String(val("estateType") || "").trim().toLocaleLowerCase("tr");
         const isArsa = current === "emlak" && estateType === "arsa";
+        const isEmlak = current === "emlak";
         const allowedSubtypeClasses = new Set();
 
-        if (current === "emlak") {
+        if (isEmlak) {
           if (subtype === "villa") {
             allowedSubtypeClasses.add("estate-subtype-villa");
           } else if (subtype === "residence") {
@@ -3943,6 +3975,8 @@
             allowedSubtypeClasses.add("estate-subtype-arsa-bahce");
           } else if (subtype === "çiftlik" || subtype === "ciftlik") {
             allowedSubtypeClasses.add("estate-subtype-arsa-ciftlik");
+          } else if (subtype === "hobi-bahçesi" || subtype === "hobi-bahcesi") {
+            allowedSubtypeClasses.add("estate-subtype-arsa-hobi-bahcesi");
           }
         }
 
@@ -3952,6 +3986,18 @@
             allowedSubtypeClasses.size > 0 &&
             [...allowedSubtypeClasses].some((className) => block.classList.contains(className));
 
+          block.classList.toggle("estate-subtype-hidden", !shouldShow);
+          block.classList.toggle("is-active", shouldShow);
+          block.hidden = !shouldShow;
+          block.style.display = shouldShow ? "" : "none";
+          block.querySelectorAll("input[type='checkbox']").forEach((input) => {
+            input.disabled = !shouldShow;
+            if (!shouldShow) input.checked = false;
+          });
+        });
+
+        document.querySelectorAll(".estate-feature-land-shared").forEach((block) => {
+          const shouldShow = isArsa;
           block.classList.toggle("estate-subtype-hidden", !shouldShow);
           block.classList.toggle("is-active", shouldShow);
           block.hidden = !shouldShow;
@@ -3972,8 +4018,11 @@
         ].forEach((id) => {
           const block = document.getElementById(id);
           if (!block) return;
-          const shouldShow = !isArsa;
+          const shouldShow = isEmlak && !isArsa;
           block.style.display = shouldShow ? "" : "none";
+          block.hidden = !shouldShow;
+          block.classList.toggle("estate-subtype-hidden", !shouldShow);
+          block.classList.toggle("is-active", shouldShow);
           block.querySelectorAll("input[type='checkbox']").forEach((input) => {
             input.disabled = !shouldShow;
             if (!shouldShow) input.checked = false;
@@ -4141,11 +4190,8 @@
             generalSubCategoryField.value = subcategory;
           }
           if (arsaStatusField && estateType === "arsa") {
-            const optionValues = Array.from(arsaStatusField.options).map((option) => option.value);
-            if (optionValues.includes(subcategory)) {
-              arsaStatusField.value = subcategory;
-              arsaStatusField.dispatchEvent(new Event("change", { bubbles: true }));
-            }
+            arsaStatusField.value = subcategory || "";
+            arsaStatusField.dispatchEvent(new Event("change", { bubbles: true }));
           }
           if (housingTypeField) {
             housingTypeField.value = housingType || "";
