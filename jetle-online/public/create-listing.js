@@ -1122,18 +1122,20 @@
             <option value="arsa">Arsa</option>
           </select>
         </div>
-        <div class="field-group">
+        <div class="field-group" id="estateSubTypeGroup">
           <label for="estateSubType">Emlak Tipi</label>
           <select id="estateSubType" name="estateSubType">
             <option value="">Emlak tipi seçin</option>
           </select>
         </div>
+        <div class="field-group estate-type-group estate-type-arsa" id="arsaSubtypeReadonlyGroup" style="display:none;">
+          <label for="arsaSubtypeReadonly" id="arsaSubtypeReadonlyLabel">Arsa Tipi</label>
+          <div class="field-static-value" id="arsaSubtypeReadonly">Belirtilmemiş</div>
+          <input type="hidden" id="zoningStatus" name="zoningStatus" value="">
+          <input type="hidden" id="arsaStatus" name="arsaStatus" value="">
+        </div>
         <input type="hidden" id="estateListingIntent" name="estateListingIntent" value="">
         <input type="hidden" id="housingType" name="housingType" value="">
-        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
-          <label>Temel Bilgiler</label>
-        </div>
-
         <div class="field-group estate-type-group estate-type-arsa estate-type-isyeri estate-subtype-ciftlik-evi" style="display:none;">
           <label for="m2" id="m2Label">m²</label>
           <input type="number" id="m2" name="m2" placeholder="Örn. 120">
@@ -1355,55 +1357,6 @@
 
         <input type="hidden" id="facade" name="facade" value="">
 
-        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
-          <label>İmar ve Tapu</label>
-        </div>
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="zoningStatus">İmar Durumu</label>
-          <select id="zoningStatus" name="zoningStatus">
-            <option value="">Seçin</option>
-            <option value="Konut İmarlı">Konut İmarlı</option>
-            <option value="Ticari İmarlı">Ticari İmarlı</option>
-            <option value="Sanayi İmarlı">Sanayi İmarlı</option>
-            <option value="Tarla">Tarla</option>
-            <option value="Bağ">Bağ</option>
-            <option value="Bahçe">Bahçe</option>
-            <option value="Zeytinlik">Zeytinlik</option>
-            <option value="Çiftlik">Çiftlik</option>
-            <option value="Hobi Bahçesi">Hobi Bahçesi</option>
-            <option value="Turizm İmarlı">Turizm İmarlı</option>
-            <option value="Akaryakıt İmarlı">Akaryakıt İmarlı</option>
-            <option value="Sağlık İmarlı">Sağlık İmarlı</option>
-            <option value="Eğitim İmarlı">Eğitim İmarlı</option>
-            <option value="Depolama İmarlı">Depolama İmarlı</option>
-            <option value="Karma İmarlı">Karma İmarlı</option>
-            <option value="Muhtelif Arsa">Muhtelif Arsa</option>
-          </select>
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="arsaStatus">Arsa Türü</label>
-          <select id="arsaStatus" name="arsaStatus">
-            <option value="">Seçin</option>
-            <option value="Konut İmarlı">Konut İmarlı</option>
-            <option value="Ticari İmarlı">Ticari İmarlı</option>
-            <option value="Sanayi İmarlı">Sanayi İmarlı</option>
-            <option value="Tarla">Tarla</option>
-            <option value="Bağ">Bağ</option>
-            <option value="Bahçe">Bahçe</option>
-            <option value="Zeytinlik">Zeytinlik</option>
-            <option value="Çiftlik">Çiftlik</option>
-            <option value="Hobi Bahçesi">Hobi Bahçesi</option>
-            <option value="Turizm İmarlı">Turizm İmarlı</option>
-            <option value="Akaryakıt İmarlı">Akaryakıt İmarlı</option>
-            <option value="Sağlık İmarlı">Sağlık İmarlı</option>
-            <option value="Eğitim İmarlı">Eğitim İmarlı</option>
-            <option value="Depolama İmarlı">Depolama İmarlı</option>
-            <option value="Karma İmarlı">Karma İmarlı</option>
-            <option value="Muhtelif Arsa">Muhtelif Arsa</option>
-          </select>
-        </div>
-
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
           <label for="adaNo">Ada No</label>
           <input type="text" id="adaNo" name="adaNo" placeholder="Örn. 145">
@@ -1438,10 +1391,6 @@
             <option value="Hisseli Tapu">Hisseli Tapu</option>
             <option value="Arsa Tapulu">Arsa Tapulu</option>
           </select>
-        </div>
-
-        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
-          <label>Altyapı</label>
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
@@ -1498,10 +1447,6 @@
           </select>
         </div>
 
-        <div class="field-group full-width estate-type-group estate-type-arsa" style="display:none;">
-          <label>Diğer</label>
-        </div>
-
         <div class="field-group estate-type-group estate-type-konut estate-subtype-sale estate-type-arsa" style="display:none;">
           <label for="isMortgageEligible">Krediye Uygun</label>
           <select id="isMortgageEligible" name="isMortgageEligible">
@@ -1523,39 +1468,6 @@
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
           <label for="parcelQueryLink">Parsel Sorgu Linki</label>
           <input type="url" id="parcelQueryLink" name="parcelQueryLink" placeholder="https://parselsorgu.tkgm.gov.tr/">
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
-          <label for="flatExchangeEligible">Kat Karşılığına Uygun</label>
-          <select id="flatExchangeEligible" name="flatExchangeEligible">
-            <option value="">Seçin</option>
-            <option value="Evet">Evet</option>
-            <option value="Hayır">Hayır</option>
-          </select>
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
-          <label for="flatExchangeRatio">Verilecek Daire Oranı</label>
-          <input type="text" id="flatExchangeRatio" name="flatExchangeRatio" placeholder="Örn. %40 veya 4 Daire">
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
-          <label for="constructionFloorCount">Kat Adedi</label>
-          <input type="number" id="constructionFloorCount" name="constructionFloorCount" placeholder="Örn. 5">
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
-          <label for="constructionRight">İnşaat Hakkı</label>
-          <input type="text" id="constructionRight" name="constructionRight" placeholder="Örn. 2500 m²">
-        </div>
-
-        <div class="field-group estate-type-group estate-type-arsa estate-arsa-flat-exchange" style="display:none;">
-          <label for="contractorOfferOpen">Müteahhit Teklifine Açık</label>
-          <select id="contractorOfferOpen" name="contractorOfferOpen">
-            <option value="">Seçin</option>
-            <option value="Evet">Evet</option>
-            <option value="Hayır">Hayır</option>
-          </select>
         </div>
 
         <div class="field-group full-width estate-type-group estate-type-isyeri" style="display:none;">
@@ -1670,6 +1582,7 @@
 
     const estateTypeField = field("estateType");
     const estateSubTypeField = field("estateSubType");
+    const estateSubTypeGroup = document.getElementById("estateSubTypeGroup");
     const estateFields = dynamicFields.querySelectorAll("input, select");
     const heatingTypeField = field("heatingType");
     const m2Label = document.getElementById("m2Label");
@@ -1677,7 +1590,11 @@
     const usageSuitabilityLabel = document.getElementById("usageSuitabilityLabel");
     const priceLabel = document.getElementById("priceLabel");
     const arsaTapuField = field("titleDeedStatus");
+    const zoningStatusField = field("zoningStatus");
     const arsaStatusField = field("arsaStatus");
+    const arsaSubtypeReadonlyGroup = document.getElementById("arsaSubtypeReadonlyGroup");
+    const arsaSubtypeReadonlyLabel = document.getElementById("arsaSubtypeReadonlyLabel");
+    const arsaSubtypeReadonly = document.getElementById("arsaSubtypeReadonly");
     const workplaceTapuField = field("workplaceTitleDeedStatus");
     const usageSuitabilityField = field("usageSuitability");
     const tenantStatusField = field("tenantStatus");
@@ -1750,13 +1667,48 @@
         ["Kat Mülkiyetli", "Kat İrtifaklı", "Hisseli Tapu", "Arsa Tapulu"]
       );
       populateEstateSelect(
-        arsaStatusField,
-        realEstateSubtypeOptions.arsa
-      );
-      populateEstateSelect(
         workplaceTapuField,
         ["Kat Mülkiyetli", "Kat İrtifaklı", "Hisseli"]
       );
+      const effectiveArsaSubtype = estateSubTypeField?.value || selectedSubType || arsaStatusField?.value || "";
+      const isArsaZoningSubtype = [
+        "Konut İmarlı",
+        "Ticari İmarlı",
+        "Sanayi İmarlı",
+        "Turizm İmarlı",
+        "Akaryakıt İmarlı",
+        "Sağlık İmarlı",
+        "Eğitim İmarlı",
+        "Depolama İmarlı",
+        "Karma İmarlı"
+      ].includes(effectiveArsaSubtype);
+      const shouldShowArsaTypeLabel = [
+        "Tarla",
+        "Bağ",
+        "Bahçe",
+        "Zeytinlik",
+        "Çiftlik",
+        "Hobi Bahçesi",
+        "Muhtelif Arsa"
+      ].includes(effectiveArsaSubtype);
+      if (effectiveType === "arsa" && arsaStatusField) {
+        arsaStatusField.value = shouldShowArsaTypeLabel ? effectiveArsaSubtype : "";
+      }
+      if (effectiveType === "arsa" && zoningStatusField) {
+        zoningStatusField.value = isArsaZoningSubtype ? effectiveArsaSubtype : "";
+      }
+      if (arsaSubtypeReadonly) {
+        arsaSubtypeReadonly.textContent = effectiveArsaSubtype || "Belirtilmemiş";
+      }
+      if (arsaSubtypeReadonlyLabel) {
+        arsaSubtypeReadonlyLabel.textContent = isArsaZoningSubtype ? "İmar Durumu" : "Arsa Türü";
+      }
+      if (arsaSubtypeReadonlyGroup) {
+        arsaSubtypeReadonlyGroup.style.display = effectiveType === "arsa" ? "flex" : "none";
+      }
+      if (estateSubTypeGroup) {
+        estateSubTypeGroup.style.display = effectiveType === "arsa" ? "none" : "flex";
+      }
       if (generalSubCategoryGroup) {
         generalSubCategoryGroup.style.display = "none";
       }
@@ -1843,27 +1795,6 @@
         estateListingIntent: safeVal("estateListingIntent")
       });
     });
-    arsaStatusField?.addEventListener("change", () => {
-      if (safeVal("estateType") !== "arsa") return;
-      if (estateSubTypeField) {
-        const optionValues = Array.from(estateSubTypeField.options).map((option) => option.value);
-        if (optionValues.includes(arsaStatusField.value)) {
-          estateSubTypeField.value = arsaStatusField.value;
-        }
-      }
-      if (generalSubCategoryField) {
-        generalSubCategoryField.value = arsaStatusField.value;
-      }
-      updateLivePreview();
-      updateStepButtons();
-      persistListingDraft({
-        subCategory: arsaStatusField.value,
-        arsaStatus: arsaStatusField.value,
-        estateType: safeVal("estateType"),
-        estateListingIntent: safeVal("estateListingIntent")
-      });
-    });
-
     estateTypeField?.addEventListener("change", () => {
       syncEstateTypeFields();
       updateLivePreview();
@@ -1888,7 +1819,6 @@
       }
     }
     syncEstateTypeFields();
-    syncDerivedEstateFields();
   }
 
   function renderElectronicsFields() {
@@ -2425,8 +2355,7 @@
       "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite",
       "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible",
       "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage",
-      "roadOpened", "flatExchangeEligible", "flatExchangeRatio", "constructionFloorCount",
-      "constructionRight", "contractorOfferOpen", "electricInfrastructure", "waterInfrastructure",
+      "roadOpened", "electricInfrastructure", "waterInfrastructure",
       "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink",
       "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus",
       "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability",
@@ -2728,7 +2657,7 @@
     console.log("CREATE_SELECTED_FEATURES", selectedFeatures);
     console.log("CREATE_PAYLOAD_FEATURES", payload.features);
 
-    ["brand", "series", "model", "year", "km", "fuel", "gear", "transmission", "bodyType", "color", "engine", "engineSize", "enginePower", "power", "sellerType", "vehicleCondition", "drivetrain", "torque", "fuelConsumption", "cityFuelConsumption", "highwayFuelConsumption", "combinedFuelConsumption", "emissionStandard", "plate", "hasarKaydi", "warrantyStatus", "isSwapEligibleVehicle", "isCreditEligibleVehicle", "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support", "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel", "fsdSupportVehicle", "hybridType", "rooms", "m2", "grossM2", "netM2", "kitchenType", "elevator", "parkingType", "energyCertificate", "age", "floor", "estateType", "housingType", "dues", "deposit", "rentalPeriod", "tenantStatus", "deliveryDate", "bathrooms", "openAreaM2", "landShareM2", "zoningStatus", "arsaStatus", "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType", "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite", "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible", "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage", "roadOpened", "flatExchangeEligible", "flatExchangeRatio", "constructionFloorCount", "constructionRight", "contractorOfferOpen", "electricInfrastructure", "waterInfrastructure", "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink", "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus", "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth", "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize", "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount", "sensorSize"].forEach((id) => {
+    ["brand", "series", "model", "year", "km", "fuel", "gear", "transmission", "bodyType", "color", "engine", "engineSize", "enginePower", "power", "sellerType", "vehicleCondition", "drivetrain", "torque", "fuelConsumption", "cityFuelConsumption", "highwayFuelConsumption", "combinedFuelConsumption", "emissionStandard", "plate", "hasarKaydi", "warrantyStatus", "isSwapEligibleVehicle", "isCreditEligibleVehicle", "batteryCapacity", "rangeKm", "acChargeTime", "dcFastChargeSupport", "ccs2Support", "type2Support", "batteryHealthVehicle", "otaSupportVehicle", "autonomousDrivingLevel", "fsdSupportVehicle", "hybridType", "rooms", "m2", "grossM2", "netM2", "kitchenType", "elevator", "parkingType", "energyCertificate", "age", "floor", "estateType", "housingType", "dues", "deposit", "rentalPeriod", "tenantStatus", "deliveryDate", "bathrooms", "openAreaM2", "landShareM2", "zoningStatus", "arsaStatus", "titleDeedStatus", "usageStatus", "hasStorage", "hasKitchen", "heatingType", "residenceUsageStatus", "residenceTitleDeedStatus", "isFurnished", "isInSite", "balconyCount", "wcCount", "facade", "totalFloors", "isMortgageEligible", "isSwapEligible", "gabari", "kaks", "adaNo", "parselNo", "paftaNo", "roadFrontage", "roadOpened", "electricInfrastructure", "waterInfrastructure", "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink", "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus", "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth", "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize", "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount", "sensorSize"].forEach((id) => {
       const element = field(id);
       if (element?.disabled) return;
       const value = safeVal(id);

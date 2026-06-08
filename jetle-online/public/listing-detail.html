@@ -4552,7 +4552,7 @@
       function formatUnitPrice(value) {
         const numericValue = Number(value);
         if (!Number.isFinite(numericValue) || numericValue <= 0) return "";
-        return `${numericValue.toLocaleString("tr-TR")} TL/m²`;
+        return numericValue.toLocaleString("tr-TR");
       }
 
       function formatSpecifiedField(value) {
@@ -4686,7 +4686,7 @@
           ["grossM2Row", formatSquareMeters(listing.grossM2)],
           ["netM2Row", formatSquareMeters(listing.netM2)],
           ["m2Row", isLand ? formatLandDetailValue(listing.m2, formatSquareMeters) : formatSquareMeters(listing.m2)],
-          ["unitPriceRow", formatUnitPrice(getComputedListingUnitPrice(listing))],
+          ["unitPriceRow", isLand ? formatLandDetailValue(getComputedListingUnitPrice(listing), formatUnitPrice) : formatUnitPrice(getComputedListingUnitPrice(listing))],
           ["roomsRow", listing.rooms],
           ["ageRow", listing.age],
           ["floorRow", listing.floor],
@@ -4920,7 +4920,7 @@
 
       const LAND_FEATURE_CATEGORY_RULES = [
         {
-          key: "Arsa Özellikleri",
+          key: "Genel Arsa Özellikleri",
           patterns: [
             "köşe parsel", "kose parsel", "ifraz", "parselli", "hisseli", "müstakil tapulu", "mustakil tapulu",
             "kat karşılığı", "kat karsiligi", "ticari projeye uygun", "villa yapımına uygun", "villa yapimina uygun",
@@ -4931,7 +4931,8 @@
             "ekim yapilabilir", "hasat yapılabilir", "hasat yapilabilir", "üzüm bağı", "uzum bagi", "meyve ağaçları",
             "meyve agaclari", "bağ evi", "bag evi", "çitli", "citli", "yol cepheli", "ahır", "ahir", "ağıl", "agil",
             "kümes", "kumes", "samanlık", "samanlik", "traktör garajı", "traktor garaji", "hayvan barınağı",
-            "hayvan barinagi", "seracılık alanı", "seracilik alani", "depolama alanı", "depolama alani"
+            "hayvan barinagi", "seracılık alanı", "seracilik alani", "depolama alanı", "depolama alani",
+            "küçük bahçe evi", "kucuk bahce evi", "hobi tarımına uygun", "hobi tarimina uygun"
           ]
         },
         {
@@ -5215,7 +5216,7 @@
         setRowValue("changedRow", listing.changedParts || listing.changed);
         setRowValue("expertiseSummaryRow", listing.expertiseSummary || listing.expertise || listing.inspection);
         setRowValue("m2Row", formatSquareMeters(listing.m2));
-        setRowValue("unitPriceRow", formatUnitPrice(getComputedListingUnitPrice(listing)));
+        setRowValue("unitPriceRow", isLandListing(listing) ? formatLandDetailValue(getComputedListingUnitPrice(listing), formatUnitPrice) : formatUnitPrice(getComputedListingUnitPrice(listing)));
         setRowValue("grossM2Row", formatSquareMeters(listing.grossM2));
         setRowValue("netM2Row", formatSquareMeters(listing.netM2));
         setRowValue("roomsRow", listing.rooms);
