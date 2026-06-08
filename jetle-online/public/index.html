@@ -119,6 +119,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
 
     #authArea span {
@@ -131,27 +132,94 @@
       font-weight: 700;
     }
 
-    #authArea button {
-      padding: 9px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      background: #fff;
-      color: #374151;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
+    #authArea > a,
     .login-btn,
-    .register-btn {
-      padding: 9px 12px;
-      border-radius: 9px;
-      color: #374151;
-      font-size: 14px;
+    .register-btn,
+    #authArea .panel-link,
+    #authArea .logout-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
-    .register-btn {
-      border: 1px solid #d1d5db;
+    #authArea > a:first-child,
+    .login-btn,
+    #authArea .panel-link,
+    #authArea .logout-btn {
+      border-color: #d7e0ec;
       background: #fff;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    #authArea > a:last-child,
+    .register-btn {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+    }
+
+    #authArea > a:hover,
+    .login-btn:hover,
+    .register-btn:hover,
+    #authArea .panel-link:hover,
+    #authArea .logout-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #authArea > a:first-child:hover,
+    .login-btn:hover,
+    #authArea .panel-link:hover,
+    #authArea .logout-btn:hover {
+      border-color: #bfcddd;
+      background: #f8fafc;
+      color: #0f172a;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    #authArea > a:last-child:hover,
+    .register-btn:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24);
+    }
+
+    #authArea > a::before,
+    .login-btn::before,
+    .register-btn::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 14px 14px;
+    }
+
+    #authArea > a:first-child::before,
+    .login-btn::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'/%3E%3C/svg%3E");
+    }
+
+    #authArea > a:last-child::before,
+    .register-btn::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632ZM18 8.25h3m-1.5-1.5v3'/%3E%3C/svg%3E");
     }
 
     .post-btn {
@@ -888,6 +956,7 @@
 
     @media (max-width: 768px) {
       .navbar-inner {
+        display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         grid-template-areas:
           "logo actions"
@@ -896,12 +965,14 @@
         padding-bottom: 8px;
         gap: 4px;
         align-items: center;
+        min-width: 0;
       }
 
       .logo {
         grid-area: logo;
         align-self: center;
         line-height: 1.05;
+        min-width: 0;
       }
 
       .search {
@@ -936,7 +1007,6 @@
         grid-area: actions;
         width: auto;
         display: flex;
-        flex-direction: row;
         align-items: center;
         justify-content: flex-end;
         gap: 5px;
@@ -949,6 +1019,7 @@
         width: auto;
         flex: 0 0 auto;
         display: flex;
+        align-items: center;
         flex-wrap: nowrap;
         justify-content: flex-end;
         gap: 5px;
@@ -965,15 +1036,67 @@
       }
 
       #authArea button,
+      #authArea > a,
+      #authArea .panel-link,
+      #authArea .logout-btn,
       .login-btn,
       .register-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         min-height: 32px;
         height: 32px;
         padding: 0 10px;
         font-size: 11px;
+        line-height: 1;
         border-radius: 8px;
+        margin-left: 0;
         white-space: nowrap;
         flex: 0 0 auto;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      #authArea > a:first-child,
+      .login-btn,
+      #authArea .panel-link,
+      #authArea .logout-btn {
+        border-color: #d7e0ec;
+        background: #fff;
+        color: #334155;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+      }
+
+      #authArea > a:last-child,
+      .register-btn {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+      }
+
+      #authArea > a::before,
+      .login-btn::before,
+      .register-btn::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        flex: 0 0 auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 12px 12px;
+      }
+
+      #authArea > a:first-child::before,
+      .login-btn::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'/%3E%3C/svg%3E");
+      }
+
+      #authArea > a:last-child::before,
+      .register-btn::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='1.9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632ZM18 8.25h3m-1.5-1.5v3'/%3E%3C/svg%3E");
       }
 
       .page {
@@ -998,24 +1121,17 @@
       }
 
       .category-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
+        grid-template-columns: 1fr;
+        gap: 0;
       }
 
       .category-card {
-        justify-content: center;
-        min-height: 44px;
-        height: 44px;
-        padding: 8px 10px;
-        border-radius: 9px;
-        font-size: 11px;
-        font-weight: 800;
-        text-align: center;
-        box-shadow: 0 6px 14px rgba(15,23,42,0.06);
-      }
-
-      .category-card::before {
-        display: none;
+        justify-content: flex-start;
+        padding: 0 14px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 0;
+        box-shadow: none;
       }
 
       .category-card[data-category="is-makineleri"],
@@ -1151,32 +1267,54 @@
 
     .category-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: 1fr;
+      gap: 0;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
     }
 
     .category-card {
       display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 74px;
-      padding: 14px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      color: #111827;
-      font-weight: 800;
-      text-align: center;
+      justify-content: flex-start;
+      min-height: 42px;
+      height: 42px;
+      padding: 0 14px;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid #f1f1f1;
+      border-radius: 0;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
       text-decoration: none;
-      box-shadow: 0 10px 24px rgba(15,23,42,0.06);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      box-shadow: none;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
     }
 
     .category-card:hover {
-      color: #2563eb;
-      border-color: #bfdbfe;
-      transform: translateY(-4px);
-      box-shadow: 0 16px 34px rgba(15,23,42,0.12);
+      background: #f8f9fb;
+      color: #2f6df6;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .category-card.active {
+      background: #f8f9fb;
+      color: #2f6df6;
+    }
+
+    .category-card:last-child {
+      border-bottom: 0;
+    }
+
+    .category-label {
+      min-width: 0;
     }
 
     .home-sections {
@@ -1797,10 +1935,10 @@
     <aside class="sidebar">
       <h2>Kategoriler</h2>
       <div class="category-grid">
-        <a class="category-card" href="?category=emlak" data-category="emlak">Emlak</a>
-        <a class="category-card" href="?category=vasita" data-category="vasita">Vasıta</a>
-        <a class="category-card" href="?category=is-makineleri" data-category="is-makineleri">İş Makineleri</a>
-        <a class="category-card" href="?category=yedek-parca" data-category="yedek-parca">Yedek Parça</a>
+        <a class="category-card" href="?category=emlak" data-category="emlak"><span class="category-label">Emlak</span></a>
+        <a class="category-card" href="?category=vasita" data-category="vasita"><span class="category-label">Vasıta</span></a>
+        <a class="category-card" href="?category=elektronik" data-category="elektronik"><span class="category-label">Elektronik</span></a>
+        <a class="category-card" href="?category=motosiklet" data-category="motosiklet"><span class="category-label">Motosiklet</span></a>
       </div>
     </aside>
 
@@ -1945,6 +2083,8 @@
       const value = String(slug || "").trim().toLocaleLowerCase("tr");
       if (value === "emlak") return "Emlak";
       if (value === "vasita" || value === "vasıta" || value === "otomobil" || value === "arac" || value === "araç") return "Araç";
+      if (value === "elektronik") return "Elektronik";
+      if (value === "motosiklet") return "Motosiklet";
       if (value === "is-makineleri" || value === "iş-makineleri" || value === "is makineleri" || value === "iş makineleri") return "İş Makineleri";
       if (value === "yedek-parca" || value === "yedek parca" || value === "yedek parça") return "Yedek Parça";
       return "";
@@ -2102,6 +2242,7 @@
       if (text.includes("emlak")) return "Emlak";
       if (text.includes("oto") || text.includes("araç") || text.includes("vasıta") || text.includes("vasita")) return "Araç";
       if (text.includes("elektronik")) return "Elektronik";
+      if (text.includes("motosiklet")) return "Motosiklet";
       return value || "";
     }
 
@@ -2233,12 +2374,33 @@
       renderHome(state.normalListings, state.showcaseListings, state.featuredOnlyListings);
     }
 
-    function renderApiGrid(container, listings) {
+    function isRenderableListing(item) {
+      if (!item || typeof item !== "object") return false;
+      const id = String(item._id || item.id || "").trim();
+      const title = String(item.title || "").trim();
+      return Boolean(id && title);
+    }
+
+    function sanitizeListings(listings) {
+      return (Array.isArray(listings) ? listings : []).filter(isRenderableListing);
+    }
+
+    function syncGridDensity(container, count, defaultColumns = 4) {
+      if (!container || !container.classList.contains("listing-grid")) return;
+      container.style.gridTemplateColumns = "";
+      container.style.justifyContent = "";
+      if (window.innerWidth <= 900) return;
+      if (count > 0 && count < defaultColumns) {
+        container.style.gridTemplateColumns = `repeat(${count}, minmax(0, 1fr))`;
+        container.style.justifyContent = "start";
+      }
+    }
+
+    function renderApiGrid(container, listings, emptyText = "Bu bölüm için ilan bulunamadı.", defaultColumns = 4) {
       if (!container) return;
-      container.innerHTML = "";
-      listings.forEach((item) => {
-        container.innerHTML += simpleApiCard(item);
-      });
+      const items = sanitizeListings(listings);
+      syncGridDensity(container, items.length, defaultColumns);
+      container.innerHTML = items.length ? items.map(simpleApiCard).join("") : emptyTemplate(emptyText);
     }
 
     function logSectionIds(label, listings) {
@@ -2294,21 +2456,21 @@
 
     function renderFeaturedListings(featuredListings) {
       console.log("RENDER_SOURCE_NAME", "featuredListings");
-      const finalListings = (Array.isArray(featuredListings) ? featuredListings : [])
+      const finalListings = sanitizeListings(Array.isArray(featuredListings) ? featuredListings : [])
         .filter((item) => item && item.isFeatured === true && item.isShowcase !== true)
         .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       console.log("FEATURED_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
-      renderApiGrid(els.featured, finalListings.slice(0, 10));
+      renderApiGrid(els.featured, finalListings.slice(0, 10), "Öne çıkan ilan bulunamadı.", 5);
       return finalListings;
     }
 
     function renderNormalListings(normalListings) {
       console.log("RENDER_SOURCE_NAME", "normalListings");
-      const finalListings = (Array.isArray(normalListings) ? normalListings : [])
+      const finalListings = sanitizeListings(Array.isArray(normalListings) ? normalListings : [])
         .filter((item) => item && item.isShowcase !== true && item.isFeatured !== true)
         .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       console.log("NORMAL_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
-      renderApiGrid(els.latest, finalListings.slice(0, 8));
+      renderApiGrid(els.latest, finalListings.slice(0, 8), "Son eklenen ilan bulunamadı.", 4);
       return finalListings;
     }
 
@@ -2353,18 +2515,22 @@
     }
 
     function renderGrid(el, listings, limit = 8) {
-      const items = listings.slice(0, limit);
+      const items = sanitizeListings(listings).slice(0, limit);
+      if (el?.classList?.contains("listing-grid")) {
+        syncGridDensity(el, items.length, limit >= 5 ? 5 : 4);
+      }
       el.innerHTML = items.length ? items.map(cardTemplate).join("") : emptyTemplate("Bu bölüm için ilan bulunamadı.");
     }
 
     function renderFeatured(listings) {
       if (!els.featuredListings) return;
-      els.featuredListings.innerHTML = listings.length ? listings.slice(0, 8).map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
+      const items = sanitizeListings(listings).slice(0, 8);
+      els.featuredListings.innerHTML = items.length ? items.map(cardTemplate).join("") : emptyTemplate("Vitrin ilan bulunamadı.");
       if (els.featuredListingsTop) {
         els.featuredListingsTop.innerHTML = `
           <h2>Vitrin İlanlar</h2>
           <div class="featured-row">
-            ${listings.map(item => `
+            ${items.map(item => `
               <div class="featured-card">
                 <strong>${escapeHtml(item.title || "Başlıksız ilan")}</strong>
                 <p>${formatPrice(item.price)}</p>
