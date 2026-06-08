@@ -4544,13 +4544,38 @@
       function getComputedListingUnitPrice(listing) {
         const numericPrice = Number(listing?.price);
         const numericM2 = Number(listing?.m2);
-        if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
-          return Number(listing?.unitPrice) || 0;
-        }
-        if (!Number.isFinite(numericM2) || numericM2 <= 0) {
-          return Number(listing?.unitPrice) || 0;
-        }
+        if (!Number.isFinite(numericPrice) || numericPrice <= 0) return 0;
+        if (!Number.isFinite(numericM2) || numericM2 <= 0) return 0;
         return Math.round(numericPrice / numericM2);
+      }
+
+      function formatUnitPrice(value) {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue <= 0) return "";
+        return `${numericValue.toLocaleString("tr-TR")} TL/m²`;
+      }
+
+      function formatSpecifiedField(value) {
+        const text = formatField(value);
+        return text || "Belirtilmemiş";
+      }
+
+      function formatSpecifiedBoolean(value) {
+        const text = formatBooleanText(value);
+        return text || "Belirtilmemiş";
+      }
+
+      function formatLandDetailValue(value, formatter = formatField) {
+        const text = formatter(value);
+        return text || "Belirtilmemiş";
+      }
+
+      function syncLandDetailLabels(listing) {
+        if (!isLandListing(listing)) return;
+        const mortgageLabel = document.querySelector("#isMortgageEligibleRow strong");
+        if (mortgageLabel) mortgageLabel.textContent = "Krediye Uygunluk:";
+        const swapLabel = document.querySelector("#isSwapEligibleRow strong");
+        if (swapLabel) swapLabel.textContent = "Takas:";
       }
 
       function setRowValue(rowId, value) {
@@ -4648,9 +4673,10 @@
         const isEstate = isRealEstateListing(listing);
         if (!isEstate) return;
         const isLand = isLandListing(listing);
+        syncLandDetailLabels(listing);
         const estateTypeDisplay = getEstateTypeDisplayText(listing);
         const zoningDisplay = isLand
-          ? formatLandZoningStatus(listing.zoningStatus || listing.arsaStatus)
+          ? formatLandDetailValue(listing.zoningStatus || listing.arsaStatus, formatLandZoningStatus)
           : listing.zoningStatus;
         const fromWhoDisplay = getListingFromWhoText(listing);
 
@@ -4659,8 +4685,8 @@
           ["housingTypeRow", listing.housingType],
           ["grossM2Row", formatSquareMeters(listing.grossM2)],
           ["netM2Row", formatSquareMeters(listing.netM2)],
-          ["m2Row", formatSquareMeters(listing.m2)],
-          ["unitPriceRow", formatTl(getComputedListingUnitPrice(listing))],
+          ["m2Row", isLand ? formatLandDetailValue(listing.m2, formatSquareMeters) : formatSquareMeters(listing.m2)],
+          ["unitPriceRow", formatUnitPrice(getComputedListingUnitPrice(listing))],
           ["roomsRow", listing.rooms],
           ["ageRow", listing.age],
           ["floorRow", listing.floor],
@@ -4685,14 +4711,14 @@
           ["facadeRow", listing.facade],
           ["zoningStatusRow", zoningDisplay],
           ["arsaStatusRow", isLand ? "" : listing.arsaStatus],
-          ["titleDeedStatusRow", listing.titleDeedStatus],
-          ["isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible)],
-          ["isSwapEligibleRow", formatBooleanText(listing.isSwapEligible)],
-          ["kaksRow", listing.kaks],
-          ["gabariRow", listing.gabari],
-          ["adaNoRow", listing.adaNo],
-          ["parselNoRow", listing.parselNo],
-          ["paftaNoRow", listing.paftaNo],
+          ["titleDeedStatusRow", isLand ? formatLandDetailValue(listing.titleDeedStatus, formatSpecifiedField) : listing.titleDeedStatus],
+          ["isMortgageEligibleRow", isLand ? formatSpecifiedBoolean(listing.isMortgageEligible) : formatBooleanText(listing.isMortgageEligible)],
+          ["isSwapEligibleRow", isLand ? formatSpecifiedBoolean(listing.isSwapEligible) : formatBooleanText(listing.isSwapEligible)],
+          ["kaksRow", isLand ? formatLandDetailValue(listing.kaks, formatSpecifiedField) : listing.kaks],
+          ["gabariRow", isLand ? formatLandDetailValue(listing.gabari, formatSpecifiedField) : listing.gabari],
+          ["adaNoRow", isLand ? formatLandDetailValue(listing.adaNo, formatSpecifiedField) : listing.adaNo],
+          ["parselNoRow", isLand ? formatLandDetailValue(listing.parselNo, formatSpecifiedField) : listing.parselNo],
+          ["paftaNoRow", isLand ? formatLandDetailValue(listing.paftaNo, formatSpecifiedField) : listing.paftaNo],
           ["roadFrontageRow", formatBooleanText(listing.roadFrontage)],
           ["roadOpenedRow", formatBooleanText(listing.roadOpened)],
           ["flatExchangeEligibleRow", formatBooleanText(listing.flatExchangeEligible)],
@@ -5189,7 +5215,7 @@
         setRowValue("changedRow", listing.changedParts || listing.changed);
         setRowValue("expertiseSummaryRow", listing.expertiseSummary || listing.expertise || listing.inspection);
         setRowValue("m2Row", formatSquareMeters(listing.m2));
-        setRowValue("unitPriceRow", formatTl(getComputedListingUnitPrice(listing)));
+        setRowValue("unitPriceRow", formatUnitPrice(getComputedListingUnitPrice(listing)));
         setRowValue("grossM2Row", formatSquareMeters(listing.grossM2));
         setRowValue("netM2Row", formatSquareMeters(listing.netM2));
         setRowValue("roomsRow", listing.rooms);
@@ -5214,16 +5240,16 @@
         setRowValue("energyCertificateRow", listing.energyCertificate);
         setRowValue("residenceTitleDeedStatusRow", listing.residenceTitleDeedStatus);
         setRowValue("facadeRow", listing.facade);
-        setRowValue("zoningStatusRow", isLandListing(listing) ? formatLandZoningStatus(listing.zoningStatus || listing.arsaStatus) : listing.zoningStatus);
+        setRowValue("zoningStatusRow", isLandListing(listing) ? formatLandDetailValue(listing.zoningStatus || listing.arsaStatus, formatLandZoningStatus) : listing.zoningStatus);
         setRowValue("arsaStatusRow", isLandListing(listing) ? "" : listing.arsaStatus);
-        setRowValue("titleDeedStatusRow", listing.titleDeedStatus);
-        setRowValue("isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible));
-        setRowValue("isSwapEligibleRow", formatBooleanText(listing.isSwapEligible));
-        setRowValue("kaksRow", listing.kaks);
-        setRowValue("gabariRow", listing.gabari);
-        setRowValue("adaNoRow", listing.adaNo);
-        setRowValue("parselNoRow", listing.parselNo);
-        setRowValue("paftaNoRow", listing.paftaNo);
+        setRowValue("titleDeedStatusRow", isLandListing(listing) ? formatLandDetailValue(listing.titleDeedStatus, formatSpecifiedField) : listing.titleDeedStatus);
+        setRowValue("isMortgageEligibleRow", isLandListing(listing) ? formatSpecifiedBoolean(listing.isMortgageEligible) : formatBooleanText(listing.isMortgageEligible));
+        setRowValue("isSwapEligibleRow", isLandListing(listing) ? formatSpecifiedBoolean(listing.isSwapEligible) : formatBooleanText(listing.isSwapEligible));
+        setRowValue("kaksRow", isLandListing(listing) ? formatLandDetailValue(listing.kaks, formatSpecifiedField) : listing.kaks);
+        setRowValue("gabariRow", isLandListing(listing) ? formatLandDetailValue(listing.gabari, formatSpecifiedField) : listing.gabari);
+        setRowValue("adaNoRow", isLandListing(listing) ? formatLandDetailValue(listing.adaNo, formatSpecifiedField) : listing.adaNo);
+        setRowValue("parselNoRow", isLandListing(listing) ? formatLandDetailValue(listing.parselNo, formatSpecifiedField) : listing.parselNo);
+        setRowValue("paftaNoRow", isLandListing(listing) ? formatLandDetailValue(listing.paftaNo, formatSpecifiedField) : listing.paftaNo);
         setRowValue("roadFrontageRow", formatBooleanText(listing.roadFrontage));
         setRowValue("roadOpenedRow", formatBooleanText(listing.roadOpened));
         setRowValue("flatExchangeEligibleRow", formatBooleanText(listing.flatExchangeEligible));

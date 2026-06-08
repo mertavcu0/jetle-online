@@ -1139,12 +1139,6 @@
           <input type="number" id="m2" name="m2" placeholder="Örn. 120">
         </div>
 
-        <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label id="unitPriceLabel">m² Fiyatı</label>
-          <div class="readonly-field-value" id="unitPriceDisplay">Fiyat ve m² girildiğinde otomatik hesaplanır</div>
-          <input type="hidden" id="unitPrice" name="unitPrice" value="">
-        </div>
-
         <div class="field-group estate-type-group estate-type-konut">
           <label for="grossM2">Brüt m²</label>
           <input type="number" id="grossM2" name="grossM2" placeholder="Örn. 145">
@@ -1682,9 +1676,6 @@
     const sectionCountLabel = document.getElementById("sectionCountLabel");
     const usageSuitabilityLabel = document.getElementById("usageSuitabilityLabel");
     const priceLabel = document.getElementById("priceLabel");
-    const unitPriceLabel = document.getElementById("unitPriceLabel");
-    const unitPriceField = field("unitPrice");
-    const unitPriceDisplay = document.getElementById("unitPriceDisplay");
     const arsaTapuField = field("titleDeedStatus");
     const arsaStatusField = field("arsaStatus");
     const workplaceTapuField = field("workplaceTitleDeedStatus");
@@ -1694,22 +1685,6 @@
     const housingTypeField = field("housingType");
     const generalSubCategoryField = field("subCategory");
     const generalSubCategoryGroup = generalSubCategoryField?.closest(".field-group");
-    const syncDerivedEstateFields = () => {
-      const currentType = safeVal("estateType");
-      const priceValue = Number(rawPrice());
-      const areaValue = Number(safeVal("m2"));
-      const computedUnitPrice = currentType === "arsa" && Number.isFinite(priceValue) && priceValue > 0 && Number.isFinite(areaValue) && areaValue > 0
-        ? Math.round(priceValue / areaValue)
-        : 0;
-      if (unitPriceField) {
-        unitPriceField.value = computedUnitPrice > 0 ? String(computedUnitPrice) : "";
-      }
-      if (unitPriceDisplay) {
-        unitPriceDisplay.textContent = computedUnitPrice > 0
-          ? `${computedUnitPrice.toLocaleString("tr-TR")} TL`
-          : "Fiyat ve m² girildiğinde otomatik hesaplanır";
-      }
-    };
     const populateEstateSelect = (element, options) => {
       if (!element) return;
       const current = element.value;
@@ -1832,26 +1807,22 @@
       const isFarmHouse = normalizedEstateSubType === "çiftlik-evi" || normalizedEstateSubType === "ciftlik-evi";
       if (m2Label) m2Label.textContent = isFarmHouse ? "Arazi m²" : "m²";
       if (priceLabel) priceLabel.textContent = isArsaRental ? "Kira Bedeli" : "Fiyat";
-      if (unitPriceLabel) unitPriceLabel.textContent = "m² Fiyatı";
       if (sectionCountLabel) sectionCountLabel.textContent = isFarmHouse ? "Salon Sayısı" : "Bölme Sayısı";
       if (usageSuitabilityLabel) usageSuitabilityLabel.textContent = isFarmHouse ? "Yapı Tipi" : "Kullanıma Uygunluk";
       populateEstateSelect(
         usageSuitabilityField,
         isFarmHouse ? farmHouseStructureOptions : ["Ofis", "Mağaza", "Cafe", "Market", "Sağlık", "Eğitim"]
       );
-      syncDerivedEstateFields();
       syncVisibilityRequirements();
     };
 
     estateFields.forEach((fieldEl) => {
       fieldEl.addEventListener("input", () => {
-        syncDerivedEstateFields();
         updateLivePreview();
         updateStepButtons();
         persistListingDraft();
       });
       fieldEl.addEventListener("change", () => {
-        syncDerivedEstateFields();
         updateLivePreview();
         updateStepButtons();
         persistListingDraft();
