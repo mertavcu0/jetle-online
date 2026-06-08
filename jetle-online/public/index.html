@@ -3,8 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jetle - Türkiye'nin ilan platformu</title>
-  <meta name="description" content="Satılık, kiralık, ikinci el ilanlar">
+  <title>Jetle | Satılık ve Kiralık İlanlar</title>
+  <meta name="description" content="Jetle'de satılık, kiralık ve ikinci el ilanları keşfedin. Emlak, vasıta, elektronik ve daha fazlası tek yerde.">
+  <meta name="robots" id="pageRobots" content="index,follow">
+  <link rel="canonical" id="pageCanonical" href="https://jetle.online/">
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const filteredKeys = ["category", "showcase", "featured", "sort", "city", "min", "max", "search", "q"];
+      const isFilteredUrl = filteredKeys.some((key) => params.has(key));
+      if (!isFilteredUrl) return;
+      const robots = document.getElementById("pageRobots");
+      const canonical = document.getElementById("pageCanonical");
+      if (robots) robots.setAttribute("content", "noindex,follow");
+      if (canonical) canonical.setAttribute("href", "https://jetle.online/");
+    })();
+  </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];

@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>İlan Detayı | jetle.online</title>
+  <title>İlan Detayı | Jetle</title>
+  <meta name="description" content="Jetle ilan detay sayfası. Fotoğraflar, fiyat, konum ve ilan özelliklerini tek ekranda inceleyin.">
+  <link rel="canonical" id="detailCanonical" href="https://jetle.online/listing-detail.html">
+  <script>
+    (function () {
+      const id = new URLSearchParams(window.location.search).get("id");
+      if (!id) return;
+      const canonical = document.getElementById("detailCanonical");
+      if (canonical) {
+        canonical.setAttribute("href", `https://jetle.online/listing-detail.html?id=${encodeURIComponent(id)}`);
+      }
+    })();
+  </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YCWYPP371K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];

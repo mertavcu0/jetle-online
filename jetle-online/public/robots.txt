@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow: /vitrin
+Disallow: /listings
+Disallow: /ilanlar
+Disallow: /one-cikanlar.html
+Disallow: /onecikanlar.html
+Disallow: /listing.html
+Disallow: /ilan-detay.html
+Disallow: /*?category=
+Disallow: /*?showcase=
+Disallow: /*?featured=
+Disallow: /*?sort=
+Disallow: /*?city=
+Disallow: /*?min=
+Disallow: /*?max=
+Disallow: /*?search=
+Disallow: /*?q=
+
+Sitemap: https://jetle.online/sitemap.xml
