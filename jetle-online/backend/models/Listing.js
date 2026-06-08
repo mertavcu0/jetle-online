@@ -23,6 +23,7 @@ const ListingSchema = new mongoose.Schema({
   subCategory: String,
   housingType: String,
   estateType: String,
+  estateListingIntent: String,
   brand: String,
   series: String,
   model: String,

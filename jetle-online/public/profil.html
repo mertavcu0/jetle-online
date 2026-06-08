@@ -18,11 +18,11 @@
     <div class="top-nav__inner">
       <a class="top-nav__logo" href="index.html">Jetle</a>
       <a class="top-nav__link" href="index.html">Ana Sayfa</a>
-      <a class="top-nav__link" href="index.html#ilanForm">Ä°lan Ver</a>
+      <a class="top-nav__link" href="index.html#ilanForm">İlan Ver</a>
       <a class="top-nav__link" href="profil.html">Profil</a>
       <span class="top-nav__spacer"></span>
-      <a class="top-nav__link" href="login.html">GiriÅŸ</a>
-      <a class="top-nav__link" href="#" onclick="localStorage.removeItem('token'); location.href='index.html'; return false;">Ã‡Ä±kÄ±ÅŸ</a>
+      <a class="top-nav__link" href="login.html">Giriş</a>
+      <a class="top-nav__link" href="#" onclick="localStorage.removeItem('token'); location.href='index.html'; return false;">Çıkış</a>
     </div>
   </nav>
   <div class="header">
@@ -30,15 +30,15 @@
       <span class="jetle">Jetle</span><span class="dot">.</span><span class="online">online</span>
     </div>
   </div>
-  <h1>Ä°lanlarÄ±m</h1>
+  <h1>İlanlarım</h1>
   <div id="profileBadge"></div>
   <button onclick="favoriler()">Favorilerim</button>
   <div id="myListings"></div>
 
   <script>
     function getBadgeText(badge) {
-      if (badge === "verified") return "DoÄŸrulanmÄ±ÅŸ";
-      if (badge === "trusted") return "GÃ¼venilir SatÄ±cÄ±";
+      if (badge === "verified") return "Doğrulanmış";
+      if (badge === "trusted") return "Güvenilir Satıcı";
       return "";
     }
 

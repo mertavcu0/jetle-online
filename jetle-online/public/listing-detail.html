@@ -3640,7 +3640,7 @@
         (listing.isDealer ? "Yetkili Bayi" : "")
       ).trim();
       const isCorporateSeller = /kurumsal|bayi/i.test(sellerTypeLabel);
-      const sellerRoleLabel = isCorporateSeller ? "Kurumsal Satıcı" : "Bireysel Üye";
+      const sellerRoleLabel = isCorporateSeller ? "" : "Bireysel Üye";
       const sellerProfileId = listingUserId || String(user?._id || "");
       const sellerAvatar = user?.avatarUrl || seller?.avatarUrl || listing.user?.avatarUrl || listing.seller?.avatarUrl || "";
       const sellerPhone = formatPhoneNumber(listing.contactPhone || listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor";
@@ -3691,7 +3691,7 @@
               </div>
               <div class="seller-header-main">
                 <strong>${sellerName || "Bilinmeyen kullanıcı"}</strong>
-                <div class="seller-role-line">${sellerRoleLabel}</div>
+                ${sellerRoleLabel ? `<div class="seller-role-line">${sellerRoleLabel}</div>` : ""}
                 <div class="seller-membership">Üyelik: ${sellerCreatedAt ? formatDate(sellerCreatedAt) : "Yeni"}</div>
               </div>
             </div>
@@ -4373,7 +4373,7 @@
           techHeavyDamage: listing.heavyDamage || listing.isHeavyDamageRecorded || listing.agirHasarKayitli,
           techPlate: listing.plate || listing.plateOrigin || listing.uyruk,
           techSwap: listing.swap || listing.takas,
-          techFromWho: listing.fromWho || listing.kimden || listing.sellerType,
+          techFromWho: isRealEstateListing(listing) ? "" : getListingFromWhoText(listing),
           techPaint: listing.paint || listing.paintedParts,
           techChanged: listing.changedParts || listing.changed,
           techExpertiseSummary: listing.expertiseSummary || listing.expertise || listing.inspection,
@@ -4455,6 +4455,102 @@
         const category = formatField(listing?.category).toLowerCase();
         const mainCategory = formatField(listing?.mainCategory).toLowerCase();
         return category === "emlak" || mainCategory === "emlak";
+      }
+
+      function isLandListing(listing) {
+        if (!isRealEstateListing(listing)) return false;
+        const estateType = formatField(listing?.estateType).toLocaleLowerCase("tr-TR");
+        return estateType === "arsa";
+      }
+
+      function normalizeTrDisplayText(value) {
+        const text = formatField(value);
+        if (!text) return "";
+        return text
+          .replace(/\bSatilik\b/gi, "Satılık")
+          .replace(/\bKiralik\b/gi, "Kiralık")
+          .replace(/\bKarsiligi\b/gi, "Karşılığı")
+          .replace(/\bIs\b/gi, "İş")
+          .replace(/\bYeri\b/gi, "Yeri")
+          .replace(/\bIsyeri\b/gi, "İş Yeri")
+          .replace(/\bImarli\b/gi, "İmarlı")
+          .replace(/\bMstakil\b/gi, "Müstakil")
+          .replace(/\bDogalgaz\b/gi, "Doğalgaz")
+          .replace(/\bKose\b/gi, "Köşe")
+          .replace(/\bYapimina\b/gi, "Yapımına")
+          .replace(/\bYatirima\b/gi, "Yatırıma");
+      }
+
+      function getEstateIntentLabel(listing) {
+        const intent = normalizeTrDisplayText(listing?.estateListingIntent);
+        if (!intent) return "";
+        if (/kat karşılığı/i.test(intent)) return "Kat Karşılığı Satılık";
+        if (/kiralık/i.test(intent)) return "Kiralık";
+        if (/satılık/i.test(intent)) return "Satılık";
+        return intent;
+      }
+
+      function getPrimaryEstateTypeLabel(listing) {
+        const estateType = formatField(listing?.estateType).toLocaleLowerCase("tr-TR");
+        const subCategory = normalizeTrDisplayText(listing?.subCategory);
+        const workplaceLabel = normalizeTrDisplayText(listing?.workplaceType);
+
+        if (estateType === "arsa") return "Arsa";
+        if (estateType === "isyeri") return "İş Yeri";
+
+        const apartmentSubtypePatterns = [
+          /standart daire/i,
+          /dubleks/i,
+          /triplex/i,
+          /loft/i,
+          /ara kat/i,
+          /en üst kat/i
+        ];
+        if (apartmentSubtypePatterns.some((pattern) => pattern.test(subCategory))) return "Daire";
+
+        if (subCategory) return subCategory;
+        if (estateType === "konut") return "Daire";
+        if (workplaceLabel) return "İş Yeri";
+        return normalizeTrDisplayText(listing?.estateType);
+      }
+
+      function formatLandZoningStatus(value) {
+        const text = normalizeTrDisplayText(value);
+        if (!text) return "";
+        return text.replace(/\s+(İmarlı|Imarlı|imarli)$/i, "").trim();
+      }
+
+      function getListingFromWhoText(listing) {
+        const text = formatField(listing?.fromWho || listing?.kimden || listing?.sellerType);
+        if (!text) return "Sahibinden";
+        const normalized = text.toLocaleLowerCase("tr-TR");
+        if (/kurumsal|bayi|emlak ofisi|ofis/.test(normalized)) return "Emlak Ofisinden";
+        if (/sahibinden|bireysel/.test(normalized)) return "Sahibinden";
+        return "Sahibinden";
+      }
+
+      function getEstateTypeDisplayText(listing) {
+        const intentLabel = getEstateIntentLabel(listing);
+        const typeLabel = getPrimaryEstateTypeLabel(listing);
+        if (!intentLabel && !typeLabel) return "";
+        if (!intentLabel) return typeLabel;
+        if (!typeLabel) return intentLabel;
+        if (intentLabel.toLocaleLowerCase("tr-TR").includes(typeLabel.toLocaleLowerCase("tr-TR"))) {
+          return intentLabel;
+        }
+        return `${intentLabel} ${typeLabel}`.trim();
+      }
+
+      function getComputedListingUnitPrice(listing) {
+        const numericPrice = Number(listing?.price);
+        const numericM2 = Number(listing?.m2);
+        if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+          return Number(listing?.unitPrice) || 0;
+        }
+        if (!Number.isFinite(numericM2) || numericM2 <= 0) {
+          return Number(listing?.unitPrice) || 0;
+        }
+        return Math.round(numericPrice / numericM2);
       }
 
       function setRowValue(rowId, value) {
@@ -4551,14 +4647,20 @@
       function renderEstateDetailsRows(listing) {
         const isEstate = isRealEstateListing(listing);
         if (!isEstate) return;
+        const isLand = isLandListing(listing);
+        const estateTypeDisplay = getEstateTypeDisplayText(listing);
+        const zoningDisplay = isLand
+          ? formatLandZoningStatus(listing.zoningStatus || listing.arsaStatus)
+          : listing.zoningStatus;
+        const fromWhoDisplay = getListingFromWhoText(listing);
 
         [
-          ["estateTypeRow", listing.subCategory || listing.estateType],
+          ["estateTypeRow", estateTypeDisplay],
           ["housingTypeRow", listing.housingType],
           ["grossM2Row", formatSquareMeters(listing.grossM2)],
           ["netM2Row", formatSquareMeters(listing.netM2)],
           ["m2Row", formatSquareMeters(listing.m2)],
-          ["unitPriceRow", formatTl(listing.unitPrice)],
+          ["unitPriceRow", formatTl(getComputedListingUnitPrice(listing))],
           ["roomsRow", listing.rooms],
           ["ageRow", listing.age],
           ["floorRow", listing.floor],
@@ -4581,8 +4683,8 @@
           ["energyCertificateRow", listing.energyCertificate],
           ["residenceTitleDeedStatusRow", listing.residenceTitleDeedStatus],
           ["facadeRow", listing.facade],
-          ["zoningStatusRow", listing.zoningStatus],
-          ["arsaStatusRow", listing.arsaStatus],
+          ["zoningStatusRow", zoningDisplay],
+          ["arsaStatusRow", isLand ? "" : listing.arsaStatus],
           ["titleDeedStatusRow", listing.titleDeedStatus],
           ["isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible)],
           ["isSwapEligibleRow", formatBooleanText(listing.isSwapEligible)],
@@ -4609,10 +4711,68 @@
           ["workplaceGeneratorRow", listing.workplaceGenerator],
           ["usageSuitabilityRow", listing.usageSuitability],
           ["usageStatusRow", listing.usageStatus],
-          ["showcaseMetersRow", formatSquareMeters(listing.showcaseMeters)]
+          ["showcaseMetersRow", formatSquareMeters(listing.showcaseMeters)],
+          ["fromWhoRow", fromWhoDisplay]
         ].forEach(([rowId, value]) => forceEstateRow(rowId, value));
 
         setRowLinkValue("parcelQueryLinkRow", listing.parcelQueryLink, "Parsel sorgu bağlantısı");
+        reorderLandDetailRows(listing);
+      }
+
+      function reorderLandDetailRows(listing) {
+        if (!isLandListing(listing)) return;
+        const grid = document.querySelector(".details-grid");
+        if (!grid) return;
+        const conditionRow = document.getElementById("condition")?.closest("div");
+        if (conditionRow) conditionRow.hidden = true;
+
+        const getRowNode = (rowRef) => {
+          if (!rowRef) return null;
+          if (rowRef.startsWith("#")) {
+            const span = document.querySelector(rowRef);
+            return span?.closest("div") || null;
+          }
+          return document.getElementById(rowRef);
+        };
+
+        const orderedRefs = [
+          "#listingNo",
+          "#listingDate",
+          "estateTypeRow",
+          "zoningStatusRow",
+          "m2Row",
+          "unitPriceRow",
+          "adaNoRow",
+          "parselNoRow",
+          "paftaNoRow",
+          "kaksRow",
+          "gabariRow",
+          "isMortgageEligibleRow",
+          "titleDeedStatusRow",
+          "fromWhoRow",
+          "isSwapEligibleRow",
+          "roadFrontageRow",
+          "flatExchangeEligibleRow",
+          "electricInfrastructureRow",
+          "waterInfrastructureRow",
+          "naturalGasInfrastructureRow",
+          "sewerageInfrastructureRow",
+          "parcelQueryLinkRow",
+          "facadeRow",
+          "roadOpenedRow",
+          "flatExchangeRatioRow",
+          "constructionFloorCountRow",
+          "constructionRightRow",
+          "contractorOfferOpenRow"
+        ];
+
+        const orderedNodes = orderedRefs
+          .map(getRowNode)
+          .filter(Boolean);
+
+        const orderedSet = new Set(orderedNodes);
+        const remainingNodes = Array.from(grid.children).filter((node) => !orderedSet.has(node));
+        [...orderedNodes, ...remainingNodes].forEach((node) => grid.appendChild(node));
       }
 
       function asFeatureList(value) {
@@ -4732,6 +4892,60 @@
         }
       ];
 
+      const LAND_FEATURE_CATEGORY_RULES = [
+        {
+          key: "Arsa Özellikleri",
+          patterns: [
+            "köşe parsel", "kose parsel", "ifraz", "parselli", "hisseli", "müstakil tapulu", "mustakil tapulu",
+            "kat karşılığı", "kat karsiligi", "ticari projeye uygun", "villa yapımına uygun", "villa yapimina uygun",
+            "konut projesine uygun", "yatırıma uygun", "yatirima uygun", "avm projesine uygun", "plaza projesine uygun",
+            "otel projesine uygun", "akaryakıt istasyonuna uygun", "akaryakit istasyonuna uygun",
+            "fabrika yapımına uygun", "depo yapımına uygun", "lojistik merkezi uygun", "sanayi bölgesine yakın",
+            "sanayi bolgesine yakin", "tarıma uygun", "tarima uygun", "verimli toprak", "ekim yapılabilir",
+            "ekim yapilabilir", "hasat yapılabilir", "hasat yapilabilir", "üzüm bağı", "uzum bagi", "meyve ağaçları",
+            "meyve agaclari", "bağ evi", "bag evi", "çitli", "citli", "yol cepheli", "ahır", "ahir", "ağıl", "agil",
+            "kümes", "kumes", "samanlık", "samanlik", "traktör garajı", "traktor garaji", "hayvan barınağı",
+            "hayvan barinagi", "seracılık alanı", "seracilik alani", "depolama alanı", "depolama alani"
+          ]
+        },
+        {
+          key: "Altyapı",
+          patterns: [
+            "elektrik", "su", "doğalgaz", "dogalgaz", "kanalizasyon", "telefon hattı", "telefon hatti",
+            "yola cephe", "yolu açılmış", "yolu acilmis", "sulama sistemi", "artezyen",
+            "kuyu", "su kuyusu", "tarım elektriği", "tarim elektrigi"
+          ]
+        },
+        {
+          key: "Ulaşım",
+          patterns: [
+            "anayol", "cadde", "dolmuş", "dolmus", "minibüs", "minibus", "otobüs durağı", "otobus duragi",
+            "metro", "marmaray", "tramvay", "havaalanı", "havaalani", "e5", "e-5", "tem", "sahil"
+          ]
+        },
+        {
+          key: "Çevre",
+          patterns: [
+            "market", "hastane", "eczane", "ilkokul", "lise", "üniversite", "universite", "sağlık ocağı",
+            "saglik ocagi", "belediye", "park", "marina", "sahil", "plaj"
+          ]
+        },
+        {
+          key: "Manzara",
+          patterns: [
+            "deniz", "boğaz", "bogaz", "göl", "gol", "doğa", "doga", "şehir", "sehir", "orman",
+            "park ve yeşil alan", "park ve yesil alan", "ada", "koy", "gün batımı", "gun batimi"
+          ]
+        },
+        {
+          key: "Cephe",
+          patterns: [
+            "kuzey", "güney", "guney", "doğu", "dogu", "batı", "bati", "kuzeydoğu", "kuzeydogu",
+            "kuzeybatı", "kuzeybati", "güneydoğu", "guneydogu", "güneybatı", "guneybati"
+          ]
+        }
+      ];
+
       const FEATURE_LABEL_REPLACEMENTS = [
         [/^gece görüş sistemi$/i, "Gece Görüş Sistemi"],
         [/^gece görüx sistemi$/i, "Gece Görüş Sistemi"],
@@ -4753,7 +4967,12 @@
         [/^ısıtmalı ayna$/i, "Isıtmalı Aynalar"],
         [/^park sensörü arka$/i, "Arka Park Sensörü"],
         [/^tv\s*\/\s*dijital yayın$/i, "TV / Dijital Yayın Sistemi"],
-        [/^kablosuz şarj$/i, "Kablosuz Şarj Ünitesi"]
+        [/^kablosuz şarj$/i, "Kablosuz Şarj Ünitesi"],
+        [/^kse parsel$/i, "Köşe Parsel"],
+        [/^telefon hatti$/i, "Telefon Hattı"],
+        [/^villa yapimina uygun$/i, "Villa Yapımına Uygun"],
+        [/^yatirima uygun$/i, "Yatırıma Uygun"],
+        [/^dogalgaz$/i, "Doğalgaz"]
       ];
 
       function normalizeFeatureValue(value) {
@@ -4764,7 +4983,7 @@
       }
 
       function normalizeFeatureLabel(feature) {
-        const cleaned = formatField(feature);
+        const cleaned = normalizeTrDisplayText(formatField(feature));
         if (!cleaned) return "";
         const normalized = normalizeFeatureValue(cleaned);
         const matched = FEATURE_LABEL_REPLACEMENTS.find(([pattern]) => pattern.test(normalized));
@@ -4772,11 +4991,14 @@
       }
 
       function categorizeFeatures(features, listing = {}) {
-        const featureRules = isRealEstateListing(listing)
-          ? ESTATE_FEATURE_CATEGORY_RULES
-          : VEHICLE_FEATURE_CATEGORY_RULES;
+        const isLand = isLandListing(listing);
+        const featureRules = isLand
+          ? LAND_FEATURE_CATEGORY_RULES
+          : isRealEstateListing(listing)
+            ? ESTATE_FEATURE_CATEGORY_RULES
+            : VEHICLE_FEATURE_CATEGORY_RULES;
         const grouped = new Map(
-          featureRules.map((rule) => [rule.key, []]).concat([["Diğer Özellikler", []]])
+          featureRules.map((rule) => [rule.key, []]).concat(isLand ? [] : [["Diğer Özellikler", []]])
         );
 
         features.forEach((feature) => {
@@ -4785,6 +5007,7 @@
           const matchedRule = featureRules.find((rule) =>
             rule.patterns.some((pattern) => normalized.includes(pattern))
           );
+          if (isLand && !matchedRule) return;
           const bucket = matchedRule ? matchedRule.key : "Diğer Özellikler";
           grouped.get(bucket).push(label);
         });
@@ -4943,7 +5166,7 @@
         renderListingVideo(listing);
 
         setRowValue("updatedAtRow", listing.updatedAt ? formatDate(listing.updatedAt) : "");
-        setRowValue("estateTypeRow", listing.subCategory || listing.estateType);
+        setRowValue("estateTypeRow", getEstateTypeDisplayText(listing));
         setRowValue("housingTypeRow", listing.housingType);
         setRowValue("brandRow", listing.brand);
         setRowValue("seriesRow", listing.series);
@@ -4961,12 +5184,12 @@
         setRowValue("heavyDamageRow", listing.heavyDamage || listing.isHeavyDamageRecorded || listing.agirHasarKayitli);
         setRowValue("plateRow", listing.plate || listing.plateOrigin || listing.uyruk);
         setRowValue("swapRow", listing.swap || listing.takas);
-        setRowValue("fromWhoRow", listing.fromWho || listing.kimden || listing.sellerType);
+        setRowValue("fromWhoRow", getListingFromWhoText(listing));
         setRowValue("paintRow", listing.paint || listing.paintedParts);
         setRowValue("changedRow", listing.changedParts || listing.changed);
         setRowValue("expertiseSummaryRow", listing.expertiseSummary || listing.expertise || listing.inspection);
         setRowValue("m2Row", formatSquareMeters(listing.m2));
-        setRowValue("unitPriceRow", formatTl(listing.unitPrice));
+        setRowValue("unitPriceRow", formatTl(getComputedListingUnitPrice(listing)));
         setRowValue("grossM2Row", formatSquareMeters(listing.grossM2));
         setRowValue("netM2Row", formatSquareMeters(listing.netM2));
         setRowValue("roomsRow", listing.rooms);
@@ -4991,8 +5214,8 @@
         setRowValue("energyCertificateRow", listing.energyCertificate);
         setRowValue("residenceTitleDeedStatusRow", listing.residenceTitleDeedStatus);
         setRowValue("facadeRow", listing.facade);
-        setRowValue("zoningStatusRow", listing.zoningStatus);
-        setRowValue("arsaStatusRow", listing.arsaStatus);
+        setRowValue("zoningStatusRow", isLandListing(listing) ? formatLandZoningStatus(listing.zoningStatus || listing.arsaStatus) : listing.zoningStatus);
+        setRowValue("arsaStatusRow", isLandListing(listing) ? "" : listing.arsaStatus);
         setRowValue("titleDeedStatusRow", listing.titleDeedStatus);
         setRowValue("isMortgageEligibleRow", formatBooleanText(listing.isMortgageEligible));
         setRowValue("isSwapEligibleRow", formatBooleanText(listing.isSwapEligible));
@@ -5065,6 +5288,15 @@
           ...asFeatureList(listing.equipment),
           ...asFeatureList(listing.selectedFeatures)
         ];
+        if (isLandListing(listing)) {
+          featureValues.push(...asFeatureList(listing.facade));
+          if (listing.electricInfrastructure === true || formatBooleanText(listing.electricInfrastructure) === "Evet") featureValues.push("Elektrik");
+          if (listing.waterInfrastructure === true || formatBooleanText(listing.waterInfrastructure) === "Evet") featureValues.push("Su");
+          if (listing.sewerageInfrastructure === true || formatBooleanText(listing.sewerageInfrastructure) === "Evet") featureValues.push("Kanalizasyon");
+          if (listing.naturalGasInfrastructure === true || formatBooleanText(listing.naturalGasInfrastructure) === "Evet") featureValues.push("Doğalgaz");
+          if (listing.roadFrontage === true || formatBooleanText(listing.roadFrontage) === "Evet") featureValues.push("Yola Cephe");
+          if (listing.roadOpened === true || formatBooleanText(listing.roadOpened) === "Evet") featureValues.push("Yolu Açılmış");
+        }
         console.log("FEATURE_VALUES", featureValues);
         console.log("FEATURE_VALUES_LENGTH", featureValues.length);
 

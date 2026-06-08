@@ -263,7 +263,13 @@
     const previewColumn = document.querySelector(".create-v3-preview-column");
 
     if (selectionScreen) selectionScreen.hidden = true;
-    if (formFlow) formFlow.hidden = false;
+    if (formFlow) {
+      formFlow.hidden = false;
+      formFlow.classList.remove("is-visible");
+      window.requestAnimationFrame(() => {
+        formFlow.classList.add("is-visible");
+      });
+    }
     layout?.classList.remove("category-flow-pending");
     previewColumn?.classList.remove("is-compact");
   }
@@ -1134,8 +1140,9 @@
         </div>
 
         <div class="field-group estate-type-group estate-type-arsa" style="display:none;">
-          <label for="unitPrice" id="unitPriceLabel">m² Fiyatı</label>
-          <input type="number" id="unitPrice" name="unitPrice" placeholder="Örn. 12500">
+          <label id="unitPriceLabel">m² Fiyatı</label>
+          <div class="readonly-field-value" id="unitPriceDisplay">Fiyat ve m² girildiğinde otomatik hesaplanır</div>
+          <input type="hidden" id="unitPrice" name="unitPrice" value="">
         </div>
 
         <div class="field-group estate-type-group estate-type-konut">
@@ -1676,6 +1683,8 @@
     const usageSuitabilityLabel = document.getElementById("usageSuitabilityLabel");
     const priceLabel = document.getElementById("priceLabel");
     const unitPriceLabel = document.getElementById("unitPriceLabel");
+    const unitPriceField = field("unitPrice");
+    const unitPriceDisplay = document.getElementById("unitPriceDisplay");
     const arsaTapuField = field("titleDeedStatus");
     const arsaStatusField = field("arsaStatus");
     const workplaceTapuField = field("workplaceTitleDeedStatus");
@@ -1685,6 +1694,22 @@
     const housingTypeField = field("housingType");
     const generalSubCategoryField = field("subCategory");
     const generalSubCategoryGroup = generalSubCategoryField?.closest(".field-group");
+    const syncDerivedEstateFields = () => {
+      const currentType = safeVal("estateType");
+      const priceValue = Number(rawPrice());
+      const areaValue = Number(safeVal("m2"));
+      const computedUnitPrice = currentType === "arsa" && Number.isFinite(priceValue) && priceValue > 0 && Number.isFinite(areaValue) && areaValue > 0
+        ? Math.round(priceValue / areaValue)
+        : 0;
+      if (unitPriceField) {
+        unitPriceField.value = computedUnitPrice > 0 ? String(computedUnitPrice) : "";
+      }
+      if (unitPriceDisplay) {
+        unitPriceDisplay.textContent = computedUnitPrice > 0
+          ? `${computedUnitPrice.toLocaleString("tr-TR")} TL`
+          : "Fiyat ve m² girildiğinde otomatik hesaplanır";
+      }
+    };
     const populateEstateSelect = (element, options) => {
       if (!element) return;
       const current = element.value;
@@ -1814,16 +1839,19 @@
         usageSuitabilityField,
         isFarmHouse ? farmHouseStructureOptions : ["Ofis", "Mağaza", "Cafe", "Market", "Sağlık", "Eğitim"]
       );
+      syncDerivedEstateFields();
       syncVisibilityRequirements();
     };
 
     estateFields.forEach((fieldEl) => {
       fieldEl.addEventListener("input", () => {
+        syncDerivedEstateFields();
         updateLivePreview();
         updateStepButtons();
         persistListingDraft();
       });
       fieldEl.addEventListener("change", () => {
+        syncDerivedEstateFields();
         updateLivePreview();
         updateStepButtons();
         persistListingDraft();
@@ -1889,6 +1917,7 @@
       }
     }
     syncEstateTypeFields();
+    syncDerivedEstateFields();
   }
 
   function renderElectronicsFields() {
@@ -2430,7 +2459,7 @@
       "sewerageInfrastructure", "naturalGasInfrastructure", "unitPrice", "parcelQueryLink",
       "sectionCount", "showcaseMeters", "workplaceType", "workplaceTitleDeedStatus",
       "workplaceParking", "workplaceElevator", "workplaceGenerator", "usageSuitability",
-      "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth",
+      "estateListingIntent", "videoUrl", "electronicType", "condition", "storage", "ram", "batteryHealth",
       "deviceColor", "imeiStatus", "processor", "ssdCapacity", "gpu", "screenSize",
       "operatingSystem", "screenInch", "panelType", "resolution", "lens", "shutterCount",
       "sensorSize", "subCategory", "housingType", "contactPhone"
@@ -2702,6 +2731,7 @@
       category: mainCategory || rawCategory,
       mainCategory: mainCategory || rawCategory,
       subCategory: subCategory,
+      estateListingIntent: safeVal("estateListingIntent"),
       city: safeVal("city"),
       district: safeVal("district"),
       neighborhood: safeVal("neighborhood"),

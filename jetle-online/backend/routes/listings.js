@@ -56,6 +56,14 @@ function sanitizeHtmlLikeObject(input = {}) {
   return clone;
 }
 
+function calculateUnitPrice(price, m2) {
+  const numericPrice = Number(price);
+  const numericM2 = Number(m2);
+  if (!Number.isFinite(numericPrice) || numericPrice <= 0) return undefined;
+  if (!Number.isFinite(numericM2) || numericM2 <= 0) return undefined;
+  return Math.round(numericPrice / numericM2);
+}
+
 function isPlaceholderImage(value) {
   const src = String(value || "").trim().toLowerCase();
   if (!src) return true;
@@ -647,6 +655,12 @@ router.post("/", authMiddleware, withUploadGuard, function (req, res, next) {
     body.isFeatured = false;
     body.user = currentUserId || undefined;
     body.userEmail = currentUserEmail || undefined;
+    const computedUnitPrice = calculateUnitPrice(body.price, body.m2);
+    if (computedUnitPrice != null) {
+      body.unitPrice = computedUnitPrice;
+    } else {
+      delete body.unitPrice;
+    }
     console.log("MODERATION_CREATE", JSON.stringify({
       approved: body.approved,
       status: body.status,
@@ -1191,6 +1205,19 @@ router.put("/:id", authMiddleware, async (req, res) => {
       }
       sanitizedBody.description = nextDescription;
       sanitizedBody.desc = nextDescription;
+    }
+
+    const nextPrice = Object.prototype.hasOwnProperty.call(sanitizedBody, "price")
+      ? sanitizedBody.price
+      : listing.price;
+    const nextM2 = Object.prototype.hasOwnProperty.call(sanitizedBody, "m2")
+      ? sanitizedBody.m2
+      : listing.m2;
+    const computedUnitPrice = calculateUnitPrice(nextPrice, nextM2);
+    if (computedUnitPrice != null) {
+      sanitizedBody.unitPrice = computedUnitPrice;
+    } else {
+      delete sanitizedBody.unitPrice;
     }
 
     const updated = await Listing.findByIdAndUpdate(

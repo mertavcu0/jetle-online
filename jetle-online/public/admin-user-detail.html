@@ -447,21 +447,21 @@
       }
 
       const user = data.user || {};
-      document.getElementById("userTitle").textContent = user.name || user.username || "Ä°simsiz kullanÄ±cÄ±";
+      document.getElementById("userTitle").textContent = user.name || user.username || "İsimsiz kullanıcı";
       document.getElementById("userEmail").textContent = user.email || "-";
       document.getElementById("totalListings").textContent = data.totalListings || 0;
       document.getElementById("registeredAt").textContent = data.createdAt
         ? new Date(data.createdAt).toLocaleDateString("tr-TR")
         : "-";
       document.getElementById("banStatus").innerHTML = data.banned
-        ? `<span class="status-pill banned">BanlÄ±</span>`
+        ? `<span class="status-pill banned">Banlı</span>`
         : `<span class="status-pill approved">Aktif</span>`;
       document.getElementById("badges").innerHTML = renderBadges(data.badges || []);
 
       const listings = await hydrateListingMedia(Array.isArray(data.listings) ? data.listings : []);
 
       if (!listings.length) {
-        list.innerHTML = `<div class="empty-state">Bu kullanÄ±cÄ±nÄ±n ilanÄ± yok.</div>`;
+        list.innerHTML = `<div class="empty-state">Bu kullanıcının ilanı yok.</div>`;
         return;
       }
 
@@ -469,7 +469,7 @@
         <article class="listing-card">
           <img src="${listingImage(item) || fallbackImage()}" alt="${escapeHtml(item.title || "İlan görseli")}">
           <div>
-            <p class="title">${escapeHtml(item.title || "BaÅŸlÄ±ksÄ±z ilan")}</p>
+            <p class="title">${escapeHtml(item.title || "Başlıksız ilan")}</p>
             <div class="meta">
               <span>${escapeHtml(item.city || "Şehir yok")}</span>
               <span>${escapeHtml(item.category || "Kategori yok")}</span>
