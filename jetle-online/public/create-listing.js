@@ -1608,6 +1608,15 @@
       element.innerHTML = ['<option value="">Seçin</option>', ...options.map((option) => `<option value="${option}">${option}</option>`)].join("");
       if (options.includes(current)) element.value = current;
     };
+    const reorderEstateFormGroups = (orderIds = []) => {
+      const formGrid = dynamicFields.querySelector(".form-grid");
+      if (!formGrid || !orderIds.length) return;
+      const resolveGroup = (id) => field(id)?.closest(".field-group") || null;
+      const orderedGroups = orderIds.map(resolveGroup).filter(Boolean);
+      const orderedSet = new Set(orderedGroups);
+      const remainingGroups = Array.from(formGrid.children).filter((node) => !orderedSet.has(node));
+      [...orderedGroups, ...remainingGroups].forEach((node) => formGrid.appendChild(node));
+    };
     const syncEstateTypeFields = () => {
       const currentType = safeVal("estateType");
       const listingIntent = safeVal("estateListingIntent");
@@ -1765,6 +1774,43 @@
         usageSuitabilityField,
         isFarmHouse ? farmHouseStructureOptions : ["Ofis", "Mağaza", "Cafe", "Market", "Sağlık", "Eğitim"]
       );
+      if (effectiveType === "konut") {
+        reorderEstateFormGroups([
+          "estateType",
+          "estateSubType",
+          "grossM2",
+          "netM2",
+          "rooms",
+          "age",
+          "floor",
+          "totalFloors",
+          "heatingType",
+          "bathrooms",
+          "balconyCount",
+          "elevator",
+          "parkingType",
+          "isFurnished",
+          "residenceUsageStatus",
+          "isInSite",
+          "dues",
+          "isMortgageEligible",
+          "residenceTitleDeedStatus",
+          "isSwapEligible",
+          "kitchenType",
+          "energyCertificate",
+          "wcCount",
+          "openAreaM2",
+          "landShareM2",
+          "adaNo",
+          "parselNo",
+          "sectionCount",
+          "usageSuitability",
+          "deposit",
+          "tenantStatus",
+          "deliveryDate",
+          "rentalPeriod"
+        ]);
+      }
       syncVisibilityRequirements();
     };
 

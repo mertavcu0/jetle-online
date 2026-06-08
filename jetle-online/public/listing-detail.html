@@ -4754,7 +4754,67 @@
         ].forEach(([rowId, value]) => forceEstateRow(rowId, value));
 
         setRowLinkValue("parcelQueryLinkRow", listing.parcelQueryLink, "Parsel sorgu bağlantısı");
+        reorderHousingDetailRows(listing);
         reorderLandDetailRows(listing);
+      }
+
+      function reorderHousingDetailRows(listing) {
+        if (!isRealEstateListing(listing) || isLandListing(listing)) return;
+        const estateType = formatField(listing?.estateType).toLocaleLowerCase("tr-TR");
+        if (estateType !== "konut") return;
+        const grid = document.querySelector(".details-grid");
+        if (!grid) return;
+
+        const getRowNode = (rowRef) => {
+          if (!rowRef) return null;
+          if (rowRef.startsWith("#")) {
+            const span = document.querySelector(rowRef);
+            return span?.closest("div") || null;
+          }
+          return document.getElementById(rowRef);
+        };
+
+        const orderedRefs = [
+          "#listingNo",
+          "#listingDate",
+          "estateTypeRow",
+          "housingTypeRow",
+          "grossM2Row",
+          "netM2Row",
+          "roomsRow",
+          "ageRow",
+          "floorRow",
+          "totalFloorsRow",
+          "heatingTypeRow",
+          "bathroomsRow",
+          "balconyCountRow",
+          "elevatorRow",
+          "parkingTypeRow",
+          "isFurnishedRow",
+          "residenceUsageStatusRow",
+          "isInSiteRow",
+          "duesRow",
+          "isMortgageEligibleRow",
+          "residenceTitleDeedStatusRow",
+          "fromWhoRow",
+          "isSwapEligibleRow",
+          "kitchenTypeRow",
+          "energyCertificateRow",
+          "facadeRow",
+          "openAreaM2Row",
+          "landShareM2Row",
+          "adaNoRow",
+          "parselNoRow",
+          "sectionCountRow",
+          "usageSuitabilityRow",
+          "wcCountRow",
+          "depositRow"
+        ];
+
+        const orderedNodes = orderedRefs.map(getRowNode).filter(Boolean);
+        const orderedSet = new Set(orderedNodes);
+        const remainingNodes = Array.from(grid.children).filter((node) => !orderedSet.has(node));
+        [...orderedNodes, ...remainingNodes].forEach((node) => grid.appendChild(node));
       }
 
       function reorderLandDetailRows(listing) {
@@ -4876,7 +4936,7 @@
         }
       ];
 
-      const ESTATE_FEATURE_CATEGORY_RULES = [
+      const ESTATE_COMMON_FEATURE_CATEGORY_RULES = [
         {
           key: "İç Özellikler",
           patterns: [
@@ -4920,15 +4980,123 @@
           ]
         },
         {
-          key: "Konut Tipi",
+          key: "Cephe",
           patterns: [
-            "villa", "müstakil", "mustakil", "rezidans", "dubleks", "duplex", "triplex", "tripleks",
-            "loft", "bahçe dubleksi", "bahce dubleksi", "çatı dubleksi", "cati dubleksi", "ara kat",
-            "giriş katı", "giris kati", "en üst kat", "en ust kat", "yalı", "yali", "yalı dairesi",
-            "çiftlik evi", "ciftlik evi", "köşk", "kosk", "konak"
+            "kuzey", "güney", "guney", "doğu", "dogu", "batı", "bati", "kuzeydoğu", "kuzeydogu",
+            "kuzeybatı", "kuzeybati", "güneydoğu", "guneydogu", "güneybatı", "guneybati"
           ]
         }
       ];
+
+      const ESTATE_SUBTYPE_FEATURE_RULES = {
+        villa: [
+          {
+            key: "Villa Özellikleri",
+            patterns: [
+              "özel havuz", "kapalı havuz", "açık havuz", "kapalı garaj", "açık otopark", "kış bahçesi",
+              "müştemilat", "akıllı ev sistemi", "bahçe sulama sistemi", "özel güvenlik"
+            ]
+          }
+        ],
+        residence: [
+          {
+            key: "Residence Hizmetleri",
+            patterns: [
+              "spa", "fitness", "vale", "concierge", "housekeeping", "7/24 resepsiyon", "kartlı geçiş",
+              "güvenlik", "merkezi klima", "merkezi ısıtma", "kapalı otopark", "açık otopark", "hidrofor",
+              "jeneratör", "yangın merdiveni", "akıllı ev sistemi", "kamera sistemi", "site görevlisi",
+              "misafir otoparkı", "sauna", "türk hamamı", "buhar odası", "kapalı yüzme havuzu",
+              "açık yüzme havuzu", "çocuk havuzu", "çocuk oyun alanı", "yürüyüş parkuru",
+              "basketbol sahası", "tenis kortu", "kapalı spor salonu", "çocuk kulübü", "mescit",
+              "kreş", "market", "kafeterya", "restoran", "toplantı salonu", "teknik servis"
+            ]
+          }
+        ],
+        "mustakil-ev": [
+          {
+            key: "Müstakil Ev Özellikleri",
+            patterns: [
+              "bahçe", "garaj", "depo", "su deposu", "hobi odası", "müştemilat", "kış bahçesi",
+              "açık otopark", "kapalı garaj", "açık yüzme havuzu", "kapalı yüzme havuzu", "barbekü alanı",
+              "bahçe sulama sistemi", "akıllı ev sistemi", "kamera sistemi", "özel güvenlik", "jeneratör",
+              "çocuk oyun alanı", "meyve ağaçları", "hayvan barınağı", "ahır", "sera", "kuyu",
+              "güneş enerjisi sistemi", "veranda", "teras", "şömine", "yerden ısıtma", "hidrofor",
+              "yağmur suyu deposu", "elektrikli araç şarj istasyonu", "otomatik sulama", "güvenlik kulübesi",
+              "misafir evi", "çalışma odası", "çamaşır odası"
+            ]
+          }
+        ],
+        "ciftlik-evi": [
+          {
+            key: "Çiftlik Özellikleri",
+            patterns: [
+              "ahır", "ağıl", "kümes", "samanlık", "traktör garajı", "meyve bahçesi", "zeytinlik", "bağ",
+              "seracılık alanı", "hayvan barınağı", "depo", "jeneratör", "sulama sistemi", "artezyen kuyu",
+              "su kuyusu", "tarım elektriği", "hayvancılığa uygun", "organik tarıma uygun",
+              "traktör girişi", "depolama alanı", "artezyen", "seracılık"
+            ]
+          }
+        ],
+        "kosk-konak": [
+          {
+            key: "Köşk & Konak Özellikleri",
+            patterns: [
+              "misafir evi", "hizmetli evi", "şömine salonu", "kütüphane", "şarap mahzeni", "avlu",
+              "özel güvenlik", "kamera sistemi", "akıllı ev sistemi", "hobi odası", "bilardo salonu",
+              "sinema odası", "türk hamamı", "sauna", "kapalı havuz", "açık havuz", "fitness salonu",
+              "müstakil garaj", "çoklu araç garajı", "özel iskele", "deniz cephesi", "tarihi yapı",
+              "koruma altında yapı", "jeneratör", "asansör"
+            ]
+          }
+        ],
+        yali: [
+          {
+            key: "Yalı Özellikleri",
+            patterns: [
+              "özel iskele", "deniz cephesi", "boğaz cephesi", "kıyı kullanım hakkı", "tekne bağlama alanı",
+              "yat bağlama alanı", "özel plaj", "sonsuz deniz manzarası", "panoramik boğaz manzarası",
+              "açık havuz", "kapalı havuz", "sauna", "türk hamamı", "şömine", "akıllı ev sistemi",
+              "jeneratör", "hizmetli evi", "misafir evi", "çoklu araç garajı", "güvenlik kamerası",
+              "özel güvenlik", "asansör", "şarap mahzeni"
+            ]
+          }
+        ],
+        "yali-dairesi": [
+          {
+            key: "Yalı Dairesi Özellikleri",
+            patterns: [
+              "deniz cephesi", "boğaz cephesi", "marina manzarası", "panoramik deniz manzarası",
+              "sahile yürüme mesafesi", "özel plaj kullanımı", "açık havuz", "kapalı havuz", "sauna",
+              "fitness", "türk hamamı", "güvenlik", "kamera sistemi", "kapalı otopark", "açık otopark",
+              "concierge", "vale", "akıllı ev sistemi", "merkezi ısıtma", "merkezi klima", "fiber internet"
+            ]
+          }
+        ],
+        yazlik: [
+          {
+            key: "Yazlık Özellikleri",
+            patterns: [
+              "denize sıfır", "denize yakın", "plaja yakın", "özel plaj", "iskele", "marina yakını",
+              "deniz manzarası", "koy manzarası", "gün batımı manzarası", "ada manzarası", "orman manzarası",
+              "bahçe", "özel bahçe", "meyve ağaçları", "barbekü alanı", "veranda", "teras", "çatı terası",
+              "açık havuz", "çocuk havuzu", "jakuzi", "şömine", "klima", "alarm sistemi", "kamera sistemi",
+              "akıllı ev sistemi", "güneş enerjisi", "hidrofor", "su deposu", "artezyen kuyusu",
+              "açık otopark", "kapalı otopark"
+            ]
+          }
+        ],
+        kooperatif: [
+          {
+            key: "Kooperatif Özellikleri",
+            patterns: [
+              "kooperatif hissesi", "tapu devri hazır", "iskanlı", "iskansız", "yapı kullanım izin belgesi",
+              "kat mülkiyetine geçebilir", "ortak bahçe", "ortak otopark", "site yönetimi", "aidatlı",
+              "aidatsız", "asansörlü", "merkezi sistem", "güvenlik görevlisi", "kamera sistemi",
+              "açık otopark", "kapalı otopark", "çocuk oyun alanı", "depo alanı"
+            ]
+          }
+        ]
+      };
 
       const LAND_FEATURE_CATEGORY_RULES = [
         {
@@ -5029,12 +5197,33 @@
         return matched ? matched[1] : cleaned;
       }
 
+      function getNormalizedEstateSubtypeKey(listing) {
+        const rawSubtype = normalizeTrDisplayText(listing?.subCategory);
+        if (!rawSubtype) return "";
+        return rawSubtype
+          .toLocaleLowerCase("tr-TR")
+          .replace(/ş/g, "s")
+          .replace(/ı/g, "i")
+          .replace(/ğ/g, "g")
+          .replace(/ü/g, "u")
+          .replace(/ö/g, "o")
+          .replace(/ç/g, "c")
+          .replace(/\s*&\s*/g, "-")
+          .replace(/\s+/g, "-");
+      }
+
+      function getEstateFeatureCategoryRules(listing) {
+        const subtypeKey = getNormalizedEstateSubtypeKey(listing);
+        const subtypeRules = ESTATE_SUBTYPE_FEATURE_RULES[subtypeKey] || [];
+        return [...subtypeRules, ...ESTATE_COMMON_FEATURE_CATEGORY_RULES];
+      }
+
       function categorizeFeatures(features, listing = {}) {
         const isLand = isLandListing(listing);
         const featureRules = isLand
           ? LAND_FEATURE_CATEGORY_RULES
           : isRealEstateListing(listing)
-            ? ESTATE_FEATURE_CATEGORY_RULES
+            ? getEstateFeatureCategoryRules(listing)
             : VEHICLE_FEATURE_CATEGORY_RULES;
         const grouped = new Map(
           featureRules.map((rule) => [rule.key, []]).concat(isLand ? [] : [["Diğer Özellikler", []]])
