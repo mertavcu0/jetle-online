@@ -5233,7 +5233,7 @@
           const label = normalizeFeatureLabel(feature);
           const normalized = normalizeFeatureValue(label);
           const matchedRule = featureRules.find((rule) =>
-            rule.patterns.some((pattern) => normalized.includes(pattern))
+            rule.patterns.some((pattern) => normalized.includes(normalizeFeatureValue(pattern)))
           );
           if (isLand && !matchedRule) return;
           const bucket = matchedRule ? matchedRule.key : "Diğer Özellikler";
