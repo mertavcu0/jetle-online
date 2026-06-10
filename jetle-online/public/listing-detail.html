@@ -1222,47 +1222,48 @@
 
     .seller-phone-panel {
       display: grid;
-      gap: 4px;
-      padding: 7px 8px;
+      gap: 6px;
+      padding: 10px 12px;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       background: #f8fafc;
     }
 
     .seller-phone-row {
-      display: grid;
-      grid-template-columns: 28px minmax(0, 1fr);
-      gap: 6px;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      min-width: 0;
     }
 
     .seller-phone-label {
       color: #64748b;
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
       text-transform: none;
       letter-spacing: 0;
-      white-space: nowrap;
+      line-height: 1.2;
     }
 
     .seller-phone-value {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      flex: 1;
+      display: block;
+      width: 100%;
       color: #0f172a;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 800;
       letter-spacing: 0;
-      line-height: 1.1;
+      line-height: 1.35;
       text-align: left;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .seller-phone-value.is-hidden {
       color: #94a3b8;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 600;
       letter-spacing: 0;
     }
 
@@ -2592,9 +2593,18 @@
         flex-direction: column;
       }
 
+      .seller-phone-row {
+        width: 100%;
+      }
+
+      .seller-phone-label {
+        font-size: 11px;
+      }
+
       .seller-phone-value {
         justify-content: flex-start;
         text-align: left;
+        font-size: 14px;
       }
 
       .owner-actions-grid {
@@ -2628,7 +2638,9 @@
   <div class="page-shell">
   <header class="navbar">
     <div class="navbar-inner">
-      <a class="logo" href="index.html">jetle<span>.online</span></a>
+      <a class="logo" href="index.html" aria-label="Jetle ana sayfa">
+        <span class="brand-wordmark"><span class="brand-jetle">jetle</span><span class="brand-online">.online</span></span>
+      </a>
       <form class="search" action="ilanlar.html" method="get">
         <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
         <button type="submit">Ara</button>
@@ -3658,7 +3670,8 @@
       const sellerRoleLabel = isCorporateSeller ? "" : "Bireysel Üye";
       const sellerProfileId = listingUserId || String(user?._id || "");
       const sellerAvatar = user?.avatarUrl || seller?.avatarUrl || listing.user?.avatarUrl || listing.seller?.avatarUrl || "";
-      const sellerPhone = formatPhoneNumber(listing.contactPhone || listing.phone || listing.user?.phone || listing.seller?.phone) || "Telefon bilgisi bulunmuyor";
+      const sellerPhone = formatPhoneNumber(listing.contactPhone || listing.phone || listing.user?.phone || listing.seller?.phone);
+      const hasSellerPhone = Boolean(sellerPhone);
       const sellerListingsHref = sellerProfileId ? `/profile.html?id=${encodeURIComponent(sellerProfileId)}` : `/listings.html`;
       console.log("MESSAGE_AUTH_STATE", {
         currentUserId,
@@ -3730,8 +3743,8 @@
                 <div class="seller-contact-stack">
                   <div class="seller-phone-panel">
                     <div class="seller-phone-row">
-                      <div class="seller-phone-label">Telefon Numarası:</div>
-                      <div id="sellerPhoneValue" class="seller-phone-value">${sellerPhone}</div>
+                      ${hasSellerPhone ? '<div class="seller-phone-label">Telefon</div>' : ""}
+                      <div id="sellerPhoneValue" class="seller-phone-value${hasSellerPhone ? "" : " is-hidden"}">${hasSellerPhone ? sellerPhone : "Telefon bilgisi bulunmuyor"}</div>
                     </div>
                   </div>
                   <div class="seller-link-row">
@@ -4550,21 +4563,27 @@
       function getPrimaryEstateTypeLabel(listing) {
         const estateType = formatField(listing?.estateType).toLocaleLowerCase("tr-TR");
         const subCategory = normalizeTrDisplayText(listing?.subCategory);
+        const normalizedSubCategory = normalizeSubtypeKey(subCategory);
         const workplaceLabel = normalizeTrDisplayText(listing?.workplaceType);
         const workplaceTypeLabel = workplaceLabel || subCategory;
 
         if (estateType === "arsa") return "Arsa";
         if (estateType === "isyeri") return workplaceTypeLabel || "İş Yeri";
 
-        const apartmentSubtypePatterns = [
-          /standart daire/i,
-          /dubleks/i,
-          /triplex/i,
-          /loft/i,
-          /ara kat/i,
-          /en üst kat/i
-        ];
-        if (apartmentSubtypePatterns.some((pattern) => pattern.test(subCategory))) return "Daire";
+        const apartmentSubtypeKeys = new Set([
+          "daire",
+          "standartdaire",
+          "dubleks",
+          "arakatdubleks",
+          "catidubleksi",
+          "bahcedubleksi",
+          "tersdubleks",
+          "triplex",
+          "loft",
+          "arakat",
+          "enustkat"
+        ]);
+        if (apartmentSubtypeKeys.has(normalizedSubCategory)) return "Daire";
 
         if (subCategory) return subCategory;
         if (estateType === "konut") return "Daire";
@@ -4708,6 +4727,25 @@
         return "";
       }
 
+      const apartmentHousingTypeOptions = [
+        "Dubleks",
+        "Ara Kat Dubleks",
+        "Çatı Dubleksi",
+        "Bahçe Dubleksi",
+        "Ters Dubleks",
+        "Triplex",
+        "Loft",
+        "Ara Kat",
+        "En Üst Kat"
+      ];
+
+      function getHousingTypeDisplayValue(listing) {
+        const subtype = normalizeTrDisplayText(listing?.subCategory);
+        const housingType = String(listing?.housingType || "").trim();
+        if (subtype === "daire" && !apartmentHousingTypeOptions.includes(housingType)) return "";
+        return listing?.housingType || "";
+      }
+
       function renderListingVideo(listing) {
         const section = document.getElementById("listingVideoSection");
         const frame = document.getElementById("listingVideoFrame");
@@ -4755,7 +4793,7 @@
 
         [
           ["estateTypeRow", estateTypeDisplay],
-          ["housingTypeRow", listing.housingType],
+          ["housingTypeRow", getHousingTypeDisplayValue(listing)],
           ["grossM2Row", formatSquareMeters(listing.grossM2)],
           ["netM2Row", formatSquareMeters(listing.netM2)],
           ["m2Row", isLand ? formatLandDetailValue(listing.m2, formatSquareMeters) : formatSquareMeters(listing.m2)],
@@ -4878,7 +4916,6 @@
           "#listingNo",
           "#listingDate",
           "estateTypeRow",
-          "housingTypeRow",
           "grossM2Row",
           "netM2Row",
           "roomsRow",
@@ -4887,6 +4924,7 @@
           "totalFloorsRow",
           "heatingTypeRow",
           "bathroomsRow",
+          "kitchenTypeRow",
           "balconyCountRow",
           "elevatorRow",
           "parkingTypeRow",
@@ -4895,11 +4933,10 @@
           "isInSiteRow",
           "duesRow",
           "isMortgageEligibleRow",
+          "energyCertificateRow",
           "residenceTitleDeedStatusRow",
           "fromWhoRow",
           "isSwapEligibleRow",
-          "kitchenTypeRow",
-          "energyCertificateRow",
           "facadeRow",
           "openAreaM2Row",
           "landShareM2Row",
@@ -5861,7 +5898,7 @@
 
         setRowValue("updatedAtRow", listing.updatedAt ? formatDate(listing.updatedAt) : "");
         setRowValue("estateTypeRow", getEstateTypeDisplayText(listing));
-        setRowValue("housingTypeRow", listing.housingType);
+        setRowValue("housingTypeRow", getHousingTypeDisplayValue(listing));
         setRowValue("brandRow", listing.brand);
         setRowValue("seriesRow", listing.series);
         setRowValue("modelRow", listing.model);

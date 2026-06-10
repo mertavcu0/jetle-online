@@ -325,6 +325,9 @@ a {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 24px;
   font-weight: 900;
   color: #2563eb;
@@ -332,7 +335,18 @@ a {
   white-space: nowrap;
 }
 
-.logo span {
+.logo .brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.logo .brand-jetle {
+  color: #2563eb;
+  text-transform: lowercase;
+}
+
+.logo .brand-online {
   color: #111827;
 }
 
@@ -614,13 +628,27 @@ a {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.2px;
   color: #2563eb;
 }
 
-.logo span {
+.logo .brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.logo .brand-jetle {
+  color: #2563eb;
+  text-transform: lowercase;
+}
+
+.logo .brand-online {
   color: #111827;
 }
 

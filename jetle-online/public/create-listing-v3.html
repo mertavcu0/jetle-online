@@ -59,7 +59,7 @@
     .create-v3-brand {
       display: inline-flex;
       align-items: center;
-      gap: 0;
+      gap: 10px;
       text-decoration: none;
       color: #2563eb;
       font-size: 24px;
@@ -68,11 +68,18 @@
       white-space: nowrap;
     }
 
-    .create-v3-brand .jetle {
-      color: #2563eb;
+    .create-v3-brand .brand-wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
     }
 
-    .create-v3-brand span:last-child {
+    .create-v3-brand .brand-jetle {
+      color: #2563eb;
+      text-transform: lowercase;
+    }
+
+    .create-v3-brand .brand-online {
       color: #111827;
     }
 
@@ -2223,6 +2230,11 @@
         padding: 10px 14px;
       }
 
+      .create-v3-brand {
+        gap: 8px;
+        font-size: 22px;
+      }
+
       .create-v3-nav {
         width: 100%;
         justify-content: flex-start;
@@ -2320,8 +2332,8 @@
 <body class="create-v3-page">
   <header class="create-v3-topbar">
     <div class="create-v3-topbar-inner">
-      <a class="create-v3-brand" href="/">
-        <span class="jetle">jetle</span><span>.online</span>
+      <a class="create-v3-brand" href="/" aria-label="Jetle ana sayfa">
+        <span class="brand-wordmark"><span class="brand-jetle">jetle</span><span class="brand-online">.online</span></span>
       </a>
       <nav class="create-v3-nav" aria-label="Hızlı bağlantılar">
         <a href="/dashboard.html">Profilim</a>
@@ -4221,8 +4233,6 @@
           if (housingTypeField) {
             if (housingType) {
               housingTypeField.value = housingType;
-            } else if (subcategory === "Daire" && !housingTypeField.value) {
-              housingTypeField.value = "Standart Daire";
             } else if (subcategory !== "Daire") {
               housingTypeField.value = "";
             }

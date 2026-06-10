@@ -79,13 +79,27 @@
     }
 
     .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-size: 24px;
       font-weight: 900;
       color: #2563eb;
       letter-spacing: -0.2px;
     }
 
-    .logo span {
+    .logo .brand-wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
+    }
+
+    .logo .brand-jetle {
+      color: #2563eb;
+      text-transform: lowercase;
+    }
+
+    .logo .brand-online {
       color: #111827;
     }
 
@@ -925,6 +939,11 @@
 
       .nav-right {
         width: 100%;
+      }
+
+      .logo {
+        gap: 8px;
+        font-size: 22px;
       }
 
       .post-btn,
@@ -1909,7 +1928,9 @@
 <body>
   <header class="navbar">
     <div class="navbar-inner">
-      <a class="logo" href="index.html">jetle<span>.online</span></a>
+      <a class="logo" href="index.html" aria-label="Jetle ana sayfa">
+        <span class="brand-wordmark"><span class="brand-jetle">jetle</span><span class="brand-online">.online</span></span>
+      </a>
       <form class="search" id="topSearch">
         <input id="topSearchInput" type="text" placeholder="Kelime, ilan no veya kategori ara">
         <button type="submit">Ara</button>

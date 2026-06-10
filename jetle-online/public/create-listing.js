@@ -411,7 +411,7 @@
   const editListingId = String(pageParams.get("edit") || "").trim();
   const isEditMode = Boolean(editListingId);
   const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
-  const HOUSING_TYPE_OPTIONS = ["Standart Daire", "Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"];
+  const HOUSING_TYPE_OPTIONS = ["Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"];
 
   let currentStep = 0;
   let isRendering = false;
@@ -437,6 +437,11 @@
   let currentDamageMode = "original";
 
   function inferHousingTypeFromLegacySubCategory(value) {
+    const text = String(value || "").trim();
+    return HOUSING_TYPE_OPTIONS.includes(text) ? text : "";
+  }
+
+  function normalizeHousingTypeValue(value) {
     const text = String(value || "").trim();
     return HOUSING_TYPE_OPTIONS.includes(text) ? text : "";
   }
@@ -1888,13 +1893,13 @@
         generalSubCategoryField.value = estateSubTypeField?.value || "";
       }
       if (housingTypeField && !housingTypeField.value && legacyHousingType) {
-        housingTypeField.value = legacyHousingType;
+        housingTypeField.value = normalizeHousingTypeValue(legacyHousingType);
       }
       if (housingTypeField) {
         if ((estateSubTypeField?.value || "") !== "Daire") {
           housingTypeField.value = "";
-        } else if (!housingTypeField.value) {
-          housingTypeField.value = "Standart Daire";
+        } else {
+          housingTypeField.value = normalizeHousingTypeValue(housingTypeField.value);
         }
       }
       populateEstateSelect(
@@ -2900,7 +2905,7 @@
     window.__JETLE_CREATE_DRAFT = {
       category: formCategory,
       subCategory: normalizedSubCategory,
-      housingType: listing.housingType || legacyHousingType || "",
+      housingType: normalizeHousingTypeValue(listing.housingType || legacyHousingType || ""),
       estateType: listing.estateType || "",
       estateListingIntent: listing.estateListingIntent || "",
       title: listing.title || "",
@@ -2924,7 +2929,7 @@
     await loadNeighborhoodsForCity(listing.city || "");
     await populateNeighborhoods(listing.neighborhood || "");
     setVal("subCategory", normalizedSubCategory);
-    setVal("housingType", listing.housingType || legacyHousingType || "");
+    setVal("housingType", normalizeHousingTypeValue(listing.housingType || legacyHousingType || ""));
 
     if (categorySelect) {
       categorySelect.dispatchEvent(new Event("change", { bubbles: true }));
