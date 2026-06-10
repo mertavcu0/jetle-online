@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jetle Güven Merkezi | jetle.online</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .trust-main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+
+    .trust-hero {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .trust-breadcrumb {
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .trust-breadcrumb a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .trust-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .trust-title {
+      margin: 0;
+      font-size: clamp(30px, 4.4vw, 44px);
+      font-weight: 900;
+      line-height: 1.06;
+      color: #0f172a;
+    }
+
+    .trust-subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .trust-shell {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    .trust-head {
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid #eef2f7;
+      background: linear-gradient(180deg, #fafcff 0%, #f4f8ff 100%);
+    }
+
+    .trust-head h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .trust-head p {
+      margin: 0;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .trust-tabs {
+      display: flex;
+      gap: 10px;
+      padding: 16px 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .trust-tab {
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .trust-tab:hover {
+      background: #dbeafe;
+      border-color: #93c5fd;
+    }
+
+    .trust-tab.is-active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .trust-panels {
+      padding: 16px;
+    }
+
+    .trust-panel {
+      display: none;
+    }
+
+    .trust-panel.is-active {
+      display: block;
+    }
+
+    .trust-panel-intro {
+      margin: 0 0 14px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .trust-accordion {
+      display: grid;
+      gap: 10px;
+    }
+
+    .trust-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .trust-item[open] {
+      border-color: #bfdbfe;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+    }
+
+    .trust-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .trust-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .trust-item summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: #2563eb;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .trust-item[open] summary::after {
+      content: "-";
+    }
+
+    .trust-item-body {
+      padding: 0 18px 18px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .trust-item-body ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .trust-item-body li + li {
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .trust-main {
+        padding: 22px 12px 40px;
+      }
+
+      .trust-head {
+        padding: 18px 16px 14px;
+      }
+
+      .trust-tabs,
+      .trust-panels {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .trust-tab {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 0;
+      }
+
+      .trust-item summary {
+        padding: 14px;
+        font-size: 15px;
+      }
+
+      .trust-item-body {
+        padding: 0 14px 16px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .trust-tab {
+        flex-basis: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="static-page">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="/index.html">jetle<span>.online</span></a>
+      <form class="search" action="/listings.html" method="get">
+        <input type="text" name="search" placeholder="Kelime, ilan no veya kategori ara">
+        <button type="submit">Ara</button>
+      </form>
+      <div class="nav-right">
+        <div id="authArea"></div>
+        <a href="/create-listing.html" class="post-btn">İlan Ver</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="trust-main">
+    <section class="trust-hero">
+      <p class="trust-breadcrumb"><a href="/index.html">Ana Sayfa</a> / Güvenli Alışveriş</p>
+      <h1 class="trust-title">Jetle Güven Merkezi</h1>
+      <p class="trust-subtitle">Jetle kullanıcılarının güvenli alışveriş yapabilmesi için hazırlanmış bilgilendirme rehberi.</p>
+    </section>
+
+    <section class="trust-shell">
+      <div class="trust-head">
+        <h2>İşlem Öncesi Temel Kontroller</h2>
+        <p>İlan açıklaması, satıcı profili, ödeme yöntemi ve görüşme planı birlikte değerlendirilmelidir. Güven vermeyen acele baskısı, eksik bilgi veya tutarsız açıklamalar varsa işlemi yavaşlatın ve ek doğrulama isteyin.</p>
+      </div>
+
+      <div class="trust-tabs" role="tablist" aria-label="Güvenli alışveriş sekmeleri">
+        <button class="trust-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="buyersPanel" id="buyersTab" data-target="buyersPanel">Alıcılar İçin</button>
+        <button class="trust-tab" type="button" role="tab" aria-selected="false" aria-controls="sellersPanel" id="sellersTab" data-target="sellersPanel">Satıcılar İçin</button>
+      </div>
+
+      <div class="trust-panels">
+        <section class="trust-panel is-active" id="buyersPanel" role="tabpanel" aria-labelledby="buyersTab">
+          <p class="trust-panel-intro">Araç, emlak veya ikinci el ürün alırken karar sürecini aceleye getirmeden, ilan ve kişi doğrulamasını birlikte yürütmek daha güvenli sonuç verir.</p>
+
+          <div class="trust-accordion">
+            <details class="trust-item" open>
+              <summary>Kapora Dolandırıcılığı</summary>
+              <div class="trust-item-body">
+                “Başka alıcı var”, “hemen göndermezsen ilan kapanacak” gibi baskı dili kapora dolandırıcılığında sık görülür. Özellikle görmeden ve resmî doğrulama yapmadan ön ödeme göndermek yüksek risk taşır.
+                <ul>
+                  <li>IBAN, alıcı adı ve ilan sahibinin kimliğini eşleştirmeden para göndermeyin.</li>
+                  <li>Kapora istendiğinde yazılı açıklama, tarih ve işlem gerekçesi isteyin.</li>
+                  <li>Acele baskısı ve tutarsız cevaplar risk işaretidir.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Aracı Görmeden Ödeme Yapmayın</summary>
+              <div class="trust-item-body">
+                İlan fotoğrafları tek başına yeterli doğrulama değildir. Aracı mümkünse gündüz, açık alanda ve evraklarıyla birlikte görmek güvenli karar için kritik adımdır.
+                <ul>
+                  <li>Ruhsat, şasi numarası ve plaka bilgilerini karşılaştırın.</li>
+                  <li>Ekspertiz raporunun tarihini ve kapsamını kontrol edin.</li>
+                  <li>Piyasanın çok altında fiyatlanan ilanlarda ikinci doğrulama yapın.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Kimlik ve Evrak Kontrolü</summary>
+              <div class="trust-item-body">
+                Satıcı kimliği ile ödeme talep eden kişi veya hesap aynı görünmüyorsa işlemi durdurun. Evraklar net değilse ek belge isteyin.
+                <ul>
+                  <li>Ruhsat veya tapu sahibinin bilgisiyle ilan sahibinin ilişkisini anlamaya çalışın.</li>
+                  <li>Yetki belgesi veya vekalet sunuluyorsa tarih ve kapsamını okuyun.</li>
+                  <li>Belge göstermeden ödeme isteyen profillere temkinli yaklaşın.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Güvenli Buluşma Önerileri</summary>
+              <div class="trust-item-body">
+                İlk görüşmelerinizi kamusal, mümkünse kalabalık ve gündüz saatlerinde planlamak daha güvenlidir. İşlemi aceleye getiren ıssız lokasyonlardan kaçının.
+                <ul>
+                  <li>Buluşma bilgisini yakınlarınızla paylaşın.</li>
+                  <li>Yanınızda ikinci bir kişi bulunması güvenliği artırabilir.</li>
+                  <li>Test sürüşü veya belge incelemesi sırasında kimlik ve anahtar teslimini kontrollü yapın.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="trust-panel" id="sellersPanel" role="tabpanel" aria-labelledby="sellersTab">
+          <p class="trust-panel-intro">Satıcı tarafında en büyük riskler sahte ödeme bildirimleri, acele satış baskısı ve fazla kişisel bilgi paylaşımıdır. Devir veya teslim öncesi ödeme doğrulaması temel kuraldır.</p>
+
+          <div class="trust-accordion">
+            <details class="trust-item" open>
+              <summary>Sahte Dekontlara Dikkat</summary>
+              <div class="trust-item-body">
+                Ekran görüntüsü veya mesajlaşma uygulaması üzerinden gönderilen dekontlar tek başına ödeme kanıtı değildir. Banka hesabınıza geçen tutarı siz doğrulamadan teslim adımına geçmeyin.
+                <ul>
+                  <li>Dekont yerine hesabınıza düşen gerçek hareketi kontrol edin.</li>
+                  <li>“Sistem gecikmeli, birazdan geçer” gibi açıklamalarla baskı kurulmasına izin vermeyin.</li>
+                  <li>Ödeme teyidi bankanızdan veya uygulamanızdan görülmeden işlem tamamlamayın.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Araç Devri Öncesi Ödeme Kontrolü</summary>
+              <div class="trust-item-body">
+                Noter veya resmî devir öncesi ödeme teyidi alınmadan anahtar, ruhsat veya satış onayı verilmemelidir.
+                <ul>
+                  <li>Ödemenin tam tutarda hesabınıza geçtiğini kontrol edin.</li>
+                  <li>Bölünmüş ödeme veya üçüncü kişi hesabı taleplerinde dikkatli olun.</li>
+                  <li>Devir ve teslim adımlarını aynı gün ve kontrollü biçimde planlayın.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Kişisel Bilgi Güvenliği</summary>
+              <div class="trust-item-body">
+                Kimlik, ruhsat, IBAN veya adres gibi hassas bilgiler yalnızca işlem için gerektiği kadar paylaşılmalıdır. Gereksiz belge ve fotoğraf talebinde dikkatli olun.
+                <ul>
+                  <li>Kimlik ve ruhsat fotoğraflarını gelişigüzel mesajlaşma kanallarında yaymayın.</li>
+                  <li>Adres ve konum paylaşımını sadece görüşme netleştiğinde yapın.</li>
+                  <li>Tek bir görüşme için fazla kişisel bilgi isteyen kullanıcılara temkinli yaklaşın.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="trust-item">
+              <summary>Şüpheli Kullanıcıları Bildirme</summary>
+              <div class="trust-item-body">
+                Farklı kişi adına ödeme isteyen, agresif biçimde acele ettiren veya sahte belge ile ilerleyen kullanıcılar not alınmalı ve platforma bildirilmelidir.
+                <ul>
+                  <li>Mesaj kayıtlarını ve ekran görüntülerini saklayın.</li>
+                  <li>Şüpheli kullanıcı adı, telefon ve talep edilen hesap bilgisini not edin.</li>
+                  <li>Somut detaylarla yapılan bildirimler inceleme sürecini hızlandırır.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenli-alisveris.html">Güvenli Alışveriş İpuçları</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
+  </footer>
+
+  <script src="/auth-global.js"></script>
+  <script>
+    (function () {
+      const tabs = Array.from(document.querySelectorAll(".trust-tab"));
+      const panels = Array.from(document.querySelectorAll(".trust-panel"));
+
+      function activateTab(targetId) {
+        tabs.forEach((tab) => {
+          const isActive = tab.dataset.target === targetId;
+          tab.classList.toggle("is-active", isActive);
+          tab.setAttribute("aria-selected", String(isActive));
+        });
+
+        panels.forEach((panel) => {
+          panel.classList.toggle("is-active", panel.id === targetId);
+        });
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => activateTab(tab.dataset.target));
+      });
+    })();
+  </script>
+</body>
+</html>

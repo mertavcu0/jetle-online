@@ -119,10 +119,30 @@ const helmetOptions = {
         useDefaults: true,
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://cdn.socket.io",
+            "https://www.googletagmanager.com",
+            "https://www.google-analytics.com"
+          ],
           styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-          imgSrc: ["'self'", "data:", "blob:", "https:"],
-          connectSrc: ["'self'", "https://jetle.online", "https://www.jetle.online", "wss://jetle.online", "wss://www.jetle.online"],
+          imgSrc: [
+            "'self'",
+            "data:",
+            "blob:",
+            "https:",
+            "https://www.google-analytics.com"
+          ],
+          connectSrc: [
+            "'self'",
+            "https://jetle.online",
+            "https://www.jetle.online",
+            "wss://jetle.online",
+            "wss://www.jetle.online",
+            "https://www.google-analytics.com",
+            "https://region1.google-analytics.com"
+          ],
           fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
           objectSrc: ["'none'"],
           frameAncestors: ["'self'"]

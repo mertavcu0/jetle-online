@@ -2379,10 +2379,6 @@
               <div class="category-flow-subcards" id="categoryFlowLevel4Cards"></div>
             </section>
 
-            <section id="categoryFlowLevel5" class="category-flow-column" hidden>
-              <strong id="categoryFlowLevel5Heading" class="category-flow-column-title">Konut Tipi</strong>
-              <div class="category-flow-subcards" id="categoryFlowLevel5Cards"></div>
-            </section>
           </div>
         </div>
         <!-- CATEGORY FLOW UPGRADE END -->
@@ -2824,6 +2820,16 @@
                   <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_northwest"><span class="feature-label">Kuzeybatı</span></label>
                   <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_southeast"><span class="feature-label">Güneydoğu</span></label>
                   <label class="feature-check"><input type="checkbox" class="estate-facade-option" id="estate_feat_facade_southwest"><span class="feature-label">Güneybatı</span></label>
+                </div>
+              </details>
+
+              <details class="features-block category-feature-group category-emlak estate-feature-subtype estate-subtype-isyeri-buro-ofis estate-subtype-isyeri-dukkan-magaza estate-subtype-isyeri-depo-antrepo estate-subtype-isyeri-fabrika-uretim-tesisi" id="featureBlockWorkplaceBuildingAmenities" open>
+                <summary><h3>Bina Özellikleri</h3></summary>
+                <div class="features-grid-4">
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_workplace_generator"><span class="feature-label">Jeneratör</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_workplace_closed_parking"><span class="feature-label">Kapalı Otopark</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_workplace_freight_elevator"><span class="feature-label">Yük Asansörü</span></label>
+                  <label class="feature-check"><input type="checkbox" id="estate_feat_workplace_fire_alarm"><span class="feature-label">Yangın Alarmı</span></label>
                 </div>
               </details>
 
@@ -3621,7 +3627,7 @@
             return {
               category: "Emlak",
               estateType: "konut",
-              listingIntent: draft.estateListingIntent || "Satılık Daire",
+              listingIntent: draft.estateListingIntent || "Satılık",
               subcategory: draft.subCategory,
               housingType: draft.housingType || ""
             };
@@ -3642,7 +3648,7 @@
               listingIntent:
                 draft.estateListingIntent || "Satılık",
               subcategory:
-                draft.subCategory || "İş Yeri"
+                draft.subCategory || draft.workplaceType || "İş Yeri"
             };
           }
         }
@@ -3933,6 +3939,12 @@
         return (val("estateSubType") || val("arsaStatus") || val("zoningStatus") || val("subCategory") || "")
           .trim()
           .toLocaleLowerCase("tr")
+          .replace(/ç/g, "c")
+          .replace(/ğ/g, "g")
+          .replace(/ı/g, "i")
+          .replace(/ö/g, "o")
+          .replace(/ş/g, "s")
+          .replace(/ü/g, "u")
           .replace(/\s+/g, "-");
       }
 
@@ -3977,6 +3989,14 @@
             allowedSubtypeClasses.add("estate-subtype-arsa-ciftlik");
           } else if (subtype === "hobi-bahçesi" || subtype === "hobi-bahcesi") {
             allowedSubtypeClasses.add("estate-subtype-arsa-hobi-bahcesi");
+          } else if (subtype === "büro-ofis" || subtype === "buro-ofis") {
+            allowedSubtypeClasses.add("estate-subtype-isyeri-buro-ofis");
+          } else if (subtype === "dükkan-mağaza" || subtype === "dukkan-magaza") {
+            allowedSubtypeClasses.add("estate-subtype-isyeri-dukkan-magaza");
+          } else if (subtype === "depo-antrepo") {
+            allowedSubtypeClasses.add("estate-subtype-isyeri-depo-antrepo");
+          } else if (subtype === "fabrika-üretim-tesisi" || subtype === "fabrika-uretim-tesisi") {
+            allowedSubtypeClasses.add("estate-subtype-isyeri-fabrika-uretim-tesisi");
           }
         }
 
@@ -4018,7 +4038,7 @@
         ].forEach((id) => {
           const block = document.getElementById(id);
           if (!block) return;
-          const shouldShow = isEmlak && !isArsa;
+          const shouldShow = isEmlak && estateType === "konut";
           block.style.display = shouldShow ? "" : "none";
           block.hidden = !shouldShow;
           block.classList.toggle("estate-subtype-hidden", !shouldShow);
@@ -4119,8 +4139,8 @@
           level3Heading: "İşlem Türü",
           level3: {
             konut: [
-              { key: "satilik", label: "Satılık", listingIntent: "Satılık Daire" },
-              { key: "kiralik", label: "Kiralık", listingIntent: "Kiralık Daire" }
+              { key: "satilik", label: "Satılık", listingIntent: "Satılık" },
+              { key: "kiralik", label: "Kiralık", listingIntent: "Kiralık" }
             ],
             arsa: [
               { key: "satilik", label: "Satılık", listingIntent: "Satılık" },
@@ -4135,14 +4155,14 @@
           },
           level4HeadingByEstateCategory: {
             konut: "Emlak Tipi",
-            arsa: "Arsa Tipi"
+            arsa: "Arsa Tipi",
+            isyeri: "İşyeri Türü"
           },
           level4ByEstateCategory: {
             konut: ["Daire", "Residence", "Villa", "Müstakil Ev", "Çiftlik Evi", "Köşk & Konak", "Yalı", "Yalı Dairesi", "Yazlık", "Kooperatif"],
-            arsa: ["Konut İmarlı", "Ticari İmarlı", "Sanayi İmarlı", "Tarla", "Bağ", "Bahçe", "Zeytinlik", "Çiftlik", "Hobi Bahçesi", "Turizm İmarlı", "Akaryakıt İmarlı", "Sağlık İmarlı", "Eğitim İmarlı", "Depolama İmarlı", "Karma İmarlı", "Muhtelif Arsa"]
+            arsa: ["Konut İmarlı", "Ticari İmarlı", "Sanayi İmarlı", "Tarla", "Bağ", "Bahçe", "Zeytinlik", "Çiftlik", "Hobi Bahçesi", "Turizm İmarlı", "Akaryakıt İmarlı", "Sağlık İmarlı", "Eğitim İmarlı", "Depolama İmarlı", "Karma İmarlı", "Muhtelif Arsa"],
+            isyeri: ["Akaryakıt İstasyonu", "Apartman Dairesi", "Atölye", "AVM", "Büfe", "Büro & Ofis", "Çiftlik", "Depo & Antrepo", "Düğün Salonu", "Dükkan & Mağaza", "Enerji Santrali", "Fabrika & Üretim Tesisi", "Garaj & Park Yeri", "İmalathane", "İş Hanı Katı & Ofisi", "Kafe & Bar", "Kantin", "Kır & Kahvaltı Bahçesi", "Kıraathane", "Komple Bina", "Maden Ocağı", "Otopark & Garaj", "Oto Yıkama & Kuaför", "Pastane, Fırın & Tatlıcı", "Pazar Yeri", "Plaza", "Plaza Katı & Ofisi", "Radyo İstasyonu & TV Kanalı", "Restoran & Lokanta", "Rezidans Katı & Ofisi", "Sağlık Merkezi", "Sinema & Konferans Salonu", "SPA, Hamam & Sauna", "Spor Tesisi", "Villa", "Yurt"]
           },
-          level5Heading: "Konut Tipi",
-          level5: ["Standart Daire", "Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"]
         },
         elektronik: {
           category: "Elektronik",
@@ -4171,6 +4191,7 @@
           const estateSubTypeField = document.getElementById("estateSubType");
           const housingTypeField = document.getElementById("housingType");
           const arsaStatusField = document.getElementById("arsaStatus");
+          const zoningStatusField = document.getElementById("zoningStatus");
           if (estateIntentField) {
             estateIntentField.value = listingIntent || "";
           }
@@ -4190,11 +4211,21 @@
             generalSubCategoryField.value = subcategory;
           }
           if (arsaStatusField && estateType === "arsa") {
-            arsaStatusField.value = subcategory || "";
+            arsaStatusField.value = "";
             arsaStatusField.dispatchEvent(new Event("change", { bubbles: true }));
           }
+          if (zoningStatusField && estateType === "arsa") {
+            zoningStatusField.value = subcategory || "";
+            zoningStatusField.dispatchEvent(new Event("change", { bubbles: true }));
+          }
           if (housingTypeField) {
-            housingTypeField.value = housingType || "";
+            if (housingType) {
+              housingTypeField.value = housingType;
+            } else if (subcategory === "Daire" && !housingTypeField.value) {
+              housingTypeField.value = "Standart Daire";
+            } else if (subcategory !== "Daire") {
+              housingTypeField.value = "";
+            }
             housingTypeField.dispatchEvent(new Event("change", { bubbles: true }));
           }
         }
@@ -4208,6 +4239,7 @@
           }
         }
       }
+      window.__applyPendingCategorySelection = applyPendingCategorySelection;
 
       function initCategoryFlow() {
         const isEditMode = new URLSearchParams(window.location.search).has("edit");
@@ -4225,16 +4257,13 @@
         const level4Section = document.getElementById("categoryFlowLevel4");
         const level4CardsWrap = document.getElementById("categoryFlowLevel4Cards");
         const level4Heading = document.getElementById("categoryFlowLevel4Heading");
-        const level5Section = document.getElementById("categoryFlowLevel5");
-        const level5CardsWrap = document.getElementById("categoryFlowLevel5Cards");
-        const level5Heading = document.getElementById("categoryFlowLevel5Heading");
         const backButton = document.getElementById("categoryFlowBack");
         const categoryField = document.getElementById("category");
         const subCategoryField = document.getElementById("subCategory");
         const step1Next = document.getElementById("btnStep1Next");
         const clearDraftButton = document.getElementById("btnClearDraft");
 
-        if (!selectionScreen || !formFlow || !layout || !previewColumn || !cardsWrap || !level2Section || !level2CardsWrap || !level2Heading || !level3Section || !level3CardsWrap || !level3Heading || !level4Section || !level4CardsWrap || !level4Heading || !level5Section || !level5CardsWrap || !level5Heading || !backButton || !categoryField || !subCategoryField) {
+        if (!selectionScreen || !formFlow || !layout || !previewColumn || !cardsWrap || !level2Section || !level2CardsWrap || !level2Heading || !level3Section || !level3CardsWrap || !level3Heading || !level4Section || !level4CardsWrap || !level4Heading || !backButton || !categoryField || !subCategoryField) {
           return;
         }
 
@@ -4252,7 +4281,7 @@
         };
 
         const syncBackButton = () => {
-          backButton.hidden = !(level2Section.hidden === false || level3Section.hidden === false || level4Section.hidden === false || level5Section.hidden === false);
+          backButton.hidden = !(level2Section.hidden === false || level3Section.hidden === false || level4Section.hidden === false);
         };
 
         const revealFormFlow = () => {
@@ -4272,8 +4301,10 @@
 
         const finalizeSelection = (selection) => {
           pendingCategoryFlowSelection = selection;
+          window.__JETLE_CATEGORY_FLOW_SELECTION = selection;
           categoryField.value = selection.category;
           subCategoryField.value = selection.subcategory || "";
+          categoryField.dispatchEvent(new Event("change", { bubbles: true }));
           persistDraftSelection(selection);
           revealFormFlow();
         };
@@ -4284,6 +4315,7 @@
           const selection = buildSelectionFromDraft(draft);
           if (!draft || !selection) return false;
           pendingCategoryFlowSelection = selection;
+          window.__JETLE_CATEGORY_FLOW_SELECTION = selection;
           categoryField.value = selection.category;
           subCategoryField.value = selection.subcategory || "";
           revealFormFlow();
@@ -4302,41 +4334,15 @@
             <button type="button" class="category-flow-subcard" data-estate-subtype="${typeLabel.replace(/"/g, "&quot;")}">${typeLabel}</button>
           `).join("");
           level4Section.hidden = false;
-          resetColumn(level5Section, level5CardsWrap);
           level4CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
             button.addEventListener("click", () => {
               activeEstateSubtype = button.dataset.estateSubtype;
-              if (activeEstateCategoryKey === "konut" && activeEstateSubtype === "Daire") {
-                renderLevel5();
-                return;
-              }
               finalizeSelection({
                 category: "Emlak",
                 estateType: activeEstateCategoryKey,
                 listingIntent: activeEstateIntent,
                 subcategory: activeEstateSubtype,
                 housingType: ""
-              });
-            });
-          });
-          syncBackButton();
-        };
-
-        const renderLevel5 = () => {
-          const config = categoryFlowConfig.emlak;
-          level5Heading.textContent = config.level5Heading;
-          level5CardsWrap.innerHTML = config.level5.map((typeLabel) => `
-            <button type="button" class="category-flow-subcard" data-housing-type="${typeLabel.replace(/"/g, "&quot;")}">${typeLabel}</button>
-          `).join("");
-          level5Section.hidden = false;
-          level5CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
-            button.addEventListener("click", () => {
-              finalizeSelection({
-                category: "Emlak",
-                estateType: "konut",
-                listingIntent: activeEstateIntent,
-                subcategory: "Daire",
-                housingType: button.dataset.housingType || ""
               });
             });
           });
@@ -4352,11 +4358,10 @@
           `).join("");
           level3Section.hidden = false;
           resetColumn(level4Section, level4CardsWrap);
-          resetColumn(level5Section, level5CardsWrap);
           level3CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
             button.addEventListener("click", () => {
               activeEstateIntent = button.dataset.estateIntent;
-              if (activeEstateCategoryKey === "konut" || activeEstateCategoryKey === "arsa") {
+              if (activeEstateCategoryKey === "konut" || activeEstateCategoryKey === "arsa" || activeEstateCategoryKey === "isyeri") {
                 renderLevel4();
                 return;
               }
@@ -4390,7 +4395,6 @@
           level2Section.hidden = false;
           resetColumn(level3Section, level3CardsWrap);
           resetColumn(level4Section, level4CardsWrap);
-          resetColumn(level5Section, level5CardsWrap);
           level2CardsWrap.querySelectorAll(".category-flow-subcard").forEach((button) => {
             button.addEventListener("click", () => {
               if (categoryKey === "emlak") {
@@ -4417,7 +4421,6 @@
           resetColumn(level2Section, level2CardsWrap);
           resetColumn(level3Section, level3CardsWrap);
           resetColumn(level4Section, level4CardsWrap);
-          resetColumn(level5Section, level5CardsWrap);
           cardsWrap.querySelectorAll(".category-flow-card[data-category-key]").forEach((card) => {
             card.classList.remove("is-active");
           });
@@ -4429,12 +4432,6 @@
         });
 
         backButton.addEventListener("click", () => {
-          if (!level5Section.hidden) {
-            resetColumn(level5Section, level5CardsWrap);
-            activeEstateSubtype = "";
-            syncBackButton();
-            return;
-          }
           if (!level4Section.hidden) {
             resetColumn(level4Section, level4CardsWrap);
             activeEstateIntent = "";

@@ -1,2 +1,12 @@
 node_modules
 .tmp-edge-debug-escalated/
+.tmp*/
+.tmp*
+tmp-*
+jetle-online/.tmp*
+jetle-online/backend/.env
+jetle-online/backend/*.log
+jetle-online/backend/*.err.log
+jetle-online/backend/*.out.log
+jetle-online/backend/uploads/*
+!jetle-online/backend/uploads/.gitkeep
