@@ -3587,7 +3587,7 @@
   <div id="damageTooltip" class="damage-tooltip"></div>
 
   <script src="/cities.js"></script>
-  <script src="/create-listing.js"></script>
+  <script src="/create-listing.js?v=20260610-2"></script>
   <script>
     (function () {
       const form = document.getElementById("createForm");
@@ -3605,11 +3605,33 @@
       const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
       const FEATURE_STATE_KEY = "jetle-create-listing-v3-feature-state";
       const FEATURE_PANEL_KEY = "jetle-create-listing-v3-feature-panels";
+      const APARTMENT_HOUSING_TYPE_OPTIONS = new Set([
+        "Dubleks",
+        "Ara Kat Dubleks",
+        "Çatı Dubleksi",
+        "Bahçe Dubleksi",
+        "Ters Dubleks",
+        "Tripleks",
+        "Triplex",
+        "Loft",
+        "Ara Kat",
+        "En Üst Kat"
+      ]);
+
+      function normalizeApartmentHousingType(value) {
+        const text = String(value || "").trim();
+        return APARTMENT_HOUSING_TYPE_OPTIONS.has(text) ? text : "";
+      }
 
       function readDraftObject() {
         try {
           const raw = localStorage.getItem(LISTING_DRAFT_KEY);
-          return raw ? JSON.parse(raw) : null;
+          const draft = raw ? JSON.parse(raw) : null;
+          if (!draft || typeof draft !== "object") return draft;
+          if (Object.prototype.hasOwnProperty.call(draft, "housingType")) {
+            draft.housingType = normalizeApartmentHousingType(draft.housingType);
+          }
+          return draft;
         } catch (error) {
           return null;
         }
@@ -3624,7 +3646,7 @@
             subCategory: selection?.subcategory || current.subCategory || "",
             estateType: selection?.estateType || current.estateType || "",
             estateListingIntent: selection?.listingIntent || current.estateListingIntent || "",
-            housingType: selection?.housingType || current.housingType || "",
+            housingType: normalizeApartmentHousingType(selection?.housingType || current.housingType || ""),
             step: current.step || 1,
             updatedAt: Date.now()
           };
@@ -3641,7 +3663,7 @@
               estateType: "konut",
               listingIntent: draft.estateListingIntent || "Satılık",
               subcategory: draft.subCategory,
-              housingType: draft.housingType || ""
+              housingType: normalizeApartmentHousingType(draft.housingType || "")
             };
           }
           if (draft.estateType === "arsa") {
@@ -4231,8 +4253,11 @@
             zoningStatusField.dispatchEvent(new Event("change", { bubbles: true }));
           }
           if (housingTypeField) {
-            if (housingType) {
-              housingTypeField.value = housingType;
+            const normalizedHousingType = normalizeApartmentHousingType(housingType);
+            if (normalizedHousingType) {
+              housingTypeField.value = normalizedHousingType;
+            } else if (subcategory === "Daire") {
+              housingTypeField.value = "";
             } else if (subcategory !== "Daire") {
               housingTypeField.value = "";
             }

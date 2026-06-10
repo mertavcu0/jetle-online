@@ -411,7 +411,7 @@
   const editListingId = String(pageParams.get("edit") || "").trim();
   const isEditMode = Boolean(editListingId);
   const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
-  const HOUSING_TYPE_OPTIONS = ["Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Triplex", "Loft", "Ara Kat", "En Üst Kat"];
+  const HOUSING_TYPE_OPTIONS = ["Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Tripleks", "Loft", "Ara Kat", "En Üst Kat"];
 
   let currentStep = 0;
   let isRendering = false;
