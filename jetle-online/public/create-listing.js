@@ -249,7 +249,12 @@
     const fallbackElement = namedElements.length ? null : document.getElementById(name);
     const targets = fallbackElement ? [...namedElements, fallbackElement] : namedElements;
     if (!targets.length) return;
-    const normalizedValue = name === "price" || name === "km" ? formatThousands(value) : (value ?? "");
+    const normalizedValue =
+      name === "price" || name === "km"
+        ? formatThousands(value)
+        : name === "fuel"
+          ? normalizeFuelValue(value)
+          : (value ?? "");
     targets.forEach((el) => {
       el.value = normalizedValue;
     });
@@ -395,7 +400,7 @@
   const damageTooltip = $("damageTooltip");
   const token = localStorage.getItem("token");
   const MAX_PHOTOS = 30;
-  const fuelOptions = ["Benzin", "Dizel", "LPG", "Hibrit", "Elektrik"];
+  const fuelOptions = ["Benzin", "Benzin & LPG", "LPG", "Dizel", "Hibrit", "Elektrikli"];
   const transmissionOptions = ["Manuel", "Otomatik", "Yarı Otomatik"];
   const bodyTypes = ["Sedan", "Hatchback", "SUV", "Coupe", "Pickup", "Minivan", "Station Wagon"];
   const colors = ["Beyaz", "Siyah", "Gri", "Kırmızı", "Mavi"];
@@ -412,6 +417,24 @@
   const isEditMode = Boolean(editListingId);
   const LISTING_DRAFT_KEY = "jetle-create-listing-v3-draft";
   const HOUSING_TYPE_OPTIONS = ["Dubleks", "Ara Kat Dubleks", "Çatı Dubleksi", "Bahçe Dubleksi", "Ters Dubleks", "Tripleks", "Loft", "Ara Kat", "En Üst Kat"];
+
+  function normalizeFuelValue(value) {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    const normalized = text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ı/g, "i");
+
+    if (normalized === "benzin" || normalized === "benzinli") return "Benzin";
+    if (normalized === "benzin & lpg" || normalized === "benzin-lpg" || normalized === "benzin ve lpg") return "Benzin & LPG";
+    if (normalized === "lpg") return "LPG";
+    if (normalized === "dizel") return "Dizel";
+    if (normalized === "hibrit") return "Hibrit";
+    if (normalized === "elektrik" || normalized === "elektrikli") return "Elektrikli";
+    return text;
+  }
 
   let currentStep = 0;
   let isRendering = false;
@@ -836,8 +859,8 @@
   }
 
   function syncVehicleFuelFields() {
-    const fuelValue = safeVal("fuel");
-    const isElectric = fuelValue === "Elektrik";
+    const fuelValue = normalizeFuelValue(safeVal("fuel"));
+    const isElectric = fuelValue === "Elektrikli";
     const isHybrid = fuelValue === "Hibrit";
 
     dynamicFields?.querySelectorAll(".vehicle-fuel-group").forEach((group) => {

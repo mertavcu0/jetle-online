@@ -444,6 +444,48 @@
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
+    .main-video-stage {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #0f172a;
+      z-index: 1;
+    }
+
+    .main-video-stage.active {
+      display: block;
+    }
+
+    .main-video-stage .listing-video-frame {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      border: 0;
+      border-radius: 0;
+      background: #0f172a;
+    }
+
+    .main-video-stage .listing-video-link {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      margin-top: 0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      color: #ffffff;
+      z-index: 2;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(6px);
+    }
+
+    .main-video-stage .listing-video-link:hover {
+      text-decoration: underline;
+      background: rgba(15, 23, 42, 0.84);
+    }
+
     .image-container {
       position: relative;
     }
@@ -548,18 +590,37 @@
       padding: 0;
     }
 
+    #thumbnails .media-thumb,
+    .gallery .media-thumb,
     #thumbnails img,
     .gallery img {
       width: 100%;
       height: 58px;
-      object-fit: cover;
       cursor: pointer;
       border-radius: 4px;
       border: 2px solid rgba(148,163,184,0.18);
       background: #e5e7eb;
       transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      overflow: hidden;
     }
 
+    #thumbnails img,
+    .gallery img {
+      object-fit: cover;
+      display: block;
+    }
+
+    #thumbnails .media-thumb,
+    .gallery .media-thumb {
+      position: relative;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #thumbnails .media-thumb:hover,
+    .gallery .media-thumb:hover,
     #thumbnails img:hover,
     .gallery img:hover {
       border-color: rgba(37,99,235,0.72);
@@ -568,11 +629,28 @@
       filter: saturate(1.02);
     }
 
+    #thumbnails .media-thumb.active,
+    .gallery .media-thumb.active,
     #thumbnails img.active,
     .gallery img.active {
       border-color: #2563eb;
       box-shadow: 0 0 0 3px rgba(37,99,235,0.22);
       transform: translateY(-1px);
+    }
+
+    .media-thumb-video {
+      background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .media-thumb-video::before {
+      content: "▶";
+      font-size: 14px;
+      margin-right: 6px;
+      line-height: 1;
     }
 
     .thumb-pager {
@@ -2694,6 +2772,19 @@
           <div class="slider image-container">
             <button id="prev" type="button" aria-label="Önceki fotoğraf">&lsaquo;</button>
             <img id="mainImage" class="main-img main-image" src="" alt="İlan fotoğrafı">
+            <div id="mainVideoStage" class="main-video-stage" hidden>
+              <div class="listing-video-frame">
+                <iframe
+                  id="mainVideoFrame"
+                  src=""
+                  title="İlan videosu"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <a id="mainVideoLink" class="listing-video-link" href="#" target="_blank" rel="noopener noreferrer">Videoyu yeni sekmede aç</a>
+            </div>
             <button id="next" type="button" aria-label="Sonraki fotoğraf">&rsaquo;</button>
             <button id="detailFavoriteBtn" class="fav-btn" type="button">
               ♡
@@ -2718,22 +2809,6 @@
                 <h3>Açıklama</h3>
               </div>
               <p id="descText"></p>
-              <div id="listingVideoSection" class="listing-video-card" hidden>
-                <div class="section-card-head">
-                  <h3>Video</h3>
-                </div>
-                <div class="listing-video-frame">
-                  <iframe
-                    id="listingVideoFrame"
-                    src=""
-                    title="İlan videosu"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen
-                  ></iframe>
-                </div>
-                <a id="listingVideoLink" class="listing-video-link" href="#" target="_blank" rel="noopener noreferrer">Videoyu yeni sekmede aç</a>
-              </div>
               <div id="estateFeaturesInline" class="estate-inline-features" hidden></div>
             </div>
 
@@ -2995,8 +3070,10 @@
   <script>
     (function () {
       let images = [];
+      let mediaItems = [];
       let galleryImages = [];
       let currentIndex = 0;
+      let currentModalImageIndex = 0;
       let thumbPage = 0;
       let galleryModalOpen = false;
       let galleryModalBound = false;
@@ -3103,9 +3180,48 @@
         return uniqueMedia;
       }
 
+      function resolveVideoUrl(listing) {
+        const source = listing && typeof listing === "object" ? listing : {};
+        const rawValue = source.videoUrl || source.video || source.videoURL || source.videoLink || source.youtubeUrl;
+        if (rawValue == null) return "";
+        return String(rawValue).trim();
+      }
+
+      function getVideoEmbedUrl(rawUrl) {
+        if (!rawUrl || typeof rawUrl !== "string") return "";
+        const url = rawUrl.trim();
+        if (!url) return "";
+
+        try {
+          if (url.includes("youtube.com/embed/")) return url;
+
+          const parsed = new URL(url, window.location.origin);
+          const host = (parsed.hostname || "").toLocaleLowerCase("en-US");
+
+          if (host.includes("youtu.be")) {
+            const id = parsed.pathname.replace(/^\/+/, "").trim();
+            return id ? `https://www.youtube.com/embed/${id}` : "";
+          }
+
+          if (host.includes("youtube.com")) {
+            const id = parsed.searchParams.get("v");
+            if (id) return `https://www.youtube.com/embed/${id}`;
+            const embedMatch = parsed.pathname.match(/\/embed\/([^/?#]+)/i);
+            return embedMatch?.[1] ? `https://www.youtube.com/embed/${embedMatch[1]}` : "";
+          }
+
+          return url;
+        } catch (error) {
+          return url;
+        }
+      }
+
       function getGalleryElements() {
         return {
           main: document.getElementById("mainImage"),
+          mainVideoStage: document.getElementById("mainVideoStage"),
+          mainVideoFrame: document.getElementById("mainVideoFrame"),
+          mainVideoLink: document.getElementById("mainVideoLink"),
           thumbs: document.getElementById("thumbnails"),
           prev: document.getElementById("prev"),
           next: document.getElementById("next"),
@@ -3124,6 +3240,13 @@
         const safeTotal = total || 1;
         const safeIndex = typeof index === "number" ? index + 1 : 1;
         return `${safeIndex}/${safeTotal}`;
+      }
+
+      function formatMediaCounter(index, total, item) {
+        if (item?.type === "video") {
+          return total > 1 ? `Video (${index + 1}/${total})` : "Video";
+        }
+        return formatGalleryCounter(index, total);
       }
 
       function isMobileThumbLayout() {
@@ -3247,12 +3370,13 @@
 
         if (thumbs) {
           const desktopPaged = thumbs.dataset.paged === "true";
-          const expectedPage = Math.floor(currentIndex / 8);
-          if (desktopPaged && expectedPage !== Number(thumbs.dataset.page || "0") && galleryImages.length) {
+          const { perPage } = getThumbGridConfig();
+          const expectedPage = Math.floor(currentIndex / perPage);
+          if (desktopPaged && expectedPage !== Number(thumbs.dataset.page || "0") && mediaItems.length) {
             thumbPage = expectedPage;
-            renderThumbStrip(thumbs, galleryImages, (index) => setMainImage(galleryImages, index), currentIndex);
+            renderThumbStrip(thumbs, mediaItems, (index) => setMainImage(mediaItems, index), currentIndex);
           }
-          thumbs.querySelectorAll("img").forEach((thumb, index) => {
+          thumbs.querySelectorAll(".media-thumb").forEach((thumb, index) => {
             const absoluteIndex = Number(thumb.dataset.index ?? index);
             thumb.classList.toggle("active", absoluteIndex === currentIndex);
           });
@@ -3306,9 +3430,16 @@
       }
 
       function syncMainImage(src) {
-        const { main } = getGalleryElements();
+        const { main, mainVideoStage, mainVideoFrame, mainVideoLink } = getGalleryElements();
         const noImageText = getNoImageText();
         if (!main) return;
+
+        if (mainVideoFrame) mainVideoFrame.src = "";
+        if (mainVideoLink) mainVideoLink.href = "#";
+        if (mainVideoStage) {
+          mainVideoStage.hidden = true;
+          mainVideoStage.classList.remove("active");
+        }
 
         main.onload = () => {
           console.log("MAIN_IMAGE_LOADED_SRC", main.src);
@@ -3332,8 +3463,25 @@
         logGalleryLayout("after-main-src-set", { src });
       }
 
+      function syncMainVideo(item) {
+        const { main, mainVideoStage, mainVideoFrame, mainVideoLink } = getGalleryElements();
+        const noImageText = getNoImageText();
+        if (!main || !mainVideoStage || !mainVideoFrame || !mainVideoLink) return;
+
+        main.removeAttribute("src");
+        main.style.display = "none";
+        main.onclick = null;
+        main.style.cursor = "default";
+        if (noImageText) noImageText.style.display = "none";
+
+        mainVideoStage.hidden = false;
+        mainVideoStage.classList.add("active");
+        mainVideoFrame.src = item?.embedUrl || "";
+        mainVideoLink.href = item?.url || "#";
+      }
+
       function syncModalImage(src) {
-        const { modalImage, modalBottomCounter, imageCount } = getGalleryElements();
+        const { modalImage, modalBottomCounter } = getGalleryElements();
         if (!modalImage) return;
 
         galleryZoomed = false;
@@ -3343,9 +3491,6 @@
         const counterText = formatGalleryCounter(currentIndex, galleryImages.length || 1);
         if (modalBottomCounter) {
           modalBottomCounter.textContent = counterText;
-        }
-        if (imageCount) {
-          imageCount.textContent = counterText;
         }
       }
 
@@ -3390,33 +3535,37 @@
       function setMainImage(media, index) {
         if (!Array.isArray(media) || !media.length) return;
         currentIndex = ((index % media.length) + media.length) % media.length;
-        const src = media[currentIndex];
+        const item = media[currentIndex];
         const { imageCount } = getGalleryElements();
 
         logGalleryLayout("before-setMainImage", {
           requestedIndex: index,
           currentIndex,
-          src
+          item
         });
-        syncMainImage(src);
+        if (item?.type === "video") {
+          syncMainVideo(item);
+        } else {
+          syncMainImage(item?.src || item);
+        }
         if (imageCount) {
-          imageCount.textContent = formatGalleryCounter(currentIndex, media.length);
+          imageCount.textContent = formatMediaCounter(currentIndex, media.length, item);
         }
         updateSelectedThumbs();
         preloadAdjacentImages();
         logGalleryLayout("after-setMainImage", {
           requestedIndex: index,
           currentIndex,
-          src
+          item
         });
 
-        if (galleryModalOpen) {
-          syncModalImage(src);
+        if (galleryModalOpen && item?.type === "image") {
+          syncModalImage(item?.src || item);
         }
 
         logMedia("DETAIL_IMAGE_RENDER_OK", {
           currentIndex,
-          src,
+          item,
           count: media.length
         });
       }
@@ -3429,7 +3578,7 @@
         root.dataset.page = "0";
         const preservePage = Boolean(options.preservePage);
 
-        let items = media.map((src, index) => ({ src, index }));
+        let items = media.map((item, index) => ({ item, index }));
         if (root.id === "thumbnails") {
           const { perPage } = getThumbGridConfig();
           const totalPages = Math.max(1, Math.ceil(media.length / perPage));
@@ -3442,15 +3591,25 @@
           root.dataset.page = String(thumbPage);
         }
 
-        items.forEach(({ src, index }) => {
-          const thumb = document.createElement("img");
-          thumb.src = src;
-          thumb.alt = `Küçük görsel ${index + 1}`;
-          thumb.loading = "lazy";
-          thumb.decoding = "async";
+        items.forEach(({ item, index }) => {
+          const isVideo = item?.type === "video";
+          const thumb = document.createElement(isVideo ? "button" : "img");
+          thumb.classList.add("media-thumb");
           thumb.dataset.index = String(index);
           if (index === activeIndex) thumb.classList.add("active");
-          thumb.onerror = () => thumb.remove();
+          if (isVideo) {
+            thumb.type = "button";
+            thumb.classList.add("media-thumb-video");
+            thumb.textContent = "Video";
+            thumb.setAttribute("aria-label", "Video küçük görseli");
+          } else {
+            const src = item?.src || item;
+            thumb.src = src;
+            thumb.alt = `Küçük görsel ${index + 1}`;
+            thumb.loading = "lazy";
+            thumb.decoding = "async";
+            thumb.onerror = () => thumb.remove();
+          }
           thumb.addEventListener("click", () => {
             clickHandler(index);
             logMedia("THUMBNAIL_NAVIGATION_OK", {
@@ -3477,17 +3636,52 @@
         exitGalleryFullscreen();
       }
 
+      function getImageModalIndexFromMediaIndex(index) {
+        if (!Array.isArray(mediaItems) || !mediaItems.length) return -1;
+        const target = mediaItems[index];
+        if (!target || target.type !== "image") return -1;
+        let imageIndex = -1;
+        for (let i = 0; i <= index; i += 1) {
+          if (mediaItems[i]?.type === "image") imageIndex += 1;
+        }
+        return imageIndex;
+      }
+
+      function getMediaIndexFromImageModalIndex(index) {
+        if (!Array.isArray(mediaItems) || !mediaItems.length) return -1;
+        let imageIndex = -1;
+        for (let i = 0; i < mediaItems.length; i += 1) {
+          if (mediaItems[i]?.type === "image") imageIndex += 1;
+          if (imageIndex === index) return i;
+        }
+        return -1;
+      }
+
+      function setModalImageByIndex(index) {
+        if (!galleryImages.length) return;
+        currentModalImageIndex = ((index % galleryImages.length) + galleryImages.length) % galleryImages.length;
+        syncModalImage(galleryImages[currentModalImageIndex]);
+        const mediaIndex = getMediaIndexFromImageModalIndex(currentModalImageIndex);
+        if (mediaIndex >= 0) {
+          currentIndex = mediaIndex;
+          updateSelectedThumbs();
+        }
+      }
+
       function openGalleryModal(index) {
         const { modal } = getGalleryElements();
-        if (!modal || !galleryImages.length) return;
+        const imageIndex = typeof index === "number" ? getImageModalIndexFromMediaIndex(index) : getImageModalIndexFromMediaIndex(currentIndex);
+        if (!modal || !galleryImages.length || imageIndex < 0) return;
         galleryModalOpen = true;
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
-        setMainImage(galleryImages, typeof index === "number" ? index : currentIndex);
+        currentModalImageIndex = imageIndex;
+        syncModalImage(galleryImages[imageIndex]);
+        updateSelectedThumbs();
         logMedia("LIGHTBOX_READY", {
           count: galleryImages.length,
-          currentIndex
+          currentIndex: imageIndex
         });
         logMedia("MARKETPLACE_GALLERY_EXPERIENCE_OK", {
           count: galleryImages.length,
@@ -3533,8 +3727,8 @@
         const { modal, modalPrev, modalNext, modalClose, modalThumbs, modalImage } = getGalleryElements();
         if (!modal) return;
 
-        modalPrev?.addEventListener("click", () => setMainImage(galleryImages, currentIndex - 1));
-        modalNext?.addEventListener("click", () => setMainImage(galleryImages, currentIndex + 1));
+        modalPrev?.addEventListener("click", () => setModalImageByIndex(currentModalImageIndex - 1));
+        modalNext?.addEventListener("click", () => setModalImageByIndex(currentModalImageIndex + 1));
         modalClose?.addEventListener("click", closeGalleryModal);
 
         modal.addEventListener("click", (event) => {
@@ -3554,12 +3748,12 @@
           }
           if (event.key === "ArrowLeft") {
             event.preventDefault();
-            setMainImage(galleryImages, currentIndex - 1);
+            setModalImageByIndex(currentModalImageIndex - 1);
             return;
           }
           if (event.key === "ArrowRight") {
             event.preventDefault();
-            setMainImage(galleryImages, currentIndex + 1);
+            setModalImageByIndex(currentModalImageIndex + 1);
           }
         });
 
@@ -3569,32 +3763,47 @@
             if (!target) return;
             const thumbs = Array.from(modalThumbs.querySelectorAll("img"));
             const index = thumbs.indexOf(target);
-            if (index >= 0) setMainImage(galleryImages, index);
+            if (index >= 0) setModalImageByIndex(index);
           });
         }
       }
 
       async function renderGallery(input) {
+        const listing = input && typeof input === "object" && !Array.isArray(input) ? input : null;
         const rawMedia = Array.isArray(input) ? input.slice() : resolveMedia(input);
         const media = await filterRenderableMedia(rawMedia);
-        const { main, thumbs, prev, next, imageCount, modalThumbs, modalImage } = getGalleryElements();
+        const videoUrl = resolveVideoUrl(listing);
+        const videoEmbedUrl = getVideoEmbedUrl(videoUrl);
+        const items = media.map((src) => ({ type: "image", src }));
+        if (videoUrl && videoEmbedUrl) {
+          items.push({ type: "video", url: videoUrl, embedUrl: videoEmbedUrl });
+        }
+        const { main, thumbs, prev, next, imageCount, modalThumbs, modalImage, mainVideoStage, mainVideoFrame, mainVideoLink } = getGalleryElements();
         const noImageText = getNoImageText();
 
         images = media.slice();
+        mediaItems = items.slice();
         galleryImages = media.slice();
         currentIndex = 0;
+        currentModalImageIndex = 0;
         thumbPage = 0;
 
         if (imageCount) {
-          imageCount.textContent = media.length ? formatGalleryCounter(0, media.length) : "Fotoğraf yok";
+          imageCount.textContent = items.length ? formatMediaCounter(0, items.length, items[0]) : "Fotoğraf yok";
         }
 
-        if (!media.length) {
+        if (!items.length) {
           if (main) {
             main.removeAttribute("src");
             main.style.display = "none";
             main.onclick = null;
             main.style.cursor = "default";
+          }
+          if (mainVideoFrame) mainVideoFrame.src = "";
+          if (mainVideoLink) mainVideoLink.href = "#";
+          if (mainVideoStage) {
+            mainVideoStage.hidden = true;
+            mainVideoStage.classList.remove("active");
           }
           if (modalImage) modalImage.removeAttribute("src");
           if (thumbs) thumbs.innerHTML = "";
@@ -3607,39 +3816,38 @@
           return;
         }
 
-        renderThumbStrip(thumbs, media, (index) => setMainImage(media, index), 0);
-        renderThumbStrip(modalThumbs, media, (index) => setMainImage(media, index), 0);
+        renderThumbStrip(thumbs, items, (index) => setMainImage(items, index), 0);
+        renderThumbStrip(modalThumbs, media.map((src) => ({ type: "image", src })), (index) => setModalImageByIndex(index), 0);
 
         if (prev) {
-          prev.style.display = "";
-          prev.onclick = () => setMainImage(media, currentIndex - 1);
+          prev.style.display = items.length > 1 ? "" : "none";
+          prev.onclick = () => setMainImage(items, currentIndex - 1);
         }
 
         if (next) {
-          next.style.display = "";
-          next.onclick = () => setMainImage(media, currentIndex + 1);
+          next.style.display = items.length > 1 ? "" : "none";
+          next.onclick = () => setMainImage(items, currentIndex + 1);
         }
 
         if (main) {
           bindSwipeSurface(main);
-          main.onclick = () => openGalleryModal(currentIndex);
         }
 
-        galleryShowImage = (index) => setMainImage(media, index);
+        galleryShowImage = (index) => setMainImage(items, index);
         bindGalleryModalEvents();
         if (!window.__jetleThumbResizeBound) {
           window.__jetleThumbResizeBound = true;
           window.addEventListener("resize", () => {
             const { thumbs } = getGalleryElements();
-            if (!thumbs || !galleryImages.length) return;
-            renderThumbStrip(thumbs, galleryImages, (index) => setMainImage(galleryImages, index), currentIndex);
+            if (!thumbs || !mediaItems.length) return;
+            renderThumbStrip(thumbs, mediaItems, (index) => setMainImage(mediaItems, index), currentIndex);
           });
         }
-        setMainImage(media, 0);
+        setMainImage(items, 0);
 
         logMedia("MARKETPLACE_GALLERY_OK", {
-          count: media.length,
-          primary: media[0],
+          count: items.length,
+          primary: items[0],
           thumbnailsReady: Boolean(thumbs?.childElementCount),
           modalThumbsReady: Boolean(modalThumbs?.childElementCount)
         });
@@ -4418,7 +4626,7 @@
           techModel: listing.model,
           techYear: listing.year,
           techKm: listing.km,
-          techFuel: listing.fuel,
+          techFuel: normalizeVehicleFuelDisplay(listing.fuel),
           techEngine: listing.engineSize || listing.engineVolume || listing.engine,
           techTransmission: listing.transmission,
           techBodyType: listing.bodyType || listing.body,
@@ -4560,6 +4768,24 @@
           .replace(/\bMlkiyetli\b/gi, "Mülkiyetli")
           .replace(/\bYapimina\b/gi, "Yapımına")
           .replace(/\bYatirima\b/gi, "Yatırıma");
+      }
+
+      function normalizeVehicleFuelDisplay(value) {
+        const text = formatField(value);
+        if (!text) return "";
+        const normalized = text
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/ı/g, "i");
+
+        if (normalized === "benzin" || normalized === "benzinli") return "Benzin";
+        if (normalized === "benzin & lpg" || normalized === "benzin-lpg" || normalized === "benzin ve lpg") return "Benzin & LPG";
+        if (normalized === "lpg") return "LPG";
+        if (normalized === "dizel") return "Dizel";
+        if (normalized === "hibrit") return "Hibrit";
+        if (normalized === "elektrik" || normalized === "elektrikli") return "Elektrikli";
+        return text;
       }
 
       function normalizeSubtypeKey(value) {
@@ -4746,16 +4972,6 @@
         return text;
       }
 
-      function getVideoEmbedUrl(url) {
-        const text = formatField(url);
-        if (!text) return "";
-        const youtubeMatch = text.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&#?/]+)/i);
-        if (youtubeMatch?.[1]) {
-          return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
-        }
-        return "";
-      }
-
       const apartmentHousingTypeOptions = [
         "Dubleks",
         "Ara Kat Dubleks",
@@ -4777,20 +4993,8 @@
 
       function renderListingVideo(listing) {
         const section = document.getElementById("listingVideoSection");
-        const frame = document.getElementById("listingVideoFrame");
-        const link = document.getElementById("listingVideoLink");
-        if (!section || !frame || !link) return;
-        const url = formatField(listing?.videoUrl);
-        const embedUrl = getVideoEmbedUrl(url);
-        if (!url || !embedUrl) {
-          section.hidden = true;
-          frame.src = "";
-          link.href = "#";
-          return;
-        }
-        section.hidden = false;
-        frame.src = embedUrl;
-        link.href = url;
+        if (!section) return;
+        section.hidden = true;
       }
 
       function forceEstateRow(rowId, value) {
@@ -5933,7 +6137,7 @@
         setRowValue("modelRow", listing.model);
         setRowValue("yearRow", listing.year);
         setRowValue("kmRow", listing.km);
-        setRowValue("fuelRow", listing.fuel);
+        setRowValue("fuelRow", normalizeVehicleFuelDisplay(listing.fuel));
         setRowValue("transmissionRow", listing.transmission);
         setRowValue("bodyTypeRow", listing.bodyType || listing.body);
         setRowValue("engineSizeRow", listing.engineSize || listing.engineVolume || listing.engine);
@@ -6019,7 +6223,7 @@
             model: pickField(listing, ["model", "modelAdi", "ilanModel"]),
             year: pickField(listing, ["year", "yil"]),
             km: pickField(listing, ["km", "kilometre", "kilometer"]),
-            fuel: pickField(listing, ["fuel", "yakit"]),
+            fuel: normalizeVehicleFuelDisplay(pickField(listing, ["fuel", "yakit"])),
             transmission: pickField(listing, ["transmission", "vites", "gear"]),
             engineSize: pickField(listing, ["engineSize", "engineVolume", "engine", "motor"]),
             traction: pickField(listing, ["traction", "driveType", "cekis", "wheelDrive"]),

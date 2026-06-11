@@ -48,58 +48,69 @@
     }
 
     .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
       font-size: 20px;
       font-weight: 800;
       text-decoration: none;
+      letter-spacing: -0.2px;
     }
 
-    .topbar .topbar-inner .logo .logo-blue {
+    .logo .brand-wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
+    }
+
+    .topbar .topbar-inner .logo .brand-jetle {
       color: #2563eb !important;
+      text-transform: lowercase;
     }
 
-    .topbar .topbar-inner .logo .logo-dark {
+    .topbar .topbar-inner .logo .brand-online {
       color: #111827 !important;
     }
 
     .page,
     .full-listings-layout {
       display: grid;
-      grid-template-columns: 296px minmax(0, 1fr);
+      grid-template-columns: 220px minmax(0, 1fr);
       max-width: 1720px;
       width: min(1720px, calc(100% - 72px));
       margin: 0 auto 20px;
-      gap: 28px;
+      gap: 18px;
       padding: 0 8px;
       align-items: start;
     }
 
     .sidebar {
       background: #fff;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 10px;
+      border-radius: 6px;
       border: 1px solid #e5e7eb;
       height: fit-content;
       position: sticky;
       top: 18px;
-      width: 296px;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+      width: 220px;
+      box-shadow: none;
     }
 
     .sidebar h3 {
       margin: 0 0 8px;
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 800;
     }
 
     .filter-stack {
       display: grid;
-      gap: 6px;
+      gap: 5px;
     }
 
     .filter-section {
       border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      background: #fcfcfd;
+      border-radius: 8px;
+      background: #fff;
       overflow: hidden;
     }
 
@@ -110,9 +121,9 @@
 
     .filter-summary {
       list-style: none;
-      padding: 7px 9px;
+      padding: 8px 10px;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
       color: #111827;
       display: flex;
@@ -136,14 +147,14 @@
     }
 
     .filter-body {
-      padding: 0 9px 9px;
+      padding: 0 10px 10px;
       border-top: 1px solid #eef2f7;
     }
 
     .sidebar label {
       display: block;
       margin-top: 6px;
-      font-size: 9.5px;
+      font-size: 11px;
       font-weight: 600;
       color: #374151;
     }
@@ -151,13 +162,14 @@
     .sidebar input,
     .sidebar select {
       width: 100%;
-      padding: 5px 8px;
+      padding: 6px 8px;
       margin-top: 3px;
-      min-height: 30px;
-      border-radius: 5px;
+      min-height: 35px;
+      border-radius: 4px;
       border: 1px solid #d1d5db;
       outline: none;
       background: #fff;
+      font-size: 13px;
     }
 
     .sidebar input:focus,
@@ -174,14 +186,15 @@
     .sidebar button {
       margin-top: 8px;
       width: 100%;
-      padding: 7px 10px;
+      min-height: 36px;
+      padding: 8px 10px;
       background: #2563eb;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
-      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+      box-shadow: none;
     }
 
     .category-links {
@@ -192,13 +205,13 @@
 
     .category-links a {
       display: block;
-      padding: 9px 11px;
+      padding: 8px 10px;
       border-radius: 6px;
       background: #fff;
       border: 1px solid transparent;
       color: #374151;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       border-left: 3px solid transparent;
       transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
@@ -220,20 +233,24 @@
 
     .subcategory-panel {
       margin: 8px 0 12px;
-      padding: 10px;
+      padding: 8px;
       border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      background: #f9fafb;
+      border-radius: 6px;
+      background: #fff;
     }
 
     .subcategory-panel[hidden] {
       display: none;
     }
 
+    .filter-section[hidden] {
+      display: none;
+    }
+
     .subcategory-title {
       margin: 0 0 8px;
       color: #111827;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.02em;
@@ -244,16 +261,39 @@
       gap: 4px;
     }
 
+    .subcategory-group {
+      display: grid;
+      gap: 4px;
+      padding-top: 2px;
+    }
+
+    .subcategory-group + .subcategory-group {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #eef2f7;
+    }
+
+    .subcategory-group-title {
+      color: #111827;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .subcategory-group-links {
+      display: grid;
+      gap: 4px;
+    }
+
     .subcategory-links a {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 8px 10px;
+      padding: 7px 9px;
       border-radius: 6px;
       color: #4b5563;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       border: 1px solid transparent;
       transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
@@ -446,22 +486,22 @@
 
     .listing-table.vasita .listing-table-header,
     .listing-table.vasita .listing-row {
-      grid-template-columns: 182px 138px minmax(360px, 1fr) 58px 78px 68px 146px 96px 116px;
+      grid-template-columns: 134px 122px minmax(340px, 1fr) 54px 70px 62px 126px 90px 106px;
     }
 
     .listing-table.emlak .listing-table-header,
     .listing-table.emlak .listing-row {
-      grid-template-columns: 182px minmax(400px, 1fr) 76px 76px 146px 96px 116px;
+      grid-template-columns: 130px minmax(320px, 1fr) 70px 75px 120px 90px 110px;
     }
 
     .listing-table.diger .listing-table-header,
     .listing-table.diger .listing-row {
-      grid-template-columns: 182px minmax(420px, 1fr) 112px 146px 96px 116px;
+      grid-template-columns: 134px minmax(400px, 1fr) 100px 126px 90px 106px;
     }
 
     .listing-table.showcase .listing-table-header,
     .listing-table.showcase .listing-row {
-      grid-template-columns: 182px minmax(420px, 1fr) 146px 96px 116px;
+      grid-template-columns: 134px minmax(400px, 1fr) 126px 90px 106px;
     }
 
     .listing-table-header {
@@ -478,8 +518,8 @@
 
     .listing-row {
       background: #fff;
-      min-height: 124px;
-      padding: 7px 7px;
+      min-height: 100px;
+      padding: 4px 5px;
       border-bottom: 1px solid #d7dee8;
       cursor: pointer;
       transition: background-color 0.15s ease, transform 0.15s ease;
@@ -496,10 +536,15 @@
 
     .listing-cell {
       min-width: 0;
-      padding: 0 4px;
+      padding: 0 3px;
       font-size: 12px;
       color: #374151;
       overflow: hidden;
+    }
+
+    .listing-table-header .listing-cell + .listing-cell,
+    .listing-row .listing-cell + .listing-cell {
+      border-left: 1px solid #e5e7eb;
     }
 
     .listing-table-header .listing-cell,
@@ -520,8 +565,8 @@
 
     .listing-thumb-wrap {
       position: relative;
-      width: 170px;
-      height: 120px;
+      width: 125px;
+      height: 88px;
       overflow: hidden;
       border-radius: 4px;
       border: 1px solid #e5e7eb;
@@ -530,8 +575,8 @@
 
     .listing-photo,
     .listing-photo-placeholder {
-      width: 170px;
-      height: 118px;
+      width: 125px;
+      height: 88px;
       border-radius: 4px;
       object-fit: cover;
       display: block;
@@ -571,11 +616,11 @@
     }
 
     .listing-title {
-      color: #1f2937;
-      font-size: 18px;
-      font-weight: 800;
-      line-height: 1.28;
-      margin: 0 0 3px;
+      color: #0057b8;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.22;
+      margin: 0 0 2px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -584,13 +629,13 @@
     }
 
     .listing-row:hover .listing-title {
-      color: #1d4ed8;
+      color: #004b9b;
     }
 
     .listing-submeta {
       color: #7b8794;
       font-size: 10px;
-      line-height: 1.22;
+      line-height: 1.2;
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
@@ -614,13 +659,13 @@
     }
 
     .listing-price {
-      color: #1d4ed8;
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1.05;
+      color: #b91c1c;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1;
       white-space: nowrap;
       width: 100%;
-      text-align: right;
+      text-align: center;
     }
 
     .listing-grid.showcase-grid .listing-price {
@@ -832,9 +877,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 4px 8px;
+      padding: 3px 7px;
       border-radius: 999px;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.02em;
       text-transform: uppercase;
@@ -868,12 +913,12 @@
 
     .listing-price {
       margin: 0;
-      color: #2563eb;
-      font-weight: 800;
-      font-size: 19px;
-      line-height: 1.2;
+      color: #b91c1c;
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 1.1;
       white-space: nowrap;
-      text-align: right;
+      text-align: center;
     }
 
     .listing-date,
@@ -963,59 +1008,55 @@
       margin: 0;
     }
 
-    .jl-footer {
-      margin-top: 28px;
+    .footer {
       background: #fff;
+      margin-top: 24px;
+      padding: 28px 0 16px;
       border-top: 1px solid #e5e7eb;
     }
 
-    .jl-footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 16px 20px;
-    }
-
-    .jl-footer-grid {
+    .footer-container {
+      max-width: 1180px;
+      margin: auto;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      padding: 0 14px;
     }
 
-    .jl-footer-col h4 {
+    .footer-col h4 {
       margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-col li {
+      margin-bottom: 7px;
+      color: #6b7280;
       font-size: 13px;
-      font-weight: 800;
-      color: #111827;
     }
 
-    .jl-footer-links {
-      display: grid;
-      gap: 8px;
-    }
-
-    .jl-footer-links a,
-    .jl-footer-links span {
-      color: #4b5563;
+    .footer a {
+      display: block;
+      margin-bottom: 6px;
+      color: #444;
       text-decoration: none;
-      font-size: 12px;
-      line-height: 1.45;
     }
 
-    .jl-footer-links a:hover {
+    .footer a:hover {
       color: #2563eb;
     }
 
-    .jl-footer-bottom {
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px solid #f1f5f9;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+    .footer-bottom {
+      margin-top: 26px;
+      text-align: center;
       color: #6b7280;
       font-size: 12px;
-      flex-wrap: wrap;
     }
 
     @keyframes spin {
@@ -1072,12 +1113,17 @@
         display: none;
       }
 
+      .listing-row .listing-cell + .listing-cell,
+      .listing-table-header .listing-cell + .listing-cell {
+        border-left: 0;
+      }
+
       .listing-grid.showcase-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
       }
 
-      .jl-footer-grid {
+      .footer-container {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
@@ -1121,6 +1167,11 @@
         padding: 0;
       }
 
+      .listing-row .listing-cell + .listing-cell,
+      .listing-table-header .listing-cell + .listing-cell {
+        border-left: 0;
+      }
+
       .listing-photo,
       .listing-photo-placeholder {
         width: 100%;
@@ -1132,13 +1183,8 @@
         height: 190px;
       }
 
-      .jl-footer-grid {
+      .footer-container {
         grid-template-columns: 1fr;
-      }
-
-      .jl-footer-bottom {
-        flex-direction: column;
-        align-items: flex-start;
       }
     }
 
@@ -1249,9 +1295,7 @@
 <body>
   <div class="topbar">
     <div class="topbar-inner">
-      <a class="logo" href="/">
-        <span class="logo-blue">jetle</span><span class="logo-dark">.online</span>
-      </a>
+      <a class="logo" href="/"><span class="brand-wordmark"><span class="brand-jetle">jetle</span><span class="brand-online">.online</span></span></a>
       <div id="authArea"></div>
     </div>
   </div>
@@ -1264,10 +1308,10 @@
           <summary class="filter-summary">Kategori</summary>
           <div class="filter-body">
             <div class="category-links">
-              <a href="listings.html?category=emlak" data-category-link="emlak">Emlak (0)</a>
-              <a href="listings.html?category=vasita" data-category-link="vasita">Vasıta (0)</a>
-              <a href="listings.html?category=is-makineleri" data-category-link="is-makineleri">İş Makineleri (0)</a>
-              <a href="listings.html?category=yedek-parca" data-category-link="yedek-parca">Yedek Parça (0)</a>
+              <a href="listings.html?category=Emlak" data-category-link="emlak">Emlak (0)</a>
+              <a href="listings.html?category=Vasıta" data-category-link="vasita">Vasıta (0)</a>
+              <a href="listings.html?category=İş%20Makineleri" data-category-link="is-makineleri">İş Makineleri (0)</a>
+              <a href="listings.html?category=Yedek%20Parça" data-category-link="yedek-parca">Yedek Parça (0)</a>
             </div>
             <div id="subcategoryPanel" class="subcategory-panel" hidden>
               <div id="subcategoryTitle" class="subcategory-title">Alt Kategoriler</div>
@@ -1307,20 +1351,20 @@
           </div>
         </details>
 
-        <details class="filter-section">
+        <details class="filter-section" id="sellerTypeSection">
           <summary class="filter-summary">Satıcı Tipi</summary>
           <div class="filter-body">
             <label>Satıcı Türü</label>
-            <select disabled>
+            <select id="sellerTypeSelect" disabled>
               <option>Tümü</option>
               <option>Sahibinden</option>
-              <option>Galeriden</option>
-              <option>Yetkili Bayiden</option>
+              <option data-emlak-label="Emlak Ofisinden" data-vasita-label="Galeriden">Galeriden</option>
+              <option data-emlak-label="İnşaat Firmasından" data-vasita-label="Yetkili Bayiden">Yetkili Bayiden</option>
             </select>
           </div>
         </details>
 
-        <details class="filter-section">
+        <details class="filter-section" id="vehicleBrandModelSection">
           <summary class="filter-summary">Marka ve Model</summary>
           <div class="filter-body">
             <label>Marka</label>
@@ -1349,47 +1393,44 @@
     </main>
   </div>
 
-  <footer class="jl-footer">
-    <div class="jl-footer-inner">
-      <div class="jl-footer-grid">
-        <div class="jl-footer-col">
-          <h4>Hakkımızda</h4>
-          <div class="jl-footer-links">
-            <a href="/hakkimizda.html">Jetle Hakkında</a>
-            <a href="/account.html">Hesap Ayarları</a>
-            <a href="/dashboard.html">Benim İlanlarım</a>
-          </div>
-        </div>
-        <div class="jl-footer-col">
-          <h4>Hizmetlerimiz</h4>
-          <div class="jl-footer-links">
-            <a href="/create-listing.html">İlan Ver</a>
-            <a href="/listings.html?category=vasita">Vasıta İlanları</a>
-            <a href="/listings.html?category=emlak">Emlak İlanları</a>
-          </div>
-        </div>
-        <div class="jl-footer-col">
-          <h4>Gizlilik ve Kullanım</h4>
-          <div class="jl-footer-links">
-            <a href="/gizlilik.html">Gizlilik ve Kullanım</a>
-            <a href="/site-haritasi.html">Site Haritası</a>
-            <a href="/kvkk.html">KVKK Aydınlatma</a>
-          </div>
-        </div>
-        <div class="jl-footer-col">
-          <h4>Yardım ve İşlem Rehberi</h4>
-          <div class="jl-footer-links">
-            <a href="/yardim.html">Yardım ve İşlem Rehberi</a>
-            <a href="/guvenli-alisveris.html">Güvenli Alışveriş İpuçları</a>
-            <span>Bizi Takip Edin</span>
-          </div>
-        </div>
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="/ilan-ver.html">Ücretsiz İlan Ver</a></li>
+          <li><a href="/vitrin.html">Vitrin</a></li>
+          <li><a href="/one-cikanlar.html">Öne Çıkanlar</a></li>
+        </ul>
       </div>
-      <div class="jl-footer-bottom">
-        <span>Telif Hakkı © 2026 jetle.online</span>
-        <span>Jetle Online İlan Platformu</span>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="/iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yardım</h4>
+        <ul>
+          <li><a href="/yardim.html">Yardım Merkezi</a></li>
+          <li><a href="/guvenlik.html">Güvenlik</a></li>
+          <li><a href="/dolandiricilik.html">Dolandırıcılık Önleme</a></li>
+          <li><a href="/sss.html">Sık Sorulan Sorular</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Yasal</h4>
+        <ul>
+          <li><a href="/kullanim-sartlari.html">Kullanım Şartları</a></li>
+          <li><a href="/gizlilik.html">Gizlilik Politikası</a></li>
+          <li><a href="/kvkk.html">KVKK</a></li>
+          <li><a href="/cerez.html">Çerez Politikası</a></li>
+        </ul>
       </div>
     </div>
+    <div class="footer-bottom">© 2026 jetle.online - Tüm hakları saklıdır.</div>
   </footer>
 
   <script>(function(){function fix(t){if(typeof t!=="string")return t;if(!/[\u00C3\u00C2\u00C4\u00C5\uFFFD]/.test(t))return t;try{const bytes=Uint8Array.from(Array.from(t).map(ch=>ch.charCodeAt(0)&255));const next=new TextDecoder("utf-8").decode(bytes);return next&&next!==t?next.replace(/\uFFFD/g,""):t.replace(/\uFFFD/g,"");}catch{return t.replace(/\uFFFD/g,"")}}function walk(v){if(Array.isArray(v))return v.map(walk);if(v&&typeof v==="object"){const out={};for(const [k,val] of Object.entries(v))out[k]=walk(val);return out}return typeof v==="string"?fix(v).normalize("NFC"):v}for(const key of ["user","favs"]){try{const raw=localStorage.getItem(key);if(!raw)continue;localStorage.setItem(key,JSON.stringify(walk(JSON.parse(raw))))}catch{}}})();</script>
@@ -1402,6 +1443,8 @@
       const title = document.getElementById("pageTitle");
       const tabButtons = Array.from(document.querySelectorAll(".results-tab"));
       const categoryLinks = Array.from(document.querySelectorAll(".category-links a"));
+      const vehicleBrandModelSection = document.getElementById("vehicleBrandModelSection");
+      const sellerTypeSelect = document.getElementById("sellerTypeSelect");
       const titleMap = {
         emlak: "Emlak İlanları",
         vasita: "Vasıta İlanları",
@@ -1412,10 +1455,79 @@
       let currentSellerTab = "all";
       let lastRenderedListings = [];
       const pageSize = typeof PAGE_SIZE === "number" ? PAGE_SIZE : 20;
+      const estateCategoryTree = [
+        {
+          title: "Konut",
+          links: [
+            { label: "Konut", query: { category: "Emlak", estateType: "konut" } },
+            { label: "Satılık", query: { category: "Emlak", estateType: "konut", estateListingIntent: "Satılık" } },
+            { label: "Kiralık", query: { category: "Emlak", estateType: "konut", estateListingIntent: "Kiralık" } },
+            { label: "Daire", query: { category: "Emlak", estateType: "konut", subCategory: "Daire" } },
+            { label: "Residence", query: { category: "Emlak", estateType: "konut", subCategory: "Residence" } },
+            { label: "Müstakil Ev", query: { category: "Emlak", estateType: "konut", subCategory: "Müstakil Ev" } },
+            { label: "Villa", query: { category: "Emlak", estateType: "konut", subCategory: "Villa" } }
+          ]
+        },
+        {
+          title: "İş Yeri",
+          links: [
+            { label: "İş Yeri", query: { category: "Emlak", estateType: "isyeri" } },
+            { label: "Büro & Ofis", query: { category: "Emlak", estateType: "isyeri", workplaceType: "Büro & Ofis" } },
+            { label: "Dükkan & Mağaza", query: { category: "Emlak", estateType: "isyeri", workplaceType: "Dükkan & Mağaza" } },
+            { label: "Depo & Antrepo", query: { category: "Emlak", estateType: "isyeri", workplaceType: "Depo & Antrepo" } },
+            { label: "Fabrika & Üretim Tesisi", query: { category: "Emlak", estateType: "isyeri", workplaceType: "Fabrika & Üretim Tesisi" } }
+          ]
+        },
+        {
+          title: "Arsa",
+          links: [
+            { label: "Arsa", query: { category: "Emlak", estateType: "arsa" } },
+            { label: "Konut İmarlı", query: { category: "Emlak", estateType: "arsa", subCategory: "Konut İmarlı" } },
+            { label: "Ticari İmarlı", query: { category: "Emlak", estateType: "arsa", subCategory: "Ticari İmarlı" } },
+            { label: "Tarla", query: { category: "Emlak", estateType: "arsa", subCategory: "Tarla" } }
+          ]
+        }
+      ];
+
+      const normalizeSlug = (value) => String(value || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ı/g, "i")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+      const normalizeCategoryValue = (value) => {
+        const slug = normalizeSlug(value);
+        if (slug === "emlak") return "emlak";
+        if (["vasita", "otomobil", "arac", "araba"].includes(slug)) return "vasita";
+        if (["is-makineleri", "is-makinalari", "is-makinesi", "is-makinasi"].includes(slug)) return "is-makineleri";
+        if (["yedek-parca", "yedek-parca-ve-aksesuar", "yedek-parca-aksesuar"].includes(slug)) return "yedek-parca";
+        return slug;
+      };
+
+      const normalizeEstateTypeValue = (value) => {
+        const slug = normalizeSlug(value);
+        if (["konut"].includes(slug)) return "konut";
+        if (["arsa"].includes(slug)) return "arsa";
+        if (["isyeri", "is-yeri", "is-yerii", "is-yeri-ofis", "is-yeri-magaza"].includes(slug)) return "isyeri";
+        return slug;
+      };
+
+      const getQueryFilters = () => {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          category: normalizeCategoryValue(params.get("category") || ""),
+          estateType: normalizeEstateTypeValue(params.get("estateType") || ""),
+          subCategory: normalizeSlug(params.get("subCategory") || params.get("subcategory") || ""),
+          listingIntent: normalizeSlug(params.get("listingIntent") || params.get("estateListingIntent") || ""),
+          workplaceType: normalizeSlug(params.get("workplaceType") || "")
+        };
+      };
 
       const getActiveCategory = () => {
-        const params = new URLSearchParams(window.location.search);
-        return (params.get("category") || "").trim().toLowerCase();
+        return getQueryFilters().category;
       };
 
       const isShowcaseListingPage = () => {
@@ -1454,6 +1566,108 @@
         if (typeof setFormFromUrl === "function") {
           setFormFromUrl();
         }
+
+        renderEstateCategoryPanel();
+        syncCategorySpecificFilters();
+        syncSellerTabs();
+      };
+
+      const isEstateCategory = () => {
+        const filters = getQueryFilters();
+        return filters.category === "emlak" || !!filters.estateType;
+      };
+
+      const isVehicleCategory = () => {
+        return getActiveCategory() === "vasita";
+      };
+
+      const syncCategorySpecificFilters = () => {
+        if (vehicleBrandModelSection) {
+          vehicleBrandModelSection.hidden = !isVehicleCategory();
+        }
+
+        if (sellerTypeSelect) {
+          Array.from(sellerTypeSelect.options).forEach((option) => {
+            const estateLabel = option.dataset.emlakLabel;
+            const vehicleLabel = option.dataset.vasitaLabel;
+            if (estateLabel || vehicleLabel) {
+              option.textContent = isEstateCategory() ? (estateLabel || option.textContent) : (vehicleLabel || option.textContent);
+            }
+          });
+        }
+      };
+
+      const syncSellerTabs = () => {
+        const estateView = isEstateCategory();
+        tabButtons.forEach((button) => {
+          if (button.dataset.tab === "galeriden") {
+            button.textContent = estateView ? "Emlak Ofisinden" : "Galeriden";
+          }
+          if (button.dataset.tab === "yetkili-bayi") {
+            button.textContent = estateView ? "İnşaat Firmasından" : "Yetkili Bayiden";
+          }
+        });
+      };
+
+      const buildListingHref = (query) => {
+        const params = new URLSearchParams();
+        Object.entries(query || {}).forEach(([key, value]) => {
+          if (value) params.set(key, String(value));
+        });
+        return `listings.html?${params.toString()}`;
+      };
+
+      const queryMatchesLink = (linkQuery, activeFilters) => {
+        return Object.entries(linkQuery || {}).every(([key, value]) => {
+          const normalizedValue = key === "category"
+            ? normalizeCategoryValue(value)
+            : key === "estateType"
+              ? normalizeEstateTypeValue(value)
+              : normalizeSlug(value);
+          const activeValue = key === "category"
+            ? activeFilters.category
+            : key === "estateType"
+              ? activeFilters.estateType
+              : key === "subCategory"
+                ? activeFilters.subCategory
+                : key === "workplaceType"
+                  ? activeFilters.workplaceType
+                  : activeFilters.listingIntent;
+          return normalizedValue === activeValue;
+        });
+      };
+
+      const renderEstateCategoryPanel = () => {
+        const panel = document.getElementById("subcategoryPanel");
+        const titleEl = document.getElementById("subcategoryTitle");
+        const linksEl = document.getElementById("subcategoryLinks");
+        const emptyEl = document.getElementById("subcategoryEmpty");
+        if (!panel || !titleEl || !linksEl || !emptyEl) return;
+
+        const activeFilters = getQueryFilters();
+        const showEstatePanel = activeFilters.category === "emlak" || !!activeFilters.estateType;
+        if (!showEstatePanel) {
+          panel.hidden = true;
+          linksEl.innerHTML = "";
+          emptyEl.hidden = true;
+          return;
+        }
+
+        titleEl.textContent = "Emlak Alt Kategorileri";
+        panel.hidden = false;
+        emptyEl.hidden = true;
+        linksEl.innerHTML = estateCategoryTree.map((group) => `
+          <div class="subcategory-group">
+            <div class="subcategory-group-title">${escapeHtml(group.title)}</div>
+            <div class="subcategory-group-links">
+              ${group.links.map((item) => `
+                <a href="${escapeHtml(buildListingHref(item.query))}" class="${queryMatchesLink(item.query, activeFilters) ? "active" : ""}">
+                  <span>${escapeHtml(item.label)}</span>
+                </a>
+              `).join("")}
+            </div>
+          </div>
+        `).join("");
       };
 
       const normalizeSellerValue = (value) => {
@@ -1536,10 +1750,111 @@
         return parts;
       };
 
-      const getViewType = () => {
+      const getListingFamily = (listing) => {
+        const category = String(listing?.category || listing?.mainCategory || "").trim().toLowerCase();
+        const estateType = String(listing?.estateType || "").trim().toLowerCase();
+        const subCategory = String(listing?.subCategory || "").trim().toLowerCase();
+
+        if (category.includes("vas")) return "vasita";
+        if (category.includes("emlak")) return "emlak";
+        if (["konut", "arsa", "isyeri"].includes(estateType)) return "emlak";
+
+        const hasVehicleSignals = Boolean(listing?.brand || listing?.model || listing?.year || listing?.km);
+        if (hasVehicleSignals) return "vasita";
+
+        const hasEstateSignals = Boolean(
+          estateType ||
+          listing?.grossM2 ||
+          listing?.brutM2 ||
+          listing?.grossArea ||
+          listing?.openAreaM2 ||
+          listing?.rooms ||
+          listing?.roomCount ||
+          listing?.odaSayisi ||
+          subCategory
+        );
+
+        if (hasEstateSignals) return "emlak";
+        return "diger";
+      };
+
+      const getListingCategoryValue = (listing) => normalizeCategoryValue(
+        listing?.mainCategory ||
+        listing?.category ||
+        ""
+      );
+
+      const getListingEstateTypeValue = (listing) => normalizeEstateTypeValue(
+        listing?.estateType ||
+        listing?.propertyType ||
+        ""
+      );
+
+      const getListingSubCategoryValue = (listing) => normalizeSlug(
+        listing?.subCategory ||
+        listing?.estateSubType ||
+        listing?.housingType ||
+        listing?.landType ||
+        ""
+      );
+
+      const getListingIntentValue = (listing) => normalizeSlug(
+        listing?.estateListingIntent ||
+        listing?.listingIntent ||
+        listing?.listingType ||
+        ""
+      );
+
+      const getListingWorkplaceTypeValue = (listing) => normalizeSlug(
+        listing?.workplaceType ||
+        listing?.estateSubType ||
+        listing?.subCategory ||
+        ""
+      );
+
+      const matchesListingFilters = (listing, filters) => {
+        const family = getListingFamily(listing);
+        const categoryValue = getListingCategoryValue(listing);
+        const estateTypeValue = getListingEstateTypeValue(listing);
+        const subCategoryValue = getListingSubCategoryValue(listing);
+        const listingIntentValue = getListingIntentValue(listing);
+        const workplaceTypeValue = getListingWorkplaceTypeValue(listing);
+
+        if (filters.category) {
+          if (filters.category === "emlak") {
+            if (family !== "emlak") return false;
+          } else if (filters.category === "vasita") {
+            if (family !== "vasita") return false;
+          } else if (categoryValue !== filters.category) {
+            return false;
+          }
+        }
+
+        if (filters.estateType && estateTypeValue !== filters.estateType) return false;
+        if (filters.subCategory && subCategoryValue !== filters.subCategory) return false;
+        if (filters.listingIntent && listingIntentValue !== filters.listingIntent) return false;
+        if (filters.workplaceType && workplaceTypeValue !== filters.workplaceType) return false;
+
+        return true;
+      };
+
+      const getViewType = (listings = []) => {
         const activeCategory = getActiveCategory();
         if (activeCategory === "vasita") return "vasita";
         if (activeCategory === "emlak") return "emlak";
+        if (!Array.isArray(listings) || !listings.length) return "diger";
+
+        const counts = listings.reduce((acc, listing) => {
+          const family = getListingFamily(listing);
+          acc[family] = (acc[family] || 0) + 1;
+          return acc;
+        }, {});
+        const total = listings.length;
+        const emlakRatio = (counts.emlak || 0) / total;
+        const vasitaRatio = (counts.vasita || 0) / total;
+
+        if (emlakRatio >= 0.6) return "emlak";
+        if (vasitaRatio >= 0.6) return "vasita";
         return "diger";
       };
 
@@ -1547,6 +1862,25 @@
         const num = Number(value);
         if (!Number.isFinite(num)) return "";
         return new Intl.NumberFormat("tr-TR").format(num);
+      };
+
+      const getDisplayAreaValue = (value) => {
+        if (value == null) return "-";
+        const text = String(value).trim();
+        if (!text) return "-";
+        const normalized = text.replace(",", ".");
+        const numericMatch = normalized.match(/\d+(?:\.\d+)?/);
+        if (numericMatch?.[0]) {
+          const raw = numericMatch[0];
+          const num = Number(raw);
+          if (Number.isFinite(num)) {
+            return Number.isInteger(num)
+              ? new Intl.NumberFormat("tr-TR").format(num)
+              : new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 2 }).format(num);
+          }
+          return raw;
+        }
+        return text === "-" ? "-" : text;
       };
 
       const buildStatusBadges = (listing) => {
@@ -1619,8 +1953,8 @@
             <div class="listing-table-header">
               <div class="listing-cell">Fotoğraf</div>
               <div class="listing-cell">İlan Başlığı</div>
-              <div class="listing-cell mobile-hide">m²</div>
-              <div class="listing-cell mobile-hide">Oda</div>
+              <div class="listing-cell mobile-hide">m² (Brüt)</div>
+              <div class="listing-cell mobile-hide">Oda Sayısı</div>
               <div class="listing-cell">Fiyat</div>
               <div class="listing-cell mobile-hide">İlan Tarihi</div>
               <div class="listing-cell mobile-hide">İl / İlçe</div>
@@ -1672,8 +2006,8 @@
 
       const renderEstateRow = (listing, user, src, dateText, id) => {
         const location = [listing.city, listing.district].filter(Boolean).join(" / ");
-        const room = listing.roomCount || listing.rooms || "";
-        const size = listing.grossArea || listing.brutM2 || listing.size || "";
+        const room = listing.rooms || listing.roomCount || listing.odaSayisi || "";
+        const size = listing.grossM2 || listing.m2 || listing.brutM2 || listing.grossArea || listing.openAreaM2 || listing.size || "";
         const metaLine = [listing.subCategory, listing.estateType, listing.heating, location].filter(Boolean);
         const statusBadges = buildStatusBadges(listing);
 
@@ -1690,7 +2024,7 @@
               <div class="listing-submeta">${metaLine.map((item, index) => `${index ? '<span class="meta-separator">•</span>' : ''}<span>${escapeHtml(item)}</span>`).join("")}</div>
               ${statusBadges ? `<div class="badge-row">${statusBadges}</div>` : ""}
             </div>
-            <div class="listing-cell listing-size mobile-hide">${size ? `${escapeHtml(String(size))} m²` : "-"}</div>
+            <div class="listing-cell listing-size mobile-hide">${escapeHtml(getDisplayAreaValue(size))}</div>
             <div class="listing-cell listing-room mobile-hide">${escapeHtml(String(room || "-"))}</div>
             <div class="listing-cell"><div class="listing-side-stack"><div class="listing-price">${typeof formatPrice === "function" ? formatPrice(listing.price) : ""}</div></div></div>
             <div class="listing-cell listing-date mobile-hide">${escapeHtml(dateText || "-")}</div>
@@ -1763,7 +2097,7 @@
         const renderListingRows = (filteredListings) => {
           const user = typeof currentUser === "function" ? currentUser() : {};
           const showcasePage = isShowcaseListingPage();
-          const viewType = showcasePage ? "showcase" : getViewType();
+          const viewType = showcasePage ? "showcase" : getViewType(filteredListings);
           const seenIds = new Set();
           let renderCount = 0;
           const rows = filteredListings.map((listing) => {
@@ -1805,7 +2139,9 @@
         renderListings = function (listings) {
           if (!container) return;
 
-          lastRenderedListings = Array.isArray(listings) ? listings.slice() : [];
+          const activeFilters = getQueryFilters();
+          lastRenderedListings = (Array.isArray(listings) ? listings : []).filter((listing) => matchesListingFilters(listing, activeFilters));
+          renderEstateCategoryPanel();
           const filteredByTab = lastRenderedListings.filter((listing) => matchesSellerTab(listing, currentSellerTab));
           const pagination = typeof paginateItems === "function"
             ? paginateItems(filteredByTab, getActivePage(), pageSize)

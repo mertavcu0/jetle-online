@@ -2253,13 +2253,51 @@
       }
 
       .create-v3-progress {
-        gap: 8px;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 6px;
         margin-bottom: 10px;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .create-v3-progress::-webkit-scrollbar {
+        height: 5px;
+      }
+
+      .create-v3-progress::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
       }
 
       .step-progress-item {
-        min-height: 54px;
-        padding: 8px 9px;
+        flex: 0 0 auto;
+        min-width: 72px;
+        min-height: auto;
+        padding: 8px 6px;
+        gap: 3px;
+        text-align: center;
+      }
+
+      .step-progress-item::after {
+        display: none;
+      }
+
+      .step-progress-item span {
+        width: 24px;
+        height: 24px;
+        margin: 0 auto;
+        font-size: 12px;
+      }
+
+      .step-progress-item strong {
+        display: block;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: nowrap;
       }
 
       .preview-specs {
@@ -2402,12 +2440,12 @@
         <div class="create-v3-progress" role="tablist" aria-label="İlan verme adımları">
           <div class="step-progress-item active" data-step-indicator="1">
             <span>1</span>
-            <strong>Temel Bilgiler</strong>
+            <strong>Temel</strong>
             <small></small>
           </div>
           <div class="step-progress-item active" data-step-indicator="1">
             <span>2</span>
-            <strong>Detaylar</strong>
+            <strong>Detay</strong>
             <small></small>
           </div>
           <div class="step-progress-item" data-step-indicator="2">
@@ -2422,7 +2460,7 @@
           </div>
           <div class="step-progress-item" data-step-indicator="3">
             <span>5</span>
-            <strong>Yayınla</strong>
+            <strong>Yayın</strong>
             <small></small>
           </div>
         </div>

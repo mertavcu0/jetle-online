@@ -1780,13 +1780,73 @@
     }
 
     #latest-section .listing-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #latest-section .listing-grid .listing-card {
+      border-radius: 8px;
+      box-shadow: none;
+    }
+
+    #latest-section .listing-grid .listing-card .img-wrapper {
+      height: 88px;
+      background: #f3f4f6;
+    }
+
+    #latest-section .listing-grid .listing-card .img-placeholder {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
+    }
+
+    #latest-section .listing-grid .listing-card .fav-btn {
+      top: 6px;
+      right: 6px;
+      padding: 4px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.94);
+    }
+
+    #latest-section .listing-grid .listing-card .card-body {
+      gap: 4px;
+      padding: 8px 8px 9px;
+    }
+
+    #latest-section .listing-grid .listing-card .title {
+      font-size: 12px;
+      line-height: 1.3;
+      min-height: calc(1.3em * 2);
+      max-height: calc(1.3em * 2);
+    }
+
+    #latest-section .listing-grid .listing-card .price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    #latest-section .listing-grid .listing-card .meta {
+      gap: 2px;
+    }
+
+    #latest-section .listing-grid .listing-card .city-meta,
+    #latest-section .listing-grid .listing-card .category-meta {
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    #latest-section .listing-grid .listing-card .card-footer {
+      display: none;
     }
 
     @media (min-width: 1480px) {
       #showcase-section .listing-slider {
         grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      #latest-section .listing-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
       }
     }
 
@@ -1811,7 +1871,7 @@
       }
 
       #latest-section .listing-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 
@@ -1836,6 +1896,23 @@
       #featured-section .listing-grid .listing-card .price,
       #latest-section .listing-grid .listing-card .price {
         font-size: 22px;
+      }
+
+      #latest-section .listing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      #latest-section .listing-grid .listing-card .img-wrapper {
+        height: 92px;
+      }
+
+      #latest-section .listing-grid .listing-card .title {
+        font-size: 12px;
+      }
+
+      #latest-section .listing-grid .listing-card .price {
+        font-size: 13px;
       }
     }
 
@@ -1970,10 +2047,10 @@
     <aside class="sidebar">
       <h2>Kategoriler</h2>
       <div class="category-grid">
-        <a class="category-card" href="?category=emlak" data-category="emlak"><span class="category-label">Emlak</span></a>
-        <a class="category-card" href="?category=vasita" data-category="vasita"><span class="category-label">Vasıta</span></a>
-        <a class="category-card" href="?category=elektronik" data-category="elektronik"><span class="category-label">Elektronik</span></a>
-        <a class="category-card" href="?category=motosiklet" data-category="motosiklet"><span class="category-label">Motosiklet</span></a>
+        <a class="category-card" href="/listings.html?category=Emlak" data-category="emlak"><span class="category-label">Emlak</span></a>
+        <a class="category-card" href="/listings.html?category=Vasıta" data-category="vasita"><span class="category-label">Vasıta</span></a>
+        <a class="category-card" href="/listings.html?category=İş%20Makineleri" data-category="is-makineleri"><span class="category-label">İş Makineleri</span></a>
+        <a class="category-card" href="/listings.html?category=Yedek%20Parça" data-category="yedek-parca"><span class="category-label">Yedek Parça</span></a>
       </div>
     </aside>
 
@@ -1999,8 +2076,8 @@
 
       <section id="latest-section" class="home-section section-block">
         <div class="section-head">
-          <h2>Son Eklenen İlanlar</h2>
-          <a href="listings.html?sort=new">Tüm son eklenenler</a>
+          <h2>Anasayfa</h2>
+          <a href="/listings.html?sort=new">Tüm ilanları göster</a>
         </div>
         <div id="latestGrid" class="listing-grid"></div>
       </section>
@@ -2505,7 +2582,8 @@
         .filter((item) => item && item.isShowcase !== true && item.isFeatured !== true)
         .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       console.log("NORMAL_RENDER_FINAL", finalListings.map((item) => String(item?._id || item?.id || "")));
-      renderApiGrid(els.latest, finalListings.slice(0, 8), "Son eklenen ilan bulunamadı.", 4);
+      // This area can later be reused for a paid homepage showcase surface.
+      renderApiGrid(els.latest, finalListings.slice(0, 12), "Ana sayfa ilanı bulunamadı.", 6);
       return finalListings;
     }
 
