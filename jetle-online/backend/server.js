@@ -788,10 +788,145 @@ app.get("/api/test-auth", (req, res) => {
 });
 
 const publicDir = path.join(__dirname, "../public");
+const listingDetailHtmlPath = path.join(publicDir, "listing-detail.html");
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getRequestBaseUrl(req) {
+  const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
+  const protocol = forwardedProto || req.protocol || "https";
+  const host = String(req.headers["x-forwarded-host"] || req.get("host") || "jetle.online").split(",")[0].trim() || "jetle.online";
+  return `${protocol}://${host}`;
+}
+
+function resolveAbsoluteAssetUrl(req, value) {
+  const raw = String(value || "").trim();
+  const baseUrl = getRequestBaseUrl(req);
+  if (!raw) return `${baseUrl}/assets/branding/jetle-share-default.svg`;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith("//")) return `https:${raw}`;
+  return `${baseUrl}${raw.startsWith("/") ? raw : `/${raw}`}`;
+}
+
+function getListingShareImage(listing) {
+  const candidates = [
+    listing?.coverImage,
+    listing?.mainImage,
+    listing?.image,
+    ...(Array.isArray(listing?.images) ? listing.images : []),
+    ...(Array.isArray(listing?.gallery) ? listing.gallery : []),
+    ...(Array.isArray(listing?.photos) ? listing.photos : [])
+  ];
+
+  return candidates
+    .map((item) => String(item || "").trim())
+    .find(Boolean);
+}
+
+function getListingTypeLabel(listing) {
+  return [
+    listing?.estateListingIntent,
+    listing?.workplaceType,
+    listing?.subCategory,
+    listing?.estateType,
+    listing?.category
+  ]
+    .map((item) => String(item || "").trim())
+    .find(Boolean) || "İlan";
+}
+
+function formatListingPrice(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount) || amount <= 0) return "Fiyat belirtilmemiş";
+  return `${new Intl.NumberFormat("tr-TR").format(amount)} TL`;
+}
+
+function buildListingMetaPayload(req, listingId, listing) {
+  const baseUrl = getRequestBaseUrl(req);
+  const ogUrl = listingId
+    ? `${baseUrl}/listing-detail.html?id=${encodeURIComponent(String(listingId))}`
+    : `${baseUrl}/listing-detail.html`;
+
+  if (!listing) {
+    return {
+      title: "Jetle - Türkiye'nin ilan platformu",
+      description: "Ücretsiz ilan ver. Emlak, araç, vasıta ve daha fazlası Jetle’de.",
+      image: `${baseUrl}/assets/branding/jetle-share-default.svg`,
+      url: ogUrl,
+      type: "website"
+    };
+  }
+
+  const listingTitle = String(listing.title || "İlan Detayı").trim();
+  const location = [listing.city, listing.district].map((item) => String(item || "").trim()).filter(Boolean).join(" / ");
+  const typeLabel = getListingTypeLabel(listing);
+  const title = `${listingTitle} | Jetle`;
+  const description = [formatListingPrice(listing.price), location, typeLabel].filter(Boolean).join(" - ");
+
+  return {
+    title,
+    description,
+    image: resolveAbsoluteAssetUrl(req, getListingShareImage(listing)),
+    url: ogUrl,
+    type: "website"
+  };
+}
+
+function injectListingMeta(html, meta) {
+  const tags = [
+    `<title>${escapeHtml(meta.title)}</title>`,
+    `<meta name="description" content="${escapeHtml(meta.description)}">`,
+    `<link rel="canonical" href="${escapeHtml(meta.url)}">`,
+    `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
+    `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
+    `<meta property="og:image" content="${escapeHtml(meta.image)}">`,
+    `<meta property="og:url" content="${escapeHtml(meta.url)}">`,
+    `<meta property="og:type" content="${escapeHtml(meta.type || "website")}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
+    `<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
+    `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
+    `<meta name="twitter:image" content="${escapeHtml(meta.image)}">`
+  ].join("\n  ");
+
+  const stripped = String(html || "")
+    .replace(/<title>[\s\S]*?<\/title>/i, "")
+    .replace(/<meta\s+name="description"[\s\S]*?>/ig, "")
+    .replace(/<link\s+rel="canonical"[\s\S]*?>/ig, "")
+    .replace(/<meta\s+(?:property|name)="(?:og:[^"]+|twitter:[^"]+)"[\s\S]*?>/ig, "");
+
+  return stripped.replace(/<\/head>/i, `  ${tags}\n</head>`);
+}
 
 app.use((req, res, next) => {
   console.log("STATIC_REQUEST", req.url);
   next();
+});
+
+app.get("/listing-detail.html", async (req, res, next) => {
+  try {
+    const listingId = String(req.query.id || "").trim();
+    let listing = null;
+
+    if (listingId && mongoose.Types.ObjectId.isValid(listingId)) {
+      listing = await Listing.findById(listingId).lean();
+    }
+
+    const html = fs.readFileSync(listingDetailHtmlPath, "utf8");
+    const meta = buildListingMetaPayload(req, listingId, listing);
+    const responseHtml = injectListingMeta(html, meta);
+
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.send(responseHtml);
+  } catch (error) {
+    return next(error);
+  }
 });
 
 app.use("/css", express.static(publicDir, {

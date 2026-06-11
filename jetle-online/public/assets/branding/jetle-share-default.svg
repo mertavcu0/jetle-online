@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Jetle paylaşım görseli</title>
+  <desc id="desc">Jetle.online ilan paylaşım önizlemesi için varsayılan görsel.</desc>
+  <rect width="1200" height="630" fill="#f4f6f8"/>
+  <rect x="56" y="56" width="1088" height="518" rx="28" fill="#ffffff" stroke="#dbe3ef" stroke-width="2"/>
+  <text x="108" y="255" fill="#2563eb" font-family="Inter, Arial, sans-serif" font-size="118" font-weight="800">jetle</text>
+  <text x="423" y="255" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="118" font-weight="800">.online</text>
+  <text x="112" y="340" fill="#334155" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600">Türkiye'nin ilan platformu</text>
+  <text x="112" y="400" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="28">Emlak, vasıta ve daha fazlasını Jetle'de keşfedin.</text>
+</svg>
