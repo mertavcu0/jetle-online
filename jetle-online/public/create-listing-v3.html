@@ -91,6 +91,12 @@
       flex-wrap: wrap;
     }
 
+    .create-v3-notification-slot {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+
     .create-v3-nav a {
       display: inline-flex;
       align-items: center;
@@ -2374,6 +2380,7 @@
         <span class="brand-wordmark"><span class="brand-jetle">jetle</span><span class="brand-online">.online</span></span>
       </a>
       <nav class="create-v3-nav" aria-label="Hızlı bağlantılar">
+        <div class="create-v3-notification-slot" data-notification-host></div>
         <a href="/dashboard.html">Profilim</a>
         <a href="/messages.html">Mesajlar</a>
         <a href="/favorites.html">Favoriler</a>
@@ -3625,6 +3632,7 @@
   <div id="damageTooltip" class="damage-tooltip"></div>
 
   <script src="/cities.js"></script>
+  <script src="/auth-global.js?v=3"></script>
   <script src="/create-listing.js?v=20260610-2"></script>
   <script>
     (function () {

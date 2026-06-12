@@ -1,5 +1,6 @@
 const adminLoginForm = document.getElementById("adminLoginForm");
 const adminLoginMessage = document.getElementById("adminLoginMessage");
+const ADMIN_AUTH_KEYS = ["token", "user", "userId", "userEmail", "userRole", "admin"];
 
 function setAdminMessage(message, type = "") {
   if (!adminLoginMessage) return;
@@ -7,12 +8,35 @@ function setAdminMessage(message, type = "") {
   adminLoginMessage.className = ["muted", type].filter(Boolean).join(" ");
 }
 
+function clearAdminSession() {
+  ADMIN_AUTH_KEYS.forEach((key) => localStorage.removeItem(key));
+}
+
 function persistAdminSession(payload) {
-  if (payload?.token) {
-    localStorage.setItem("token", payload.token);
-  }
-  if (payload?.user) {
-    localStorage.setItem("user", JSON.stringify(payload.user));
+  const token = payload?.token ? String(payload.token) : "";
+  const user = payload?.user && typeof payload.user === "object" ? payload.user : null;
+
+  if (!token || !user) return;
+
+  const userId = user._id || user.id || "";
+  const userEmail = user.email || "";
+  const userRole = user.role || "";
+  const normalizedUser = {
+    ...user,
+    _id: userId || user._id || user.id || "",
+    id: userId || user.id || user._id || "",
+    email: userEmail
+  };
+
+  localStorage.setItem("token", token);
+  localStorage.setItem("user", JSON.stringify(normalizedUser));
+  if (userId) localStorage.setItem("userId", String(userId));
+  if (userEmail) localStorage.setItem("userEmail", String(userEmail));
+  if (userRole) localStorage.setItem("userRole", String(userRole));
+  if (String(userRole).trim().toLowerCase() === "admin") {
+    localStorage.setItem("admin", JSON.stringify(normalizedUser));
+  } else {
+    localStorage.removeItem("admin");
   }
 }
 
@@ -46,8 +70,7 @@ async function handleAdminLogin(event) {
 
     if (String(data?.user?.role || "").trim().toLowerCase() !== "admin") {
       console.log("Admin redirect reason:", "non_admin_user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      clearAdminSession();
       setAdminMessage("Bu panel sadece admin hesabına açıktır.", "error");
       return;
     }
